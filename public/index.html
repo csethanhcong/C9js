@@ -4,7 +4,9 @@
 	<meta charset="UTF-8">
 	<base href="/">
 
-	<title>Demo d3JS</title>
+	<title>Demo d3js</title>
+	<!-- ICON -->
+	<link rel="icon" href="images/icon.ico">
 
 	<!-- CSS -->
 	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
@@ -13,6 +15,7 @@
 	<!-- JS -->
 	<script src="libs/angular/angular.min.js"></script>
 	<script src="libs/angular-route/angular-route.min.js"></script>
+	<script src="libs/jquery/dist/jquery.min.js"></script>
 
 	<!-- ANGULAR CUSTOM -->
 	<!-- CONTROLLERS -->
@@ -27,9 +30,9 @@
 	<!-- END ANGULAR CUSTOM -->
 </head>
 <body>
-	<div class="container"  ng-app="demoApp">
+	<!-- <div class="container"  ng-app="demoApp">  -->
 		
-		<!-- DEMO -->
+		<!-- DEMO
 		<div class="row">
 	      <div class="col-md-6 col-md-offset-3">Resize the page or change the numbers to see the d3 re-render!</div>
 	    </div>
@@ -75,6 +78,47 @@
 		<!-- ANGULAR DYNAMIC CONTENT -->
 		<!-- <div ng-view></div> -->
 
-	</div>
+	<!-- </div> -->
+
+	<!-- header -->
+	<header>
+		<nav class="navbar navbar-default navbar-fixed-top">
+		  <div class="container">
+		    <div class="navbar-header">
+		      <a class="navbar-brand" href="/">
+		      	<img src="images/icon.ico" alt="" width="32px" height="32px">
+		      </a>
+		      <a class="navbar-brand" href="/">d3Team</a>
+		    </div>
+		    <div class="navbar-header navbar-right">
+		    	<ul class="nav navbar-nav">
+		    		<li class="active"><a href="/">Home</a></li>
+		    		<li><a href="/">About</a></li>
+		    		<li><p class="navbar-text">Version 1.0</p></li>
+		    	</ul>
+		    </div>
+		  </div>
+		</nav>
+	</header>
+	<section class="col-lg-3">
+			<div class="input-group">
+            	<span class="input-group-btn">
+                    <span class="btn btn-primary btn-file" id="choose-file">
+                        <i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip; <input type="file" multiple="false">
+                    </span>
+                </span>
+                <input  class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
+            </div>
+	</section>
 </body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#choose-file').on('change', ':file', function() {
+		  	var input_file = $('#input-file'),
+		  		input = $(this),
+		      	label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+		  	input_file.val(label);
+		});
+	});
+</script>
 </html>
