@@ -72,8 +72,24 @@ angular.module('appDirective', [])
               .attr("y", function(d, i){return i * 35 + 22;})
               .attr("x", 15)
               .text(function(d){return d[scope.label];});
-
         };
       }
     };
-  }]);
+  }])
+  .directive("ngFileSelect",function(){
+
+    return {
+      link: function($scope,el){
+        
+        el.bind("change", function(e){
+        
+          $scope.file = (e.srcElement || e.target).files[0];
+          $scope.getFile();
+        })
+        
+      }
+      
+    }
+    
+    
+  });

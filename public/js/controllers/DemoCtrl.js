@@ -18,5 +18,20 @@ angular.module('appCtrl', [])
       {title: "Ari", score:43},
       {title: "Loser", score: 87}
     ];
+  })
+  .controller('DemoCtrl3', function($scope, fileReader){
+    $scope.d3Data = [];
+    $scope.title = "DemoCtrl3";
+    $scope.getFile = function () {
+        fileReader.readAsDataUrl($scope.file, $scope)
+                      .then(function(result) {
+                          var resultInJSON = JSON.parse(result);
+                          for (var i = 0; i < resultInJSON.length; i++){
+                            $scope.d3Data.push({
+                                        name: resultInJSON[i].title,
+                                        score: resultInJSON[i].score
+                                      });
+                          }                          
+                      });
+    };
   });
-
