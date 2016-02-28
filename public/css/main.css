@@ -12,9 +12,8 @@ btn-file {
   position: absolute;
   top: 0;
   right: 0;
-  min-width: 100%;
-  min-height: 100%;
-  font-size: 100px;
+  max-width: 100%;
+  max-height: 100%;
   text-align: right;
   filter: alpha(opacity=0);
   opacity: 0;
@@ -25,4 +24,16 @@ btn-file {
 input[readonly] {
   background-color: white !important;
   cursor: text !important;
+}
+
+/*----Customize HR element-------*/
+hr {
+  margin-top: 0px;
+  /*margin-bottom: 0px;*/
+}
+
+/*---------Headr-----------------*/
+header .navbar{
+  background-color: #011638;
+  border-color: #4FB0C6;
 }

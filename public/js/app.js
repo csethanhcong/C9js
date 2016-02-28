@@ -3,8 +3,8 @@ angular.module('demoApp', [
 	'ngRoute', 
 	'appRoutes', 
 	'appCtrl',
-  'appDirective',
-  'd3'
+  	'appDirective',
+  	'd3'
   ]);
 
 // setup dependency injection
