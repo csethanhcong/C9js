@@ -31,12 +31,6 @@
 	<!-- END ANGULAR CUSTOM -->
 </head>
 <body ng-controller="DemoCtrl">
-	<!-- <div class="container"  ng-app="demoApp">  -->
-		
-		
-
-	<!-- </div> -->
-
 	<!-- header -->
 	<header>
 		<nav class="navbar navbar-default navbar-fixed-top">
@@ -64,7 +58,7 @@
 		        	<div class="input-group-btn">
 		                <div class="btn btn-primary btn-file" id="choose-file">
 		                    <i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip; 
-		                    <input class="form-control" type="file">
+		                    <input class="form-control" type="file" ng-file-select="onFileSelect($files)">
 		                </div>
 		            </div>
 		            <input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
@@ -78,24 +72,22 @@
 					<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
 				</div>
 			</div>
-			<div class="row">
+			<div class="row" ng-repeat="row in rows">
 				<div class="row">
 					<div class="col-lg-4">
-						<input type="text" class="form-control" placeholder="name..">
+						<input type="text" class="form-control" placeholder="name.." value="{{row.name}}"></input>
 					</div>
 					<div class="col-lg-4">
-						<input type="text" class="form-control" placeholder="data..">
+						<input type="text" class="form-control" placeholder="data.." value="{{row.score}}"></input>
 					</div>
 					<div class="col-lg-4">
-						<button class="btn btn-primary" type="button" title="Add" ng-click="addData()" ><span><i class="glyphicon glyphicon-plus"></i></span></button>
+						<button class="btn btn-primary" type="button" title="Add" ng-click="addData()"><span><i class="glyphicon glyphicon-plus"></i></span></button>
 						<button class="btn btn-danger" type="button" title="Remove" ng-click="removeData()"><span><i class="glyphicon glyphicon-remove"></i></span></button>
 					</div>
 				</div>
 				<div class="col-lg-10"><hr></div>
 			</div> <!-- Input-data -->
 		</div>
-		
-		
 	</section>
 	<section class="col-lg-8">
 		<!-- DEMO -->
@@ -121,7 +113,7 @@
 	        <input type="text" ng-model="d3Data[2].score"></input>
 	      </div>
 	    </div>
-	    <div class="row">
+	    <!-- <div class="row">
 	      <div class="col-lg-6"><hr></div>
 	    </div>
 	    <div class="row">
@@ -144,9 +136,9 @@
 	        <form>
 		        <input type="file" ng-file-select="onFileSelect($files)"/><br/>
 		    </form>
-	      </div>
+	      </div> -->
 
-	    </div>
+	    <!-- </div> -->
 		<!-- <div ng-controller="myController">
 			
 	    </div> -->
