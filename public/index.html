@@ -1,163 +1,101 @@
 <!doctype html>
 <html lang="en" ng-app="demoApp">
-<head>
-	<meta charset="UTF-8">
-	<base href="/">
-
-	<title>Demo d3js</title>
-	<!-- ICON -->
-	<link rel="icon" href="images/icon.ico">
-
-	<!-- CSS -->
-	<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
-	<link rel="stylesheet" href="css/main.css"> <!-- custom styles -->
-
-	<!-- JS -->
-	<script src="libs/angular/angular.min.js"></script>
-	<script src="libs/angular-route/angular-route.min.js"></script>
-	<script src="libs/jquery/dist/jquery.min.js"></script>
-
-	<!-- ANGULAR CUSTOM -->
-	<script src="js/app.js"></script>
-	<!-- CONTROLLERS -->
-	<script src="js/controllers/DemoCtrl.js"></script>
-	<script src="js/factory/UploadFactory.js"></script>
-	<!-- SERVICES -->
-	<script src="js/services/d3.js"></script>
-	<!-- DIRECTIVES -->
-	<script src="js/directives/d3basic.js"></script>
-	<script src="js/directives/userInteraction.js"></script>
-
-	<!-- <script src="js/appRoutes.js"></script> -->
-	<!-- END ANGULAR CUSTOM -->
-</head>
-<body ng-controller="DemoCtrl">
-	<!-- header -->
-	<header>
-		<nav class="navbar navbar-default navbar-fixed-top">
-		  <div class="container">
-		    <div class="navbar-header">
-		      <a class="navbar-brand" href="/">
-		      	<img src="images/icon.ico" alt="" width="32px" height="32px">
-		      </a>
-		      <a class="navbar-brand" href="/">d3Team</a>
-		    </div>
-		    <div class="navbar-header navbar-right">
-		    	<ul class="nav navbar-nav">
-		    		<li class="active"><a href="/">Home</a></li>
-		    		<li><a href="/">About</a></li>
-		    		<li><p class="navbar-text">Version 1.0</p></li>
-		    	</ul>
-		    </div>
-		  </div>
-		</nav>
-	</header>
-	<section class="col-lg-4">
-		<div class="container-fluid" id="input-data">
-			<div class="row">
-				<div class="input-group">
-		        	<div class="input-group-btn">
-		                <div class="btn btn-primary btn-file" id="choose-file">
-		                    <i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip; 
-		                    <input class="form-control" type="file" ng-file-select="onFileSelect($files)">
-		                </div>
-		            </div>
-		            <input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
-		        </div>
-			</div> <!-- Input-file -->
-			<div class="row">
-				<div class="col-lg-10 col-lg-offset-1"><hr style="margin-top: 20px; margin-bottom: 10px;"></div>
-			</div>
-			<div class="row">
-				<div class="col-lg-10 col-lg-offset-2">
-					<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
-				</div>
-			</div>
-			<!-- <div class="row" ng-repeat="d3 in d3Data" user-data>
-				<div class="row" id="d3-{{$index}}">
-					<div class="col-lg-4">
-						<input ng-model="d3.name" type="text" class="form-control" placeholder="name.."></input>
+	<head>
+		<meta charset="UTF-8">
+		<base href="/">
+		<title>Demo d3js</title>
+		<!-- ICON -->
+		<link rel="icon" href="images/icon.ico">
+		<!-- CSS -->
+		<link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/main.css"> <!-- custom styles -->
+		<!-- JS -->
+		<script src="libs/angular/angular.min.js"></script>
+		<script src="libs/angular-route/angular-route.min.js"></script>
+		<script src="libs/jquery/dist/jquery.min.js"></script>
+		<!-- ANGULAR CUSTOM -->
+		<script src="js/app.js"></script>
+		<!-- CONTROLLERS -->
+		<script src="js/controllers/DemoCtrl.js"></script>
+		<script src="js/factory/UploadFactory.js"></script>
+		<!-- SERVICES -->
+		<script src="js/services/d3.js"></script>
+		<!-- DIRECTIVES -->
+		<script src="js/directives/d3basic.js"></script>
+		<script src="js/directives/userInteraction.js"></script>
+		<!-- <script src="js/appRoutes.js"></script> -->
+		<!-- END ANGULAR CUSTOM -->
+	</head>
+	<body ng-controller="DemoCtrl">
+		<!-- header -->
+		<header>
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<div class="container">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="/">
+							<img src="images/icon.ico" alt="" width="32px" height="32px">
+						</a>
+						<a class="navbar-brand" href="/">d3Team</a>
 					</div>
-					<div class="col-lg-4">
-						<input ng-model="d3.score" type="text" class="form-control" placeholder="data.."></input>
-					</div>
-					<div class="col-lg-4">
-						<button class="btn btn-primary" type="button" title="Add" ng-click="addData()"><span><i class="glyphicon glyphicon-plus"></i></span></button>
-						<button class="btn btn-danger" type="button" title="Remove" ng-click="removeData()"><span><i class="glyphicon glyphicon-remove"></i></span></button>
+					<div class="navbar-header navbar-right">
+						<ul class="nav navbar-nav">
+							<li class="active"><a href="/">Home</a></li>
+							<li><a href="/">About</a></li>
+							<li><p class="navbar-text">Version 1.0</p></li>
+						</ul>
 					</div>
 				</div>
-				<div class="col-lg-10"><hr></div>
-			</div> --> <!-- Input-data -->
-			<user-interaction data="d3Data"></user-interaction>
-		</div>
-	</section>
-	<section class="col-lg-8">
-		<!-- DEMO -->
-		<div class="row">
-	      <div class="col-lg-6">Resize the page or change the numbers to see the d3 re-render!</div>
-	    </div>
-	    <div class="row">
-	      <div class="col-lg-6"><hr></div>
-	    </div>
-	    <div class="row">
-	      <div class="col-lg-6">
-	        <span>{{title}}</span>
-	        <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
-	        <br>
-	        <br>
-	        <span>First Item</span>
-	        <input type="text" ng-model="d3Data[0].score"></input>
-	        <br>
-	        <span>Second Item</span>
-	        <input type="text" ng-model="d3Data[1].score"></input>
-	        <br>
-	        <span>Third Item</span>
-	        <input type="text" ng-model="d3Data[2].score"></input>
-	      </div>
-	    </div>
-	    <!-- <div class="row">
-	      <div class="col-lg-6"><hr></div>
-	    </div>
-	    <div class="row">
-	      <div class="col-md-6 col-md-offset-3"><hr></div>
-	    </div>
-	    <div class="row">
-	      <div class="col-md-6 col-md-offset-3" ng-controller="DemoCtrl3">
-	        <span>{{title}}</span>
-	        <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
-	        <br>
-	        <br>
-	        <span>First Item</span>
-	        <input type="text" ng-model="d3Data[0].score"></input>
-	        <br>
-	        <span>Second Item</span>
-	        <input type="text" ng-model="d3Data[1].score"></input>
-	        <br>
-	        <span>Third Item</span>
-	        <input type="text" ng-model="d3Data[2].score"></input>
-	        <form>
-		        <input type="file" ng-file-select="onFileSelect($files)"/><br/>
-		    </form>
-	      </div> -->
-
-	    <!-- </div> -->
-		<!-- <div ng-controller="myController">
-			
-	    </div> -->
-
-		<!-- ANGULAR DYNAMIC CONTENT -->
-		<!-- <div ng-view></div> -->
-	</section>
-</body>
-<script type="text/javascript">
-	$(document).ready(function() {
-		// Process choose file
-		$('#choose-file').on('change', ':file', function() {
-		  	var input_file = $('#input-file'),
-		  		input = $(this),
-		      	label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
-		  	input_file.val(label);
-		});
-	});
-</script>
+			</nav>
+		</header>
+		<section class="col-lg-4">
+			<div class="container-fluid" id="input-data">
+				<div class="row">
+					<div class="input-group">
+						<div class="input-group-btn">
+							<div class="btn btn-primary btn-file" id="choose-file">
+								<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
+								<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
+							</div>
+						</div>
+						<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
+					</div>
+					</div> <!-- Input-file -->
+					<div class="row">
+						<div class="col-lg-10 col-lg-offset-1"><hr style="margin-top: 20px; margin-bottom: 10px;"></div>
+					</div>
+					<div class="row">
+						<div class="col-lg-10 col-lg-offset-2">
+							<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
+						</div>
+					</div>
+					<user-interaction data="d3Data"></user-interaction>
+				</div>
+			</section>
+			<section class="col-lg-8">
+				<!-- DEMO -->
+				<div class="row">
+					<div class="col-lg-6">Resize the page or change the numbers to see the d3 re-render!</div>
+				</div>
+				<div class="row">
+					<div class="col-lg-6"><hr></div>
+				</div>
+				<div class="row">
+					<div class="col-lg-6">
+						<span>{{title}}</span>
+						<d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
+					</div>
+				</div>
+			</section>
+		</body>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				// Process choose file
+				$('#choose-file').on('change', ':file', function() {
+					var input_file = $('#input-file'),
+						input = $(this),
+					label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+					input_file.val(label);
+				});
+			});
+		</script>
 </html>
