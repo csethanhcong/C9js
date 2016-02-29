@@ -37,3 +37,9 @@ header .navbar{
   background-color: #011638;
   border-color: #4FB0C6;
 }
+
+d3-donut-chart {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}

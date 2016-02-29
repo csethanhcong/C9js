@@ -7,7 +7,7 @@ angular.module('demoApp')
       {name: "Ari", score:96},
       {name: "Loser", score: 48}
     ];
-
+    $scope.accessor = function(d){ return d.score };
     $scope.d3OnClick = function(item){
       alert(item.name);
     };
@@ -62,4 +62,4 @@ angular.module('demoApp')
         $scope.d3Data = [];
       // });
     };
-  });
+  })
