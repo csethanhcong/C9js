@@ -26,6 +26,7 @@
 	<script src="js/services/d3.js"></script>
 	<!-- DIRECTIVES -->
 	<script src="js/directives/d3basic.js"></script>
+	<script src="js/directives/userInteraction.js"></script>
 
 	<!-- <script src="js/appRoutes.js"></script> -->
 	<!-- END ANGULAR CUSTOM -->
@@ -72,7 +73,7 @@
 					<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
 				</div>
 			</div>
-			<div class="row" ng-repeat="d3 in d3Data" user-data>
+			<!-- <div class="row" ng-repeat="d3 in d3Data" user-data>
 				<div class="row" id="d3-{{$index}}">
 					<div class="col-lg-4">
 						<input ng-model="d3.name" type="text" class="form-control" placeholder="name.."></input>
@@ -86,7 +87,8 @@
 					</div>
 				</div>
 				<div class="col-lg-10"><hr></div>
-			</div> <!-- Input-data -->
+			</div> --> <!-- Input-data -->
+			<user-interaction data="d3Data"></user-interaction>
 		</div>
 	</section>
 	<section class="col-lg-8">
