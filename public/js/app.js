@@ -1,12 +1,15 @@
 // create the angular app
-angular.module('demoApp', [
-	'ngRoute', 
-	'appRoutes', 
-	'appCtrl',
-  'appDirective',
-  'd3',
-  'testApp'
-  ]);
+(function() {
+	angular.module('demoApp', [
+		// 'ngRoute', 
+		// 'appRoutes',
+		// 'appCtrl',
+	 //  'appDirective',
+	  'd3'
+	 //  'testApp'
+	  ]);
+})();
+
 
 // setup dependency injection
 // angular.module('d3', []);

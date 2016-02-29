@@ -1,4 +1,4 @@
-angular.module('testApp', [])
+angular.module('demoApp')
 	.factory("fileReader", ["$q", "$log", function($q, $log){
 		var onLoad = function(reader, deferred, scope) {
             return function () {

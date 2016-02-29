@@ -18,6 +18,7 @@
 	<script src="libs/jquery/dist/jquery.min.js"></script>
 
 	<!-- ANGULAR CUSTOM -->
+	<script src="js/app.js"></script>
 	<!-- CONTROLLERS -->
 	<script src="js/controllers/DemoCtrl.js"></script>
 	<script src="js/factory/UploadFactory.js"></script>
@@ -26,8 +27,7 @@
 	<!-- DIRECTIVES -->
 	<script src="js/directives/d3basic.js"></script>
 
-	<script src="js/appRoutes.js"></script>
-	<script src="js/app.js"></script>
+	<!-- <script src="js/appRoutes.js"></script> -->
 	<!-- END ANGULAR CUSTOM -->
 </head>
 <body ng-controller="DemoCtrl">
@@ -72,13 +72,13 @@
 					<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
 				</div>
 			</div>
-			<div class="row" ng-repeat="row in rows">
-				<div class="row">
+			<div class="row" ng-repeat="d3 in d3Data" user-data>
+				<div class="row" id="d3-{{$index}}">
 					<div class="col-lg-4">
-						<input type="text" class="form-control" placeholder="name.." value="{{row.name}}"></input>
+						<input ng-model="d3.name" type="text" class="form-control" placeholder="name.."></input>
 					</div>
 					<div class="col-lg-4">
-						<input type="text" class="form-control" placeholder="data.." value="{{row.score}}"></input>
+						<input ng-model="d3.score" type="text" class="form-control" placeholder="data.."></input>
 					</div>
 					<div class="col-lg-4">
 						<button class="btn btn-primary" type="button" title="Add" ng-click="addData()"><span><i class="glyphicon glyphicon-plus"></i></span></button>

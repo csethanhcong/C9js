@@ -1,4 +1,4 @@
-angular.module('appCtrl', [])
+angular.module('demoApp')
   .controller('DemoCtrl', function($scope, $compile, $element, fileReader){
     $scope.rows = [];
     $scope.title = "DemoCtrl";
@@ -53,8 +53,6 @@ angular.module('appCtrl', [])
                     score: resultInJSON[i].score
                   });
                 };     
-
-                $scope.rows = $scope.d3Data;
               });
           // });
     };

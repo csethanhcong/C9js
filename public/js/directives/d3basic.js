@@ -1,4 +1,7 @@
-angular.module('appDirective', [])
+angular.module('demoApp')
+  .directive('userData', function() {
+    
+  })
   .directive('d3Bars', ['d3', function(d3) {
     return {
       restrict: 'EA',
