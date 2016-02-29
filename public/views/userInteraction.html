@@ -1,0 +1,15 @@
+<div class="row" ng-repeat="d3 in data">
+	<div class="row" id="d3-{{$index}}">
+		<div class="col-lg-4">
+			<input ng-model="d3.name" type="text" class="form-control" placeholder="name.."></input>
+		</div>
+		<div class="col-lg-4">
+			<input ng-model="d3.data" type="text" class="form-control" placeholder="data.."></input>
+		</div>
+		<div class="col-lg-4">
+			<button class="btn btn-primary" type="button" title="Add" ng-click="addData($index)"><span><i class="glyphicon glyphicon-plus"></i></span></button>
+			<button class="btn btn-danger" type="button" title="Remove" ng-click="removeData($index)"><span><i class="glyphicon glyphicon-remove"></i></span></button>
+		</div>
+	</div>
+	<div class="col-lg-10"><hr></div>
+</div> <!-- Input-data -->

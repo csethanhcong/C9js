@@ -1,7 +1,4 @@
 angular.module('demoApp')
-  .directive('userData', function() {
-    
-  })
   .directive('d3Bars', ['d3', function(d3) {
     return {
       restrict: 'EA',
@@ -64,7 +61,7 @@ angular.module('demoApp')
               .transition()
                 .duration(1000) // time of duration
                 .attr("width", function(d){
-                  return d.score/(max/width);
+                  return d.data/(max/width);
                 }); // width based on scale
 
           svg.selectAll("text")
