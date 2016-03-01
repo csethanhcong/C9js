@@ -19,7 +19,8 @@ angular.module('demoApp')
     var height = 150;
     var min = Math.min(width, height);
 
-    var svg = d3.select(el).append('svg')
+    var svg = d3.select(el)
+      .append('svg')
         .attr({width: width, height: height})
       .append('g')
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
@@ -50,7 +51,8 @@ angular.module('demoApp')
     }
     
     // add the <path>s for each arc slice
-    var arcs = svg.selectAll('path.arc').data(pie(scope.data))
+    var arcs = svg.selectAll('path.arc')
+        .data(pie(scope.data))
       .enter().append('path')
         .attr('class', 'arc')
         .style('stroke', 'white')
@@ -61,7 +63,6 @@ angular.module('demoApp')
     // our data changed! update the arcs, adding, updating, or removing 
     // elements as needed
     scope.$watch('data', function(newData, oldData){
-      console.log('data changed!');
       var data = newData.slice(0); // copy
       var duration = 500;
       var PI = Math.PI;

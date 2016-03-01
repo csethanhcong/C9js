@@ -23,6 +23,7 @@
 		<!-- DIRECTIVES -->
 		<script src="js/directives/d3Bar.js"></script>
 		<script src="js/directives/d3DonutChart.js"></script>
+		<script src="js/directives/d3SortableBar.js"></script>
 		<script src="js/directives/ngFileSelect.js"></script>
 		<script src="js/directives/userInteraction.js"></script>
 		<!-- <script src="js/appRoutes.js"></script> -->
@@ -98,7 +99,22 @@
 				</div>
 				<div class="row">
 					<div>
-						<d3-donut-chart data="d3Data" label="name" accessor="accessor"></d3-bars>
+						<d3-donut-chart data="d3Data" label="name" accessor="accessor"></d3-donut-chart>
+					</div>
+				</div>
+
+			</section>
+			<section class="col-lg-4">
+				<!-- DEMO -->
+				<div class="row">
+					<div>Demo Sortable Bar Chart!</div>
+				</div>
+				<div class="row">
+					<div><hr></div>
+				</div>
+				<div class="row">
+					<div>
+						<d3-sortable-bar data="d3Data" label="name"></d3-sortable-bar>
 					</div>
 				</div>
 

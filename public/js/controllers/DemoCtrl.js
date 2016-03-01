@@ -14,7 +14,7 @@ angular.module('demoApp')
     }];
 
     $scope.accessor = function(d) {
-      return d.data
+      return d.data;
     };
 
     $scope.d3OnClick = function(item) {

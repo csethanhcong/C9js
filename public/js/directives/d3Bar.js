@@ -35,13 +35,14 @@ angular.module('demoApp')
 
           // setup variables
           var width, height, max;
-          width = d3.select(iElement[0])[0][0].offsetWidth - 20;
+          width = d3.select(iElement[0])[0][0].offsetWidth * 9/10;
             // 20 is for margins and can be changed
           height = scope.data.length * 35;
             // 35 = 30(bar height) + 5(margin between bars)
-          max = 98;
+          // max = 98;
             // this can also be found dynamically when the data is not static
-            // max = Math.max.apply(Math, _.map(data, ((val)-> val.count)))
+          max = Math.max.apply(Math, data.map(function(value, key) {return value.data;} ));
+            // adjust it if over the width
 
           // set the height based on the calculations above
           svg.attr('height', height);
@@ -54,6 +55,7 @@ angular.module('demoApp')
               .on("click", function(d, i){return scope.onClick({item: d});})
               .attr("height", 30) // height of each bar
               .attr("width", 0) // initial width of 0 for transition
+              .attr("fill", function(d){return 'rgb(' + 0 + ',' +  0 + ',' +  scope.random() + ')';})
               .attr("x", 10) // half of the 20 side margin specified above
               .attr("y", function(d, i){
                 return i * 35;
@@ -68,11 +70,16 @@ angular.module('demoApp')
             .data(data)
             .enter()
               .append("text")
-              .attr("fill", "#fff")
+              .attr("fill", "#30A9DE")
               .attr("y", function(d, i){return i * 35 + 22;})
               .attr("x", 15)
               .text(function(d){return d[scope.label];});
         };
+
+        // random color for bar
+        scope.random = function() {
+          return Math.floor(Math.random() * 255);
+        }
       }
     };
   }]);
