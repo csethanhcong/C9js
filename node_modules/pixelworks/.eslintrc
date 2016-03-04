@@ -1,0 +1,6 @@
+{
+  "extends": "tschaub",
+  "globals": {
+    "ImageData": false
+  }
+}
