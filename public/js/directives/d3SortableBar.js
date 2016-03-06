@@ -92,8 +92,6 @@ angular.module('demoApp')
 
             // if (sort = !sort) {
               index.sort(function(a, b) {
-                console.log(a);
-                console.log(b);
                 return data[a].data - data[b].data;
               });
             // } else {

@@ -1,5 +1,7 @@
 angular.module('demoApp')
   .controller('DemoCtrl', function($scope, $compile, $element, fileReader){
+    $scope.isActiveTabGraph = true;
+    $scope.isActiveTabMap = false;
     $scope.rows = [];
     $scope.title = "DemoCtrl";
     $scope.d3Data = [{
@@ -40,5 +42,15 @@ angular.module('demoApp')
 
     $scope.refreshData = function() {
       $scope.d3Data = [];
+    };
+
+    $scope.activeTabMap = function() {
+      $scope.isActiveTabMap = true;
+      $scope.isActiveTabGraph = false;
+    };
+
+    $scope.activeTabGraph = function() {
+      $scope.isActiveTabGraph = true;
+      $scope.isActiveTabMap = false;
     };
   });

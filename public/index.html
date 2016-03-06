@@ -55,18 +55,26 @@
 				</div>
 			</nav>
 		</header>
-		<section class="col-lg-4">
-			<div class="container-fluid" id="input-data">
-				<div class="row">
-					<div class="input-group">
-						<div class="input-group-btn">
-							<div class="btn btn-primary btn-file" id="choose-file">
-								<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
-								<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
+		<div class="container">
+			<ul class="nav nav-tabs">
+				<li role="presentation " ng-click="activeTabGraph()"><a href="#">Graph</a></li>
+				<li role="presentation" ng-click="activeTabMap()"><a href="#">Map</a></li>
+			</ul>
+		</div>
+		<!-- Tab1 : Graph -->
+		<div ng-show="isActiveTabGraph">
+			<section class="col-lg-4">
+				<div class="container-fluid" id="input-data">
+					<div class="row">
+						<div class="input-group">
+							<div class="input-group-btn">
+								<div class="btn btn-primary btn-file" id="choose-file">
+									<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
+									<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
+								</div>
 							</div>
+							<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
 						</div>
-						<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
-					</div>
 					</div> <!-- Input-file -->
 					<div class="row">
 						<div class="col-lg-10 col-lg-offset-1"><hr style="margin-top: 20px; margin-bottom: 10px;"></div>
@@ -92,7 +100,6 @@
 						<d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
 					</div>
 				</div>
-
 			</section>
 			<section class="col-lg-4">
 				<!-- DEMO -->
@@ -107,7 +114,6 @@
 						<d3-donut-chart data="d3Data" label="name" accessor="accessor"></d3-donut-chart>
 					</div>
 				</div>
-
 			</section>
 			<section class="col-lg-4 col-lg-offset-4">
 				<!-- DEMO -->
@@ -122,13 +128,17 @@
 						<d3-sortable-bar data="d3Data" label="name"></d3-sortable-bar>
 					</div>
 				</div>
-
-			</section>
-			<section>
-				<openlayers ol-center="center" ol-markers="markers" height="100%" width="100%">
-						
-					</openlayers>
-			</section>
+			</section> <!-- Tab1: Graph -->
+		</div>
+		
+		<!-- Tab2: Map -->
+		<div ng-show="isActiveTabMap">
+			<section class="col-lg-6 col-lg-offset-6">
+				<openlayers ol-center="center" ol-markers="markers" height="500px" width="100%">
+				</openlayers>
+			</section><!-- Tab2: Map -->
+		</div>
+		
 		</body>
 		<script type="text/javascript">
 			$(document).ready(function() {
