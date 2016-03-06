@@ -1,4 +1,3 @@
-var path = require('path');
 var fs = require('fs');
 
 var download = require('get-down');

@@ -20,7 +20,6 @@ var scripts = require('./scripts');
 log.level = config.get('log_level');
 
 
-
 /**
  * Script manager.
  * @param {Object} options Manager options.
@@ -309,7 +308,6 @@ Manager.prototype._startWatch = function() {
  * @param {string} filepath Script path.
  */
 Manager.prototype._handleChanged = function(filepath) {
-  var old = this._scripts[filepath];
   var self = this;
   scripts.read(filepath, function(err, script) {
     if (err) {

@@ -1,9 +1,7 @@
 var path = require('path');
 
-var async = require('async');
 var request = require('supertest');
 
-var scripts = require('../../lib/scripts');
 var Manager = require('../../lib/manager').Manager;
 var Server = require('../../lib/server').Server;
 

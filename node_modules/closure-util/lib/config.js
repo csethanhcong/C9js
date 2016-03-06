@@ -55,12 +55,13 @@ function getEnv(prefix) {
 var config = require(path.join(__dirname, '..', 'default-config.json'));
 
 var configName = 'closure-util.json';
+var key;
 
 // check for settings in install path
 var installPath = find(path.join(__dirname, configName));
 if (installPath) {
   var installConfig = require(installPath);
-  for (var key in installConfig) {
+  for (key in installConfig) {
     config[key] = installConfig[key];
   }
 }
@@ -69,14 +70,14 @@ if (installPath) {
 var cwdPath = find(path.join(process.cwd(), configName));
 if (cwdPath) {
   var cwdConfig = require(cwdPath);
-  for (var key in cwdConfig) {
+  for (key in cwdConfig) {
     config[key] = cwdConfig[key];
   }
 }
 
 // check for evn vars
 var env = getEnv('closure_');
-for (var key in env) {
+for (key in env) {
   config[key] = env[key];
 }
 
