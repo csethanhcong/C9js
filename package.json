@@ -2,7 +2,6 @@
   "name": "starter-node-angular",
   "main": "server.js",
   "dependencies": {
-    // "angular-openlayers-directive": "^1.9.2",
     "body-parser": "~1.4.2",
     "express": "~4.5.1",
     "method-override": "~2.0.2",
