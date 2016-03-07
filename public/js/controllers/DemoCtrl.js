@@ -15,6 +15,67 @@ angular.module('demoApp')
       data: 48
     }];
 
+    var center = {
+      lat: 0,
+      lon: 0,
+      zoom: 1
+    }
+
+    var markers = [
+      {
+          name: 'London',
+          lat: 51.505,
+          lon: -0.09,
+          label: {
+            message: 'London',
+            show: false,
+            showOnMouseOver: true
+          },
+          onClick: function (event, properties) {
+            center.lat = properties.lat;
+            center.lon = properties.lon;
+            center.zoom = 10;
+          }
+      },
+      {
+          name: 'Bath',
+          lat: 51.375,
+          lon: -2.35,
+          label: {
+            message: 'Bath',
+            show: false,
+            showOnMouseOver: true
+          },
+          onClick: function (event, properties) {
+            center.lat = properties.lat;
+            center.lon = properties.lon;
+            center.zoom = 10;
+          }
+      },
+      {
+          name: 'Canterbury',
+          lat: 51.267,
+          lon: 1.083,
+          label: {
+            message: 'Canterbury',
+            show: false,
+            showOnMouseOver: true,
+          },
+          onClick: function (event, properties) {
+            center.lat = properties.lat;
+            center.lon = properties.lon;
+            center.zoom = 10;
+          }
+      }
+    ];
+
+    angular.extend($scope, {
+      center: center,
+      markers: markers
+    });
+
+
+
     $scope.accessor = function(d) {
       return d.data;
     };
@@ -27,16 +88,47 @@ angular.module('demoApp')
       fileReader.readAsDataUrl($scope.file, $scope)
         .then(function(result) {
           var resultInJSON = JSON.parse(result);
-
-          // refresh data
-          $scope.refreshData();
-
-          for (var i = 0; i < resultInJSON.length; i++) {
-            $scope.d3Data.push({
-              name: resultInJSON[i].name,
-              data: resultInJSON[i].data
+          if ($scope.isActiveTabMap) {
+            markers = [];
+            center = {
+              lat: 0,
+              lon: 0,
+              zoom: 1
+            }
+            for (var i = 0; i < resultInJSON.length; i++) {
+              markers.push({
+                name: resultInJSON[i].name,
+                lat: resultInJSON[i].lat,
+                lon: resultInJSON[i].lon,
+                label: {
+                  message: resultInJSON[i].name,
+                  show: false,
+                  showOnMouseOver: true
+                }
+              });
+              markers[i].onClick = function (event, properties) {
+                center.lat = properties.lat;
+                center.lon = properties.lon;
+                center.zoom = 10;
+              }
+            };
+            angular.extend($scope, {
+              center: center,
+              markers: markers
             });
-          };
+          }
+          else {
+            // refresh data
+            $scope.refreshData();
+
+            for (var i = 0; i < resultInJSON.length; i++) {
+              $scope.d3Data.push({
+                name: resultInJSON[i].name,
+                data: resultInJSON[i].data
+              });
+            };
+          }
+          
         });
     };
 

@@ -32,6 +32,7 @@
 	    <script src="libs/angular-openlayers-directive/dist/angular-openlayers-directive.min.js"></script>
 	    <script src="libs/angular-sanitize/angular-sanitize.min.js"></script>
 	    <link rel="stylesheet" href="libs/openlayers3/build/ol.css">
+	    <link rel="stylesheet" href="libs/angular-openlayers-directive/dist/angular-openlayers-directive.css" />
 		<!-- END ANGULAR CUSTOM -->
 	</head>
 	<body ng-controller="DemoCtrl">
@@ -133,8 +134,33 @@
 		
 		<!-- Tab2: Map -->
 		<div ng-show="isActiveTabMap">
-			<section class="col-lg-6 col-lg-offset-6">
+			<section class="col-lg-4">
+				<div class="container-fluid" id="input-map-data">
+					<div class="row">
+						<div class="input-group">
+							<div class="input-group-btn">
+								<div class="btn btn-primary btn-file" id="choose-file">
+									<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
+									<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
+								</div>
+							</div>
+							<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
+						</div>
+					</div> <!-- Input-file -->
+					<div class="row">
+						<div class="col-lg-10 col-lg-offset-1"><hr style="margin-top: 20px; margin-bottom: 10px;"></div>
+					</div>
+					<div class="row">
+						<div class="col-lg-10 col-lg-offset-2">
+							<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="col-lg-6 col-lg-offset-2">
 				<openlayers ol-center="center" ol-markers="markers" height="500px" width="100%">
+					<ol-marker ol-marker-properties="marker" ng-repeat="marker in markers" lat="marker.lat" lon="marker.lon"></ol-marker>
 				</openlayers>
 			</section><!-- Tab2: Map -->
 		</div>
