@@ -2,7 +2,7 @@ var chai = require('chai');
 
 
 /** @type {boolean} */
-chai.Assertion.includeStack = true;
+chai.config.includeStack = true;
 
 
 /** @type {function} */

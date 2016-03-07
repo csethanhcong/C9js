@@ -4,7 +4,6 @@ goog.require('goog.array');
 goog.require('goog.array.ArrayLike');
 
 
-
 /**
  * Constructor.
  * @param {goog.array.ArrayLike} things Things.

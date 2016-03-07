@@ -10,7 +10,6 @@ var send = require('send');
 var socketIO = require('socket.io');
 
 
-
 /**
  * Server constructor.
  * @param {Object} config Server config.
@@ -152,7 +151,9 @@ Server.prototype._requestListener = function(req, res) {
         }, res);
       }
       var deps = this._manager.getDependencies(main);
-      var paths = deps.map(function(s) {return match + s.path;});
+      var paths = deps.map(function(s) {
+        return match + s.path;
+      });
       this._renderTemplate('load.js', {
         socket: this._socket,
         paths: JSON.stringify(paths),

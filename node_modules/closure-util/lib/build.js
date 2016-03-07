@@ -112,7 +112,7 @@ function writeOutput(outputFile, code, callback) {
  * file, compliles the JavaScript code, and writes the compiled code
  * to the output file.
  * @param {string} configFile Config file path.
- * @param {string} ouputFile Output file path.
+ * @param {string} outputFile Output file path.
  * @param {function(Error)} callback Called when the compilation is
  *     finished or when any error occured.
  */

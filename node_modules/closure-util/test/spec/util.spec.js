@@ -100,6 +100,10 @@ describe('like', function() {
     assert.isTrue(like({foo: 'bar'}, '*'));
   });
 
+  it('compares objects with different key order', function() {
+    assert.isTrue(like({foo: 'bar', baz: 'qux'}, {baz: 'qux', foo: 'bar'}));
+  });
+
   it('compares number literals', function() {
     assert.isTrue(like(42, 42));
     assert.isFalse(like(42, 24));

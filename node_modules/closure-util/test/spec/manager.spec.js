@@ -1,8 +1,5 @@
 var path = require('path');
 
-var async = require('async');
-
-var scripts = require('../../lib/scripts');
 var Manager = require('../../lib/manager').Manager;
 var helper = require('../helper');
 

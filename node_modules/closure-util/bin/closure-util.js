@@ -68,7 +68,7 @@ parser.command('build')
   })
   .option('output', {
     position: 2,
-    required: true,
+    required: true,
     help: 'Output file path'
   })
   .callback(function(opts) {
