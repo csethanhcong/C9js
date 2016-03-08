@@ -25,7 +25,12 @@ angular.module('demoApp')
       .append('g')
         .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
     
-        
+    var tooltip = d3.select("body")
+                          .append("div")
+                          .attr('class', 'd3-tip')
+                          .style("position", "absolute")
+                          .style("z-index", "10")
+                          .style("visibility", "hidden");
     
     var accessor = scope.accessor || Number;
     var pie = d3.layout.pie().sort(null).value(accessor);
@@ -33,13 +38,13 @@ angular.module('demoApp')
       .outerRadius(min / 2 * 0.9)
       .innerRadius(min / 2 * 0.5);
     
-    svg.on('mousedown', function(d) {
-      // yo angular, the code in this callback might make a change to the scope!
-      // so be sure to apply $watch's and catch errors.
-      scope.$apply(function(){
-        if(scope.onClick) scope.onClick();
-      });
-    });
+    // svg.on('mousedown', function(d) {
+    //   // yo angular, the code in this callback might make a change to the scope!
+    //   // so be sure to apply $watch's and catch errors.
+    //   scope.$apply(function(){
+    //     if(scope.onClick) scope.onClick();
+    //   });
+    // });
 
     function arcTween(a) {
       // see: http://bl.ocks.org/mbostock/1346410
@@ -54,6 +59,9 @@ angular.module('demoApp')
     var arcs = svg.selectAll('path.arc')
         .data(pie(scope.data))
       .enter().append('path')
+        .on("mouseover", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "visible");})
+              .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "hidden");})
         .attr('class', 'arc')
         .style('stroke', 'white')
         .attr('fill', function(d, i) { return color(i) })
@@ -71,6 +79,9 @@ angular.module('demoApp')
       arcs.transition().duration(duration).attrTween('d', arcTween);
       // transition in any new slices
       arcs.enter().append('path')
+        .on("mouseover", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "visible");})
+              .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "hidden");})
         .style('stroke', 'white')
         .attr('class', 'arc')
         .attr('fill', function(d, i){ return color(i) })

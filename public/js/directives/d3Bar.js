@@ -8,10 +8,17 @@ angular.module('demoApp')
         onClick: "&"
       },
       link: function(scope, iElement, iAttrs) {
-        var svg = d3.select(iElement[0])
-            .append("svg")
-            .attr("width", "100%");
+        var width = 400;
+        var chart = d3.select(iElement[0]);
+            // .append("div")
+            // .attr("width", width);
 
+        var tooltip = d3.select("body")
+                          .append("div")
+                          .attr('class', 'd3-tip')
+                          .style("position", "absolute")
+                          .style("z-index", "10")
+                          .style("visibility", "hidden");
         // on window resize, re-render d3 canvas
         window.onresize = function() {
           return scope.$apply();
@@ -31,49 +38,38 @@ angular.module('demoApp')
         // define render function
         scope.render = function(data){
           // remove all previous items before render
-          svg.selectAll("*").remove();
+          chart.selectAll("*").remove();
 
           // setup variables
-          var width, height, max;
-          width = d3.select(iElement[0])[0][0].offsetWidth * 9/10;
+          var height, max;
+          // width = d3.select(iElement[0])[0][0].offsetWidth * 9/10;
+          
             // 20 is for margins and can be changed
           height = scope.data.length * 35;
             // 35 = 30(bar height) + 5(margin between bars)
           // max = 98;
             // this can also be found dynamically when the data is not static
           max = Math.max.apply(Math, data.map(function(value, key) {return value.data;} ));
-            // adjust it if over the width
+          // adjust it if over the width
 
           // set the height based on the calculations above
-          svg.attr('height', height);
+          // chart.attr('height', height);
 
           //create the rectangles for the bar chart
-          svg.selectAll("rect")
-            .data(data)
-            .enter()
-              .append("rect")
-              .on("click", function(d, i){return scope.onClick({item: d});})
-              .attr("height", 30) // height of each bar
-              .attr("width", 0) // initial width of 0 for transition
-              .attr("fill", function(d){return 'rgb(' + 0 + ',' +  0 + ',' +  scope.random() + ')';})
-              .attr("x", 10) // half of the 20 side margin specified above
-              .attr("y", function(d, i){
-                return i * 35;
-              }) // height + margin between bars
-              .transition()
-                .duration(1000) // time of duration
-                .attr("width", function(d){
-                  return d.data/(max/width);
-                }); // width based on scale
+          var hoverDiv = chart.append("div").attr("class", "chart")
+             .selectAll("div")
+             .data(data).enter().append("div");
 
-          svg.selectAll("text")
-            .data(data)
-            .enter()
-              .append("text")
-              .attr("fill", "#30A9DE")
-              .attr("y", function(d, i){return i * 35 + 22;})
-              .attr("x", 15)
-              .text(function(d){return d[scope.label];});
+            hoverDiv
+             .style("height", "30px")
+             .transition().ease("elastic")
+             .style("width", function(d) { return d.data*width/max + "px"; })
+             .text(function(d) { return d.name ; });
+
+            hoverDiv
+              .on("mouseover", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "visible");})
+              .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "hidden");});
         };
 
         // random color for bar
