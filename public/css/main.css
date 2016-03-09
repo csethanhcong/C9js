@@ -78,9 +78,9 @@ d3-donut-chart {
 
 .chart div {
   width: 0;
-  transition: all 1s ease-out;
-  -moz-transition: all 1s ease-out;
-  -webkit-transition: all 1s ease-out;
+  transition: all 0.5s ease-out;
+  -moz-transition: all 0.5s ease-out;
+  -webkit-transition: all 0.5s ease-out;
 }
 
 .chart div {
@@ -93,6 +93,9 @@ d3-donut-chart {
   box-shadow: 2px 2px 2px #666;
 }
 
+.chart div:hover {
+  background-color: #E53A40;
+}
 /*----------------d3 ToolTip--------------------------*/
 .d3-tip {
   line-height: 1;

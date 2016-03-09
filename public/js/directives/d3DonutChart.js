@@ -15,8 +15,8 @@ angular.module('demoApp')
     // the d3 bits
     var color = d3.scale.category10();
     var el = element[0];
-    var width = 150;
-    var height = 150;
+    var width = 300;
+    var height = 300;
     var min = Math.min(width, height);
 
     var svg = d3.select(el)
@@ -60,8 +60,8 @@ angular.module('demoApp')
         .data(pie(scope.data))
       .enter().append('path')
         .on("mouseover", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "visible");})
-              .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
-              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "hidden");})
+        .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+        .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data.data + "</span>").style("visibility", "hidden");})
         .attr('class', 'arc')
         .style('stroke', 'white')
         .attr('fill', function(d, i) { return color(i) })

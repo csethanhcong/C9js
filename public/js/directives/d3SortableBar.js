@@ -101,7 +101,7 @@ angular.module('demoApp')
             y.domain(index);
 
             bar.transition()
-              .duration(750)
+              .duration(1000)
               .delay(function(d, i) {
                 return d.data;
               })
@@ -109,7 +109,7 @@ angular.module('demoApp')
                 return "translate(10," + y(i) + ")";
               });
 
-          }, 1000);
+          }, 1500);
         };
       }
     };
