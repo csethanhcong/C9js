@@ -101,7 +101,7 @@ angular.module('demoApp')
                 lat: resultInJSON[i].lat,
                 lon: resultInJSON[i].lon,
                 label: {
-                  message: resultInJSON[i].name,
+                  message: 'Name: ' + resultInJSON[i].name + '<br>Lat: ' + resultInJSON[i].lat + '<br>Lon: ' + resultInJSON[i].lon,
                   show: false,
                   showOnMouseOver: true
                 }
