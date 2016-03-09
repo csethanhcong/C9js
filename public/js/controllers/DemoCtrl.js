@@ -34,7 +34,7 @@ angular.module('demoApp')
           onClick: function (event, properties) {
             center.lat = properties.lat;
             center.lon = properties.lon;
-            center.zoom = 10;
+            center.zoom += 5;
           }
       },
       {
@@ -49,7 +49,7 @@ angular.module('demoApp')
           onClick: function (event, properties) {
             center.lat = properties.lat;
             center.lon = properties.lon;
-            center.zoom = 10;
+            center.zoom += 5;
           }
       },
       {
@@ -64,10 +64,14 @@ angular.module('demoApp')
           onClick: function (event, properties) {
             center.lat = properties.lat;
             center.lon = properties.lon;
-            center.zoom = 10;
+            center.zoom += 5;
           }
       }
     ];
+
+    for (var i = markers.length - 1; i >= 0; i--) {
+      markers[i].label.message = 'Name: ' + markers[i].name + '<br>Lat: ' + markers[i].lat + '<br>Lon: ' + markers[i].lon;
+    };
 
     angular.extend($scope, {
       center: center,
@@ -101,7 +105,7 @@ angular.module('demoApp')
                 lat: resultInJSON[i].lat,
                 lon: resultInJSON[i].lon,
                 label: {
-                  message: resultInJSON[i].name,
+                  message: 'Name: ' + resultInJSON[i].name + '<br>Lat: ' + resultInJSON[i].lat + '<br>Lon: ' + resultInJSON[i].lon,
                   show: false,
                   showOnMouseOver: true
                 }
@@ -109,7 +113,7 @@ angular.module('demoApp')
               markers[i].onClick = function (event, properties) {
                 center.lat = properties.lat;
                 center.lon = properties.lon;
-                center.zoom = 10;
+                center.zoom += 5;
               }
             };
             angular.extend($scope, {
