@@ -1,0 +1,20 @@
+<html>
+    <head>
+        <title>
+            Configurable List
+        </title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.List"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var l = new WIND.List('list',{'top':50});
+			var gp1 = l.createGroup("Lieu");
+			gp1.addItem("Anglet");
+			gp1.addItem("Bayonne");
+			var gp2 = l.createGroup("Date");
+			gp2.addItem("2015-01-01");
+			l.createAnnotation("Town","Anglet",1,1,{"style":"background-color:blue;color:white"});
+        </script>
+    </body>
+</html>

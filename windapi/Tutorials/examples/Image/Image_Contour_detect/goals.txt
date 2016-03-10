@@ -1,0 +1,1 @@
+The purpose of this example is to detect the contour of an image component using WIND API.

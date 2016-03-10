@@ -1,0 +1,1 @@
+This example demonstrate how we can annotate a line on the map.

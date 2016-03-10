@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>
+            Text with contents
+        </title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Text"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var t = new WIND.Text('text', {'top':50});
+			var p = t.createParagraph();
+			p.setContent("If you spend too much time thinking about a thing, you'll never get it done.");
+			p.setContent("Education is what remains after one has forgotten what one has learned in school.");
+        </script>
+    </body>
+</html>

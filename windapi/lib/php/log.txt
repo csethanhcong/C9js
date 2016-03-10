@@ -1,0 +1,1 @@
+SELECT * FROM geonames WHERE name LIKE 'Muret%' OR asciiname LIKE 'Muret%' OR alternatenames LIKE '%Muret%' ORDER BY population DESC

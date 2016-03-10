@@ -1,0 +1,2 @@
+In this example we add the drawing toolbar to the map then we add drawing tools. Using the mouse: If the "Hand" tool is selected then we can pan the map.<br>
+If another tool is selected then we can draw on the map the corresponding form.

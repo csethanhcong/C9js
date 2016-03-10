@@ -1,0 +1,17 @@
+<html>
+    <head>
+        <title>
+            Floating Text
+        </title>
+		<meta charset="utf-8">
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Text"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var t = new WIND.Text('text', {'draggable':true,'resizable':true,'top':50});
+			var p = t.createParagraph();
+			p.setContent("Laboratoire Informatique de l'Université de Pau et des Pays de l'Adour.");
+        </script>
+    </body>
+</html>

@@ -1,0 +1,15 @@
+<html>
+    <head>
+        <title>
+            Drawing Polygon
+        </title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Map"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var m = new WIND.Map('map', {'zoom':13,'latitude':43.468320,'longitude':-1.526535,'top':50});
+			var polygon = m.createAnnotation("Aeroport","Biarritz","POLYGON((-1.539654 43.467595,-1.535835 43.471348,-1.533603 43.471410,-1.532530 43.473761,-1.528110 43.473652,-1.528110 43.470460,-1.507983 43.470258,-1.508412 43.466692,-1.525278 43.466552,-1.526093 43.464418,-1.533432 43.464714))");
+        </script>
+    </body>
+</html>

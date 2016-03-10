@@ -1,0 +1,15 @@
+<html>
+    <head>
+		<title>
+			Multiple Layers
+		</title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Map"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+			var m = new WIND.Map('map', {'type':'Google Street', 'zoom':9,'latitude':43.442174,'longitude':-0.973270,'top':50});
+			m.addLayers(["Google Satellite","Google Hybrid","Google Terrain","OpenStreetMap","Bing Road","Bing Hybrid","Bing Aerial","IGN Satellite","IGN Route"]);
+        </script>
+    </body>
+</html>

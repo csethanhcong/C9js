@@ -1,0 +1,1 @@
+In this example we display a simple bar graph.

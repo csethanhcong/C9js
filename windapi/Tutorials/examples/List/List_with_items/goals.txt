@@ -1,0 +1,1 @@
+The purpose of this example is to demonstrate how to display a List component and add items to it.

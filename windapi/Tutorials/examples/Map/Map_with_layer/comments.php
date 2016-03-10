@@ -1,0 +1,4 @@
+In this example, the map is centered on the "Christ the Redeemer" Statue in Rio de Janeiro, Brasil ( <span id="options">Latitude</span>:-22.951913 <span id="options">Longitude</span>:-43.210534 ) with a hight <span id="options">zoom</span> level (17).<br><br>
+var m = new <a href="<?php echo $documentation_path;?>/WIND.html" target="_blank">WIND</a>.<a href="<?php echo $documentation_path;?>/WIND.Map.html" target="_blank">Map</a>('<span id="param">map</span>', {'<span id="options">type</span>': 'Google Hybrid','<span id="options">longitude</span>': -43.210534, '<span id="options">latitude</span>': -22.951913, '<span id="options">zoom</span>': 17})<br><br>
+'<span id="param">map</span>' is the identifier of the map.<br>
+Here we indicate that the <span id="options">type</span> of the initial layer is will be "Google Hybrid" ("Google Street" by default).<br>

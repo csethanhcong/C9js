@@ -1,0 +1,1 @@
+In this example we diplay a text component with contents.

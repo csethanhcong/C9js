@@ -1,0 +1,1 @@
+In this example we display a simple map centered on the "Christ the Redeemer" with a "Google Hybrid" layer.

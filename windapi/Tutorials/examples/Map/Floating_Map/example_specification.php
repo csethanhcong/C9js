@@ -1,0 +1,1 @@
+In this example, the map's position and size can be modified using the mouse.

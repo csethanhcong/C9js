@@ -1,0 +1,1 @@
+In this example we diplay an image.

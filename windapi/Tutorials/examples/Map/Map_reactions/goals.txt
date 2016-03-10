@@ -1,0 +1,1 @@
+This example shows an interaction composed of a click event and a multiple reaction on various annotations.

@@ -1,0 +1,11 @@
+********** Version 2.1 - 20/01/2015 *****************
+
+- Le répertoire lib/ dans la racine contient toutes les bibliothèques utilisées par l'API WIND (c-a-d, OpenLayers, SIMILE Timeline, CHAP Links Timeline, Seadragon, YUI) et indépendantes des versions de l'API WIND.
+
+- Une version de l'API WIND a un répertoire nommé par le numéro de la version (ex: 2.1/) qui contient les fichiers .js compressés.
+
+- L'inclusion du fichier dependence.js dans les codes n'est plus nécessaire.
+
+- Le résultat d'un exemple s'ouvre dans un nouvel onglet et ne plus dans un popup, pour faciliter le débogage.
+
+- Corriger le bug de l'exemple Map/Drawing_Tool.

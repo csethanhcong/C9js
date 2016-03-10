@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>
+            Map-Text Interaction
+        </title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Timeline"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Text"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+			//Creating the timeline.
+            var tl = new WIND.Timeline('timeline', {'type':'Chap','top':50});
+			//Creating the text.
+            var t = new WIND.Text('text', {'left':700,'top':50});
+			var p = t.createParagraph();
+			p.setContent("I will take the train from Bayonne to Pau on 2014-07-16 at 17:00");
+			//Creating the annotations.
+			var timeline_annot = tl.createAnnotation("Travel","Train from bayonne","2014-07-16T17:00:00","2014-07-16T17:00:00");
+			var text_annot = t.createAnnotation("Word","Bayonne",1,11,13,{"style":"background-color:red;color:white;"});
+			//Creating the events.
+			var evt1 = new WIND.SelectEvent("click",[timeline_annot,text_annot]);
+			//Creating the reactions and the interactions
+			evt1.trigger(function(e){
+				var react1 = new WIND.ExternalReaction(timeline_annot,"focus");
+				var react2 = new WIND.ExternalReaction(text_annot,"highlight");
+				var i1 = new WIND.Interaction(evt1, new Array(react1,react2));
+				i1.activate();
+			});
+        </script>
+    </body>
+</html>

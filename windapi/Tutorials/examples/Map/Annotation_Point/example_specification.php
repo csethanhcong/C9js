@@ -1,0 +1,1 @@
+In this example we add a point annotation of "IUT of Bayonne" to the map with a specific coordinates and style.

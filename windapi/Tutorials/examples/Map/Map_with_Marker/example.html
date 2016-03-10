@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>
+            Simple Map
+        </title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Map"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var m = new WIND.Map('map', {'top':50});
+			var marqueur = new WIND.Map.Marker(-1.509136,43.478266);
+			m.addMarker(marqueur);
+        </script>
+    </body>
+</html>

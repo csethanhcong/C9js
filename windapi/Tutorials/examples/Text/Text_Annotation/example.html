@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <title>
+            Floating Text
+        </title>
+		<meta charset="utf-8">
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Text"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+            var t = new WIND.Text('text', {'top':50});
+			var p = t.createParagraph();
+			p.setContent("Computing Laboratory, University of Pau et des Pays de l'Adour");
+			t.createAnnotation("Word","River",1,11,12,{"style":"background-color:blue;color:white"});
+        </script>
+    </body>
+</html>

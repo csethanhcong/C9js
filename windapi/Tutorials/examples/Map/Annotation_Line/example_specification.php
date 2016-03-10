@@ -1,0 +1,1 @@
+In this example we add a line annotation of "Grenet Bridge" to the map with a specific coordinates (2 points only) and style.

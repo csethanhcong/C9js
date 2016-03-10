@@ -1,0 +1,1 @@
+This example shows an interaction between 3 components, a map, a text and a timeline.

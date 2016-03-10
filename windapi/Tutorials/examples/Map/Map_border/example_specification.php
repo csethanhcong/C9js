@@ -1,0 +1,1 @@
+In this example we display a map with a "Google Satellite" layer and change the style of its header and border.

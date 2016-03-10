@@ -1,0 +1,1 @@
+This example demonstrate how we can create an instant annotation in the timeline.

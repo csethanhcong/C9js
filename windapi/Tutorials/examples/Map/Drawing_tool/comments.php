@@ -1,0 +1,4 @@
+In this example, we display a simple map centered by default on France (<span id="options">longitude</span>: -1.508585 and <span id="options">latitude</span>: 43.477743) with a low <span id="options">zoom</span> level(4).<br><br>
+var m = new <a href="<?php echo $documentation_path;?>/WIND.html" target="_blank">WIND</a>.<a href="<?php echo $documentation_path;?>/WIND.Map.html" target="_blank">Map</a>('<span id="param">map</span>', <span id="param">{'<span id="options">top</span>': 50}</span>)<br><br>
+m.<a href="<?php echo $documentation_path;?>/WIND.Map.html#addToolBar" target="_blank">addToolBar</a>();<br>
+With this function we add a toolbar to the map. With this toolbar we can choose to draw multiple forms on the map.<br><br>

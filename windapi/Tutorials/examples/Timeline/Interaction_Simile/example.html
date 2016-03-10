@@ -1,0 +1,26 @@
+<html>
+    <head>
+        <title>
+            Interaction
+        </title>
+		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Timeline"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+			//Creating the timeline.
+            var t = new WIND.Timeline('timeline',{'type':'Simile','top':50});
+			//Creating the annotations.
+			var annot1 = t.createAnnotation("Event","World Cup 2014","2014-06-12","2014-07-13");
+			var annot2 = t.createAnnotation("Event","World Cup 2010","2010-06-11","2010-07-11");
+			//Creating the events.
+			var evt1 = new WIND.SelectEvent("mousemove",annot1);
+			//Creating the reactions and the interactions
+			evt1.trigger(function(e){
+				var react1 = new WIND.ExternalReaction(annot2,"focus");
+				var i1 = new WIND.Interaction(evt1, new Array(react1));
+				i1.activate();
+			});
+        </script>
+    </body>
+</html>

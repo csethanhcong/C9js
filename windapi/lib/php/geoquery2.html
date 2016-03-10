@@ -1,0 +1,169 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Web Geo Query</title>
+<script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=ABQIAAAARsA15i36rTN8itHGDCVs6BR8cwA7V6IfezsGEeK25xLOQvt_ehSgg1llkyele0K7ebnMyz9vzzxHGw"></script>
+<script type="text/javascript" src="http://www.openlayers.org/api/OpenLayers.js"></script>  
+<script type="text/javascript" src="http://api.ign.fr/geoportail/api?v=1.1-m&amp;key=5791099045158998524&amp;includeEngine=true&amp;"></script>
+<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/Nhan/WINDv1.7.js"></script>
+
+<script type="text/javascript">
+	var carte, mp;
+	window.onload = function () {
+		carte = new WIND.Map('mymap', {top:250, left:10, width:600, height:400, type: "Google Street", longitude: 2, latitude: 46.5, zoom: 5});
+		carte.addLayer("Google Hybrid");
+		carte.addLayer("Google Satellite");
+		carte.addLayer("Google Terrain");
+		carte.addLayer("IGN Route");
+		carte.addLayer("IGN Satellite");
+		carte.addLayer("IGN Terrain");
+		carte.addLayer("IGN Boundary");
+		carte.addLayer("IGN Hydrography");
+		carte.removeKeyboardControl();
+	}
+	
+	function go(){
+		carte.vectorLayer.destroyFeatures();
+		var xhr = createXHR(); 		
+		var resource = document.getElementById("resource").value;
+		var query = document.getElementById("query").value;
+		var params = "resource=" + resource + "&query=" + query;  
+		
+		xhr.onreadystatechange = function() {  
+			document.getElementById("table").innerHTML = "<img src='ajax_loader.gif'>";
+			if(xhr.readyState == 4) {  
+				if (xhr.status == 200) {
+					var xmlDoc = xhr.responseXML;
+					
+					var es = xmlDoc.getElementsByTagName("geoname");
+					var str = es.length + " entité(s) trouvée(s).<br/>";
+					var tablehtml = "<table border='1'>";
+					if (resource == "geonames") {
+						tablehtml += "<tr><td>N°</td><td>Nom</td><td>Classe</td><td>Code</td><td>Admin1</td><td>Admin2</td><td>Admin3</td><td>Admin4</td><td>Géolocation</td></tr>";
+						var name, feaClass, feaCode, admin1, admin2, admin3, admin4, geodata;
+						mp = [];
+						for (var i=0; i<es.length; i++) {
+							geodata = "POINT(" 
+								+ es[i].getElementsByTagName("lng")[0].childNodes[0].nodeValue
+								+ " "
+								+ es[i].getElementsByTagName("lat")[0].childNodes[0].nodeValue
+								+ ")";
+							mp[i] = carte.createSensiblePart(geodata, {style: "strokeColor:#0000FF,strokeWidth:2,fillOpacity:0.2", display: true});
+							tablehtml += "<tr>";
+							tablehtml += "<td>" + (i+1) + "</td>";
+							name = es[i].getElementsByTagName("name")[0].childNodes[0].nodeValue;
+							tablehtml += "<td><a href='#' id='" + i + "'>" + name + "</a></td>";
+							feaClass = es[i].getElementsByTagName("fclName")[0].hasChildNodes() ? es[i].getElementsByTagName("fclName")[0].childNodes[0].nodeValue : "";
+							tablehtml += "<td>" + feaClass + "</td>";
+							feaCode = es[i].getElementsByTagName("fcodeName")[0].hasChildNodes() ? es[i].getElementsByTagName("fcodeName")[0].childNodes[0].nodeValue : "";
+							tablehtml += "<td>" + feaCode + "</td>";
+							admin1 = es[i].getElementsByTagName("adminName1")[0].hasChildNodes() ? es[i].getElementsByTagName("adminName1")[0].childNodes[0].nodeValue : "";
+							tablehtml += "<td>" + admin1 + "</td>";
+							admin2 = es[i].getElementsByTagName("adminName2")[0].hasChildNodes() ? es[i].getElementsByTagName("adminName2")[0].childNodes[0].nodeValue : "";
+							tablehtml += "<td>" + admin2 + "</td>";
+							admin3 = es[i].getElementsByTagName("adminName3")[0].hasChildNodes() ? es[i].getElementsByTagName("adminName3")[0].childNodes[0].nodeValue : "";
+							tablehtml += "<td>" + admin3 + "</td>";
+							admin4 = es[i].getElementsByTagName("adminName4")[0].hasChildNodes() ? es[i].getElementsByTagName("adminName4")[0].childNodes[0].nodeValue : "";
+							tablehtml += "<td>" + admin4 + "</td>";
+							tablehtml += "<td>" + geodata + "</td>";
+							tablehtml += "</tr>";
+						}
+					}
+					else if (resource == "postgres") {
+						//tablehtml += "<tr><td>N°</td><td>Nom</td><td>Département</td><td>Géolocation</td></tr>";
+						var geodata = "";
+						mp = [];
+						var fieldName = new Array();
+						if (es.length>0) {
+							for (var j=0; j<es[0].childNodes.length; j++) {
+								fieldName.push(es[0].childNodes[j].nodeName);
+								//alert(fieldName[j]);
+							}
+						}
+						tablehtml += "<td></td>";
+						for (var j=0; j<fieldName.length - 1; j++) {
+							if (fieldName[j] != "the_geom")
+								tablehtml += "<td>" + fieldName[j] + "</td>";
+						}
+						tablehtml += "<td>the_geom</td>";
+						for (var i=0; i<es.length; i++) {
+							//geodata = es[i].getElementsByTagName("geolocation")[0].textContent;
+							if ((es[i].getElementsByTagName("astext")[0] != null) && (es[i].getElementsByTagName("astext")[0].childNodes[0] != null)) {
+								geodata = es[i].getElementsByTagName("astext")[0].textContent;
+								mp[i] = carte.createSensiblePart(geodata, {style: "strokeColor:#0000FF,strokeWidth:2,fillOpacity:0.2", display: true});
+							}
+							tablehtml += "<tr>";
+							tablehtml += "<td><a href='#' id='" + i + "'><img src='globe_icon.png' alt='Focus'></a></td>";
+							for (var j=0; j<fieldName.length - 1; j++) {
+								if (fieldName[j] != "the_geom") {
+									if ((es[i].getElementsByTagName(fieldName[j])[0] != null) && (es[i].getElementsByTagName(fieldName[j])[0].childNodes[0] != null))
+										tablehtml += "<td>" + es[i].getElementsByTagName(fieldName[j])[0].childNodes[0].nodeValue + "</td>";
+									else 
+										tablehtml += "<td> N/A </td>";
+								}
+							}
+							tablehtml += "<td>" + geodata.substring(0, 50) + "</td>";
+							tablehtml += "</tr>";
+						}
+					}
+					tablehtml += "</table>";
+					if (es.length > 0) str += tablehtml;
+					document.getElementById("table").innerHTML = str;
+						
+					for (var i=0; i<es.length; i++) {
+						document.getElementById(i).onclick = function () {
+							var indice = Number(this.id);
+							mp[indice].highlight();
+							mp[indice].zoomTo();
+						}
+					}
+					
+				}	
+				else {
+					document.getElementById("table").innerHTML = "Error: " + xhr.status + " " + xhr.statusText;
+				}
+			}  
+		}  
+		xhr.open("POST", "geoquery2.php", true); 
+		xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");  		
+		xhr.send(params);  
+	}
+</script>
+</head>
+<body>
+<div>
+<h3>Web Geo Query</h3>
+<b>Resource: </b>
+<select name="resource" id="resource">
+<option value="geonames">geonames</option>
+<option value="postgres">postgres</option>
+</select>
+<br/>
+<b>Query: </b>
+<br/>
+<textarea name="query" id="query" style="width:600px;height:100px;"></textarea>
+<br/>
+<input type="button" value="Envoyer" onclick="go();" />
+</div>
+
+<div id="map"></div>
+
+<div style="position:absolute;left:620px;top:10px;">
+<h5>Exemples</h5>
+<b>Geonames</b>: SELECT * FROM geonames WHERE name like 'Mauléon%'
+<br/>
+<b>Mauléon</b>: SELECT *, astext(transform(the_geom,4326)) FROM bdnyme_communes WHERE nom_com ILIKE 'Mauleon%'
+<br/>
+<b>Toutes les régions</b>: SELECT *, astext(transform(the_geom,4326)) FROM bdnyme_regions
+<br/>
+<b>Tous les départements</b>: SELECT *, astext(transform(the_geom,4326)) FROM bdnyme_departements
+<br/>
+<b>Toutes les préfectures</b>:
+SELECT bdnyme_departements.nom_chf_l, bdnyme_departements.nom_dept, bdnyme_departements.code_dept, astext(transform(bdnyme_communes.the_geom,4326)) FROM bdnyme_communes, bdnyme_departements WHERE bdnyme_departements.code_dept = bdnyme_communes.depart AND bdnyme_communes.nom_com = bdnyme_departements.nom_chf_l
+<br/>
+<b>Préfecture de la ville</b>:
+SELECT bdnyme_departements.nom_chf_l, bdnyme_departements.nom_dept, bdnyme_departements.code_dept, astext(transform(bdnyme_communes.the_geom,4326)) FROM bdnyme_communes, bdnyme_departements WHERE bdnyme_departements.code_dept = bdnyme_communes.depart AND bdnyme_communes.nom_com = (SELECT bdnyme_departements.nom_chf_l FROM bdnyme_communes, bdnyme_departements WHERE bdnyme_departements.code_dept = bdnyme_communes.depart AND bdnyme_communes.nom_com ILIKE 'Bayonne')  
+</div>
+<div id="table" style="position:absolute;left:620px;top:300px;"></div>
+</body>
+</html>

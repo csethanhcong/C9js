@@ -1,0 +1,1 @@
+In this example we create a marker object and add it to the map.

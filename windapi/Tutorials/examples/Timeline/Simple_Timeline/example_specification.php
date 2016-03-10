@@ -1,0 +1,1 @@
+In this example we create a simple timeline with default options ("Simile Timeline").

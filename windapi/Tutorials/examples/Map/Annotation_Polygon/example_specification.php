@@ -1,0 +1,1 @@
+In this example we add a polygon annotation of "Biarritz Aeroport" to the map with a serie of coordinates.
