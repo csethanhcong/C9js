@@ -34,7 +34,7 @@
 
 	    <!-- DimpleJS -->
 	    <script src="libs/dimple/lib/d3.v3.4.8.js"></script>
-  		<script src="libs/dimple/dist/dimple.v2.1.6.min.js"></script>
+  		<!-- <script src="libs/dimple/dist/dimple.v2.1.6.min.js"></script> -->
 	    <link rel="stylesheet" href="libs/openlayers3/build/ol.css">
 	    <link rel="stylesheet" href="libs/angular-openlayers-directive/dist/angular-openlayers-directive.css" />
 		<!-- END ANGULAR CUSTOM -->
@@ -60,225 +60,34 @@
 				</div>
 			</nav>
 		</header>
-		<div class="container-fluid">
-			<ul class="nav nav-tabs">
-				<li role="presentation " ng-click="activeTabGraph()"><a href="#">Graph</a></li>
-				<li role="presentation" ng-click="activeTabMap()"><a href="#">Map</a></li>
-			</ul>
-		</div>
 		<!-- Tab1 : Graph -->
-		<div ng-show="isActiveTabGraph">
-			<section class="col-lg-4">
-				<div class="container-fluid" id="input-data">
-					<div class="row">
-						<div class="input-group">
-							<div class="input-group-btn">
-								<div class="btn btn-primary btn-file" id="choose-file">
-									<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
-									<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
-								</div>
+		<section class="col-lg-4">
+			<div class="container-fluid" id="input-data">
+				<div class="row">
+					<div class="input-group">
+						<div class="input-group-btn">
+							<div class="btn btn-primary btn-file" id="choose-file">
+								<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
+								<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
 							</div>
-							<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
 						</div>
-					</div> <!-- Input-file -->
-					<div class="row">
-						<div class="col-lg-10 col-lg-offset-1"><hr style="margin-top: 20px; margin-bottom: 10px;"></div>
+						<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
 					</div>
-					<div class="row">
-						<div class="col-lg-10 col-lg-offset-2">
-							<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
-						</div>
-					</div>
-					<user-interaction data="d3Data"></user-interaction>
-				</div>
-			</section>
-			<section class="col-lg-4">
-				<!-- DEMO -->
+				</div> <!-- Input-file -->
 				<div class="row">
-					<div>Demo Bar Chart!</div>
-				</div>
-				<div class="row">
-					<div><hr></div>
-				</div>
-				<div class="row">
-					<div>
-						<d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
+					<div id="graph">
+						<!-- <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars> -->
+
 					</div>
 				</div>
-			</section>
-			<section class="col-lg-6">
-				<!-- DEMO -->
-				<div class="row">
-					<div>Demo Donut Chart!</div>
-				</div>
-				<div class="row">
-					<div><hr></div>
-				</div>
-				<div class="row">
-					<div>
-						<d3-donut-chart data="d3Data" label="name" accessor="accessor"></d3-donut-chart>
-					</div>
-				</div>
-			</section>
-			<section class="col-lg-4 col-lg-offset-4">
-				<!-- DEMO -->
-				<div class="row">
-					<div>Demo Sortable Bar Chart!</div>
-				</div>
-				<div class="row">
-					<div><hr></div>
-				</div>
-				<div class="row">
-					<div>
-						<d3-sortable-bar data="d3Data" label="name"></d3-sortable-bar>
-					</div>
-				</div>
-			</section> <!-- Tab1: Graph -->
-			<section class="col-lg-6 col-lg-offset-4">
-				<!-- DEMO -->
-				<div class="row">
-					<div>Demo DimpleJS!</div>
-				</div>
-				<div class="row">
-					<div><hr></div>
-				</div>
-				<div class="row" id="chartContainer">
-					  <script type="text/javascript">
-					    var svg = dimple.newSvg("#chartContainer", 400, 400);
-
-					    // The default data set for these examples has regular times
-					    // and the point of this demo is to show the time axis
-					    // functionality, therefore a small bespoke data set is used.
-					    data = [
-					      { "Shift":"Early","Date":"12 Jul 2010 10:00","Value":1000 },
-					      { "Shift":"Early","Date":"20 Jul 2010 10:20","Value":1200 },
-					      { "Shift":"Early","Date":"1 Aug 2010 10:40","Value":1600 },
-					      { "Shift":"Early","Date":"8 Aug 2010 10:10","Value":1300 },
-					      { "Shift":"Early","Date":"20 Aug 2010 11:00","Value":1900 },
-					      { "Shift":"Early","Date":"7 Sep 2010 09:50","Value":1100 },
-					      { "Shift":"Early","Date":"13 Sep 2010 10:10","Value":1000 },
-					      { "Shift":"Early","Date":"1 Oct 2010 12:00","Value":2000 },
-					      { "Shift":"Early","Date":"6 Oct 2010 10:10","Value":1900 },
-					      { "Shift":"Early","Date":"19 Oct 2010 11:40","Value":1800 },
-					      { "Shift":"Early","Date":"24 Oct 2010 10:30","Value":1200 },
-					      { "Shift":"Early","Date":"3 Nov 2010 09:30","Value":1800 },
-					      { "Shift":"Early","Date":"12 Nov 2010 10:50","Value":1800 },
-					      { "Shift":"Early","Date":"20 Nov 2010 10:10","Value":1900 },
-					      { "Shift":"Early","Date":"5 Dec 2010 10:50","Value":1600 },
-					      { "Shift":"Early","Date":"9 Dec 2010 12:20","Value":1700 },
-					      { "Shift":"Early","Date":"15 Dec 2010 10:10","Value":1400 },
-					      { "Shift":"Early","Date":"20 Dec 2010 10:00","Value":1200 },
-					      { "Shift":"Late","Date":"11 Jul 2010 16:00","Value":2400 },
-					      { "Shift":"Late","Date":"30 Jul 2010 17:30","Value":2000 },
-					      { "Shift":"Late","Date":"1 Aug 2010 15:40","Value":1600 },
-					      { "Shift":"Late","Date":"5 Aug 2010 13:10","Value":1700 },
-					      { "Shift":"Late","Date":"1 Sep 2010 15:00","Value":1900 },
-					      { "Shift":"Late","Date":"7 Sep 2010 15:50","Value":1100 },
-					      { "Shift":"Late","Date":"13 Sep 2010 14:10","Value":1500 },
-					      { "Shift":"Late","Date":"30 Sep 2010 13:00","Value":1000 },
-					      { "Shift":"Late","Date":"1 Nov 2010 15:50","Value":1800 },
-					      { "Shift":"Late","Date":"24 Nov 2010 15:10","Value":1900 },
-					      { "Shift":"Late","Date":"1 Dec 2010 15:50","Value":1600 },
-					      { "Shift":"Late","Date":"5 Dec 2010 15:20","Value":1700 },
-					      { "Shift":"Late","Date":"13 Dec 2010 15:10","Value":1400 },
-					      { "Shift":"Late","Date":"25 Dec 2010 15:00","Value":1200 }
-					    ];
-
-					    // Create Separate Date and Time, this allows us to draw them
-					    // on separate axes.  Despite the time axis only displaying
-					    // the time portion, the whole date is used so they need to
-					    // have the same date allocated
-					    data.forEach(function (d) {
-					        d["Day"] = d["Date"].substring(0, d["Date"].length - 6);
-					        d["Time of Day"] =
-					            "2000-01-01 " + d["Date"].substring(d["Date"].length - 5);
-					    }, this);
-
-					    // Create the chart as usual
-					    var myChart = new dimple.chart(svg, data);
-					    myChart.setBounds(70, 40, 490, 320)
-					    
-					    // Add the x axis reading dates in the format 01 Jan 2012
-					    // and displaying them 01 Jan
-					    var x = myChart.addTimeAxis("x", "Day", "%d %b %Y", "%d %b");
-
-					    // Add the y axis reading dates and times but only outputting
-					    // times.  
-					    var y = myChart.addTimeAxis("y", "Time of Day",
-					        "%Y-%m-%d %H:%M", "%H:%M");
-
-					    // Size the bubbles by volume
-					    var z = myChart.addMeasureAxis("z", "Value");
-					    
-					    // Setting min and max dates requires them to be set
-					    // as actual javascript date objects
-					    x.overrideMin = new Date("2010-06-20");
-					    x.overrideMax = new Date("2011-01-02");
-					    y.overrideMin = new Date("01/01/2000 9:00 am");
-					    y.overrideMax = new Date("01/01/2000 6:00 pm");
-
-					    // Show a label for every 4 weeks.
-					    x.timePeriod = d3.time.weeks;
-					    x.timeInterval = 4;
-
-					    // Control bubble sizes by setting the max and min values    
-					    z.overrideMin = 900;
-					    z.overrideMax = 3000;
-
-					    // Add the bubble series for shift values first so that it is
-					    // drawn behind the lines
-					    myChart.addSeries("Shift", dimple.plot.bubble);
-
-					    // Add the line series on top of the bubbles.  The bubbles
-					    // and line points will naturally fall in the same places
-					    var s = myChart.addSeries("Shift", dimple.plot.line);
-
-					    // Add line markers to the line because it looks nice
-					    s.lineMarkers = true;
-
-					    // Show a legend
-					    myChart.addLegend(180, 10, 360, 20, "right");
-
-					    // Draw everything
-					    myChart.draw();
-
-					  </script>
-				</div>
-			</section> <!-- Tab1: Graph -->
-		</div>
-		
+			</div>
+		</section>
 		<!-- Tab2: Map -->
-		<div ng-show="isActiveTabMap">
-			<section class="col-lg-4">
-				<div class="container-fluid" id="input-map-data">
-					<div class="row">
-						<div class="input-group">
-							<div class="input-group-btn">
-								<div class="btn btn-primary btn-file" id="choose-file">
-									<i class="glyphicon glyphicon-folder-open"></i>&nbsp;Browse&hellip;
-									<input class="form-control" type="file" ng-file-select="onFileSelect($files)">
-								</div>
-							</div>
-							<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
-						</div>
-					</div> <!-- Input-file -->
-					<div class="row">
-						<div class="col-lg-10 col-lg-offset-1"><hr style="margin-top: 20px; margin-bottom: 10px;"></div>
-					</div>
-					<div class="row">
-						<div class="col-lg-10 col-lg-offset-2">
-							<p class="text-muted text-right">or edit your data <span><i class="glyphicon glyphicon-edit"></i></span></p>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<section class="col-lg-8">
-				<openlayers ol-center="center" ol-markers="markers" height="500px" width="100%">
-					<ol-marker ol-marker-properties="marker" ng-repeat="marker in markers" lat="marker.lat" lon="marker.lon"></ol-marker>
-				</openlayers>
-			</section><!-- Tab2: Map -->
-		</div>
+		<section class="col-lg-8">
+			<openlayers ol-center="center" ol-markers="markers" height="500px" width="100%">
+				<ol-marker ol-marker-properties="marker" ng-repeat="marker in markers" lat="marker.lat" lon="marker.lon"></ol-marker>
+			</openlayers>
+		</section><!-- Tab2: Map -->
 		
 		</body>
 		<script type="text/javascript">
@@ -290,6 +99,76 @@
 					label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
 					input_file.val(label);
 				});
+
+				// Init data
+				var d3Data = [
+							{"name" : "Akai",
+							"data" : "10"},
+
+							{"name" : "So",
+							"data" : "50"},
+							
+							{"name" : "Good",
+							"data" : "30"}
+						];
+
+
+				// Create graph
+				var width = 400;
+		        var chart = d3.select("#graph");
+
+		        // Create tooltip
+		        var tooltip = d3.select("body")
+		                          .append("div")
+		                          .attr('class', 'd3-tip')
+		                          .style("position", "absolute")
+		                          .style("z-index", "10")
+		                          .style("visibility", "hidden");
+
+		        // define render function
+		        render = function(data){
+		          // remove all previous items before render
+		          chart.selectAll("*").remove();
+
+		          // setup variables
+		          var height, max;
+		          // width = d3.select(iElement[0])[0][0].offsetWidth * 9/10;
+		          
+		            // 20 is for margins and can be changed
+		          height = data.length * 35;
+		            // 35 = 30(bar height) + 5(margin between bars)
+		          // max = 98;
+		            // this can also be found dynamically when the data is not static
+		          max = Math.max.apply(Math, data.map(function(value, key) {return value.data;} ));
+		          // adjust it if over the width
+
+		          // set the height based on the calculations above
+		          // chart.attr('height', height);
+
+		          //create the rectangles for the bar chart
+		          var hoverDiv = chart.append("div").attr("class", "chart")
+		             .selectAll("div")
+		             .data(data).enter().append("div").attr('id', function(value, key) { return 'graph-' + key});
+
+		            hoverDiv
+		             .style("height", "30px")
+		             .transition().ease("elastic")
+		             .style("width", function(d) { return d.data*width/max + "px"; })
+		             .text(function(d) { return d.name ; });
+
+		            hoverDiv
+		              .on("mouseover", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "visible");})
+		              .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
+		              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "hidden");});
+		        };
+
+		        // random color for bar
+		        random = function() {
+		          return Math.floor(Math.random() * 255);
+		        }
+
+		        // Render graph
+		        render(d3Data);
 			});
 		</script>
 </html>
