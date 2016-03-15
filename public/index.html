@@ -78,8 +78,9 @@
 					</div>
 				</div> <!-- Input-file -->
 				<div class="row">
-					<div id="graph" style="height: 500px;">
+					<div id="graph">
 						<!-- <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars> -->
+
 					</div>
 				</div>
 			</div>
@@ -111,7 +112,7 @@
 
 
 				// Create graph
-				var height = 400;
+				var width = 400;
 		        var chart = d3.select("#graph");
 
 		        // Create tooltip
@@ -128,11 +129,11 @@
 		          chart.selectAll("*").remove();
 
 		          // setup variables
-		          var width, max;
+		          var height, max;
 		          // width = d3.select(iElement[0])[0][0].offsetWidth * 9/10;
 		          
 		            // 20 is for margins and can be changed
-		          width = data.length * 35;
+		          height = data.length * 35;
 		            // 35 = 30(bar height) + 5(margin between bars)
 		          // max = 98;
 		            // this can also be found dynamically when the data is not static
@@ -145,14 +146,12 @@
 		          //create the rectangles for the bar chart
 		          var hoverDiv = chart.append("div").attr("class", "chart")
 		             .selectAll("div")
-		             .data(data).enter().append("div").attr('id', function(value, key) { return 'graph-' + key})
-		             .style("position", "relative");
-		             // .style("bottom", function(d) { return -365 + "px"; });
+		             .data(data).enter().append("div").attr('id', function(value, key) { return 'graph-' + key});
 
 		            hoverDiv
-		             .style("width", "30px")
-		             .transition()
-		             .style("height", function(d) { return d.data*width/max + "px"; })
+		             .style("height", "30px")
+		             .transition().ease("elastic")
+		             .style("width", function(d) { return d.data*width/max + "px"; })
 		             .text(function(d) { return d.name ; });
 
 		            hoverDiv
