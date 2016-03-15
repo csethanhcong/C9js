@@ -71,18 +71,17 @@ d3-donut-chart {
 
 /*----------------Bar Chart--------------------------*/
 .chart {
-    background: #eee;
-    padding: 3px;
+  height: 400px;
+  position: relative;
+  background: #eee;
+  padding: 3px;
 }
 
 .chart div {
-  width: 0;
+  display: inline-block;
   transition: all 0.5s ease-out;
   -moz-transition: all 0.5s ease-out;
   -webkit-transition: all 0.5s ease-out;
-}
-
-.chart div {
   font: 10px sans-serif;
   background-color: steelblue;
   text-align: left;
