@@ -156,12 +156,9 @@
 
 		            hoverDiv
 		              .on("mouseover", function(d, i){ tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "visible");
-		              		if (d.name == m.annotations[i].entity){
-		              			var react1 = new WIND.ExternalReaction(m.annotations[i],"highlight");
-								var i1 = new WIND.Interaction(evt1, new Array(react1));
-								i1.activate();
-		              		}
-		              		
+	              			var react1 = new WIND.ExternalReaction(m.annotations[i],"highlight");
+							var i1 = new WIND.Interaction(evt1, new Array(react1));
+							i1.activate();
 		          			})
 		              .on("mousemove", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");})
 		              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "hidden");});
@@ -181,7 +178,7 @@
 				var evt1 = new WIND.SelectEvent("click",annot1);
 				var evt2 = new WIND.SelectEvent("click",annot2);
 				var evt3 = new WIND.SelectEvent("click",annot3);
-				
+
 				console.log(m);
 				//Creating the reactions and the interactions
 				evt1.trigger(function(e){
