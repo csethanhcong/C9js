@@ -23,73 +23,73 @@ WIND.Annotation2DisplayerProxy = function (el, group, displayer) {
     this.isTarget = false;
 };
 
-YAHOO.lang.extend(WIND.Annotation2DisplayerProxy, YAHOO.util.DDProxy, {
+// YAHOO.lang.extend(WIND.Annotation2DisplayerProxy, YAHOO.util.DDProxy, {
 
-    /**
-     * copy the html and apply selected classes
-     * @method startDrag
-     */
-    startDrag: function (e) {
-        WIND.Annotation2DisplayerProxy.superclass.startDrag.call(this, e);
-        var del = this.getDragEl();
-        var lel = this.getEl();
-        var innerHTML = "";
-        var width = 0;
-        //alert(this._group.annotedObjects.length);
-        for (var i = 0; i < this._group.annotedObjects.length; i++) {
-            innerHTML += document.getElementById(this._group.annotedObjects[i].object).innerHTML + " ";
-            width += Number(document.getElementById(this._group.annotedObjects[i].object).innerHTML.length) * 5 + 4;
-        }
-        //del.innerHTML = lel.innerHTML;
-        del.innerHTML = innerHTML;
-        this.innerHTML = innerHTML;
-        del.style.width = (width > 0) ? (width + "px") : "100px";
-        //del.className = "Text2Drag";
-    },
+//     /**
+//      * copy the html and apply selected classes
+//      * @method startDrag
+//      */
+//     startDrag: function (e) {
+//         WIND.Annotation2DisplayerProxy.superclass.startDrag.call(this, e);
+//         var del = this.getDragEl();
+//         var lel = this.getEl();
+//         var innerHTML = "";
+//         var width = 0;
+//         //alert(this._group.annotedObjects.length);
+//         for (var i = 0; i < this._group.annotedObjects.length; i++) {
+//             innerHTML += document.getElementById(this._group.annotedObjects[i].object).innerHTML + " ";
+//             width += Number(document.getElementById(this._group.annotedObjects[i].object).innerHTML.length) * 5 + 4;
+//         }
+//         //del.innerHTML = lel.innerHTML;
+//         del.innerHTML = innerHTML;
+//         this.innerHTML = innerHTML;
+//         del.style.width = (width > 0) ? (width + "px") : "100px";
+//         //del.className = "Text2Drag";
+//     },
 
-    /**
-     * Override default behavior of DDProxy
-     * @method endDrag
-     */
-    endDrag: function (e) {},
+//     /**
+//      * Override default behavior of DDProxy
+//      * @method endDrag
+//      */
+//     endDrag: function (e) {},
 
-    /**
-     * Add the module to the WINDMash on drop on layer
-     * @method onDragDrop
-     */
-    onDragDrop: function (e, ddTargets) {
-        var layerTarget = ddTargets;
-        var del = this.getDragEl();
-        var pos = YAHOO.util.Dom.getXY(del);
-        var dislayerPos = YAHOO.util.Dom.getXY(ddTargets);
+//     /**
+//      * Add the module to the WINDMash on drop on layer
+//      * @method onDragDrop
+//      */
+//     onDragDrop: function (e, ddTargets) {
+//         var layerTarget = ddTargets;
+//         var del = this.getDragEl();
+//         var pos = YAHOO.util.Dom.getXY(del);
+//         var dislayerPos = YAHOO.util.Dom.getXY(ddTargets);
 
-        if (this._displayer.type == "timeline") {
-            var frise = this._displayer;
-            var mindate = frise.tl.getBand(0).getMinVisibleDate();
-            var maxdate = frise.tl.getBand(0).getMaxVisibleDate();
-            var tlWidth = frise.width;
-            var computedDate = new Date(Math.round((pos[0] - dislayerPos[0]) * (maxdate - mindate) / tlWidth) + (mindate - new Date(0)));
-            var parseDateTimeFunction = frise.eventSource._events.getUnit().getParser("iso8601");
-            var evt = new Timeline.DefaultEventSource.Event({
-                //'id': "Event " + this._part.word,
-                'id': this.innerHTML,
-                'start': computedDate, //parseDateTimeFunction("2000-09-20"), 
-                //'end': parseDateTimeFunction("2010-09-20"), 
-                //'latestStart': parseDateTimeFunction("2000-09-20"), 
-                //'earliestEnd': parseDateTimeFunction("2000-09-20"), 
-                'instant': true,
-                'text': this.innerHTML, //this._part.word, 
-                'description': this.innerHTML //this._part.word
-            });
-            frise.eventSource.add(evt);
-            frise.tl.layout();
-        }
-        //var layerPos = YAHOO.util.Dom.getXY(ddTarget.container);
+//         if (this._displayer.type == "timeline") {
+//             var frise = this._displayer;
+//             var mindate = frise.tl.getBand(0).getMinVisibleDate();
+//             var maxdate = frise.tl.getBand(0).getMaxVisibleDate();
+//             var tlWidth = frise.width;
+//             var computedDate = new Date(Math.round((pos[0] - dislayerPos[0]) * (maxdate - mindate) / tlWidth) + (mindate - new Date(0)));
+//             var parseDateTimeFunction = frise.eventSource._events.getUnit().getParser("iso8601");
+//             var evt = new Timeline.DefaultEventSource.Event({
+//                 //'id': "Event " + this._part.word,
+//                 'id': this.innerHTML,
+//                 'start': computedDate, //parseDateTimeFunction("2000-09-20"), 
+//                 //'end': parseDateTimeFunction("2010-09-20"), 
+//                 //'latestStart': parseDateTimeFunction("2000-09-20"), 
+//                 //'earliestEnd': parseDateTimeFunction("2000-09-20"), 
+//                 'instant': true,
+//                 'text': this.innerHTML, //this._part.word, 
+//                 'description': this.innerHTML //this._part.word
+//             });
+//             frise.eventSource.add(evt);
+//             frise.tl.layout();
+//         }
+//         //var layerPos = YAHOO.util.Dom.getXY(ddTarget.container);
 
-        //this._WINDMash.addSDLine(this._module, [pos[0]-layerPos[0], pos[1]-layerPos[1]]);
-        //this._WINDMash.onLayerChanged();
-    }
-});
+//         //this._WINDMash.addSDLine(this._module, [pos[0]-layerPos[0], pos[1]-layerPos[1]]);
+//         //this._WINDMash.onLayerChanged();
+//     }
+// });
 
 // Interaction class 
 WIND.Interaction = function (evt, reacts) {

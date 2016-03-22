@@ -38,8 +38,29 @@
 	    <link rel="stylesheet" href="libs/openlayers3/build/ol.css">
 	    <link rel="stylesheet" href="libs/angular-openlayers-directive/dist/angular-openlayers-directive.css" />
 		<!-- END ANGULAR CUSTOM -->
-		<script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
-        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Map"></script>
+		<!-- <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Map"></script> -->
+        <!-- WIND API -->
+        <script>
+        	var lib_path = "libs/wind/lib",
+        		IGN_key = "ohy4xq0hzfex6nv6rn6dw6s2",
+				BING_key = "Agzyehf8tjuXKKk5sIkuIAcE-S4NNlHmgOAaqRX062b4UsCNGWOXUEc1EJLrpvcL";
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <script src="libs/wind/OpenLayers.v2.13.js"></script>
+        <script src="libs/wind/yahoo.js"></script>
+        <script src="libs/wind/lib/yui/build/event/event.js"></script>
+        <script src="libs/wind/lib/yui/build/event-mouseenter/event-mouseenter.js"></script>
+        <script src="libs/wind/lib/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script src="libs/wind/lib/yui/build/element/element.js"></script>
+        <script src="libs/wind/lib/yui/build/button/button.js"></script>
+        <script src="libs/wind/lib/yui/build/selector/selector.js"></script>
+        <script src="libs/wind/lib/yui/build/event-delegate/event-delegate.js"></script>
+        <script src="libs/wind/lib/yui/build/dom/dom.js"></script>
+        <script src="libs/wind/WIND.js"></script>
+        <script src="libs/wind/WIND.Common.js"></script>
+        <script src="libs/wind/WIND.Map.js"></script>
+        <!-- END WIND API -->
 	</head>
 	<body ng-controller="DemoCtrl">
 
@@ -164,6 +185,8 @@
 		              .on("mouseout", function(d){return tooltip.html("<strong>Value:</strong> <span style='color:red'>" + d.data + "</span>").style("visibility", "hidden");});
 		        };
 
+
+
 		        // random color for bar
 		        random = function() {
 		          return Math.floor(Math.random() * 255);
@@ -179,9 +202,9 @@
 				var evt2 = new WIND.SelectEvent("click",annot2);
 				var evt3 = new WIND.SelectEvent("click",annot3);
 
-				console.log(m);
 				//Creating the reactions and the interactions
 				evt1.trigger(function(e){
+					console.log("clicked");
 					var react1 = new WIND.ExternalReaction(annot1,"highlight");
 					var i1 = new WIND.Interaction(evt1, new Array(react1));
 					i1.activate();
@@ -190,6 +213,7 @@
 					idx[0].style.backgroundColor = 'red';
 				});
 				evt2.trigger(function(e){
+					console.log("clicked");
 					var react1 = new WIND.ExternalReaction(annot2,"highlight");
 					var i1 = new WIND.Interaction(evt1, new Array(react1));
 					i1.activate();
@@ -198,6 +222,7 @@
 					idx[0].style.backgroundColor = 'red';
 				});
 				evt3.trigger(function(e){
+					console.log("clicked");
 					var react1 = new WIND.ExternalReaction(annot3,"highlight");
 					var i1 = new WIND.Interaction(evt1, new Array(react1));
 					i1.activate();
