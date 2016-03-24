@@ -21,15 +21,23 @@ var wind_timeline = false;
 var wind_text = false;
 
 /**
- * Util to query ID,class
+ * Util to query ID,class - addListener
  * without using blablabla
  */
+function $tag(tagName) {
+	return $("'" + tagName + "'");
+};
+
 function $id(id) {
 	return $('#' + id);
 };
 
 function $class(className) {
 	return $('.' + className);
+};
+
+function $addListener(id, eventType, callBack) {
+	$(id)[eventType](function() { callBack(event); });
 };
 
 // WIND.Annotation2DisplayerProxy = function (el, group, displayer) {
@@ -51,8 +59,8 @@ function $class(className) {
 //         var innerHTML = "";
 //         var width = 0;
 //         for (var i = 0; i < this._group.annotedObjects.length; i++) {
-//             innerHTML += document.getElementById(this._group.annotedObjects[i].object).innerHTML + " ";
-//             width += Number(document.getElementById(this._group.annotedObjects[i].object).innerHTML.length) * 5 + 4;
+//             innerHTML += $id(this._group.annotedObjects[i].object).innerHTML + " ";
+//             width += Number($id(this._group.annotedObjects[i].object).innerHTML.length) * 5 + 4;
 //         }
 //         //del.innerHTML = lel.innerHTML;
 //         del.innerHTML = innerHTML;
@@ -244,11 +252,12 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 				{
 					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
 
-						$id(vector_layer_id).delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
-							this.event_type, 
-						function (e) {
-							callback(this);
-						});	
+						$id(vector_layer_id)
+							.delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
+								this.event_type, 
+								function (e) {
+									callback(this);
+								});	
 						/*
 						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
 							callback(this);
@@ -259,50 +268,54 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 				if(wind_text)
 				{
 					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
-						tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
-						YAHOO.util.Event.addListener($('#' + tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
+						tmpAnnot2.annotedObjects[ll].css({'text-decoration': 'underline', 'cursor':'pointer'});
+						// tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
+						$id(tmpAnnot2.annotedObjects[ll].object).bind(this.event_type, function(event) {
 							callback(this);
-						}, tmpAnnot2, true);
+						});
+						// YAHOO.util.Event.addListener($id(tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
+						// 	callback(this);
+						// }, tmpAnnot2, true);
 					}
 				}
-				if(wind_timeline){
-					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
-						if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
-						{
-							var aux = $class("timeline-event-label");
-							for( var j=0; j<aux.length;j++)
-							{
-								if(aux[j].innerHTML==tmpAnnot2.entity)
-								{
-									var element = $id(aux[j].id);
-									var element1 = $id(aux[j].id.replace("label","tape0"));
-								}
-							}
-							var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
-								callback(this);
-							}, this, true);
-							var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
-								callback(this);
-							}, this, true);
-						}
-						else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
-						{
-							if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
-								var aux = $class("timeline-event");
-							else
-								var aux = $class("timeline-event-dot-container");
-							for( var j=0; j<aux.length;j++)
-							{
-								aux[j].id = aux[j].firstChild.innerHTML;
-								if(aux[j].id==tmpAnnot2.entity)
-								{
-									var element = $id(aux[j].id);
-								}
-							}
-							var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
-						}
-					}
-				}
+				// if(wind_timeline){
+				// 	if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
+				// 		if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
+				// 		{
+				// 			var aux = $class("timeline-event-label");
+				// 			for( var j=0; j<aux.length;j++)
+				// 			{
+				// 				if(aux[j].innerHTML==tmpAnnot2.entity)
+				// 				{
+				// 					var element = $id(aux[j].id);
+				// 					var element1 = $id(aux[j].id.replace("label","tape0"));
+				// 				}
+				// 			}
+				// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
+				// 				callback(this);
+				// 			}, this, true);
+				// 			var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
+				// 				callback(this);
+				// 			}, this, true);
+				// 		}
+				// 		else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
+				// 		{
+				// 			if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
+				// 				var aux = $class("timeline-event");
+				// 			else
+				// 				var aux = $class("timeline-event-dot-container");
+				// 			for( var j=0; j<aux.length;j++)
+				// 			{
+				// 				aux[j].id = aux[j].firstChild.innerHTML;
+				// 				if(aux[j].id==tmpAnnot2.entity)
+				// 				{
+				// 					var element = $id(aux[j].id);
+				// 				}
+				// 			}
+				// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
+				// 		}
+				// 	}
+				// }
 			}
 		}
     } else {
@@ -312,57 +325,63 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 			{
 				if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
 
-					YAHOO.util.Event.delegate(vector_layer_id, this.event_type, 
-						function (e) {
-							callback(this);
-						}, "path[id='" + tmpAnnot2.annotedObjects[ll].object + "']");
+					$id(vector_layer_id)
+						.delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
+							this.event_type, 
+							function (e) {
+								callback(this);
+							});
 				}
 			}
-			else if(wind_timeline){
-				if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
-					if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
-					{
-						var aux = $class("timeline-event-label");
-						for( var i=0; i<aux.length;i++)
-						{
-							if(aux[i].innerHTML==tmpAnnot2.entity)
-							{
-								var element = $id(aux[i].id);
-								var element1 = $id(aux[i].id.replace("label","tape0"));
-							}
-						}
-						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
-							callback(this);
-						}, this, true);
-						var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
-							callback(this);
-						}, this, true);
-					}
-					else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
-					{
-						if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
-							var aux = $class("timeline-event");
-						else
-							var aux = $class("timeline-event-dot-container");
-						for( var i=0; i<aux.length;i++)
-						{
-							aux[i].id = aux[i].firstChild.innerHTML;
-							if(aux[i].id==tmpAnnot2.entity)
-							{
-								var element = $id(aux[i].id);
-							}
-						}
-						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
-					}
-				}
-			}
+			// else if(wind_timeline){
+			// 	if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
+			// 		if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
+			// 		{
+			// 			var aux = $class("timeline-event-label");
+			// 			for( var i=0; i<aux.length;i++)
+			// 			{
+			// 				if(aux[i].innerHTML==tmpAnnot2.entity)
+			// 				{
+			// 					var element = $id(aux[i].id);
+			// 					var element1 = $id(aux[i].id.replace("label","tape0"));
+			// 				}
+			// 			}
+			// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
+			// 				callback(this);
+			// 			}, this, true);
+			// 			var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
+			// 				callback(this);
+			// 			}, this, true);
+			// 		}
+			// 		else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
+			// 		{
+			// 			if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
+			// 				var aux = $class("timeline-event");
+			// 			else
+			// 				var aux = $class("timeline-event-dot-container");
+			// 			for( var i=0; i<aux.length;i++)
+			// 			{
+			// 				aux[i].id = aux[i].firstChild.innerHTML;
+			// 				if(aux[i].id==tmpAnnot2.entity)
+			// 				{
+			// 					var element = $id(aux[i].id);
+			// 				}
+			// 			}
+			// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
+			// 		}
+			// 	}
+			// }
 			else if(wind_text)
 			{
 				if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
-						tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
-						YAHOO.util.Event.addListener(document.getElementById(tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
+						tmpAnnot2.annotedObjects[ll].css({'text-decoration': 'underline', 'cursor':'pointer'});
+						// tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
+						$id(tmpAnnot2.annotedObjects[ll].object).bind(this.event_type, function(event) {
 							callback(this);
-						}, this, true);
+						});
+						// YAHOO.util.Event.addListener($id(tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
+						// 	callback(this);
+						// }, this, true);
 				}
 			}
         }
@@ -391,94 +410,98 @@ WIND.InputEvent.prototype = new WIND.UserEvent("InputEvent");
 WIND.InputEvent.prototype.trigger = function (callback) {
     this.event_tool.button.on("checkedChange", function (e1) {
         if (!e1.prevValue) {
-            document.getElementById(this.event_tool.parentComponent.container).style.cursor = "url('" + lib_path + "images/crayon.png'), auto";
-            YAHOO.util.Event.addListener(this.event_tool.parentComponent.paragraphs[0].object, "mouseup", function (e) {
-                //alert("click");
-                //clic sur le bouton Ajouter : mettre dans Georeferenceurs choisis		
-                var str = null;
-                if (window.getSelection) {
-                    str = window.getSelection();
-                } else if (document.getSelection) {
-                    str = document.getSelection();
-                } else {
-                    str = document.selection.createRange();
-                }
+            $id(this.event_tool.parentComponent.container).style.cursor = "url('" + lib_path + "images/crayon.png'), auto";
+            $('"' + this.event_tool.parentComponent.paragraphs[0].object + '"')
+            	.bind('mouseup', function(event) {
+            		alert("click");
+	                //clic sur le bouton Ajouter : mettre dans Georeferenceurs choisis		
+	                var str = null;
+	                if (window.getSelection) {
+	                    str = window.getSelection();
+	                } else if (document.getSelection) {
+	                    str = document.getSelection();
+	                } else {
+	                    str = document.selection.createRange();
+	                }
 
-                var rang = null;
-                if (str.getRangeAt) {
-                    rang = str.getRangeAt(0);
-                    rang.setStart(str.anchorNode, 0);
-                    rang.setEnd(str.focusNode, str.focusNode.nodeValue.length);
-                } else { // Safari!
-                    rang = document.createRange();
-                    rang.setStart(str.anchorNode, str.anchorOffset);
-                    rang.setEnd(str.focusNode, str.focusOffset);
-                }
+	                var rang = null;
+	                if (str.getRangeAt) {
+	                    rang = str.getRangeAt(0);
+	                    rang.setStart(str.anchorNode, 0);
+	                    rang.setEnd(str.focusNode, str.focusNode.nodeValue.length);
+	                } else { // Safari!
+	                    rang = document.createRange();
+	                    rang.setStart(str.anchorNode, str.anchorOffset);
+	                    rang.setEnd(str.focusNode, str.focusOffset);
+	                }
 
-                var texteselectionne = rang.toString();
-                //alert("..." + texteselectionne + "...");
-                if (texteselectionne.endsWith(" ")) texteselectionne = texteselectionne.substring(0, texteselectionne.length - 1);
-                //alert("..." + texteselectionne + "...");
-                //alert(texteselectionne);
-                var debut = -1;
-                var fin = -1;
+	                var texteselectionne = rang.toString();
+	                //alert("..." + texteselectionne + "...");
+	                if (texteselectionne.endsWith(" ")) texteselectionne = texteselectionne.substring(0, texteselectionne.length - 1);
+	                //alert("..." + texteselectionne + "...");
+	                //alert(texteselectionne);
+	                var debut = -1;
+	                var fin = -1;
 
-                var words = this.event_tool.parentComponent.paragraphs[0].words;
-                for (var i = 0; i < words.length; i++) {
-                    if (texteselectionne.startsWith(words[i])) {
-                        var ok = true;
-                        debut = i;
-                        //alert(debut);
-                        //if (debut >=0) {			
-                        for (var j = debut; j < words.length; j++) {
-                            if (texteselectionne.endsWith(words[j])) {
-                                //alert("day roi: " + words[i]);
-                                fin = j;
-                                for (var k = debut; k <= fin; k++) {
-                                    if (texteselectionne.indexOf(words[k]) == -1) {
-                                        ok = false;
-                                        break;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                        //}
-                        if (ok) break;
-                    }
-                }
+	                var words = this.event_tool.parentComponent.paragraphs[0].words;
+	                for (var i = 0; i < words.length; i++) {
+	                    if (texteselectionne.startsWith(words[i])) {
+	                        var ok = true;
+	                        debut = i;
+	                        //alert(debut);
+	                        //if (debut >=0) {			
+	                        for (var j = debut; j < words.length; j++) {
+	                            if (texteselectionne.endsWith(words[j])) {
+	                                //alert("day roi: " + words[i]);
+	                                fin = j;
+	                                for (var k = debut; k <= fin; k++) {
+	                                    if (texteselectionne.indexOf(words[k]) == -1) {
+	                                        ok = false;
+	                                        break;
+	                                    }
+	                                }
+	                                break;
+	                            }
+	                        }
+	                        //}
+	                        if (ok) break;
+	                    }
+	                }
 
-                //alert(debut + " ... " + fin);
-                //alert(words[debut] + " ... " + words[fin]);
-                //alert(this.event_tool.parentComponent.container);
-                var tab = new Array();
-                if (fin >= debut && debut >= 0) {
-                    if (confirm('Do you want really to annotate "' + texteselectionne + '" in the text?')) {
-                        for (var j = debut + 1; j <= fin + 1; j++) {
-                            document.getElementById(this.event_tool.parentComponent.paragraphs[0].object + "_token" + j).style.color = "#008000";
-                            tab.push(j);
-                        }
-                        str.removeAllRanges();
-                        //var annot = {};
-                        //annot.entity = texteselectionne;
-                        //annot.annotedObjects = tab;
+	                //alert(debut + " ... " + fin);
+	                //alert(words[debut] + " ... " + words[fin]);
+	                //alert(this.event_tool.parentComponent.container);
+	                var tab = new Array();
+	                if (fin >= debut && debut >= 0) {
+	                    if (confirm('Do you want really to annotate "' + texteselectionne + '" in the text?')) {
+	                        for (var j = debut + 1; j <= fin + 1; j++) {
+	                            $id(this.event_tool.parentComponent.paragraphs[0].object + "_token" + j).css('color', '#008000');
+	                            tab.push(j);
+	                        }
+	                        str.removeAllRanges();
+	                        //var annot = {};
+	                        //annot.entity = texteselectionne;
+	                        //annot.annotedObjects = tab;
 
-                        var annot = this.event_tool.parentComponent.createAnnotation("Place", texteselectionne, 1, debut + 1, fin + 1, null);
-                        //if ((document.getElementById("semanticInput").value) && (document.getElementById("semanticInput").value != ""))
-                        //annot.semantics = document.getElementById("semanticInput").value;
-                        //else
-                        //	annot.semantics = "Place";
-                        //valeurs.push(annot);
-                        annot.contains = new Array();
-                        var rep = new WIND.Representation("text", annot, this.event_tool.parentComponent);
-                        this.annotationCreated = annot;
-                        callback(this);
-                    }
-                }
-            }, this, true);
+	                        var annot = this.event_tool.parentComponent.createAnnotation("Place", texteselectionne, 1, debut + 1, fin + 1, null);
+	                        //if (($id("semanticInput").value) && ($id("semanticInput").value != ""))
+	                        //annot.semantics = $id("semanticInput").value;
+	                        //else
+	                        //	annot.semantics = "Place";
+	                        //valeurs.push(annot);
+	                        annot.contains = new Array();
+	                        var rep = new WIND.Representation("text", annot, this.event_tool.parentComponent);
+	                        this.annotationCreated = annot;
+	                        callback(this);
+	                    }
+	                }
+            	});
         } else {
-            document.getElementById(this.event_tool.parentComponent.container).style.cursor = "auto";
-            YAHOO.util.Event.removeListener(this.event_tool.parentComponent.paragraphs[0].object, "mouseup");
+            $id(this.event_tool.parentComponent.container).style.cursor = "auto";
+            $('"' + this.event_tool.parentComponent.paragraphs[0].object + '"')
+            	.bind('mouseup', function(event) {
+            		// nothing to do here
+            	});
         }
     }, this, true);
 };
@@ -752,8 +775,8 @@ WIND.GUI = function (iddiv, options) {
     this.interactions = [];
 
     var docDiv;
-    if (document.getElementById(iddiv))
-        docDiv = document.getElementById(iddiv);
+    if ($id(iddiv))
+        docDiv = $id(iddiv);
     else {
         docDiv = document.createElement("div");
         docDiv.id = iddiv;
@@ -1063,8 +1086,8 @@ WIND.Popup = function (x, y, div) {
     this.container = div;
     var closeDiv = document.createElement('div');
     closeDiv.style.textAlign = 'right';
-    closeDiv.innerHTML = "<img src='close.gif' onclick='document.getElementById(\"" + div + "\").style.visibility = \"hidden\";'>";
-    document.getElementById(this.container).appendChild(closeDiv);
+    closeDiv.innerHTML = "<img src='close.gif' onclick='$id(\"" + div + "\").style.visibility = \"hidden\";'>";
+    $id(this.container).appendChild(closeDiv);
     this.content = '';
     this.hide();
 };
@@ -1075,7 +1098,7 @@ WIND.Popup.prototype.setContent = function (text) {
     textDiv.id = this.container + 'Content';
     textDiv.style.padding = '10px';
     textDiv.innerHTML = text;
-    document.getElementById(this.container).appendChild(textDiv);
+    $id(this.container).appendChild(textDiv);
 };
 WIND.Popup.prototype.getContent = function () {
     return this.content;
@@ -1100,7 +1123,7 @@ WIND.Popup.prototype.createSensiblePart = function (exp) {
         debut = fin + exp.length;
     }
     newstr += t.substring(debut, t.length);
-    document.getElementById(this.container + 'Content').innerHTML = newstr;
+    $id(this.container + 'Content').innerHTML = newstr;
     this.content = newstr;
     var textparts = [];
     for (var i = 0; i < postab.length; i++) {
@@ -1112,16 +1135,28 @@ WIND.Popup.prototype.createSensiblePartById = function (id) {
     return new WIND.TextPart(id);
 };
 WIND.Popup.prototype.show = function () {
-    document.getElementById(this.container).style.position = 'absolute';
-    document.getElementById(this.container).style.left = this.x;
-    document.getElementById(this.container).style.top = this.y;
-    document.getElementById(this.container).style.border = "1px #0033CC solid";
-    document.getElementById(this.container).style.backgroundColor = '#BFCFFE';
-    document.getElementById(this.container).style.opacity = 0.8;
-    document.getElementById(this.container).style.visibility = 'visible';
+	var styleParams = {
+		'position' : 'absolute',
+		'left' : this.x,
+		'top' : this.y,
+		'border' : "1px #0033CC solid",
+		'backgroundColor' : '#BFCFFE',
+		'opacity' : '0.8',
+		'visibility' : 'visible'
+	};
+
+	$id(this.container).css(styleParams);
+    // $id(this.container).style.position = 'absolute';
+    // $id(this.container).style.left = this.x;
+    // $id(this.container).style.top = this.y;
+    // $id(this.container).style.border = "1px #0033CC solid";
+    // $id(this.container).style.backgroundColor = '#BFCFFE';
+    // $id(this.container).style.opacity = 0.8;
+    // $id(this.container).style.visibility = 'visible';
 };
 WIND.Popup.prototype.hide = function () {
-    document.getElementById(this.container).style.visibility = 'hidden';
+	$id(this.container).css('visibility', 'hidden');
+    // $id(this.container).style.visibility = 'hidden';
 };
 
 // Create AJAX object
@@ -1198,7 +1233,7 @@ removeJS = function(url) {
 };
 // Restart div
 restartDiv = function(divId) {
-	var removedDiv = document.getElementById(divId);
+	var removedDiv = $id(divId);
 	var sty = removedDiv.className;
 	document.body.removeChild(removedDiv);
 	var newDiv = document.createElement('div'); 
