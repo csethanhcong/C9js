@@ -19,16 +19,29 @@ if (typeof WIND == "undefined" || !WIND) {
 var wind_map = false;
 var wind_timeline = false;
 var wind_text = false;
-WIND.Annotation2DisplayerProxy = function (el, group, displayer) {
-    this._displayer = displayer;
-    this._group = group;
-    // Init the DDProxy
-    WIND.Annotation2DisplayerProxy.superclass.constructor.call(this, el, "Annotation2Displayer", {
-        dragElId: "annotation2DisplayerProxy"
-    });
 
-    this.isTarget = false;
+/**
+ * Util to query ID,class
+ * without using blablabla
+ */
+function $id(id) {
+	return $('#' + id);
 };
+
+function $class(className) {
+	return $('.' + className);
+};
+
+// WIND.Annotation2DisplayerProxy = function (el, group, displayer) {
+//     this._displayer = displayer;
+//     this._group = group;
+//     // Init the DDProxy
+//     WIND.Annotation2DisplayerProxy.superclass.constructor.call(this, el, "Annotation2Displayer", {
+//         dragElId: "annotation2DisplayerProxy"
+//     });
+
+//     this.isTarget = false;
+// };
 
 // YAHOO.lang.extend(WIND.Annotation2DisplayerProxy, YAHOO.util.DDProxy, {
 //     startDrag: function (e) {
@@ -120,32 +133,32 @@ WIND.Interaction.prototype.addReaction = function (react) {
         this.reactions.push(react);
     }
 };
-WIND.Interaction.prototype.runReactions_ = function () {
-    var tmp = this.reactions;
-    for (var j = 0; j < tmp.length; j++) {
-        if (tmp[j] instanceof WIND.ExternalReaction) {
-            var cible;
-            if (tmp[j].annotationApplied == null) {
-                var newtab = new Array();
-                var temp2 = tmp[j];
-                while (temp2.dependency != null) {
-                    newtab.push(temp2.dependency);
-                    temp2 = temp2.dependency;
-                }
-                for (var i = newtab.length - 1; i > 0; i--) {
-                    newtab[i - 1].source = newtab[i].raise();
-                }
-                cible = newtab[0].raise();
-            } else
-                cible = tmp[j].annotationApplied;
-            if (cible instanceof WIND.Annotation) {
-                for (var l = 0; l < cible.annotedObjects.length; l++) {
-                    cible.annotedObjects[l].callFunction(tmp[j].effect_type, tmp[j].parameters);
-                }
-            }
-        }
-    }
-};
+// WIND.Interaction.prototype.runReactions_ = function () {
+//     var tmp = this.reactions;
+//     for (var j = 0; j < tmp.length; j++) {
+//         if (tmp[j] instanceof WIND.ExternalReaction) {
+//             var cible;
+//             if (tmp[j].annotationApplied == null) {
+//                 var newtab = new Array();
+//                 var temp2 = tmp[j];
+//                 while (temp2.dependency != null) {
+//                     newtab.push(temp2.dependency);
+//                     temp2 = temp2.dependency;
+//                 }
+//                 for (var i = newtab.length - 1; i > 0; i--) {
+//                     newtab[i - 1].source = newtab[i].raise();
+//                 }
+//                 cible = newtab[0].raise();
+//             } else
+//                 cible = tmp[j].annotationApplied;
+//             if (cible instanceof WIND.Annotation) {
+//                 for (var l = 0; l < cible.annotedObjects.length; l++) {
+//                     cible.annotedObjects[l].callFunction(tmp[j].effect_type, tmp[j].parameters);
+//                 }
+//             }
+//         }
+//     }
+// };
 /** 
 	* Activate the interaction.
 	* @function.
@@ -231,10 +244,11 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 				{
 					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
 
-						YAHOO.util.Event.delegate(vector_layer_id, this.event_type, 
+						$id(vector_layer_id).delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
+							this.event_type, 
 						function (e) {
 							callback(this);
-						}, "path[id='" + tmpAnnot2.annotedObjects[ll].object + "']");
+						});	
 						/*
 						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
 							callback(this);
@@ -246,7 +260,7 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 				{
 					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
 						tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
-						YAHOO.util.Event.addListener(document.getElementById(tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
+						YAHOO.util.Event.addListener($('#' + tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
 							callback(this);
 						}, tmpAnnot2, true);
 					}
@@ -255,13 +269,13 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
 						if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
 						{
-							var aux = document.getElementsByClassName("timeline-event-label");
+							var aux = $class("timeline-event-label");
 							for( var j=0; j<aux.length;j++)
 							{
 								if(aux[j].innerHTML==tmpAnnot2.entity)
 								{
-									var element = window.document.getElementById(aux[j].id);
-									var element1 = window.document.getElementById(aux[j].id.replace("label","tape0"));
+									var element = $id(aux[j].id);
+									var element1 = $id(aux[j].id.replace("label","tape0"));
 								}
 							}
 							var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
@@ -274,15 +288,15 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 						else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
 						{
 							if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
-								var aux = document.getElementsByClassName("timeline-event");
+								var aux = $class("timeline-event");
 							else
-								var aux = document.getElementsByClassName("timeline-event-dot-container");
+								var aux = $class("timeline-event-dot-container");
 							for( var j=0; j<aux.length;j++)
 							{
 								aux[j].id = aux[j].firstChild.innerHTML;
 								if(aux[j].id==tmpAnnot2.entity)
 								{
-									var element = window.document.getElementById(aux[j].id);
+									var element = $id(aux[j].id);
 								}
 							}
 							var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
@@ -308,13 +322,13 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 				if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
 					if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
 					{
-						var aux = document.getElementsByClassName("timeline-event-label");
+						var aux = $class("timeline-event-label");
 						for( var i=0; i<aux.length;i++)
 						{
 							if(aux[i].innerHTML==tmpAnnot2.entity)
 							{
-								var element = window.document.getElementById(aux[i].id);
-								var element1 = window.document.getElementById(aux[i].id.replace("label","tape0"));
+								var element = $id(aux[i].id);
+								var element1 = $id(aux[i].id.replace("label","tape0"));
 							}
 						}
 						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
@@ -327,15 +341,15 @@ WIND.SelectEvent.prototype.trigger = function (callback) {
 					else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
 					{
 						if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
-							var aux = document.getElementsByClassName("timeline-event");
+							var aux = $class("timeline-event");
 						else
-							var aux = document.getElementsByClassName("timeline-event-dot-container");
+							var aux = $class("timeline-event-dot-container");
 						for( var i=0; i<aux.length;i++)
 						{
 							aux[i].id = aux[i].firstChild.innerHTML;
 							if(aux[i].id==tmpAnnot2.entity)
 							{
-								var element = window.document.getElementById(aux[i].id);
+								var element = $id(aux[i].id);
 							}
 						}
 						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
