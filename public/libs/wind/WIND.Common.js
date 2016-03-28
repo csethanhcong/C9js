@@ -24,6 +24,19 @@ var wind_text = false;
  * Util to query ID,class - addListener
  * without using blablabla
  */
+function $create(tagName, isClosed) {
+	if (isClosed)
+		return $("<" + tagName + "></" + tagName + ">");
+	else return $("<" + tagName + ">");
+};
+
+function $attrs(id, list) {
+	$.each(list, function(k, v){
+		id.attr(k, v);
+	});
+	return id;
+};
+
 function $tag(tagName) {
 	return $("'" + tagName + "'");
 };

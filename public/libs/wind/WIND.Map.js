@@ -61,105 +61,73 @@ WIND.Map = function (iddiv, options) {
         }
     }
 
-    var outerDiv = document.createElement("div");
-    outerDiv.id = iddiv + "Outer";
-    outerDiv.style.position = "absolute";
+    var outerDiv = $create("div", true).attr("id", iddiv + "Outer");
 
     if (options.top) this.top = options.top;
-    outerDiv.style.top = this.top + "px";
 
     if (options.left) this.left = options.left;
-    outerDiv.style.left = this.left + "px";
 
     if (options.width) this.width = options.width;
-    outerDiv.style.width = this.width + "px";
 
     if (options.height) this.height = options.height;
-    outerDiv.style.height = this.height + "px";
 
     if (options.color) this.color = options.color;
     if (options.border) this.border = options.border;
-    outerDiv.style.border = this.border;
 
+    outerDiv.css({"position": "absolute", "top": this.top + "px", "left": this.left + "px", "width": this.width + "px", "height": this.height + "px", "border": this.border});
     if (options.parentEl) this.parentEl = options.parentEl;
     if (options.name) this.name = options.name;
     if (options.icon) this.icon = options.icon;
 
     var mapDiv;
-    if (document.getElementById(iddiv))
-        mapDiv = document.getElementById(iddiv);
+    if ($id(iddiv).length)
+        mapDiv = $id(iddiv);
     else {
-        mapDiv = document.createElement("div");
-        mapDiv.id = iddiv;
+        mapDiv = $create("div", true).attr("id", iddiv);
     }
-    mapDiv.style.position = "absolute";
-    mapDiv.style.top = "0px";
-    mapDiv.style.width = "100%";
-    mapDiv.style.height = "100%";
-    outerDiv.appendChild(mapDiv);
-    //document.body.appendChild(outerDiv);
+    mapDiv.css({"position": "absolute", "top": "0px", "width": "100%", "height": "100%"});
+    outerDiv.append(mapDiv);
     if (options.parentEl) {
         this.parentEl = options.parentEl;
-        document.getElementById(options.parentEl).appendChild(outerDiv);
-    } else document.body.appendChild(outerDiv);
+        $id(options.parentEl).append(outerDiv);
+    } else $("body").append(outerDiv);
 
     if (this.header) {
-        var headerDiv = document.createElement("div");
-        headerDiv.id = iddiv + "Handle";
-        headerDiv.style.position = "absolute";
-        headerDiv.style.width = "100%";
-        headerDiv.style.height = "20px";
-        headerDiv.style.backgroundColor = this.color;
-        if (this.draggable) headerDiv.style.cursor = "move";
-        headerDiv.style.zIndex = 2;
+        var headerDiv = $create("div", true)
+                            .attr("id", iddiv + "Handle")
+                            .css({"position": "absolute", "width": "100%", "height": "20px", "background-color": this.color, "zIndex": 2});
+        if (this.draggable) headerDiv.css("cursor", "move");
 
-        var iconSpan = document.createElement("img");
-        iconSpan.src = this.icon;
-        iconSpan.alt = "[ ]";
-        iconSpan.title = "MapDisplayer";
-        iconSpan.style.cssFloat = "left";
-        headerDiv.appendChild(iconSpan);
+        var iconSpan = $attrs($create("img", false), {"src": this.icon, "alt": "[ ]", "title": "MapDisplayer"}).css("float", "left");
+        headerDiv.append(iconSpan);
 
-        var nameNode = document.createElement("span");
-        nameNode.style.color = "#FFFFFF";
-        nameNode.style.paddingLeft = "3px";
-        nameNode.appendChild(document.createTextNode(this.name));
-        headerDiv.appendChild(nameNode);
+        var nameNode = $create("span", true)
+                            .css({"color": "#FFFFFF", "paddingLeft": "3px"})
+                            .text(this.name);
+        headerDiv.append(nameNode);
 
-        var configDiv = document.createElement("div");
-        configDiv.id = iddiv + "Configuration";
-        configDiv.style.position = "absolute";
-        configDiv.style.width = "100%";
-        //configDiv.style.height = "100px";
-        configDiv.style.marginTop = "20px";
-        configDiv.style.backgroundColor = "#E4E4E4";
-        configDiv.style.zIndex = 11;
-        configDiv.style.display = "none";
-        outerDiv.appendChild(configDiv);
+        var configDiv = $create("div", true)
+                            .attr("id", iddiv + "Configuration")
+                            .css({"position": "absolute", "width": "100%", "marginTop": "20px", "background-color": "#E4E4E4", "zIndex": 11, "display": "none"});
+        outerDiv.append(configDiv);
 
         var that = this;
 
         // Name of displayer
-        var label1 = document.createElement("span");
-        label1.appendChild(document.createTextNode("Name: "));
-        configDiv.appendChild(label1);
+        var label1 = $create("span", true).text("Name: ");
+        configDiv.append(label1);
         //configDiv.appendChild(document.createElement("br"));
-        var input1 = document.createElement("input");
-        input1.type = "text";
-        input1.id = iddiv + "Configuration_Name";
-        input1.name = iddiv + "Configuration_Name";
-        input1.size = "30";
-        input1.value = this.name;
-        configDiv.appendChild(input1);
-        input1.onblur = function () {
-            var nomafficheur = document.getElementById(iddiv + "Configuration_Name").value;
+        var input1 = $attrs($create("input", false), {"type": "text", "id": iddiv + "Configuration_Name", "name": iddiv + "Configuration_Name", "size": 30, "value": this.name});
+        configDiv.append(input1);
+        input1.blur(function () {
+            var nomafficheur = $id(iddiv + "Configuration_Name").val();
             if ((nomafficheur != null) && (nomafficheur != '')) {
                 that.name = nomafficheur;
                 nameNode.removeChild(nameNode.firstChild);
                 nameNode.appendChild(document.createTextNode(that.name));
             }
             that.eventConfigured.fire(that);
-        };
+        });
         /*
 		var nameButton = document.createElement("input");
 		nameButton.type = "button";
@@ -177,43 +145,34 @@ WIND.Map = function (iddiv, options) {
 			that.eventConfigured.fire(that);
 		};
 		*/
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br", false));
         // Color of displayer
-        var label2 = document.createElement("span");
-        label2.appendChild(document.createTextNode("Color: "));
-        configDiv.appendChild(label2);
-        var input2 = document.createElement("select");
-        input2.id = iddiv + "Configuration_Color";
-        input2.name = iddiv + "Configuration_Color";
-        configDiv.appendChild(input2);
-        input2.style.background = this.color;
+        var label2 = $create("span", true).text("Color: ");
+        configDiv.append(label2);
+        var input2 = $attrs($create("select", true), {"id": iddiv + "Configuration_Color", "name": iddiv + "Configuration_Color"}).css("background", this.color);
+        configDiv.append(input2);
         var colorTab = ["#00248E", "#0033CC", "#809FFE", "#BFCFFE", "#12127D", "#1919B3", "#9191FE", "#C8C8FE", "#24006B", "#330099", "#AA80FE", "#D4BFFE", "#2D006B", "#400099", "#B580FE", "#DABFFE", "#47006B", "#660099", "#D580FE", "#EABFFE", "#6B006B", "#990099", "#FF80FE", "#FFBFFE", "#8E006B", "#CC0099", "#FE80DF", "#FEBFEF", "#A10048", "#E60066", "#FE80B9", "#FEBFDC", "#B20000", "#FF0000", "#FE8080", "#FEBFBF", "#B22400", "#FF3300", "#FE9980", "#FECCBF", "#B24700", "#FF6600", "#FEB380", "#FED9BF", "#B25900", "#FF8000", "#FEBF80", "#FEDFBF", "#B26B00", "#FF9900", "#FECC80", "#FEE6BF", "#B27D00", "#FFB200", "#FED980", "#FEECBF", "#B28F00", "#FFCC00", "#FEE680", "#FEF2BF", "#B2A100", "#FFE500", "#FEF280", "#FEF9BF", "#B2B300", "#FFFF00", "#FEFF80", "#FEFFBF", "#8FB200", "#CCFF00", "#E6FE80", "#F2FEBF", "#6BB200", "#99FF00", "#CCFE80", "#E6FEBF", "#24B200", "#33FF00", "#99FE80", "#CCFEBF", "#008E00", "#00CC00", "#80FE80", "#BFFEBF", "#007D47", "#00B366", "#80FEC8", "#BFFEE3", "#006B6B", "#009999", "#80FFFE", "#BFFFFE", "#00477D", "#0066B3", "#80C8FE", "#BFE3FE"];
-        for (var i = 0; i < colorTab.length; i++) {
-            var opt = new Option(colorTab[i], colorTab[i]);
-            opt.style.background = colorTab[i];
-            opt.style.position = "absolute";
-            opt.style.width = "100px";
-            opt.style.height = "30px";
-            if (colorTab[i] == this.color) opt.selected = true;
-            input2.add(opt);
-        }
-        input2.onchange = function () {
-            input2.style.background = this.options[this.selectedIndex].value;
-            that.color = this.options[this.selectedIndex].value;
-            that.border = this.options[this.selectedIndex].value + " 2px solid";
-            document.getElementById(iddiv + "Handle").style.backgroundColor = that.color;
-            document.getElementById(iddiv + "Outer").style.border = that.border;
-        };
+        $.each(colorTab, function(i, v){
+            var opt = $create("option", true)
+                            .text(v)
+                            .attr("value", v);
+            opt.css({"background": v, "position": "absolute", "width": "100px", "height": "30px"})
+            if (v == this.color) opt.attr("selected", true);
+            input2.append(opt);
+        });
+        input2.change(function (){
+            $(this).css("background", $("option:selected").val());
+            that.color = $("option:selected").val();
+            that.border = $("option:selected").val() + " 2px solid";
+            $id(iddiv + "Handle").css("background-color", that.color);
+            $id(iddiv + "Outer").css("border", that.border);
+        });
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br", false));
         // Zoomable
-        var label3 = document.createElement("span");
-        label3.appendChild(document.createTextNode("Zoomable: "));
-        configDiv.appendChild(label3);
-        var input31 = document.createElement("input");
-        input31.type = "radio";
-        input31.id = iddiv + "Configuration_Zoomable_Yes";
-        input31.name = iddiv + "Configuration_Zoomable";
+        var label3 = $create("span", true).text("Zoomable: ");
+        configDiv.append(label3);
+        var input31 = $attrs($create("input", false), {"type": "radio", "id": iddiv + "Configuration_Zoomable_Yes", "name": iddiv + "Configuration_Zoomable"});
         if (this.zoomable == true) input31.checked = "checked";
         configDiv.appendChild(input31);
         var labelInput31 = document.createElement("label");
