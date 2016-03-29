@@ -61,7 +61,7 @@ WIND.Map = function (iddiv, options) {
         }
     }
 
-    var outerDiv = $create("div", true).attr("id", iddiv + "Outer");
+    var outerDiv = $create("div").attr("id", iddiv + "Outer");
 
     if (options.top) this.top = options.top;
 
@@ -83,7 +83,7 @@ WIND.Map = function (iddiv, options) {
     if ($id(iddiv).length)
         mapDiv = $id(iddiv);
     else {
-        mapDiv = $create("div", true).attr("id", iddiv);
+        mapDiv = $create("div").attr("id", iddiv);
     }
     mapDiv.css({"position": "absolute", "top": "0px", "width": "100%", "height": "100%"});
     outerDiv.append(mapDiv);
@@ -93,20 +93,20 @@ WIND.Map = function (iddiv, options) {
     } else $("body").append(outerDiv);
 
     if (this.header) {
-        var headerDiv = $create("div", true)
+        var headerDiv = $create("div")
                             .attr("id", iddiv + "Handle")
                             .css({"position": "absolute", "width": "100%", "height": "20px", "background-color": this.color, "zIndex": 2});
         if (this.draggable) headerDiv.css("cursor", "move");
 
-        var iconSpan = $attrs($create("img", false), {"src": this.icon, "alt": "[ ]", "title": "MapDisplayer"}).css("float", "left");
+        var iconSpan = $attrs($create("img"), {"src": this.icon, "alt": "[ ]", "title": "MapDisplayer"}).css("float", "left");
         headerDiv.append(iconSpan);
 
-        var nameNode = $create("span", true)
+        var nameNode = $create("span")
                             .css({"color": "#FFFFFF", "paddingLeft": "3px"})
                             .text(this.name);
         headerDiv.append(nameNode);
 
-        var configDiv = $create("div", true)
+        var configDiv = $create("div")
                             .attr("id", iddiv + "Configuration")
                             .css({"position": "absolute", "width": "100%", "marginTop": "20px", "background-color": "#E4E4E4", "zIndex": 11, "display": "none"});
         outerDiv.append(configDiv);
@@ -114,46 +114,46 @@ WIND.Map = function (iddiv, options) {
         var that = this;
 
         // Name of displayer
-        var label1 = $create("span", true).text("Name: ");
+        var label1 = $create("span").text("Name: ");
         configDiv.append(label1);
-        //configDiv.appendChild(document.createElement("br"));
-        var input1 = $attrs($create("input", false), {"type": "text", "id": iddiv + "Configuration_Name", "name": iddiv + "Configuration_Name", "size": 30, "value": this.name});
+        //configDiv.append($create("br"));
+        var input1 = $attrs($create("input"), {"type": "text", "id": iddiv + "Configuration_Name", "name": iddiv + "Configuration_Name", "size": 30, "value": this.name});
         configDiv.append(input1);
         input1.blur(function () {
             var nomafficheur = $id(iddiv + "Configuration_Name").val();
             if ((nomafficheur != null) && (nomafficheur != '')) {
                 that.name = nomafficheur;
-                nameNode.removeChild(nameNode.firstChild);
-                nameNode.appendChild(document.createTextNode(that.name));
+                nameNode.remove(nameNode.firstChild);
+                nameNode.append(document.createTextNode(that.name));
             }
             that.eventConfigured.fire(that);
         });
         /*
-		var nameButton = document.createElement("input");
+		var nameButton = $create("input");
 		nameButton.type = "button";
 		nameButton.id = iddiv + "Configuration_Name_OK";
 		nameButton.name = iddiv + "Configuration_Name_OK";
 		nameButton.value = "OK";
-		configDiv.appendChild(nameButton);
+		configDiv.append(nameButton);
 		nameButton.onclick = function() {
-			var nomafficheur = document.getElementById(iddiv + "Configuration_Name").value;
+			var nomafficheur = $id(iddiv + "Configuration_Name").value;
 			if ((nomafficheur != null) && (nomafficheur != '')) {
 				that.name = nomafficheur;
-				nameNode.removeChild(nameNode.firstChild);
-				nameNode.appendChild(document.createTextNode(that.name));
+				nameNode.remove(nameNode.firstChild);
+				nameNode.append(document.createTextNode(that.name));
 			}
 			that.eventConfigured.fire(that);
 		};
 		*/
-        configDiv.append($create("br", false));
+        configDiv.append($create("br"));
         // Color of displayer
-        var label2 = $create("span", true).text("Color: ");
+        var label2 = $create("span").text("Color: ");
         configDiv.append(label2);
-        var input2 = $attrs($create("select", true), {"id": iddiv + "Configuration_Color", "name": iddiv + "Configuration_Color"}).css("background", this.color);
+        var input2 = $attrs($create("select"), {"id": iddiv + "Configuration_Color", "name": iddiv + "Configuration_Color"}).css("background", this.color);
         configDiv.append(input2);
         var colorTab = ["#00248E", "#0033CC", "#809FFE", "#BFCFFE", "#12127D", "#1919B3", "#9191FE", "#C8C8FE", "#24006B", "#330099", "#AA80FE", "#D4BFFE", "#2D006B", "#400099", "#B580FE", "#DABFFE", "#47006B", "#660099", "#D580FE", "#EABFFE", "#6B006B", "#990099", "#FF80FE", "#FFBFFE", "#8E006B", "#CC0099", "#FE80DF", "#FEBFEF", "#A10048", "#E60066", "#FE80B9", "#FEBFDC", "#B20000", "#FF0000", "#FE8080", "#FEBFBF", "#B22400", "#FF3300", "#FE9980", "#FECCBF", "#B24700", "#FF6600", "#FEB380", "#FED9BF", "#B25900", "#FF8000", "#FEBF80", "#FEDFBF", "#B26B00", "#FF9900", "#FECC80", "#FEE6BF", "#B27D00", "#FFB200", "#FED980", "#FEECBF", "#B28F00", "#FFCC00", "#FEE680", "#FEF2BF", "#B2A100", "#FFE500", "#FEF280", "#FEF9BF", "#B2B300", "#FFFF00", "#FEFF80", "#FEFFBF", "#8FB200", "#CCFF00", "#E6FE80", "#F2FEBF", "#6BB200", "#99FF00", "#CCFE80", "#E6FEBF", "#24B200", "#33FF00", "#99FE80", "#CCFEBF", "#008E00", "#00CC00", "#80FE80", "#BFFEBF", "#007D47", "#00B366", "#80FEC8", "#BFFEE3", "#006B6B", "#009999", "#80FFFE", "#BFFFFE", "#00477D", "#0066B3", "#80C8FE", "#BFE3FE"];
         $.each(colorTab, function(i, v){
-            var opt = $create("option", true)
+            var opt = $create("option")
                             .text(v)
                             .attr("value", v);
             opt.css({"background": v, "position": "absolute", "width": "100px", "height": "30px"})
@@ -168,27 +168,27 @@ WIND.Map = function (iddiv, options) {
             $id(iddiv + "Outer").css("border", that.border);
         });
 
-        configDiv.append($create("br", false));
+        configDiv.append($create("br"));
         // Zoomable
-        var label3 = $create("span", true).text("Zoomable: ");
+        var label3 = $create("span").text("Zoomable: ");
         configDiv.append(label3);
-        var input31 = $attrs($create("input", false), {"type": "radio", "id": iddiv + "Configuration_Zoomable_Yes", "name": iddiv + "Configuration_Zoomable"});
+        var input31 = $attrs($create("input"), {"type": "radio", "id": iddiv + "Configuration_Zoomable_Yes", "name": iddiv + "Configuration_Zoomable"});
         if (this.zoomable == true) input31.checked = "checked";
-        configDiv.appendChild(input31);
-        var labelInput31 = document.createElement("label");
+        configDiv.append(input31);
+        var labelInput31 = $create("label");
         //labelInput31.for = iddiv + "Configuration_Zoomable";
-        labelInput31.appendChild(document.createTextNode("Yes "));
-        configDiv.appendChild(labelInput31);
-        var input32 = document.createElement("input");
+        labelInput31.append(document.createTextNode("Yes "));
+        configDiv.append(labelInput31);
+        var input32 = $create("input");
         input32.type = "radio";
         input32.id = iddiv + "Configuration_Zoomable_No";
         input32.name = iddiv + "Configuration_Zoomable";
         if (this.zoomable == false) input32.checked = "checked";
-        configDiv.appendChild(input32);
-        var labelInput32 = document.createElement("label");
+        configDiv.append(input32);
+        var labelInput32 = $create("label");
         //labelInput32.for = iddiv + "Configuration_Zoomable";
-        labelInput32.appendChild(document.createTextNode("No "));
-        configDiv.appendChild(labelInput32);
+        labelInput32.append(document.createTextNode("No "));
+        configDiv.append(labelInput32);
         input31.onclick = function () {
             that.zoomable = true;
             if (that.pannable)
@@ -226,31 +226,31 @@ WIND.Map = function (iddiv, options) {
             that.removeZoomControl();
         };
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br"));
         // Pannable
-        var label4 = document.createElement("span");
-        label4.appendChild(document.createTextNode("Pannable: "));
-        configDiv.appendChild(label4);
-        var input41 = document.createElement("input");
+        var label4 = $create("span");
+        label4.append(document.createTextNode("Pannable: "));
+        configDiv.append(label4);
+        var input41 = $create("input");
         input41.type = "radio";
         input41.id = iddiv + "Configuration_Pannable_Yes";
         input41.name = iddiv + "Configuration_Pannable";
         if (this.pannable == true) input41.checked = "checked";
-        configDiv.appendChild(input41);
-        var labelInput41 = document.createElement("label");
+        configDiv.append(input41);
+        var labelInput41 = $create("label");
         //labelInput41.for = iddiv + "Configuration_Pannable";
-        labelInput41.appendChild(document.createTextNode("Yes "));
-        configDiv.appendChild(labelInput41);
-        var input42 = document.createElement("input");
+        labelInput41.append(document.createTextNode("Yes "));
+        configDiv.append(labelInput41);
+        var input42 = $create("input");
         input42.type = "radio";
         input42.id = iddiv + "Configuration_Pannable_No";
         input42.name = iddiv + "Configuration_Pannable";
         if (this.pannable == false) input42.checked = "checked";
-        configDiv.appendChild(input42);
-        var labelInput42 = document.createElement("label");
+        configDiv.append(input42);
+        var labelInput42 = $create("label");
         //labelInput42.for = iddiv + "Configuration_Pannable";
-        labelInput42.appendChild(document.createTextNode("No "));
-        configDiv.appendChild(labelInput42);
+        labelInput42.append(document.createTextNode("No "));
+        configDiv.append(labelInput42);
         input41.onclick = function () {
             that.pannable = true;
             if (that.zoomable)
@@ -286,31 +286,31 @@ WIND.Map = function (iddiv, options) {
                 });
         };
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br"));
         // Show Scale
-        var label5 = document.createElement("span");
-        label5.appendChild(document.createTextNode("Show scale: "));
-        configDiv.appendChild(label5);
-        var input51 = document.createElement("input");
+        var label5 = $create("span");
+        label5.append(document.createTextNode("Show scale: "));
+        configDiv.append(label5);
+        var input51 = $create("input");
         input51.type = "radio";
         input51.id = iddiv + "Configuration_Showscale_Yes";
         input51.name = iddiv + "Configuration_Showscale";
         if (this.showscale == true) input51.checked = "checked";
-        configDiv.appendChild(input51);
-        var labelInput51 = document.createElement("label");
+        configDiv.append(input51);
+        var labelInput51 = $create("label");
         //labelInput51.for = iddiv + "Configuration_Showscale";
-        labelInput51.appendChild(document.createTextNode("Yes "));
-        configDiv.appendChild(labelInput51);
-        var input52 = document.createElement("input");
+        labelInput51.append(document.createTextNode("Yes "));
+        configDiv.append(labelInput51);
+        var input52 = $create("input");
         input52.type = "radio";
         input52.id = iddiv + "Configuration_Showscale_No";
         input52.name = iddiv + "Configuration_Showscale";
         if (this.showscale == false) input52.checked = "checked";
-        configDiv.appendChild(input52);
-        var labelInput52 = document.createElement("label");
+        configDiv.append(input52);
+        var labelInput52 = $create("label");
         //labelInput52.for = iddiv + "Configuration_Showscale";
-        labelInput52.appendChild(document.createTextNode("No "));
-        configDiv.appendChild(labelInput52);
+        labelInput52.append(document.createTextNode("No "));
+        configDiv.append(labelInput52);
         input51.onclick = function () {
             that.showscale = true;
             that.scaleControl = new OpenLayers.Control.Scale();
@@ -321,31 +321,31 @@ WIND.Map = function (iddiv, options) {
             that.olMap.removeControl(that.scaleControl);
         };
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br"));
         // Show Position
-        var label6 = document.createElement("span");
-        label6.appendChild(document.createTextNode("Show position: "));
-        configDiv.appendChild(label6);
-        var input61 = document.createElement("input");
+        var label6 = $create("span");
+        label6.append(document.createTextNode("Show position: "));
+        configDiv.append(label6);
+        var input61 = $create("input");
         input61.type = "radio";
         input61.id = iddiv + "Configuration_Showposition_Yes";
         input61.name = iddiv + "Configuration_Showposition";
         if (this.showposition == true) input61.checked = "checked";
-        configDiv.appendChild(input61);
-        var labelInput61 = document.createElement("label");
+        configDiv.append(input61);
+        var labelInput61 = $create("label");
         //labelInput61.for = iddiv + "Configuration_Showposition";
-        labelInput61.appendChild(document.createTextNode("Yes "));
-        configDiv.appendChild(labelInput61);
-        var input62 = document.createElement("input");
+        labelInput61.append(document.createTextNode("Yes "));
+        configDiv.append(labelInput61);
+        var input62 = $create("input");
         input62.type = "radio";
         input62.id = iddiv + "Configuration_Showposition_No";
         input62.name = iddiv + "Configuration_Showposition";
         if (this.showposition == false) input62.checked = "checked";
-        configDiv.appendChild(input62);
-        var labelInput62 = document.createElement("label");
+        configDiv.append(input62);
+        var labelInput62 = $create("label");
         //labelInput62.for = iddiv + "Configuration_Showposition";
-        labelInput62.appendChild(document.createTextNode("No "));
-        configDiv.appendChild(labelInput62);
+        labelInput62.append(document.createTextNode("No "));
+        configDiv.append(labelInput62);
         input61.onclick = function () {
             that.showposition = true;
             that.positionControl = new OpenLayers.Control.MousePosition();
@@ -356,21 +356,21 @@ WIND.Map = function (iddiv, options) {
             that.olMap.removeControl(that.positionControl);
         };
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br"));
         // Layers
-        var label7 = document.createElement("span");
-        label7.appendChild(document.createTextNode("Layers: "));
-        configDiv.appendChild(label7);
+        var label7 = $create("span");
+        label7.append(document.createTextNode("Layers: "));
+        configDiv.append(label7);
         for (var i = 0; i < WIND.Map.Type.length; i++) {
-            var layerChoice = document.createElement("input");
+            var layerChoice = $create("input");
             layerChoice.type = "checkbox";
             layerChoice.id = iddiv + "Configuration_Layer" + i;
             layerChoice.name = iddiv + "Configuration_Layer" + i;
-            configDiv.appendChild(layerChoice);
-            var layerChoiceLabel = document.createElement("label");
+            configDiv.append(layerChoice);
+            var layerChoiceLabel = $create("label");
             //layerChoiceLabel.for = iddiv + "Configuration_Layer" + i;
-            layerChoiceLabel.appendChild(document.createTextNode(WIND.Map.Type[i] + " "));
-            configDiv.appendChild(layerChoiceLabel);
+            layerChoiceLabel.append(document.createTextNode(WIND.Map.Type[i] + " "));
+            configDiv.append(layerChoiceLabel);
             if (WIND.Map.Type[i] == this.baseLayer) {
                 layerChoice.checked = true;
                 layerChoice.disabled = true;
@@ -384,31 +384,31 @@ WIND.Map = function (iddiv, options) {
             };
         }
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br"));
         // Toolbar
-        var label8 = document.createElement("span");
-        label8.appendChild(document.createTextNode("Toolbar: "));
-        configDiv.appendChild(label8);
-        var input81 = document.createElement("input");
+        var label8 = $create("span");
+        label8.append(document.createTextNode("Toolbar: "));
+        configDiv.append(label8);
+        var input81 = $create("input");
         input81.type = "radio";
         input81.id = iddiv + "Configuration_Showtoolbar_Yes";
         input81.name = iddiv + "Configuration_Showtoolbar";
         if (this.showtoolbar == true) input81.checked = "checked";
-        configDiv.appendChild(input81);
-        var labelInput81 = document.createElement("label");
+        configDiv.append(input81);
+        var labelInput81 = $create("label");
         //labelInput81.for = iddiv + "Configuration_Showtoolbar";
-        labelInput81.appendChild(document.createTextNode("Yes "));
-        configDiv.appendChild(labelInput81);
-        var input82 = document.createElement("input");
+        labelInput81.append(document.createTextNode("Yes "));
+        configDiv.append(labelInput81);
+        var input82 = $create("input");
         input82.type = "radio";
         input82.id = iddiv + "Configuration_Showtoolbar_No";
         input82.name = iddiv + "Configuration_Showtoolbar";
         if (this.showtoolbar == false) input82.checked = "checked";
-        configDiv.appendChild(input82);
-        var labelInput82 = document.createElement("label");
+        configDiv.append(input82);
+        var labelInput82 = $create("label");
         //labelInput82.for = iddiv + "Configuration_Showtoolbar";
-        labelInput82.appendChild(document.createTextNode("No "));
-        configDiv.appendChild(labelInput82);
+        labelInput82.append(document.createTextNode("No "));
+        configDiv.append(labelInput82);
         input81.onclick = function () {
             that.showtoolbar = true;
             pointChoice.disabled = false;
@@ -430,10 +430,10 @@ WIND.Map = function (iddiv, options) {
             that.removeToolBar();
         };
 
-        configDiv.appendChild(document.createElement("br"));
+        configDiv.append($create("br"));
 
         // Elements de la barre d'outil
-        var pointChoiceIcon = document.createElement("img");
+        var pointChoiceIcon = $create("img");
         if (this.showtoolbar == true) {
             pointChoiceIcon.src = lib_path + "images/draw_point_on.png";
         } else {
@@ -441,12 +441,12 @@ WIND.Map = function (iddiv, options) {
         }
         pointChoiceIcon.alt = "Point";
         pointChoiceIcon.title = "Point";
-        configDiv.appendChild(pointChoiceIcon);
-        var pointChoice = document.createElement("input");
+        configDiv.append(pointChoiceIcon);
+        var pointChoice = $create("input");
         pointChoice.type = "checkbox";
         pointChoice.id = iddiv + "Configuration_Toolbar_PointChoice";
         pointChoice.name = iddiv + "Configuration_Toolbar_PointChoice";
-        configDiv.appendChild(pointChoice);
+        configDiv.append(pointChoice);
         if (this.showtoolbar == false) {
             pointChoice.disabled = true;
         }
@@ -460,7 +460,7 @@ WIND.Map = function (iddiv, options) {
             }
         };
 
-        var lineChoiceIcon = document.createElement("img");
+        var lineChoiceIcon = $create("img");
         if (this.showtoolbar == true) {
             lineChoiceIcon.src = lib_path + "images/draw_line_on.png";
         } else {
@@ -468,12 +468,12 @@ WIND.Map = function (iddiv, options) {
         }
         lineChoiceIcon.alt = "Line";
         lineChoiceIcon.title = "Line";
-        configDiv.appendChild(lineChoiceIcon);
-        var lineChoice = document.createElement("input");
+        configDiv.append(lineChoiceIcon);
+        var lineChoice = $create("input");
         lineChoice.type = "checkbox";
         lineChoice.id = iddiv + "Configuration_Toolbar_LineChoice";
         lineChoice.name = iddiv + "Configuration_Toolbar_LineChoice";
-        configDiv.appendChild(lineChoice);
+        configDiv.append(lineChoice);
         if (this.showtoolbar == false) {
             lineChoice.disabled = true;
         }
@@ -486,7 +486,7 @@ WIND.Map = function (iddiv, options) {
             }
         };
 
-        var polygonChoiceIcon = document.createElement("img");
+        var polygonChoiceIcon = $create("img");
         if (this.showtoolbar == true) {
             polygonChoiceIcon.src = lib_path + "images/draw_polygon_on.png";
         } else {
@@ -494,12 +494,12 @@ WIND.Map = function (iddiv, options) {
         }
         polygonChoiceIcon.alt = "Polygon";
         polygonChoiceIcon.title = "Polygon";
-        configDiv.appendChild(polygonChoiceIcon);
-        var polygonChoice = document.createElement("input");
+        configDiv.append(polygonChoiceIcon);
+        var polygonChoice = $create("input");
         polygonChoice.type = "checkbox";
         polygonChoice.id = iddiv + "Configuration_Toolbar_PolygonChoice";
         polygonChoice.name = iddiv + "Configuration_Toolbar_PolygonChoice";
-        configDiv.appendChild(polygonChoice);
+        configDiv.append(polygonChoice);
         if (this.showtoolbar == false) {
             polygonChoice.disabled = true;
         }
@@ -513,29 +513,29 @@ WIND.Map = function (iddiv, options) {
         };
 
         /* Show Location
-		var label9 = document.createElement("span");
-		label9.appendChild(document.createTextNode("Show location bar: "));
-		configDiv.appendChild(label9);
-		var input91 = document.createElement("input");
+		var label9 = $create("span");
+		label9.append(document.createTextNode("Show location bar: "));
+		configDiv.append(label9);
+		var input91 = $create("input");
 		input91.type = "radio";
 		input91.id = iddiv + "Configuration_Showlocation_Yes";
 		input91.name = iddiv + "Configuration_Showlocation";
 		if (this.showlocation == true) input91.checked = "checked";
-		configDiv.appendChild(input91);
-		var labelInput91 = document.createElement("label");
+		configDiv.append(input91);
+		var labelInput91 = $create("label");
 		//labelInput91.for = iddiv + "Configuration_Showlocation";
-		labelInput91.appendChild(document.createTextNode("Yes "));
-		configDiv.appendChild(labelInput91);
-		var input92 = document.createElement("input");
+		labelInput91.append(document.createTextNode("Yes "));
+		configDiv.append(labelInput91);
+		var input92 = $create("input");
 		input92.type = "radio";
 		input92.id = iddiv + "Configuration_Showlocation_No";
 		input92.name = iddiv + "Configuration_Showlocation";
 		if (this.showlocation == false) input92.checked = "checked";
-		configDiv.appendChild(input92);
-		var labelInput92 = document.createElement("label");
+		configDiv.append(input92);
+		var labelInput92 = $create("label");
 		//labelInput92.for = iddiv + "Configuration_Showlocation";
-		labelInput92.appendChild(document.createTextNode("No "));
-		configDiv.appendChild(labelInput92);
+		labelInput92.append(document.createTextNode("No "));
+		configDiv.append(labelInput92);
 		input91.onclick = function() {
 			that.showlocation = true;
 			that.addLocationBar();
@@ -545,31 +545,31 @@ WIND.Map = function (iddiv, options) {
 			that.removeLocationBar();
 		};
 		
-		configDiv.appendChild(document.createElement("br"));
+		configDiv.append($create("br"));
 		// Show Itinerary
-		var label10 = document.createElement("span");
-		label10.appendChild(document.createTextNode("Show itinerary bar: "));
-		configDiv.appendChild(label10);
-		var input101 = document.createElement("input");
+		var label10 = $create("span");
+		label10.append(document.createTextNode("Show itinerary bar: "));
+		configDiv.append(label10);
+		var input101 = $create("input");
 		input101.type = "radio";
 		input101.id = iddiv + "Configuration_Showitinerary_Yes";
 		input101.name = iddiv + "Configuration_Showitinerary";
 		if (this.showitinerary == true) input101.checked = "checked";
-		configDiv.appendChild(input101);
-		var labelInput101 = document.createElement("label");
+		configDiv.append(input101);
+		var labelInput101 = $create("label");
 		//labelInput101.for = iddiv + "Configuration_Showitinerary";
-		labelInput101.appendChild(document.createTextNode("Yes "));
-		configDiv.appendChild(labelInput101);
-		var input102 = document.createElement("input");
+		labelInput101.append(document.createTextNode("Yes "));
+		configDiv.append(labelInput101);
+		var input102 = $create("input");
 		input102.type = "radio";
 		input102.id = iddiv + "Configuration_Showitinerary_No";
 		input102.name = iddiv + "Configuration_Showitinerary";
 		if (this.showitinerary == false) input102.checked = "checked";
-		configDiv.appendChild(input102);
-		var labelInput102 = document.createElement("label");
+		configDiv.append(input102);
+		var labelInput102 = $create("label");
 		//labelInput102.for = iddiv + "Configuration_Showitinerary";
-		labelInput102.appendChild(document.createTextNode("No "));
-		configDiv.appendChild(labelInput102);
+		labelInput102.append(document.createTextNode("No "));
+		configDiv.append(labelInput102);
 		input101.onclick = function() {
 			that.showitinerary = true;
 			that.addItineraryBar();
@@ -579,39 +579,39 @@ WIND.Map = function (iddiv, options) {
 			that.removeItineraryBar();
 		};
 		*/
-        configDiv.appendChild(document.createElement("br"));
-        configDiv.appendChild(document.createElement("br"));
-        /*var button1 = document.createElement("input");
+        configDiv.append($create("br"));
+        configDiv.append($create("br"));
+        /*var button1 = $create("input");
 		button1.type = "button";
 		button1.id = iddiv + "Configuration_OK";
 		button1.name = iddiv + "Configuration_OK";
 		button1.value = "OK";
-		configDiv.appendChild(button1);
+		configDiv.append(button1);
 		*/
         this.eventConfigured = new YAHOO.util.CustomEvent("eventConfigured");
 
         /*
 		button1.onclick = function() {
-			var nomafficheur = document.getElementById(iddiv + "Configuration_Name").value;
+			var nomafficheur = $id(iddiv + "Configuration_Name").value;
 			if ((nomafficheur != null) && (nomafficheur != '')) {
 				that.name = nomafficheur;
-				nameNode.removeChild(nameNode.firstChild);
-				nameNode.appendChild(document.createTextNode(that.name));
+				nameNode.remove(nameNode.firstChild);
+				nameNode.append(document.createTextNode(that.name));
 			}
 			configDiv.style.display = "none";
 			that.eventConfigured.fire(that);
 			//zoom
-			if (document.getElementById(iddiv + "Configuration_Zoomable_Yes").checked) {
+			if ($id(iddiv + "Configuration_Zoomable_Yes").checked) {
 				that.zoomable = true;
 			}
-			else if (document.getElementById(iddiv + "Configuration_Zoomable_No").checked) {
+			else if ($id(iddiv + "Configuration_Zoomable_No").checked) {
 				that.zoomable = false;
 			}
 			
-			if (document.getElementById(iddiv + "Configuration_Pannable_Yes").checked) {
+			if ($id(iddiv + "Configuration_Pannable_Yes").checked) {
 				that.pannable = true;
 			}
-			else if (document.getElementById(iddiv + "Configuration_Pannable_No").checked) {
+			else if ($id(iddiv + "Configuration_Pannable_No").checked) {
 				that.pannable = false;
 			}
 			
@@ -636,12 +636,12 @@ WIND.Map = function (iddiv, options) {
 		*/
         this.eventConfigured.subscribe(this.onConfigure, this, true);
 
-        var button2 = document.createElement("input");
+        var button2 = $create("input");
         button2.type = "button";
         button2.id = iddiv + "Configuration_Cancel";
         button2.name = iddiv + "Configuration_Cancel";
         button2.value = "Close";
-        configDiv.appendChild(button2);
+        configDiv.append(button2);
         button2.onclick = function () {
             configDiv.style.display = "none";
         };
@@ -649,14 +649,18 @@ WIND.Map = function (iddiv, options) {
         if (this.removable) {
             this.eventRemoved = new YAHOO.util.CustomEvent("eventRemoved");
 
-            var removeSpan = document.createElement("img");
-            removeSpan.src = lib_path + "images/close.png";
-            removeSpan.alt = "X";
-            removeSpan.title = "Click to delete";
-            removeSpan.style.backgroundColor = "#EFEFEF";
-            removeSpan.style.cssFloat = "right";
-            removeSpan.style.cursor = "pointer";
-            headerDiv.appendChild(removeSpan);
+            var removeSpan = $create("img")
+                                .attr({
+                                    src: lib_path + "images/close.png",
+                                    alt: 'X',
+                                    title: 'Click to delete'
+                                })
+                                .css({
+                                    backgroundColor: '#EFEFEF',
+                                    cssFloat: 'right',
+                                    cursor: 'pointer'
+                                });
+            headerDiv.append(removeSpan);
             //var that = this;
             removeSpan.onclick = function () {
                 if (confirm("Do you really want to delete it?")) {
@@ -668,21 +672,24 @@ WIND.Map = function (iddiv, options) {
         }
 
         if (this.configurable) {
-            var configureSpan = document.createElement("img");
-            configureSpan.src = lib_path + "images/gear.png";
-            configureSpan.alt = "*";
-            configureSpan.title = "Click to configure";
-            //configureSpan.style.backgroundColor = "#EFEFEF";
-            configureSpan.style.cssFloat = "right";
-            configureSpan.style.marginRight = "10px";
-            configureSpan.style.cursor = "pointer";
-            headerDiv.appendChild(configureSpan);
+            var configureSpan = $create("img")
+                                .attr({
+                                    src: lib_path + "images/gear.png",
+                                    alt: '*',
+                                    title: 'Click to configure'
+                                })
+                                .css({
+                                    marginRight: '10px',
+                                    cssFloat: 'right',
+                                    cursor: 'pointer'
+                                });
+            headerDiv.append(configureSpan);
             configureSpan.onclick = function () {
-                configDiv.style.display = "block";
+                configDiv.css('display', 'block');
             };
         }
 
-        outerDiv.appendChild(headerDiv);
+        outerDiv.append(headerDiv);
 
         if (this.draggable) {
             var dd = new YAHOO.util.DD(iddiv + "Outer");
@@ -694,7 +701,7 @@ WIND.Map = function (iddiv, options) {
 
             this.eventDragged.subscribe(this.onDrag, this, true);
             if (options.parentEl) {
-                var region = document.getElementById(options.parentEl);
+                var region = $id(options.parentEl);
                 //Set left to x minus left 
                 var left = outerDiv.offsetLeft - region.offsetLeft;
                 //Set right to right minus x minus width 
@@ -717,29 +724,29 @@ WIND.Map = function (iddiv, options) {
 	
 	
     if (this.resizable) {
-        var newdiv = document.createElement("div");
+        var newdiv = $create("div");
         newdiv.id = "yui-gen0";
         newdiv.className = "yui-resize-handle yui-resize-handle-r";
-        var newindiv = document.createElement("div");
+        var newindiv = $create("div");
         newindiv.className = "yui-resize-handle-inner-r";
-        newdiv.appendChild(newindiv);
-        outerDiv.appendChild(newdiv);
+        newdiv.append(newindiv);
+        outerDiv.append(newdiv);
 
-        var newdiv = document.createElement("div");
+        var newdiv = $create("div");
         newdiv.id = "yui-gen1";
         newdiv.className = "yui-resize-handle yui-resize-handle-b";
-        var newindiv = document.createElement("div");
+        var newindiv = $create("div");
         newindiv.className = "yui-resize-handle-inner-b";
-        newdiv.appendChild(newindiv);
-        outerDiv.appendChild(newdiv);
+        newdiv.append(newindiv);
+        outerDiv.append(newdiv);
 
-        var newdiv = document.createElement("div");
+        var newdiv = $create("div");
         newdiv.id = "yui-gen2";
         newdiv.className = "yui-resize-handle yui-resize-handle-br";
-        var newindiv = document.createElement("div");
+        var newindiv = $create("div");
         newindiv.className = "yui-resize-handle-inner-br";
-        newdiv.appendChild(newindiv);
-        outerDiv.appendChild(newdiv);
+        newdiv.append(newindiv);
+        outerDiv.append(newdiv);
 
         var dd2 = new YAHOO.util.Resize(iddiv + "Outer", {
             'minWidth': 160,
@@ -795,18 +802,18 @@ WIND.Map = function (iddiv, options) {
     if (typesupport) {
         this.render();
     } else {
-        document.getElementById(this.container).innerHTML = "Don't support map type " + this.baseLayer;
+        $id(this.container).innerHTML = "Don't support map type " + this.baseLayer;
     }
 };
 var id_annot;
 var index_annot = 0;
 WIND.Map.prototype.onDrag = function () {
-    this.top = document.getElementById(this.container + "Outer").offsetTop;
-    this.left = document.getElementById(this.container + "Outer").offsetLeft;
+    this.top = $id(this.container + "Outer").offsetTop;
+    this.left = $id(this.container + "Outer").offsetLeft;
 };
 WIND.Map.prototype.onResize = function () {
-    this.width = document.getElementById(this.container + "Outer").offsetWidth;
-    this.height = document.getElementById(this.container + "Outer").offsetHeight;
+    this.width = $id(this.container + "Outer").offsetWidth;
+    this.height = $id(this.container + "Outer").offsetHeight;
 };
 WIND.Map.prototype.onConfigure = function () {}; // to override
 WIND.Map.prototype.onRemove = function () {}; // to override
@@ -1002,54 +1009,67 @@ WIND.Map.prototype.removeKeyboardControl = function () {
 
 WIND.Map.prototype.addZoomControl = function () {
     if (this.zoomControl == null) {
-        var zodiv = document.createElement('div');
-        zodiv.style.position = 'absolute';
-        zodiv.style.top = '60px';
-        zodiv.style.right = '10px';
-        zodiv.style.zIndex = 10;
+        var zodiv = $create('div')
+                        .css({
+                            position: 'absolute',
+                            top: '60px',
+                            right: '10px',
+                            zIndex: '10'
+                        });
         var mm = this;
-        var p1 = document.createElement('p');
-        var zoomInButton = document.createElement('input');
-        zoomInButton.type = 'button';
-        zoomInButton.value = '+';
-        zoomInButton.style.fontSize = '20px';
-        zoomInButton.style.border = '#80FE80 1px solid';
-        zoomInButton.style.backgroundColor = '#80FE80';
-        zoomInButton.style.height = '30px';
-        zoomInButton.style.width = '30px';
-        zoomInButton.style.cursor = 'pointer';
+        var p1 = $create('p');
+        var zoomInButton = $create('input')
+                                .css({
+                                    fontSize: '20px',
+                                    border: '#80FE80 1px solid',
+                                    backgroundColor: '#80FE80',
+                                    height: '30px',
+                                    width: '30px',
+                                    cursor: 'pointer'
+                                })
+                                .attr({
+                                    type: 'button',
+                                    value: '+'
+                                });
         zoomInButton.onclick = function () {
             mm.zoomIn();
         };
-        p1.appendChild(zoomInButton);
-        zodiv.appendChild(p1);
+        p1.append(zoomInButton);
+        zodiv.append(p1);
 
-        var p2 = document.createElement('p');
-        var zoomOutButton = document.createElement('input');
-        zoomOutButton.type = 'button';
-        zoomOutButton.value = '-';
-        zoomOutButton.style.fontSize = '20px';
-        zoomOutButton.style.border = '#80FE80 1px solid';
-        zoomOutButton.style.backgroundColor = '#80FE80';
-        zoomOutButton.style.height = '30px';
-        zoomOutButton.style.width = '30px';
-        zoomOutButton.style.cursor = 'pointer';
+        var p2 = $create('p');
+        var zoomOutButton = $create('input')
+                                .css({
+                                    fontSize: '20px',
+                                    border: '#80FE80 1px solid',
+                                    backgroundColor: '#80FE80',
+                                    height: '30px',
+                                    width: '30px',
+                                    cursor: 'pointer'
+                                })
+                                .attr({
+                                    type: 'button',
+                                    value: '-'
+                                });
         zoomOutButton.onclick = function () {
             mm.zoomOut();
         };
-        p2.appendChild(zoomOutButton);
-        zodiv.appendChild(p2);
-        //document.body.appendChild(zodiv);
-        document.getElementById(this.container + "Outer").appendChild(zodiv);
+        p2.append(zoomOutButton);
+        zodiv.append(p2);
+        //document.body.append(zodiv);
+        $id(this.container + "Outer").append(zodiv);
         this.zoomControl = zodiv;
-    } else this.zoomControl.style.visibility = "visible";
+    } else {
+        this.zoomControl.css('visibility', 'visible');
+    }
 };
 
 WIND.Map.prototype.removeZoomControl = function () {
-    //if (this.zoomControl != null) document.body.removeChild(this.zoomControl);
-    if (this.zoomControl != null)
-        this.zoomControl.style.visibility = "hidden";
-    //document.getElementById(this.container + "Outer").removeChild(this.zoomControl);
+    //if (this.zoomControl != null) document.body.remove(this.zoomControl);
+    if (this.zoomControl != null) {
+        this.zoomControl.css('visibility', 'hidden');
+    }
+    //$id(this.container + "Outer").remove(this.zoomControl);
 };
 /**
  Zoom in on the map.
@@ -1093,57 +1113,61 @@ WIND.Map.prototype.zoomToExtent = function (mps) {
 };
 WIND.Map.prototype.addSwitcher = function () {
     if (this.switcher == null) {
-        var swdiv = document.createElement('div');
-        swdiv.style.position = 'absolute';
-        swdiv.style.top = '42px';
-        swdiv.style.left = '2px';
-        swdiv.style.border = '#B0B0B0 1px solid';
-        swdiv.style.backgroundColor = '#FFFFFF';
-        swdiv.style.zIndex = 10;
-        swdiv.style.display = 'none';
-        swdiv.style.textAlign = 'left';
+        var swdiv = $create('div') 
+                        .css({
+                            position: 'absolute',
+                            top: '42px',
+                            left: '2px',
+                            border: '#B0B0B0 1px solid',
+                            backgroundColor: '#FFFFFF',
+                            zIndex: 10,
+                            display: 'none',
+                            textAlign: 'left'
+                        });
         var mm = this;
         for (var i = 0; i < this.typeList.length; i++) {
             if (!this.typeList[i].startsWith("IGN")) {
-                var radioObj = document.createElement("input");
-                radioObj.setAttribute("type", "radio");
+                var radioObj = $create("input")
+                                    .attr("type", "radio");
                 if (this.baseLayer == this.typeList[i]) {
-                    radioObj.checked = true;
+                    radioObj.attr("checked", true); 
                 }
-                radioObj.setAttribute("name", "layerchoice");
-                radioObj.setAttribute("value", this.typeList[i]);
+                radioObj.attr({
+                    name: 'layerchoice',
+                    value: value
+                });
                 radioObj.onclick = function () {
                     if (mm.ignLayersDiv) mm.ignLayersDiv.style.display = 'none';
                     mm.changeBaseLayer(this.value);
 
                 };
-                swdiv.appendChild(radioObj);
-                swdiv.appendChild(document.createTextNode(this.typeList[i]));
-                swdiv.appendChild(document.createElement("br"));
+                swdiv.append(radioObj);
+                swdiv.append(document.createTextNode(this.typeList[i]));
+                swdiv.append($create("br"));
             } else if (!this.ignLayersDiv) {
-                var radioObj = document.createElement("input");
-                radioObj.setAttribute("type", "radio");
+                var radioObj = $create("input");
+                radioObj.css("type", "radio");
                 if (this.baseLayer == this.typeList[i]) {
                     radioObj.checked = true;
                 }
-                radioObj.setAttribute("name", "layerchoice");
-                radioObj.setAttribute("value", "IGN Maps");
-                swdiv.appendChild(radioObj);
-                swdiv.appendChild(document.createTextNode("IGN Maps"));
-                swdiv.appendChild(document.createElement("br"));
-                var ignDiv = document.createElement("div");
+                radioObj.css("name", "layerchoice");
+                radioObj.css("value", "IGN Maps");
+                swdiv.append(radioObj);
+                swdiv.append(document.createTextNode("IGN Maps"));
+                swdiv.append($create("br"));
+                var ignDiv = $create("div");
                 ignDiv.style.position = 'relative';
                 ignDiv.style.left = '5px';
                 if (radioObj.checked) ignDiv.style.display = 'block';
                 else ignDiv.style.display = 'none';
-                var checkboxObj = document.createElement("input");
-                checkboxObj.setAttribute("type", "checkbox");
-                checkboxObj.setAttribute("value", this.typeList[i]);
+                var checkboxObj = $create("input");
+                checkboxObj.css("type", "checkbox");
+                checkboxObj.css("value", this.typeList[i]);
                 checkboxObj.checked = true;
-                ignDiv.appendChild(checkboxObj);
-                ignDiv.appendChild(document.createTextNode(this.typeList[i]));
-                ignDiv.appendChild(document.createElement("br"));
-                swdiv.appendChild(ignDiv);
+                ignDiv.append(checkboxObj);
+                ignDiv.append(document.createTextNode(this.typeList[i]));
+                ignDiv.append($create("br"));
+                swdiv.append(ignDiv);
                 this.ignLayersDiv = ignDiv;
                 radioObj.onclick = function () {
                     mm.ignLayersDiv.style.display = 'block';
@@ -1163,15 +1187,15 @@ WIND.Map.prototype.addSwitcher = function () {
 
                 };
             } else {
-                var checkboxObj = document.createElement("input");
-                checkboxObj.setAttribute("type", "checkbox");
-                checkboxObj.setAttribute("value", this.typeList[i]);
+                var checkboxObj = $create("input");
+                checkboxObj.css("type", "checkbox");
+                checkboxObj.css("value", this.typeList[i]);
                 checkboxObj.checked = false;
                 /*if (this.typeList[i] == "IGN Route" || this.typeList[i] == "IGN Satellite")
 					checkboxObj.checked = true;*/
-                this.ignLayersDiv.appendChild(checkboxObj);
-                this.ignLayersDiv.appendChild(document.createTextNode(this.typeList[i]));
-                this.ignLayersDiv.appendChild(document.createElement("br"));
+                this.ignLayersDiv.append(checkboxObj);
+                this.ignLayersDiv.append(document.createTextNode(this.typeList[i]));
+                this.ignLayersDiv.append($create("br"));
                 var myLayer;
                 checkboxObj.onclick = function () {
                     for (var i = 0; i < mm.olMap.layers.length; i++) {
@@ -1185,21 +1209,28 @@ WIND.Map.prototype.addSwitcher = function () {
                 };
             }
         }
-        //document.body.appendChild(swdiv);
-        document.getElementById(this.container + "Outer").appendChild(swdiv);
-        var layerButtonDiv = document.createElement('div');
-        layerButtonDiv.style.position = 'absolute';
-        layerButtonDiv.style.top = '21px';
-        layerButtonDiv.style.left = '2px';
-        layerButtonDiv.style.border = '#B0B0B0 1px solid';
-        layerButtonDiv.style.backgroundColor = '#FFFFFF';
-        layerButtonDiv.style.zIndex = 10;
-        var layerButton = document.createElement('input');
-        layerButton.type = 'button';
-        layerButton.value = 'Layers';
-        layerButton.style.border = '#B0B0B0 1px solid';
-        layerButton.style.backgroundColor = '#FFFFFF';
-        layerButton.style.cursor = 'pointer';
+        //document.body.append(swdiv);
+        $id(this.container + "Outer").append(swdiv);
+        var layerButtonDiv = $create('div')
+                                    .css({
+                                        position: 'absolute',
+                                        top: '21px',
+                                        left: '2px',
+                                        border: '#B0B0B0 1px solid',
+                                        backgroundColor: '#FFFFFF',
+                                        zIndex: 10
+                                    });
+        
+        var layerButton = $create('input')
+                                .css({
+                                    border: '#B0B0B0 1px solid',
+                                    backgroundColor: '#FFFFFF',
+                                    cursor: 'pointer'
+                                })
+                                .attr({
+                                    type: 'button',
+                                    value: 'Layers'
+                                });
         layerButton.onclick = function () {
             if (swdiv.style.display == 'none') {
                 swdiv.style.display = 'block';
@@ -1211,9 +1242,9 @@ WIND.Map.prototype.addSwitcher = function () {
                 layerButton.style.color = '#000000';
             }
         };
-        layerButtonDiv.appendChild(layerButton);
-        //document.body.appendChild(layerButtonDiv);
-        document.getElementById(this.container + "Outer").appendChild(layerButtonDiv);
+        layerButtonDiv.append(layerButton);
+        //document.body.append(layerButtonDiv);
+        $id(this.container + "Outer").append(layerButtonDiv);
         this.switcher = swdiv;
         this.switcherButton = layerButtonDiv;
     } else {
@@ -1223,11 +1254,11 @@ WIND.Map.prototype.addSwitcher = function () {
 };
 WIND.Map.prototype.removeSwitcher = function () {
     if (this.switcher != null) {
-        //document.body.removeChild(this.switcherButton);
-        //document.getElementById(this.container + "Outer").removeChild(this.switcherButton);
+        //document.body.remove(this.switcherButton);
+        //$id(this.container + "Outer").remove(this.switcherButton);
         this.switcherButton.style.visibility = "hidden";
-        //document.body.removeChild(this.switcher);
-        //document.getElementById(this.container + "Outer").removeChild(this.switcher);
+        //document.body.remove(this.switcher);
+        //$id(this.container + "Outer").remove(this.switcher);
         this.switcher.style.visibility = "hidden";
     }
 };
@@ -1240,21 +1271,21 @@ Add a toolbar of drawing tools.
  **/
 WIND.Map.prototype.addToolBarLite = function () {
     if (this.toolbar == null) {
-        var headID = document.getElementsByTagName("head")[0];
-        var cssNode = document.createElement('link');
+        var headID = $tag("head")[0];
+        var cssNode = $create('link');
         cssNode.type = 'text/css';
         cssNode.rel = 'stylesheet';
         cssNode.href = lib_path + "/styles/toolbar.css";
         //cssNode.media = 'screen';
-        headID.appendChild(cssNode);
+        headID.append(cssNode);
 
-        var tbdiv = document.createElement('div');
+        var tbdiv = $create('div');
         tbdiv.style.position = 'absolute';
         tbdiv.style.top = '20px';
         tbdiv.style.right = '0px';
         tbdiv.className = "olControlPanel";
         tbdiv.style.zIndex = 10;
-        document.getElementById(this.container + "Outer").appendChild(tbdiv);
+        $id(this.container + "Outer").append(tbdiv);
         this.toolbardiv = tbdiv;
         //this.toolbar = new OpenLayers.Control.EditingToolbar(this.vectorLayer, {'div': this.toolbardiv});
         //, {defaultControl: mousecontrol}
@@ -1343,21 +1374,21 @@ WIND.Map.prototype.addDrawing2ToolBar = function (tool, vl) {
 
 WIND.Map.prototype.addToolBar = function () {
     if (this.toolbar == null) {
-        var headID = document.getElementsByTagName("head")[0];
-        var cssNode = document.createElement('link');
+        var headID = $tag("head")[0];
+        var cssNode = $create('link');
         cssNode.type = 'text/css';
         cssNode.rel = 'stylesheet';
         cssNode.href = lib_path + "/styles/toolbar.css";
         //cssNode.media = 'screen';
-        headID.appendChild(cssNode);
+        headID.append(cssNode);
 
-        var tbdiv = document.createElement('div');
+        var tbdiv = $create('div');
         tbdiv.style.position = 'absolute';
         tbdiv.style.top = '20px';
         tbdiv.style.right = '0px';
         tbdiv.className = "olControlPanel";
         tbdiv.style.zIndex = 10;
-        document.getElementById(this.container + "Outer").appendChild(tbdiv);
+        $id(this.container + "Outer").append(tbdiv);
         this.toolbardiv = tbdiv;
         //this.toolbar = new OpenLayers.Control.EditingToolbar(this.vectorLayer, {'div': this.toolbardiv});
         //, {defaultControl: mousecontrol}
@@ -1395,7 +1426,7 @@ WIND.Map.prototype.addToolBar = function () {
             },
             displayClass: 'olControlDrawFeatureRegularPolygon'
         });
-        var drawRegularPolygonDiv = document.createElement('div');
+        var drawRegularPolygonDiv = $create('div');
         //drawRegularPolygonDiv.id = this.container + "drawRegularPolygonParam";
         drawRegularPolygonDiv.style.position = 'absolute';
         drawRegularPolygonDiv.style.top = '45px';
@@ -1405,49 +1436,49 @@ WIND.Map.prototype.addToolBar = function () {
         drawRegularPolygonDiv.style.display = "none";
         //tbdiv.className = "olControlPanel";
         drawRegularPolygonDiv.style.zIndex = 10;
-        document.getElementById(this.container + "Outer").appendChild(drawRegularPolygonDiv);
-        var ligne1 = document.createElement("p");
-        var span1 = document.createElement("span");
+        $id(this.container + "Outer").append(drawRegularPolygonDiv);
+        var ligne1 = $create("p");
+        var span1 = $create("span");
         span1.innerHTML = "Number of sides: ";
-        ligne1.appendChild(span1);
-        var input1 = document.createElement("input");
+        ligne1.append(span1);
+        var input1 = $create("input");
         input1.type = "text";
         input1.id = this.container + "WIND-draw-Regular-Polygon-polysides";
         input1.value = 4;
-        ligne1.appendChild(input1);
-        drawRegularPolygonDiv.appendChild(ligne1);
-        var ligne2 = document.createElement("p");
-        var span2 = document.createElement("span");
+        ligne1.append(input1);
+        drawRegularPolygonDiv.append(ligne1);
+        var ligne2 = $create("p");
+        var span2 = $create("span");
         span2.innerHTML = "Irregularity: ";
-        ligne2.appendChild(span2);
-        var input2 = document.createElement("input");
+        ligne2.append(span2);
+        var input2 = $create("input");
         input2.type = "checkbox";
         input2.id = this.container + "WIND-draw-Regular-Polygon-irregularpoly";
-        ligne2.appendChild(input2);
-        drawRegularPolygonDiv.appendChild(ligne2);
-        var sbutton1 = document.createElement("input");
+        ligne2.append(input2);
+        drawRegularPolygonDiv.append(ligne2);
+        var sbutton1 = $create("input");
         sbutton1.type = "button";
         sbutton1.value = "OK";
         //sbutton.id = "WIND-draw-Regular-Polygon-irregularpoly";
-        drawRegularPolygonDiv.appendChild(sbutton1);
-        var sbutton2 = document.createElement("input");
+        drawRegularPolygonDiv.append(sbutton1);
+        var sbutton2 = $create("input");
         sbutton2.type = "button";
         sbutton2.value = "Cancel";
-        drawRegularPolygonDiv.appendChild(sbutton2);
+        drawRegularPolygonDiv.append(sbutton2);
         this.drawRegularPolygonDiv = drawRegularPolygonDiv;
         var that = this;
         sbutton1.onclick = function () {
-            var sides = parseInt(document.getElementById(that.container + "WIND-draw-Regular-Polygon-polysides").value);
+            var sides = parseInt($id(that.container + "WIND-draw-Regular-Polygon-polysides").value);
             sides = Math.max(3, isNaN(sides) ? 0 : sides);
             that.drawRegularPolygon.handler.sides = sides;
-            var irregular = document.getElementById(that.container + "WIND-draw-Regular-Polygon-irregularpoly").checked;
+            var irregular = $id(that.container + "WIND-draw-Regular-Polygon-irregularpoly").checked;
             that.drawRegularPolygon.handler.irregular = irregular;
             that.drawRegularPolygonDiv.style.display = "none";
         };
         sbutton2.onclick = function () {
             that.drawRegularPolygonDiv.style.display = "none";
         };
-        /*document.getElementById(this.drawRegularPolygon.div).onclick = function() {
+        /*$id(this.drawRegularPolygon.div).onclick = function() {
 			that.drawRegularPolygonDiv.style.display = "block";
 		};*/
         this.drawRegularPolygon.events.register("activate", this, function () {
@@ -1461,7 +1492,7 @@ WIND.Map.prototype.addToolBar = function () {
             title: "Créer un marqueur",
             displayClass: "olControlInsertIcon"
         });
-        var createMarkerDiv = document.createElement('div');
+        var createMarkerDiv = $create('div');
         //drawRegularPolygonDiv.id = this.container + "drawRegularPolygonParam";
         createMarkerDiv.style.position = 'absolute';
         createMarkerDiv.style.top = '45px';
@@ -1471,61 +1502,61 @@ WIND.Map.prototype.addToolBar = function () {
         createMarkerDiv.style.display = "none";
         //tbdiv.className = "olControlPanel";
         createMarkerDiv.style.zIndex = 10;
-        document.getElementById(this.container + "Outer").appendChild(createMarkerDiv);
-        var ligne1 = document.createElement("p");
-        var span1 = document.createElement("span");
+        $id(this.container + "Outer").append(createMarkerDiv);
+        var ligne1 = $create("p");
+        var span1 = $create("span");
         span1.innerHTML = "URL of icon: ";
-        ligne1.appendChild(span1);
-        var input1 = document.createElement("input");
+        ligne1.append(span1);
+        var input1 = $create("input");
         input1.type = "text";
         input1.size = "50";
         input1.id = this.container + "WIND-create-Marker-Url";
         input1.value = lib_path + "images/marker.png";
-        ligne1.appendChild(input1);
-        createMarkerDiv.appendChild(ligne1);
-        var ligne2 = document.createElement("p");
-        var span2 = document.createElement("span");
+        ligne1.append(input1);
+        createMarkerDiv.append(ligne1);
+        var ligne2 = $create("p");
+        var span2 = $create("span");
         span2.innerHTML = "Size: ";
-        ligne2.appendChild(span2);
-        var selectbox = document.createElement("select");
+        ligne2.append(span2);
+        var selectbox = $create("select");
         selectbox.id = this.container + "WIND-create-Marker-Size";
-        var optnTiny = document.createElement("option");
+        var optnTiny = $create("option");
         optnTiny.text = "Tiny";
         optnTiny.value = 5;
         selectbox.options.add(optnTiny);
-        var optnSmall = document.createElement("option");
+        var optnSmall = $create("option");
         optnSmall.selected = true;
         optnSmall.text = "Small";
         optnSmall.value = 15;
         selectbox.options.add(optnSmall);
-        var optnNormal = document.createElement("option");
+        var optnNormal = $create("option");
         optnNormal.text = "Normal";
         optnNormal.value = 25;
         selectbox.options.add(optnNormal);
-        var optnLarge = document.createElement("option");
+        var optnLarge = $create("option");
         optnLarge.text = "Large";
         optnLarge.value = 35;
         selectbox.options.add(optnLarge);
-        var optnHuge = document.createElement("option");
+        var optnHuge = $create("option");
         optnHuge.text = "Huge";
         optnHuge.value = 45;
         selectbox.options.add(optnHuge);
-        ligne2.appendChild(selectbox);
-        createMarkerDiv.appendChild(ligne2);
-        var sbutton1 = document.createElement("input");
+        ligne2.append(selectbox);
+        createMarkerDiv.append(ligne2);
+        var sbutton1 = $create("input");
         sbutton1.type = "button";
         sbutton1.value = "OK";
-        createMarkerDiv.appendChild(sbutton1);
-        var sbutton2 = document.createElement("input");
+        createMarkerDiv.append(sbutton1);
+        var sbutton2 = $create("input");
         sbutton2.type = "button";
         sbutton2.value = "Cancel";
-        createMarkerDiv.appendChild(sbutton2);
+        createMarkerDiv.append(sbutton2);
         this.createMarkerDiv = createMarkerDiv;
         var that = this;
         sbutton1.onclick = function () {
-            var iconurl = document.getElementById(that.container + "WIND-create-Marker-Url").value;
+            var iconurl = $id(that.container + "WIND-create-Marker-Url").value;
             that.createMarker.iconURL = iconurl;
-            var size = parseInt(document.getElementById(that.container + "WIND-create-Marker-Size").value);
+            var size = parseInt($id(that.container + "WIND-create-Marker-Size").value);
             that.createMarker.size = size;
             that.createMarkerDiv.style.display = "none";
         };
@@ -1569,136 +1600,136 @@ WIND.Map.prototype.addToolBar = function () {
             displayClass: 'olControlFormatFeature',
             onSelect: function (feature) {
                 //selectedFeature = feature;
-                var popupDiv = document.createElement("div");
+                var popupDiv = $create("div");
                 popupDiv.style.fontSize = "12px";
 
                 if ((feature.style == null) || (feature.style.externalGraphic == null)) {
                     //Stroke
-                    var ligne1 = document.createElement("p");
-                    var span11 = document.createElement("span");
+                    var ligne1 = $create("p");
+                    var span11 = $create("span");
                     span11.innerHTML = "Stroke Color: ";
-                    ligne1.appendChild(span11);
-                    var input11 = document.createElement("input");
+                    ligne1.append(span11);
+                    var input11 = $create("input");
                     input11.id = that.container + "WIND-strokecolor";
                     input11.type = "text";
                     input11.size = 10;
                     //input11.value = "dqshdkjqshdkjqshdkjqshkdj";
-                    ligne1.appendChild(input11);
-                    var span12 = document.createElement("span");
+                    ligne1.append(input11);
+                    var span12 = $create("span");
                     span12.innerHTML = " Stroke Width: ";
-                    ligne1.appendChild(span12);
-                    var input12 = document.createElement("select");
+                    ligne1.append(span12);
+                    var input12 = $create("select");
                     input12.id = that.container + "WIND-strokewidth";
                     for (var i = 0; i < 10; i++) {
-                        var optn = document.createElement("option");
+                        var optn = $create("option");
                         if (i == 2) optn.selected = true;
                         else optn.selected = false;
                         optn.text = i;
                         optn.value = i;
                         input12.options.add(optn);
                     }
-                    ligne1.appendChild(input12);
-                    var span13 = document.createElement("span");
+                    ligne1.append(input12);
+                    var span13 = $create("span");
                     span13.innerHTML = " Stroke Opacity: ";
-                    ligne1.appendChild(span13);
-                    var input13 = document.createElement("select");
+                    ligne1.append(span13);
+                    var input13 = $create("select");
                     input13.id = that.container + "WIND-strokeopacity";
-                    var optn = document.createElement("option");
+                    var optn = $create("option");
                     optn.text = 1.0;
                     optn.value = 1.0;
                     input13.options.add(optn);
                     for (var i = 9; i >= 0; i--) {
-                        var optn = document.createElement("option");
+                        var optn = $create("option");
                         optn.text = "0." + i;
                         optn.value = Number("0." + i);
                         input13.options.add(optn);
                     }
-                    ligne1.appendChild(input13);
-                    popupDiv.appendChild(ligne1);
+                    ligne1.append(input13);
+                    popupDiv.append(ligne1);
 
                     // Fill
-                    var ligne2 = document.createElement("p");
-                    var span21 = document.createElement("span");
+                    var ligne2 = $create("p");
+                    var span21 = $create("span");
                     span21.innerHTML = "Fill Color: ";
-                    ligne2.appendChild(span21);
-                    var input21 = document.createElement("input");
+                    ligne2.append(span21);
+                    var input21 = $create("input");
                     input21.id = that.container + "WIND-fillcolor";
                     input21.type = "text";
                     input21.size = 10;
                     input21.value = "EE9900";
-                    ligne2.appendChild(input21);
-                    var span22 = document.createElement("span");
+                    ligne2.append(input21);
+                    var span22 = $create("span");
                     span22.innerHTML = " Fill Opacity: ";
-                    ligne2.appendChild(span22);
-                    var input22 = document.createElement("select");
+                    ligne2.append(span22);
+                    var input22 = $create("select");
                     input22.id = that.container + "WIND-fillopacity";
-                    var optn = document.createElement("option");
+                    var optn = $create("option");
                     optn.text = 1.0;
                     optn.value = 1.0;
                     input22.options.add(optn);
                     for (var i = 9; i >= 0; i--) {
-                        var optn = document.createElement("option");
+                        var optn = $create("option");
                         optn.text = "0." + i;
                         optn.value = Number("0." + i);
                         input22.options.add(optn);
                     }
-                    ligne2.appendChild(input22);
-                    popupDiv.appendChild(ligne2);
+                    ligne2.append(input22);
+                    popupDiv.append(ligne2);
 
                     // Buttons
-                    var sbutton1 = document.createElement("input");
+                    var sbutton1 = $create("input");
                     sbutton1.id = that.container + "updateFeatureButton";
                     sbutton1.type = "button";
                     sbutton1.value = "Update";
-                    popupDiv.appendChild(sbutton1);
+                    popupDiv.append(sbutton1);
                 } else {
                     // Url
-                    var ligne1 = document.createElement("p");
-                    var span1 = document.createElement("span");
+                    var ligne1 = $create("p");
+                    var span1 = $create("span");
                     span1.innerHTML = "URL of icon: ";
-                    ligne1.appendChild(span1);
-                    var input1 = document.createElement("input");
+                    ligne1.append(span1);
+                    var input1 = $create("input");
                     input1.type = "text";
                     input1.size = "50";
                     input1.id = that.container + "WIND-iconurl";
-                    ligne1.appendChild(input1);
-                    popupDiv.appendChild(ligne1);
+                    ligne1.append(input1);
+                    popupDiv.append(ligne1);
                     // Size
-                    var ligne2 = document.createElement("p");
-                    var span2 = document.createElement("span");
+                    var ligne2 = $create("p");
+                    var span2 = $create("span");
                     span2.innerHTML = "Size: ";
-                    ligne2.appendChild(span2);
-                    var selectbox = document.createElement("select");
+                    ligne2.append(span2);
+                    var selectbox = $create("select");
                     selectbox.id = that.container + "WIND-iconsize";
-                    var optnTiny = document.createElement("option");
+                    var optnTiny = $create("option");
                     optnTiny.text = "Tiny";
                     optnTiny.value = 5;
                     selectbox.options.add(optnTiny);
-                    var optnSmall = document.createElement("option");
+                    var optnSmall = $create("option");
                     optnSmall.text = "Small";
                     optnSmall.value = 15;
                     selectbox.options.add(optnSmall);
-                    var optnNormal = document.createElement("option");
+                    var optnNormal = $create("option");
                     optnNormal.text = "Normal";
                     optnNormal.value = 25;
                     selectbox.options.add(optnNormal);
-                    var optnLarge = document.createElement("option");
+                    var optnLarge = $create("option");
                     optnLarge.text = "Large";
                     optnLarge.value = 35;
                     selectbox.options.add(optnLarge);
-                    var optnHuge = document.createElement("option");
+                    var optnHuge = $create("option");
                     optnHuge.text = "Huge";
                     optnHuge.value = 45;
                     selectbox.options.add(optnHuge);
-                    ligne2.appendChild(selectbox);
-                    popupDiv.appendChild(ligne2);
+                    ligne2.append(selectbox);
+                    popupDiv.append(ligne2);
 
                     // Buttons
-                    var sbutton1 = document.createElement("input");
+                    var sbutton1 = $create("input");
                     sbutton1.id = that.container + "updateFeatureButton";
                     sbutton1.type = "button";
                     sbutton1.value = "Update";
-                    popupDiv.appendChild(sbutton1);
+                    popupDiv.append(sbutton1);
                 }
 
                 that.popupDiv = popupDiv;
@@ -1710,31 +1741,31 @@ WIND.Map.prototype.addToolBar = function () {
                 that.selectedFeature = feature;
 
                 if ((feature.style == null) || (feature.style.externalGraphic == null)) {
-                    document.getElementById(that.container + "WIND-strokecolor").value = ((feature.style != null) && (feature.style.strokeColor != null)) ? feature.style.strokeColor : "#0033CC";
-                    document.getElementById(that.container + "WIND-strokewidth").options[((feature.style != null) && (feature.style.strokeWidth != null)) ? feature.style.strokeWidth : 2].selected = true;
-                    document.getElementById(that.container + "WIND-strokeopacity").options[10 - 10 * Number(((feature.style != null) && (feature.style.strokeOpacity != null)) ? feature.style.strokeOpacity : 1)].selected = true;
-                    document.getElementById(that.container + "WIND-fillcolor").value = ((feature.style != null) && (feature.style.fillColor != null)) ? feature.style.fillColor : "#809FFE";
-                    document.getElementById(that.container + "WIND-fillopacity").options[10 - 10 * Number(((feature.style != null) && (feature.style.fillOpacity != null)) ? feature.style.fillOpacity : 0.5)].selected = true;
+                    $id(that.container + "WIND-strokecolor").value = ((feature.style != null) && (feature.style.strokeColor != null)) ? feature.style.strokeColor : "#0033CC";
+                    $id(that.container + "WIND-strokewidth").options[((feature.style != null) && (feature.style.strokeWidth != null)) ? feature.style.strokeWidth : 2].selected = true;
+                    $id(that.container + "WIND-strokeopacity").options[10 - 10 * Number(((feature.style != null) && (feature.style.strokeOpacity != null)) ? feature.style.strokeOpacity : 1)].selected = true;
+                    $id(that.container + "WIND-fillcolor").value = ((feature.style != null) && (feature.style.fillColor != null)) ? feature.style.fillColor : "#809FFE";
+                    $id(that.container + "WIND-fillopacity").options[10 - 10 * Number(((feature.style != null) && (feature.style.fillOpacity != null)) ? feature.style.fillOpacity : 0.5)].selected = true;
                 } else {
-                    document.getElementById(that.container + "WIND-iconurl").value = feature.style.externalGraphic;
-                    document.getElementById(that.container + "WIND-iconsize").options[Math.floor((Number(feature.style.pointRadius) - 5) / 10)].selected = true;
+                    $id(that.container + "WIND-iconurl").value = feature.style.externalGraphic;
+                    $id(that.container + "WIND-iconsize").options[Math.floor((Number(feature.style.pointRadius) - 5) / 10)].selected = true;
                 }
 
-                document.getElementById(that.container + "updateFeatureButton").onclick = function () {
+                $id(that.container + "updateFeatureButton").onclick = function () {
                     if ((feature.style == null) || (feature.style.externalGraphic == null)) {
                         var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        style.strokeColor = document.getElementById(that.container + "WIND-strokecolor").value;
-                        style.strokeWidth = parseInt(document.getElementById(that.container + "WIND-strokewidth").value);
-                        style.strokeOpacity = parseFloat(document.getElementById(that.container + "WIND-strokeopacity").value);
-                        style.fillColor = document.getElementById(that.container + "WIND-fillcolor").value;
-                        style.fillOpacity = parseFloat(document.getElementById(that.container + "WIND-fillopacity").value);
+                        style.strokeColor = $id(that.container + "WIND-strokecolor").value;
+                        style.strokeWidth = parseInt($id(that.container + "WIND-strokewidth").value);
+                        style.strokeOpacity = parseFloat($id(that.container + "WIND-strokeopacity").value);
+                        style.fillColor = $id(that.container + "WIND-fillcolor").value;
+                        style.fillOpacity = parseFloat($id(that.container + "WIND-fillopacity").value);
                         feature.style = style;
                         that.vectorLayers[0].drawFeature(feature);
                         that.olMap.removePopup(feature.popup);
                     } else {
                         var style = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        style.externalGraphic = document.getElementById(that.container + "WIND-iconurl").value;
-                        var mysize = parseInt(document.getElementById(that.container + "WIND-iconsize").value);
+                        style.externalGraphic = $id(that.container + "WIND-iconurl").value;
+                        var mysize = parseInt($id(that.container + "WIND-iconsize").value);
                         style.pointRadius = mysize;
                         style.graphicXOffset = -1 * mysize;
                         style.graphicYOffset = -2 * mysize;
@@ -1887,14 +1918,14 @@ WIND.Map.prototype.removeToolBar = function () {
     if (this.toolbar != null) {
         this.olMap.removeControl(this.toolbar);
         this.toolbar = null;
-        document.getElementById(this.container + "Outer").removeChild(this.toolbardiv);
+        $id(this.container + "Outer").remove(this.toolbardiv);
     }
 };
 WIND.Map.prototype.addLocationBar = function () {
     if (this.locationBar == null) {
-        var lb = document.createElement('div');
+        var lb = $create('div');
         lb.style.position = 'absolute';
-        //lb.style.top = (document.getElementById(this.container).offsetTop + document.getElementById(this.container).offsetHeight) + 'px';
+        //lb.style.top = ($id(this.container).offsetTop + $id(this.container).offsetHeight) + 'px';
         lb.style.bottom = '2px';
         lb.style.left = '2px';
         lb.style.zIndex = 10;
@@ -1902,11 +1933,11 @@ WIND.Map.prototype.addLocationBar = function () {
         var html = "<input type='text' id='lbaddress' size='10'> ";
         html += "<input type='button' id='lbsubmit' value='Search'>";
         lb.innerHTML = html;
-        //document.body.appendChild(lb);
-        document.getElementById(this.container + "Outer").appendChild(lb);
-        document.getElementById('lbsubmit').onclick = function () {
-            if (document.getElementById('lbaddress').value) {
-                var ps = WIND.Map.searchLocation(document.getElementById('lbaddress').value, false);
+        //document.body.append(lb);
+        $id(this.container + "Outer").append(lb);
+        $id('lbsubmit').onclick = function () {
+            if ($id('lbaddress').value) {
+                var ps = WIND.Map.searchLocation($id('lbaddress').value, false);
                 for (var i = 0; i < ps.length; i++)
                     mm.addMarker(new WIND.Map.Marker(ps[i]));
             } else alert("Please entre a location!");
@@ -1915,13 +1946,13 @@ WIND.Map.prototype.addLocationBar = function () {
     } else this.locationBar.style.visibility = "visible";
 };
 WIND.Map.prototype.removeLocationBar = function () {
-    //if (this.locationBar != null) document.body.removeChild(this.locationBar);
+    //if (this.locationBar != null) document.body.remove(this.locationBar);
     if (this.locationBar != null)
         this.locationBar.style.visibility = "hidden";
 };
 WIND.Map.prototype.addItineraryBar = function () {
     if (this.itineraryBar == null) {
-        var ib = document.createElement('div');
+        var ib = $create('div');
         ib.style.position = 'absolute';
         ib.style.bottom = '2px';
         ib.style.right = '2px';
@@ -1931,11 +1962,11 @@ WIND.Map.prototype.addItineraryBar = function () {
         var html = "<input type='text' id='ibitinerary' size='20' value='from:Bayonne to:Dax to:Pau'> route<input type='checkbox' id='itimode'>";
         html += "<input type='button' id='ibsubmit' value='Itinerary'>";
         ib.innerHTML = html;
-        //document.body.appendChild(ib);
-        document.getElementById(this.container + "Outer").appendChild(ib);
-        document.getElementById('ibsubmit').onclick = function () {
-            if (document.getElementById('ibitinerary').value) {
-                var iti = (document.getElementById('ibitinerary').value).split(" ");
+        //document.body.append(ib);
+        $id(this.container + "Outer").append(ib);
+        $id('ibsubmit').onclick = function () {
+            if ($id('ibitinerary').value) {
+                var iti = ($id('ibitinerary').value).split(" ");
                 var places = [];
                 var place = '';
                 for (var i = 0; i < iti.length; i++) {
@@ -1947,7 +1978,7 @@ WIND.Map.prototype.addItineraryBar = function () {
                     places.push(place);
                 }
                 var iti = WIND.Map.searchItinerary(places);
-                if (document.getElementById('itimode').checked)
+                if ($id('itimode').checked)
                     mm.addItinerary(iti, {
                         mode: "route",
                         color: "blue"
@@ -1964,7 +1995,7 @@ WIND.Map.prototype.addItineraryBar = function () {
 };
 WIND.Map.prototype.removeItineraryBar = function () {
     if (this.itineraryBar != null)
-    //document.body.removeChild(this.itineraryBar);
+    //document.body.remove(this.itineraryBar);
         this.itineraryBar.style.visibility = "hidden";
 };
 /**
@@ -2003,7 +2034,7 @@ WIND.Map.prototype.destroy = function () {
     this.locationbar = null;
     this.itinerarybar = null;
 
-    var mapDiv = document.getElementById(this.container + "Outer");
+    var mapDiv = $id(this.container + "Outer");
     if (this.parentEl) {
         var newtab = [];
         for (var i = 0; i < this.parentDocument.viewers.length; i++) {
@@ -2012,8 +2043,8 @@ WIND.Map.prototype.destroy = function () {
             }
         }
         this.parentDocument.viewers = newtab;
-        document.getElementById(this.parentEl).removeChild(mapDiv);
-    } else document.body.removeChild(mapDiv);
+        $id(this.parentEl).remove(mapDiv);
+    } else document.body.remove(mapDiv);
 };
 /**
  Remove the layer from the map.
@@ -2041,9 +2072,9 @@ WIND.Map.prototype.removeLayer = function (layerName) {
             if (radios[i].type == "radio" && radios[i].value == layerName) {
                 var textnode = radios[i].nextSibling;
                 var brnode = textnode.nextSibling;
-                this.switcher.removeChild(radios[i]);
-                this.switcher.removeChild(textnode);
-                this.switcher.removeChild(brnode);
+                this.switcher.remove(radios[i]);
+                this.switcher.remove(textnode);
+                this.switcher.remove(brnode);
                 break;
             }
         }
@@ -2078,38 +2109,38 @@ WIND.Map.prototype.addLayer = function (layerName, isBaseLayer) {
         else if (this.switcher != null) {
             var myselect = this.switcher;
             if (!layerName.startsWith("IGN")) { // layer autre que IGN
-                var radioObj = document.createElement("input");
-                radioObj.setAttribute("type", "radio");
-                radioObj.setAttribute("name", "layerchoice");
-                radioObj.setAttribute("value", layerName);
+                var radioObj = $create("input");
+                radioObj.css("type", "radio");
+                radioObj.css("name", "layerchoice");
+                radioObj.css("value", layerName);
                 radioObj.onclick = function () {
                     mm.changeBaseLayer(this.value);
                     if (mm.ignLayersDiv) mm.ignLayersDiv.style.display = 'none';
                 };
-                myselect.appendChild(radioObj);
-                myselect.appendChild(document.createTextNode(layerName));
-                myselect.appendChild(document.createElement("br"));
+                myselect.append(radioObj);
+                myselect.append(document.createTextNode(layerName));
+                myselect.append($create("br"));
             } else if (!this.ignLayersDiv) {
-                var radioObj = document.createElement("input");
-                radioObj.setAttribute("type", "radio");
-                radioObj.setAttribute("name", "layerchoice");
-                radioObj.setAttribute("value", "IGN Maps");
-                myselect.appendChild(radioObj);
-                myselect.appendChild(document.createTextNode("IGN Maps"));
-                myselect.appendChild(document.createElement("br"));
-                var ignDiv = document.createElement("div");
+                var radioObj = $create("input");
+                radioObj.css("type", "radio");
+                radioObj.css("name", "layerchoice");
+                radioObj.css("value", "IGN Maps");
+                myselect.append(radioObj);
+                myselect.append(document.createTextNode("IGN Maps"));
+                myselect.append($create("br"));
+                var ignDiv = $create("div");
                 ignDiv.style.position = 'relative';
                 ignDiv.style.left = '5px';
                 if (radioObj.checked) ignDiv.style.display = 'block';
                 else ignDiv.style.display = 'none';
-                var checkboxObj = document.createElement("input");
-                checkboxObj.setAttribute("type", "checkbox");
-                checkboxObj.setAttribute("value", layerName);
+                var checkboxObj = $create("input");
+                checkboxObj.css("type", "checkbox");
+                checkboxObj.css("value", layerName);
                 checkboxObj.checked = true;
-                ignDiv.appendChild(checkboxObj);
-                ignDiv.appendChild(document.createTextNode(layerName));
-                ignDiv.appendChild(document.createElement("br"));
-                myselect.appendChild(ignDiv);
+                ignDiv.append(checkboxObj);
+                ignDiv.append(document.createTextNode(layerName));
+                ignDiv.append($create("br"));
+                myselect.append(ignDiv);
                 this.ignLayersDiv = ignDiv;
                 radioObj.onclick = function () {
                     mm.ignLayersDiv.style.display = 'block';
@@ -2128,15 +2159,15 @@ WIND.Map.prototype.addLayer = function (layerName, isBaseLayer) {
 
                 };
             } else {
-                var checkboxObj = document.createElement("input");
-                checkboxObj.setAttribute("type", "checkbox");
-                checkboxObj.setAttribute("value", layerName);
+                var checkboxObj = $create("input");
+                checkboxObj.css("type", "checkbox");
+                checkboxObj.css("value", layerName);
                 checkboxObj.checked = false;
                 /*if (layerName == "IGN Route" || layerName == "IGN Satellite")
 					checkboxObj.checked = true;*/
-                this.ignLayersDiv.appendChild(checkboxObj);
-                this.ignLayersDiv.appendChild(document.createTextNode(layerName));
-                this.ignLayersDiv.appendChild(document.createElement("br"));
+                this.ignLayersDiv.append(checkboxObj);
+                this.ignLayersDiv.append(document.createTextNode(layerName));
+                this.ignLayersDiv.append($create("br"));
                 var myLayer;
                 checkboxObj.onclick = function () {
                     for (var i = 0; i < mm.olMap.layers.length; i++) {
@@ -2719,7 +2750,7 @@ WIND.Map.prototype.render = function () {
 
 	// get id of vector layer
 	vector_layer_id = "OpenLayers_Layer_Vector_31_vroot";
-	var allG = document.getElementsByTagName("g");
+	var allG = $tag("g");
 	for (var g = 0; g < allG.length; g++) {
 		if (allG[g].id.indexOf("OpenLayers_Layer_Vector") != -1 && allG[g].id.indexOf("_vroot") != -1 && allG[g].id.indexOf("RootContainer") == -1) {
 			vector_layer_id = allG[g].id;
@@ -2804,11 +2835,11 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
                                                     });
                                                 } else if (cibleViewer instanceof WIND.Text) {
                                                     //Tricher
-                                                    var textDiv = document.getElementById(cibleViewer.container);
+                                                    var textDiv = $id(cibleViewer.container);
                                                     while (textDiv.firstChild) {
-                                                        textDiv.removeChild(textDiv.firstChild);
+                                                        textDiv.remove(textDiv.firstChild);
                                                     }
-                                                    document.getElementById(cibleViewer.container).innerHTML = "";
+                                                    $id(cibleViewer.container).innerHTML = "";
                                                     cibleViewer.paragraphs = [];
 
                                                     var p = cibleViewer.createParagraph();
@@ -2840,11 +2871,11 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
                                                     });
                                                 } else if (cibleViewer instanceof WIND.Text) {
                                                     //Tricher
-                                                    var textDiv = document.getElementById(cibleViewer.container);
+                                                    var textDiv = $id(cibleViewer.container);
                                                     while (textDiv.firstChild) {
-                                                        textDiv.removeChild(textDiv.firstChild);
+                                                        textDiv.remove(textDiv.firstChild);
                                                     }
-                                                    document.getElementById(cibleViewer.container).innerHTML = "";
+                                                    $id(cibleViewer.container).innerHTML = "";
                                                     cibleViewer.paragraphs = [];
 
                                                     var p = cibleViewer.createParagraph();
@@ -2876,11 +2907,11 @@ OpenLayers.Control.Click = OpenLayers.Class(OpenLayers.Control, {
                                                     });
                                                 } else if (cibleViewer instanceof WIND.Text) {
                                                     //Tricher
-                                                    var textDiv = document.getElementById(cibleViewer.container);
+                                                    var textDiv = $id(cibleViewer.container);
                                                     while (textDiv.firstChild) {
-                                                        textDiv.removeChild(textDiv.firstChild);
+                                                        textDiv.remove(textDiv.firstChild);
                                                     }
-                                                    document.getElementById(cibleViewer.container).innerHTML = "";
+                                                    $id(cibleViewer.container).innerHTML = "";
                                                     cibleViewer.paragraphs = [];
 
                                                     var p = cibleViewer.createParagraph();
@@ -3076,7 +3107,7 @@ WIND.Map.prototype.loadXMLFile = function (url) {
         }
         this.zoomToExtent(this.parts);
     } else {
-        document.getElementById(this.container).innerHTML = "Error: " + url + " " + xhr.status + " " + xhr.statusText;
+        $id(this.container).innerHTML = "Error: " + url + " " + xhr.status + " " + xhr.statusText;
     }
 };
 WIND.Map.prototype.loadRDFFile = function (php, url) {
@@ -3118,7 +3149,7 @@ WIND.Map.prototype.loadRDFFile = function (php, url) {
             this.zoomToExtent(this.parts);
         }
     } else {
-        document.getElementById(this.container).innerHTML = "Error: " + url + " " + xhr.status + " " + xhr.statusText;
+        $id(this.container).innerHTML = "Error: " + url + " " + xhr.status + " " + xhr.statusText;
     }
 };
 WIND.Map.prototype.createSensiblePart = function (geo, options, vl) {
@@ -3407,7 +3438,8 @@ WIND.Map.Part.prototype.zoomWith = function (mp) {
     var feature = new OpenLayers.Feature.Vector(bbox2.toGeometry(), {}, style);
     this.vlayer.addFeatures([feature]);
     var that = this;
-    window.setTimeout(function () {
+
+    setTimeout(function () {
         that.vlayer.removeFeatures([feature]);
     }, 1000);
 };
@@ -3418,9 +3450,12 @@ WIND.Map.Part.prototype.zoomWith = function (mp) {
  part.highlight();
  **/
 WIND.Map.Part.prototype.highlight = function () {
-    this.feature.style.strokeColor = 'green';
-    this.feature.style.strokeWidth = 3;
-    this.feature.style.fillColor = 'blue';
+    var styleParams = {
+        'strokeColor'   : 'green',
+        'strokeWidth'   : '3',
+        'fillColor'     : 'blue'
+    };
+    this.feature.css(styleParams);
 	this.vlayer.redraw();
 };
 WIND.Map.Part.prototype.setFeatureStyle = function (styleString) {

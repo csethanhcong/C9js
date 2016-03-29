@@ -24,14 +24,25 @@ var wind_text = false;
  * Util to query ID,class - addListener
  * without using blablabla
  */
-function $create(tagName, isClosed) {
+function $create(tagName) {
+	var closeTag = ["div", "p", "span", "select", "option"];
+	var isClosed = false;
+
+	closeTag.forEach(function(tag) {
+		if (tagName === tag) {
+			isClosed = true;
+			break;
+		}
+	});
+
 	if (isClosed)
 		return $("<" + tagName + "></" + tagName + ">");
-	else return $("<" + tagName + ">");
+	else 
+		return $("<" + tagName + ">");
 };
 
-function $attrs(id, list) {
-	$.each(list, function(k, v){
+function $attrs(id, listAttr) {
+	$.each(listAttr, function(k, v){
 		id.attr(k, v);
 	});
 	return id;
@@ -791,41 +802,50 @@ WIND.GUI = function (iddiv, options) {
     if ($id(iddiv))
         docDiv = $id(iddiv);
     else {
-        docDiv = document.createElement("div");
-        docDiv.id = iddiv;
+        docDiv = $create("div");
+        docDiv.attr('id', iddiv);
     }
     if (this.title) {
-        var div = document.createElement("div");
-        div.id = this.container + "-applicationTitle";
-        div.style.position = "absolute";
-        div.style.left = "10px";
-        div.style.top = "3px";
-        var p = document.createElement("p");
-        p.style.color = "#3366CC";
-        p.style.fontWeight = "bold";
-        p.style.fontSize = "20px";
-        p.innerHTML = this.title;
-        div.appendChild(p);
-        var p = document.createElement("p");
-        p.style.fontSize = "15px";
-        p.innerHTML = this.description;
-        div.appendChild(p);
-        docDiv.appendChild(div);
+        var div = $create("div")
+        			.attr('id', this.container + "-applicationTitle")
+		        	.css({
+		        		position: 'absolute',
+		        		left: '10px',
+		        		top: '3px'
+		        	});
+        var p = $create("p")
+        			.css({
+			        	color: '#3366CC',
+			        	fontWeight: 'bold',
+			        	fontSize: '20px'
+			        })
+			        .val(this.title);
+        div.append(p);
 
-        var div = document.createElement("div");
-        div.id = this.container + "-applicationFooter";
-        div.style.position = "absolute";
-        div.style.left = "10px";
-        div.style.bottom = "3px";
-        var p = document.createElement("p");
-        p.style.fontSize = "9px";
-        p.style.fontStyle = "italic";
+        var p = $create("p")
+        			.css('fontSize','15px')
+        			.val(this.description);
+        div.append(p);
+        docDiv.append(div);
+
+        var div = $create("div")
+        			.attr('id', this.container + "-applicationFooter")
+		        	.css({
+		        		position: 'absolute',
+		        		left: '10px',
+		        		bottom: '3px'
+		        	});
+        var p = $create("p")
+        			.css({
+        				fontSize: '9px',
+        				fontStyle: 'italic'
+        			});
         if (this.author == null)
-            p.innerHTML = "This application is designed using WINDMash.";
+            p.val('This application is designed using WINDMash.');
         else
-            p.innerHTML = "This application is designed by " + this.author /*+ " using WINDMash."*/ ;
-        div.appendChild(p);
-        docDiv.appendChild(div);
+            p.val('This application is designed by ' + this.author); /*+ " using WINDMash."*/ ;
+        div.append(p);
+        docDiv.append(div);
     }
 };
 WIND.GUI.prototype.createInteraction = function (part, str, reacts) {
@@ -1191,8 +1211,8 @@ createXHR = function () {
 
 /*loadJS = function(url, callback) {
 	var added = false;
-	var heads = document.getElementsByTagName('head');
-	var scripts = document.getElementsByTagName('script');
+	var heads = $tag('head');
+	var scripts = $tag('script');
 	if (heads.length > 0) {
 		var head = heads[0]; 
 		for (var i=0; i<scripts.length; i++) {
@@ -1233,8 +1253,8 @@ createXHR = function () {
 };
 
 removeJS = function(url) {
-	var heads = document.getElementsByTagName('head');
-	var scripts = document.getElementsByTagName('script');
+	var heads = $tag('head');
+	var scripts = $tag('script');
 	if (heads.length > 0) {
 		var head = heads[0]; 
 		for (var i=0; i<scripts.length; i++) {
@@ -1275,7 +1295,7 @@ fixIE = function () {
 
         window.console = {};
         window.console.log = function (message) {
-            var body = document.getElementsByTagName('body')[0];
+            var body = $tag('body')[0];
             var messageDiv = document.createElement('div');
             messageDiv.innerHTML = message;
             body.insertBefore(messageDiv, body.lastChild);
