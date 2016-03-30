@@ -643,7 +643,7 @@ WIND.Map = function (iddiv, options) {
         button2.value = "Close";
         configDiv.append(button2);
         button2.onclick = function () {
-            configDiv.style.display = "none";
+            configDiv.css('display', 'none');
         };
 
         if (this.removable) {
@@ -1056,7 +1056,7 @@ WIND.Map.prototype.addZoomControl = function () {
         };
         p2.append(zoomOutButton);
         zodiv.append(p2);
-        //document.body.append(zodiv);
+        //$tag('body').append(zodiv);
         $id(this.container + "Outer").append(zodiv);
         this.zoomControl = zodiv;
     } else {
@@ -1065,7 +1065,7 @@ WIND.Map.prototype.addZoomControl = function () {
 };
 
 WIND.Map.prototype.removeZoomControl = function () {
-    //if (this.zoomControl != null) document.body.remove(this.zoomControl);
+    //if (this.zoomControl != null) $tag('body').remove(this.zoomControl);
     if (this.zoomControl != null) {
         this.zoomControl.css('visibility', 'hidden');
     }
@@ -1137,7 +1137,7 @@ WIND.Map.prototype.addSwitcher = function () {
                     value: value
                 });
                 radioObj.onclick = function () {
-                    if (mm.ignLayersDiv) mm.ignLayersDiv.style.display = 'none';
+                    if (mm.ignLayersDiv) mm.ignLayersDiv.css('display', 'none');
                     mm.changeBaseLayer(this.value);
 
                 };
@@ -1155,22 +1155,28 @@ WIND.Map.prototype.addSwitcher = function () {
                 swdiv.append(radioObj);
                 swdiv.append(document.createTextNode("IGN Maps"));
                 swdiv.append($create("br"));
-                var ignDiv = $create("div");
-                ignDiv.style.position = 'relative';
-                ignDiv.style.left = '5px';
-                if (radioObj.checked) ignDiv.style.display = 'block';
-                else ignDiv.style.display = 'none';
+                var ignDiv = $create("div")
+                                .css({
+                                    position: 'relative',
+                                    left: '5px'
+                                });
+                if (radioObj.checked) 
+                    ignDiv.css('display', 'block');
+                else 
+                    ignDiv.css('display', 'none');
                 var checkboxObj = $create("input");
-                checkboxObj.css("type", "checkbox");
-                checkboxObj.css("value", this.typeList[i]);
-                checkboxObj.checked = true;
+                checkboxObj.attr({
+                    type: 'checkbox',
+                    value: this.typeList[i],
+                    checked: true
+                });
                 ignDiv.append(checkboxObj);
                 ignDiv.append(document.createTextNode(this.typeList[i]));
                 ignDiv.append($create("br"));
                 swdiv.append(ignDiv);
                 this.ignLayersDiv = ignDiv;
                 radioObj.onclick = function () {
-                    mm.ignLayersDiv.style.display = 'block';
+                    mm.ignLayersDiv.css('display', 'block');
                     mm.changeBaseLayer(this.value);
 
                 };
@@ -1188,9 +1194,11 @@ WIND.Map.prototype.addSwitcher = function () {
                 };
             } else {
                 var checkboxObj = $create("input");
-                checkboxObj.css("type", "checkbox");
-                checkboxObj.css("value", this.typeList[i]);
-                checkboxObj.checked = false;
+                checkboxObj.attr({
+                    type: 'checkbox',
+                    value: this.typeList[i],
+                    checked: false
+                });("type", "checkbox");
                 /*if (this.typeList[i] == "IGN Route" || this.typeList[i] == "IGN Satellite")
 					checkboxObj.checked = true;*/
                 this.ignLayersDiv.append(checkboxObj);
@@ -1209,7 +1217,7 @@ WIND.Map.prototype.addSwitcher = function () {
                 };
             }
         }
-        //document.body.append(swdiv);
+        //$tag('body').append(swdiv);
         $id(this.container + "Outer").append(swdiv);
         var layerButtonDiv = $create('div')
                                     .css({
@@ -1232,34 +1240,38 @@ WIND.Map.prototype.addSwitcher = function () {
                                     value: 'Layers'
                                 });
         layerButton.onclick = function () {
-            if (swdiv.style.display == 'none') {
-                swdiv.style.display = 'block';
-                layerButton.style.backgroundColor = '#B0B0B0';
-                layerButton.style.color = '#FFFFFF';
+            if (swdiv.css('display') == 'none') {
+                swdiv.css('display', 'block');
+                layerButton.css({
+                    backgroundColor: '#B0B0B0',
+                    color: '#FFFFFF'
+                });
             } else {
-                swdiv.style.display = 'none';
-                layerButton.style.backgroundColor = '#FFFFFF';
-                layerButton.style.color = '#000000';
+                swdiv.css('display', 'none');
+                layerButton.css({
+                    backgroundColor: '#FFFFFF',
+                    color: '#000000'
+                });
             }
         };
         layerButtonDiv.append(layerButton);
-        //document.body.append(layerButtonDiv);
+        //$tag('body').append(layerButtonDiv);
         $id(this.container + "Outer").append(layerButtonDiv);
         this.switcher = swdiv;
         this.switcherButton = layerButtonDiv;
     } else {
-        this.switcherButton.style.visibility = "visible";
-        this.switcher.style.visibility = "visible";
+        this.switcherButton.css('visibility', 'visible');
+        this.switcher.css('visibility', 'visible');
     }
 };
 WIND.Map.prototype.removeSwitcher = function () {
     if (this.switcher != null) {
-        //document.body.remove(this.switcherButton);
+        //$tag('body').remove(this.switcherButton);
         //$id(this.container + "Outer").remove(this.switcherButton);
-        this.switcherButton.style.visibility = "hidden";
-        //document.body.remove(this.switcher);
+        this.switcherButton.css('visibility', 'hidden');
+        //$tag('body').remove(this.switcher);
         //$id(this.container + "Outer").remove(this.switcher);
-        this.switcher.style.visibility = "hidden";
+        this.switcher.css('visibility', 'hidden');
     }
 };
 /**
@@ -1272,19 +1284,23 @@ Add a toolbar of drawing tools.
 WIND.Map.prototype.addToolBarLite = function () {
     if (this.toolbar == null) {
         var headID = $tag("head")[0];
-        var cssNode = $create('link');
-        cssNode.type = 'text/css';
-        cssNode.rel = 'stylesheet';
-        cssNode.href = lib_path + "/styles/toolbar.css";
+        var cssNode = $create('link')
+                        .attr({
+                            type: 'text/css',
+                            rel: 'stylesheet',
+                            href: lib_path + "/styles/toolbar.css"
+                        });
         //cssNode.media = 'screen';
         headID.append(cssNode);
 
-        var tbdiv = $create('div');
-        tbdiv.style.position = 'absolute';
-        tbdiv.style.top = '20px';
-        tbdiv.style.right = '0px';
-        tbdiv.className = "olControlPanel";
-        tbdiv.style.zIndex = 10;
+        var tbdiv = $create('div')
+                        .attr({
+                            position: 'absolute',
+                            top: '20px',
+                            right: '0px',
+                            className: 'olControlPanel',
+                            zIndex: '10'
+                        });
         $id(this.container + "Outer").append(tbdiv);
         this.toolbardiv = tbdiv;
         //this.toolbar = new OpenLayers.Control.EditingToolbar(this.vectorLayer, {'div': this.toolbardiv});
@@ -1375,19 +1391,23 @@ WIND.Map.prototype.addDrawing2ToolBar = function (tool, vl) {
 WIND.Map.prototype.addToolBar = function () {
     if (this.toolbar == null) {
         var headID = $tag("head")[0];
-        var cssNode = $create('link');
-        cssNode.type = 'text/css';
-        cssNode.rel = 'stylesheet';
-        cssNode.href = lib_path + "/styles/toolbar.css";
+        var cssNode = $create('link')
+                        .attr({
+                            type: 'text/css',
+                            rel: 'stylesheet',
+                            href: lib_path + "/styles/toolbar.css"
+                        });
         //cssNode.media = 'screen';
         headID.append(cssNode);
 
-        var tbdiv = $create('div');
-        tbdiv.style.position = 'absolute';
-        tbdiv.style.top = '20px';
-        tbdiv.style.right = '0px';
-        tbdiv.className = "olControlPanel";
-        tbdiv.style.zIndex = 10;
+        var tbdiv = $create('div')
+                        .css({
+                            position: 'absolute',
+                            top: '20px',
+                            right: '0px',
+                            className: 'olControlPanel',
+                            zIndex: '10'
+                        });
         $id(this.container + "Outer").append(tbdiv);
         this.toolbardiv = tbdiv;
         //this.toolbar = new OpenLayers.Control.EditingToolbar(this.vectorLayer, {'div': this.toolbardiv});
@@ -1426,148 +1446,191 @@ WIND.Map.prototype.addToolBar = function () {
             },
             displayClass: 'olControlDrawFeatureRegularPolygon'
         });
-        var drawRegularPolygonDiv = $create('div');
+        var drawRegularPolygonDiv = $create('div')
+                                        .css({
+                                            position: 'absolute',
+                                            top: '45px',
+                                            right: '120px',
+                                            padding: '10px',
+                                            backgroundColor: '#EFEFEF',
+                                            display: 'none',
+                                            zIndex: '10'
+                                        });
         //drawRegularPolygonDiv.id = this.container + "drawRegularPolygonParam";
-        drawRegularPolygonDiv.style.position = 'absolute';
-        drawRegularPolygonDiv.style.top = '45px';
-        drawRegularPolygonDiv.style.right = '120px';
-        drawRegularPolygonDiv.style.padding = '10px';
-        drawRegularPolygonDiv.style.backgroundColor = "#EFEFEF";
-        drawRegularPolygonDiv.style.display = "none";
-        //tbdiv.className = "olControlPanel";
-        drawRegularPolygonDiv.style.zIndex = 10;
         $id(this.container + "Outer").append(drawRegularPolygonDiv);
+
         var ligne1 = $create("p");
         var span1 = $create("span");
         span1.innerHTML = "Number of sides: ";
         ligne1.append(span1);
-        var input1 = $create("input");
-        input1.type = "text";
-        input1.id = this.container + "WIND-draw-Regular-Polygon-polysides";
-        input1.value = 4;
+
+        var input1 = $create("input")
+                        .attr({
+                            type: 'text',
+                            id: this.container + "WIND-draw-Regular-Polygon-polysides",
+                            value: '4'
+                        });
         ligne1.append(input1);
         drawRegularPolygonDiv.append(ligne1);
+
         var ligne2 = $create("p");
         var span2 = $create("span");
         span2.innerHTML = "Irregularity: ";
         ligne2.append(span2);
-        var input2 = $create("input");
-        input2.type = "checkbox";
-        input2.id = this.container + "WIND-draw-Regular-Polygon-irregularpoly";
+
+        var input2 = $create("input")
+                        .attr({
+                            type: 'checkbox',
+                            id: this.container + "WIND-draw-Regular-Polygon-irregularpoly"
+                        });
         ligne2.append(input2);
         drawRegularPolygonDiv.append(ligne2);
-        var sbutton1 = $create("input");
-        sbutton1.type = "button";
-        sbutton1.value = "OK";
-        //sbutton.id = "WIND-draw-Regular-Polygon-irregularpoly";
+
+        var sbutton1 = $create("input")
+                            .attr({
+                                type: 'button',
+                                value: 'OK'
+                            });
         drawRegularPolygonDiv.append(sbutton1);
-        var sbutton2 = $create("input");
-        sbutton2.type = "button";
-        sbutton2.value = "Cancel";
+
+        var sbutton2 = $create("input")
+                            .attr({
+                                type: 'button',
+                                value: 'Cancel'
+                            });
         drawRegularPolygonDiv.append(sbutton2);
         this.drawRegularPolygonDiv = drawRegularPolygonDiv;
+
         var that = this;
         sbutton1.onclick = function () {
-            var sides = parseInt($id(that.container + "WIND-draw-Regular-Polygon-polysides").value);
+            var sides = parseInt($id(that.container + "WIND-draw-Regular-Polygon-polysides").attr('value'));
             sides = Math.max(3, isNaN(sides) ? 0 : sides);
             that.drawRegularPolygon.handler.sides = sides;
-            var irregular = $id(that.container + "WIND-draw-Regular-Polygon-irregularpoly").checked;
+            var irregular = $id(that.container + "WIND-draw-Regular-Polygon-irregularpoly").attr('checked');
             that.drawRegularPolygon.handler.irregular = irregular;
-            that.drawRegularPolygonDiv.style.display = "none";
+            that.drawRegularPolygonDiv.css('display', 'none');
         };
         sbutton2.onclick = function () {
-            that.drawRegularPolygonDiv.style.display = "none";
+            that.drawRegularPolygonDiv.css('display', 'none');
         };
         /*$id(this.drawRegularPolygon.div).onclick = function() {
 			that.drawRegularPolygonDiv.style.display = "block";
 		};*/
         this.drawRegularPolygon.events.register("activate", this, function () {
-            this.drawRegularPolygonDiv.style.display = "block";
+            this.drawRegularPolygonDiv.css('display', 'block');
         });
         this.drawRegularPolygon.events.register("deactivate", this, function () {
-            this.drawRegularPolygonDiv.style.display = "none";
+            this.drawRegularPolygonDiv.css('display', 'none');
         });
 
         this.createMarker = new OpenLayers.Control.InsertIcon(this.vectorLayers[0], {
             title: "Créer un marqueur",
             displayClass: "olControlInsertIcon"
         });
-        var createMarkerDiv = $create('div');
-        //drawRegularPolygonDiv.id = this.container + "drawRegularPolygonParam";
-        createMarkerDiv.style.position = 'absolute';
-        createMarkerDiv.style.top = '45px';
-        createMarkerDiv.style.right = '40px';
-        createMarkerDiv.style.padding = '10px';
-        createMarkerDiv.style.backgroundColor = "#EFEFEF";
-        createMarkerDiv.style.display = "none";
-        //tbdiv.className = "olControlPanel";
-        createMarkerDiv.style.zIndex = 10;
+
+        var createMarkerDiv = $create('div')
+                                .css({
+                                    position: 'absolute',
+                                    top: '45px',
+                                    right: '40px',
+                                    padding: '10px',
+                                    backgroundColor: '#EFEFEF',
+                                    display: 'none',
+                                    zIndex: '10'
+                                });
         $id(this.container + "Outer").append(createMarkerDiv);
+
         var ligne1 = $create("p");
         var span1 = $create("span");
         span1.innerHTML = "URL of icon: ";
         ligne1.append(span1);
-        var input1 = $create("input");
-        input1.type = "text";
-        input1.size = "50";
-        input1.id = this.container + "WIND-create-Marker-Url";
-        input1.value = lib_path + "images/marker.png";
+
+        var input1 = $create("input")
+                        .attr({
+                            type: 'text',
+                            size: '50',
+                            id: this.container + "WIND-create-Marker-Url",
+                            value: lib_path + "images/marker.png"
+                        });
         ligne1.append(input1);
         createMarkerDiv.append(ligne1);
+
         var ligne2 = $create("p");
         var span2 = $create("span");
         span2.innerHTML = "Size: ";
         ligne2.append(span2);
+
         var selectbox = $create("select");
         selectbox.id = this.container + "WIND-create-Marker-Size";
-        var optnTiny = $create("option");
-        optnTiny.text = "Tiny";
-        optnTiny.value = 5;
+
+        var optnTiny = $create("option")
+                            .attr({
+                                text: 'Tiny',
+                                value: '5'
+                            });
         selectbox.options.add(optnTiny);
-        var optnSmall = $create("option");
-        optnSmall.selected = true;
-        optnSmall.text = "Small";
-        optnSmall.value = 15;
+
+        var optnSmall = $create("option")
+                            .attr({
+                                selected: 'true',
+                                text: 'Small',
+                                value: '15'
+                            });
         selectbox.options.add(optnSmall);
-        var optnNormal = $create("option");
-        optnNormal.text = "Normal";
-        optnNormal.value = 25;
+
+        var optnNormal = $create("option")
+                            .attr({
+                                text: 'Normal',
+                                value: '25'
+                            });
         selectbox.options.add(optnNormal);
-        var optnLarge = $create("option");
-        optnLarge.text = "Large";
-        optnLarge.value = 35;
+        var optnLarge = $create("option")
+                            .attr({
+                                text: 'Large',
+                                value: '35'
+                            });
         selectbox.options.add(optnLarge);
-        var optnHuge = $create("option");
-        optnHuge.text = "Huge";
-        optnHuge.value = 45;
+
+        var optnHuge = $create("option")
+                            .attr({
+                                text: 'Huge',
+                                value: '45'
+                            });
         selectbox.options.add(optnHuge);
         ligne2.append(selectbox);
         createMarkerDiv.append(ligne2);
-        var sbutton1 = $create("input");
-        sbutton1.type = "button";
-        sbutton1.value = "OK";
+
+        var sbutton1 = $create("input")
+                            .attr({
+                                type: 'button',
+                                value: 'OK'
+                            });
         createMarkerDiv.append(sbutton1);
-        var sbutton2 = $create("input");
-        sbutton2.type = "button";
-        sbutton2.value = "Cancel";
+
+        var sbutton2 = $create("input")
+                            .attr({
+                                type: 'button',
+                                value: 'Cancel'
+                            });
         createMarkerDiv.append(sbutton2);
         this.createMarkerDiv = createMarkerDiv;
+
         var that = this;
         sbutton1.onclick = function () {
-            var iconurl = $id(that.container + "WIND-create-Marker-Url").value;
+            var iconurl = $id(that.container + "WIND-create-Marker-Url").attr('value');
             that.createMarker.iconURL = iconurl;
-            var size = parseInt($id(that.container + "WIND-create-Marker-Size").value);
+            var size = parseInt($id(that.container + "WIND-create-Marker-Size").attr('value'));
             that.createMarker.size = size;
-            that.createMarkerDiv.style.display = "none";
+            that.createMarkerDiv.css('display', 'none');
         };
         sbutton2.onclick = function () {
-            that.createMarkerDiv.style.display = "none";
+            that.createMarkerDiv.css('display', 'none');
         };
         this.createMarker.events.register("activate", this, function () {
-            this.createMarkerDiv.style.display = "block";
+            this.createMarkerDiv.css('display', 'block');
         });
         this.createMarker.events.register("deactivate", this, function () {
-            this.createMarkerDiv.style.display = "none";
+            this.createMarkerDiv.css('display', 'none');
         });
 
         this.reshapeFeature = new OpenLayers.Control.ModifyFeature(this.vectorLayers[0], {
@@ -1600,8 +1663,8 @@ WIND.Map.prototype.addToolBar = function () {
             displayClass: 'olControlFormatFeature',
             onSelect: function (feature) {
                 //selectedFeature = feature;
-                var popupDiv = $create("div");
-                popupDiv.style.fontSize = "12px";
+                var popupDiv = $create("div")
+                                    .css('fontSize', '12px');
 
                 if ((feature.style == null) || (feature.style.externalGraphic == null)) {
                     //Stroke
@@ -1609,39 +1672,55 @@ WIND.Map.prototype.addToolBar = function () {
                     var span11 = $create("span");
                     span11.innerHTML = "Stroke Color: ";
                     ligne1.append(span11);
-                    var input11 = $create("input");
-                    input11.id = that.container + "WIND-strokecolor";
-                    input11.type = "text";
-                    input11.size = 10;
-                    //input11.value = "dqshdkjqshdkjqshdkjqshkdj";
+
+                    var input11 = $create("input")
+                                        .attr({
+                                            id: that.container + "WIND-strokecolor",
+                                            type: 'text',
+                                            size: '10'
+                                        });
                     ligne1.append(input11);
+
                     var span12 = $create("span");
                     span12.innerHTML = " Stroke Width: ";
                     ligne1.append(span12);
-                    var input12 = $create("select");
-                    input12.id = that.container + "WIND-strokewidth";
+
+                    var input12 = $create("select")
+                                        .attr('id', that.container + "WIND-strokewidth");
+
                     for (var i = 0; i < 10; i++) {
                         var optn = $create("option");
-                        if (i == 2) optn.selected = true;
-                        else optn.selected = false;
-                        optn.text = i;
-                        optn.value = i;
+                        if (i == 2) 
+                            optn.selected = true;
+                        else 
+                            optn.selected = false;
+                        optn.attr({
+                                text: i,
+                                value: i
+                            });
                         input12.options.add(optn);
                     }
                     ligne1.append(input12);
+
                     var span13 = $create("span");
                     span13.innerHTML = " Stroke Opacity: ";
                     ligne1.append(span13);
-                    var input13 = $create("select");
-                    input13.id = that.container + "WIND-strokeopacity";
-                    var optn = $create("option");
-                    optn.text = 1.0;
-                    optn.value = 1.0;
+
+                    var input13 = $create("select")
+                                        .attr('id', that.container + "WIND-strokeopacity");
+
+                    var optn = $create("option")
+                                    .attr({
+                                        text: 1.0,
+                                        value: 1.0
+                                    });
                     input13.options.add(optn);
                     for (var i = 9; i >= 0; i--) {
                         var optn = $create("option");
-                        optn.text = "0." + i;
-                        optn.value = Number("0." + i);
+                        optn.attr({
+                                text: "0." + i,
+                                value: Number("0." + i)
+                            });
                         input13.options.add(optn);
                     }
                     ligne1.append(input13);
@@ -1652,35 +1731,47 @@ WIND.Map.prototype.addToolBar = function () {
                     var span21 = $create("span");
                     span21.innerHTML = "Fill Color: ";
                     ligne2.append(span21);
-                    var input21 = $create("input");
-                    input21.id = that.container + "WIND-fillcolor";
-                    input21.type = "text";
-                    input21.size = 10;
-                    input21.value = "EE9900";
+
+                    var input21 = $create("input")
+                                        .attr({
+                                            id: that.container + "WIND-fillcolor",
+                                            type: 'text',
+                                            size: '10',
+                                            value: 'EE9900'
+                                        });
                     ligne2.append(input21);
+
                     var span22 = $create("span");
                     span22.innerHTML = " Fill Opacity: ";
                     ligne2.append(span22);
-                    var input22 = $create("select");
-                    input22.id = that.container + "WIND-fillopacity";
-                    var optn = $create("option");
-                    optn.text = 1.0;
-                    optn.value = 1.0;
+
+                    var input22 = $create("select")
+                                        .attr('id', that.container + "WIND-fillopacity");
+
+                    var optn = $create("option")
+                                    .attr({
+                                        text: '1.0',
+                                        value: '1.0'
+                                    });
                     input22.options.add(optn);
                     for (var i = 9; i >= 0; i--) {
-                        var optn = $create("option");
-                        optn.text = "0." + i;
-                        optn.value = Number("0." + i);
+                        var optn = $create("option")
+                                        .attr({
+                                            text: "0." + i,
+                                            value: Number("0." + i)
+                                        });
                         input22.options.add(optn);
                     }
                     ligne2.append(input22);
                     popupDiv.append(ligne2);
 
                     // Buttons
-                    var sbutton1 = $create("input");
-                    sbutton1.id = that.container + "updateFeatureButton";
-                    sbutton1.type = "button";
-                    sbutton1.value = "Update";
+                    var sbutton1 = $create("input")
+                                        .attr({
+                                            id: that.container + "updateFeatureButton",
+                                            type: 'button',
+                                            value: 'Update'
+                                        });
                     popupDiv.append(sbutton1);
                 } else {
                     // Url
@@ -1688,10 +1779,13 @@ WIND.Map.prototype.addToolBar = function () {
                     var span1 = $create("span");
                     span1.innerHTML = "URL of icon: ";
                     ligne1.append(span1);
-                    var input1 = $create("input");
-                    input1.type = "text";
-                    input1.size = "50";
-                    input1.id = that.container + "WIND-iconurl";
+
+                    var input1 = $create("input")
+                                        .attr({
+                                            id: that.container + "WIND-iconurl",
+                                            type: 'text',
+                                            size: '50'
+                                        });
                     ligne1.append(input1);
                     popupDiv.append(ligne1);
                     // Size
@@ -1699,36 +1793,55 @@ WIND.Map.prototype.addToolBar = function () {
                     var span2 = $create("span");
                     span2.innerHTML = "Size: ";
                     ligne2.append(span2);
+
                     var selectbox = $create("select");
                     selectbox.id = that.container + "WIND-iconsize";
-                    var optnTiny = $create("option");
-                    optnTiny.text = "Tiny";
-                    optnTiny.value = 5;
+
+                    var optnTiny = $create("option")
+                            .attr({
+                                text: 'Tiny',
+                                value: '5'
+                            });
                     selectbox.options.add(optnTiny);
-                    var optnSmall = $create("option");
-                    optnSmall.text = "Small";
-                    optnSmall.value = 15;
+
+                    var optnSmall = $create("option")
+                                        .attr({
+                                            selected: 'true',
+                                            text: 'Small',
+                                            value: '15'
+                                        });
                     selectbox.options.add(optnSmall);
-                    var optnNormal = $create("option");
-                    optnNormal.text = "Normal";
-                    optnNormal.value = 25;
+
+                    var optnNormal = $create("option")
+                                        .attr({
+                                            text: 'Normal',
+                                            value: '25'
+                                        });
                     selectbox.options.add(optnNormal);
-                    var optnLarge = $create("option");
-                    optnLarge.text = "Large";
-                    optnLarge.value = 35;
+                    var optnLarge = $create("option")
+                                        .attr({
+                                            text: 'Large',
+                                            value: '35'
+                                        });
                     selectbox.options.add(optnLarge);
-                    var optnHuge = $create("option");
-                    optnHuge.text = "Huge";
-                    optnHuge.value = 45;
+
+                    var optnHuge = $create("option")
+                                        .attr({
+                                            text: 'Huge',
+                                            value: '45'
+                                        });
                     selectbox.options.add(optnHuge);
+
                     ligne2.append(selectbox);
                     popupDiv.append(ligne2);
 
                     // Buttons
-                    var sbutton1 = $create("input");
-                    sbutton1.id = that.container + "updateFeatureButton";
-                    sbutton1.type = "button";
-                    sbutton1.value = "Update";
+                    var sbutton1 = $create("input")
+                                        .attr({
+                                            id: that.container + "updateFeatureButton",
+                                            type: 'button',
+                                            value: 'Update'
+                                        });
                     popupDiv.append(sbutton1);
                 }
 
@@ -1923,17 +2036,18 @@ WIND.Map.prototype.removeToolBar = function () {
 };
 WIND.Map.prototype.addLocationBar = function () {
     if (this.locationBar == null) {
-        var lb = $create('div');
-        lb.style.position = 'absolute';
-        //lb.style.top = ($id(this.container).offsetTop + $id(this.container).offsetHeight) + 'px';
-        lb.style.bottom = '2px';
-        lb.style.left = '2px';
-        lb.style.zIndex = 10;
+        var lb = $create('div')
+                    .css({
+                        position: 'absolute',
+                        bottom: '2px',
+                        left: '2px',
+                        zIndex: '10'
+                    });
         var mm = this;
         var html = "<input type='text' id='lbaddress' size='10'> ";
         html += "<input type='button' id='lbsubmit' value='Search'>";
         lb.innerHTML = html;
-        //document.body.append(lb);
+
         $id(this.container + "Outer").append(lb);
         $id('lbsubmit').onclick = function () {
             if ($id('lbaddress').value) {
@@ -1943,26 +2057,28 @@ WIND.Map.prototype.addLocationBar = function () {
             } else alert("Please entre a location!");
         };
         this.locationBar = lb;
-    } else this.locationBar.style.visibility = "visible";
+    } else this.locationBar.css('visibility', 'visible');
 };
 WIND.Map.prototype.removeLocationBar = function () {
-    //if (this.locationBar != null) document.body.remove(this.locationBar);
+    //if (this.locationBar != null) $tag('body').remove(this.locationBar);
     if (this.locationBar != null)
-        this.locationBar.style.visibility = "hidden";
+        this.locationBar.css('visibility', 'hidden');
 };
 WIND.Map.prototype.addItineraryBar = function () {
     if (this.itineraryBar == null) {
-        var ib = $create('div');
-        ib.style.position = 'absolute';
-        ib.style.bottom = '2px';
-        ib.style.right = '2px';
-        ib.style.zIndex = 10;
+        var ib = $create('div')
+                        .css({
+                            position: 'absolute',
+                            bottom: '2px',
+                            left: '2px',
+                            zIndex: '10'
+                        });
         var mm = this;
         //var html = "<input type='text' id='ibaddress1' size='10'> <input type='text' id='ibaddress2' size='10'>";
         var html = "<input type='text' id='ibitinerary' size='20' value='from:Bayonne to:Dax to:Pau'> route<input type='checkbox' id='itimode'>";
         html += "<input type='button' id='ibsubmit' value='Itinerary'>";
         ib.innerHTML = html;
-        //document.body.append(ib);
+        //$tag('body').append(ib);
         $id(this.container + "Outer").append(ib);
         $id('ibsubmit').onclick = function () {
             if ($id('ibitinerary').value) {
@@ -1991,12 +2107,12 @@ WIND.Map.prototype.addItineraryBar = function () {
             } else alert("Please entre an itinerary!");
         };
         this.itineraryBar = ib;
-    } else this.itineraryBar.style.visibility = "visible";
+    } else this.itineraryBar.css('visibility', 'visible');
 };
 WIND.Map.prototype.removeItineraryBar = function () {
     if (this.itineraryBar != null)
-    //document.body.remove(this.itineraryBar);
-        this.itineraryBar.style.visibility = "hidden";
+    //$tag('body').remove(this.itineraryBar);
+        this.itineraryBar.css('visibility', 'hidden');
 };
 /**
  Initialize the map.
@@ -2044,7 +2160,7 @@ WIND.Map.prototype.destroy = function () {
         }
         this.parentDocument.viewers = newtab;
         $id(this.parentEl).remove(mapDiv);
-    } else document.body.remove(mapDiv);
+    } else $tag('body').remove(mapDiv);
 };
 /**
  Remove the layer from the map.
@@ -2109,41 +2225,52 @@ WIND.Map.prototype.addLayer = function (layerName, isBaseLayer) {
         else if (this.switcher != null) {
             var myselect = this.switcher;
             if (!layerName.startsWith("IGN")) { // layer autre que IGN
-                var radioObj = $create("input");
-                radioObj.css("type", "radio");
-                radioObj.css("name", "layerchoice");
-                radioObj.css("value", layerName);
+                var radioObj = $create("input")
+                                    .attr({
+                                        type: 'radio',
+                                        name: 'layerchoice',
+                                        value: layerName
+                                    });
                 radioObj.onclick = function () {
                     mm.changeBaseLayer(this.value);
-                    if (mm.ignLayersDiv) mm.ignLayersDiv.style.display = 'none';
+                    if (mm.ignLayersDiv) mm.ignLayersDiv.css('display', 'none');
                 };
                 myselect.append(radioObj);
                 myselect.append(document.createTextNode(layerName));
                 myselect.append($create("br"));
             } else if (!this.ignLayersDiv) {
-                var radioObj = $create("input");
-                radioObj.css("type", "radio");
-                radioObj.css("name", "layerchoice");
-                radioObj.css("value", "IGN Maps");
+                var radioObj = $create("input")
+                                    .attr({
+                                        type: 'radio',
+                                        name: 'layerchoice',
+                                        value: 'IGN Maps'
+                                    });
                 myselect.append(radioObj);
                 myselect.append(document.createTextNode("IGN Maps"));
                 myselect.append($create("br"));
-                var ignDiv = $create("div");
-                ignDiv.style.position = 'relative';
-                ignDiv.style.left = '5px';
-                if (radioObj.checked) ignDiv.style.display = 'block';
-                else ignDiv.style.display = 'none';
-                var checkboxObj = $create("input");
-                checkboxObj.css("type", "checkbox");
-                checkboxObj.css("value", layerName);
+
+                var ignDiv = $create("div")
+                                    .css({
+                                        position: 'relative',
+                                        left: '5px'
+                                    });
+
+                if (radioObj.checked) ignDiv.css('display', 'block');
+                else ignDiv.css('display', 'none');
+                var checkboxObj = $create("input")
+                                        .attr({
+                                            type: 'checkbox',
+                                            value: layerName
+                                        });
                 checkboxObj.checked = true;
                 ignDiv.append(checkboxObj);
                 ignDiv.append(document.createTextNode(layerName));
                 ignDiv.append($create("br"));
+
                 myselect.append(ignDiv);
                 this.ignLayersDiv = ignDiv;
                 radioObj.onclick = function () {
-                    mm.ignLayersDiv.style.display = 'block';
+                    mm.ignLayersDiv.css('display', 'block');
                     mm.changeBaseLayer(this.value);
                 };
                 this.ignBaseLayer = layerName;
@@ -2159,9 +2286,11 @@ WIND.Map.prototype.addLayer = function (layerName, isBaseLayer) {
 
                 };
             } else {
-                var checkboxObj = $create("input");
-                checkboxObj.css("type", "checkbox");
-                checkboxObj.css("value", layerName);
+                var checkboxObj = $create("input")
+                                        .attr({
+                                            type: 'checkbox',
+                                            value: layerName
+                                        });
                 checkboxObj.checked = false;
                 /*if (layerName == "IGN Route" || layerName == "IGN Satellite")
 					checkboxObj.checked = true;*/
@@ -3450,12 +3579,9 @@ WIND.Map.Part.prototype.zoomWith = function (mp) {
  part.highlight();
  **/
 WIND.Map.Part.prototype.highlight = function () {
-    var styleParams = {
-        'strokeColor'   : 'green',
-        'strokeWidth'   : '3',
-        'fillColor'     : 'blue'
-    };
-    this.feature.css(styleParams);
+    this.feature.style.strokeColor = 'green';
+    this.feature.style.strokeWidth = '3';
+    this.feature.style.fillColor = 'blue';
 	this.vlayer.redraw();
 };
 WIND.Map.Part.prototype.setFeatureStyle = function (styleString) {

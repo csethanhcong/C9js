@@ -31,7 +31,6 @@ function $create(tagName) {
 	closeTag.forEach(function(tag) {
 		if (tagName === tag) {
 			isClosed = true;
-			break;
 		}
 	});
 
@@ -49,7 +48,7 @@ function $attrs(id, listAttr) {
 };
 
 function $tag(tagName) {
-	return $("'" + tagName + "'");
+	return $(tagName);
 };
 
 function $id(id) {
