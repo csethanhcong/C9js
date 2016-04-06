@@ -7,3 +7,8 @@
 \contentsline {subsubsection}{\numberline {2.1.2}M\IeC {\d u}c ti\IeC {\^e}u}{4}
 \contentsline {subsubsection}{\numberline {2.1.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{4}
 \contentsline {subsubsection}{\numberline {2.1.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{5}
+\contentsline {subsection}{\numberline {2.2}Global Health Atlas - WHO}{6}
+\contentsline {subsubsection}{\numberline {2.2.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{6}
+\contentsline {subsubsection}{\numberline {2.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{6}
+\contentsline {subsubsection}{\numberline {2.2.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{7}
+\contentsline {subsubsection}{\numberline {2.2.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{8}

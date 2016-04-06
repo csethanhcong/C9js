@@ -47,7 +47,7 @@ Từ năm 2008 Gapminder còn cung cấp các biểu đồ con (sub-graph) thể
 \begin{center}
     \begin{figure}[htp]
     \begin{center}
-     \includegraphics[scale=.5]{image/gapminder}
+     \includegraphics[scale=.4]{image/gapminder}
     \end{center}
     \caption{Đồ thị trực quan dữ liệu Gapminder World}
     \label{refhinh1}
@@ -66,6 +66,67 @@ Dữ liệu đề tài sẽ sử dụng từ Gapminder để đảm bảo nguồ
 Ngoài ra, cách sử dụng các biểu đồ con để hiển thị dữ liệu liên quan của một đối tượng được tương tác giúp người dùng dễ dàng nắm bắt được chính xác các thông tin muốn truyền đạt, tăng tính thân thiện cũng như trải nghiệm người dùng. Áp dụng tính hiệu quả trên, đề tài đề xuất sử dụng cách thể hiện trải nghiệm người dùng (UI/UX) kế thừa các đặc tính của Gapminder World. 
 
 Về thư viện D3.js được sử dụng trong Gapminder World, đây là một thư viện mạnh mẽ tiếp cận dữ liệu dựa trên các thao tác với DOM. D3.js cho phép tái sử dụng các thành phần và trình nhúng (plugin) một cách đơn giản và hiệu quả. Đề tài đề xuất sử dụng D3.js làm thư viện chính để hiện thực thư viện tương tác giữa các đồ thị.
+
+\subsection{Global Health Atlas - WHO}
+\subsubsection{Giới thiệu}
+Trong một môi trường điện tử, WHO’s Communicable Disease Global Atlas được dùng cho việc phân tích và so sánh dữ liệu chuẩn, thống kê các bệnh truyền nhiễm ở các quốc gia, vùng lãnh thổ, và toàn thế giới. Việc phân tích và biểu diễn dữ liệu ngày càng được hỗ trợ tốt hơn thông qua các thông tin về dân số, điều kiện kinh tế xã hội, và các yếu tố môi trường. Với việc làm đó, Atlas có thể biết được những yếu tố gây ra bệnh truyền nhiễm.
+
+\begin{center}
+    \begin{figure}[htp]
+    \begin{center}
+     \includegraphics[scale=.4]{image/globalatlas}
+    \end{center}
+    \caption{Biểu đồ tương tác về mật độ bác sĩ của WHO}
+    \label{refhinh2}
+    \end{figure}
+\end{center}
+
+\subsubsection{Mục tiêu}
+Ban đầu, với mục đích cung cấp những dữ liệu, báo cáo về các bệnh truyền nhiễm chính (sốt rét, HIV/AIDS,..), thì ngày nay Global Atlas của WHO cũng dùng để phân tích, biểu diễn, so sánh dữ liệu từ những vấn đề liên quan đến y tế khác như: mật độ bác sĩ, số lượng người chết do tai nạn giao thông, tuổi thọ trung bình,… 
+
+\subsubsection{Phương pháp}
+Trực quan dữ liệu thành nhiều dạng biểu đồ khác nhau, các biểu đồ có thể tương tác với nhau giúp cho việc nhìn nhận, phân tích, đánh giá thông tin một cách chính xác, đầy đủ.
+
+Ứng dụng bao gồm các thành phần:
+
+\indent \indent \textbullet \ Bảng dữ liệu: được lấy từ database của WHO
+
+\indent \indent \textbullet \ Map: dùng thư viện Google Maps, kết hợp với bảng dữ liệu để tạo ra biểu đồ
+
+\indent \indent \textbullet \ Biểu đồ cột: dựa vào bảng dữ liệu để tạo ra biểu đồ
+
+\indent \indent \textbullet \ Chú thích: phân vùng dữ liệu
+
+Tính năng: ứng dụng hỗ trợ tương tác giữa các biểu đồ, bảng dữ liệu:
+
+\indent \indent \textbullet \ Khi click vào 1 hàng trong bảng dữ liệu, bên map sẽ phóng to đến vùng tương ứng, bên biểu đồ cột sẽ nổi bật cột tương ứng. Các tương tác sẽ được thể hiện tương tự khi click vào các biểu đồ.
+\begin{center}
+    \begin{figure}[htp]
+    \begin{center}
+     \includegraphics[scale=.4]{image/clickatlas}
+    \end{center}
+    \caption{Tương tác khi click vào một hàng trong bảng dữ liệu}
+    \label{refhinh3}
+    \end{figure}
+\end{center}
+\indent \indent \textbullet \ Khi hover lên 1 hàng trong bảng dữ liệu, bên các biểu đồ cũng sẽ được làm nổi bật vùng tương ứng như khi click, nhưng với 1 màu sắc khác (bên map sẽ không phóng to đến vùng tương ứng).
+\begin{center}
+    \begin{figure}[htp]
+    \begin{center}
+     \includegraphics[scale=.4]{image/hoveratlas}
+    \end{center}
+    \caption{Tương tác khi hover lên Map}
+    \label{refhinh4}
+    \end{figure}
+\end{center}
+\subsubsection{Đánh giá}
+Dữ liệu được WHO thu thập trên toàn thế giới, cập nhật theo thời gian, đảm bảo tính chính xác của ứng dụng.
+
+Bên cạnh đó, việc trực quan thành nhiều loại biểu đồ, thể hiện được nhiều cái nhìn khác nhau của dữ liệu giúp đánh giá vấn đề 1 cách đúng đắn, đầy đủ.
+
+Một tính năng khác đó là việc tương tác giữa các giữa các đồ thị giúp người dùng có nhiều cái nhìn từ nguồn dữ liệu, hiểu được thông tin rút trích từ các đồ thị, tăng tính thân thiện, trải nghiệm của người dùng.
+
+Do đó, đề tài đề xuất sử dụng nhiều đồ thị để biểu diễn cho nguồn dữ liệu đầu vào, và sự tương tác giữa các đồ thị.
 
 
 \end{document}
