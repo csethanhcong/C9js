@@ -1,11 +1,11 @@
 /*
  * Web INteraction Design (WIND)
- * Interaction Design API v2.1
+ * Interaction Design API v3.0
  *
- * Copyright (c) 2009-2012 The Nhan LUONG
- * thenhan.luong@iutbayonne.univ-pau.fr
+ * Copyright (c) 2016 windapi
+ * nhan@hcmut.edu.vn
  *
- * $Date: 2015/01/19 $
+ * $Date: 2016/04/08 $
  */
 // Namespace to protect this library from conflicting with external
 /**
@@ -13,119 +13,64 @@
  @namespace WIND
  @author Luong The Nhan <luongthenhan@gmail.com>
  **/
-if (typeof WIND == "undefined" || !WIND) {
-	var WIND = WIND || {};
+if (typeof WIND === "undefined" || !WIND) {
+    var WIND = WIND || {};
 }
 var wind_map = false;
 var wind_timeline = false;
 var wind_text = false;
+var lib_path = "http://erozate.iutbayonne.univ-pau.fr/windapi/lib/";
 
 /**
  * Util to query ID,class - addListener
  * without using blablabla
  */
 function $create(tagName) {
-	var closeTag = ["div", "p", "span", "select", "option"];
-	var isClosed = false;
+    var closeTag = ["div", "p", "span", "select", "option"];
+    var isClosed = false;
 
-	closeTag.forEach(function(tag) {
-		if (tagName === tag) {
-			isClosed = true;
-		}
-	});
+    closeTag.forEach(function (tag) {
+        if (tagName === tag) {
+            isClosed = true;
+        }
+    });
 
-	if (isClosed)
-		return $("<" + tagName + "></" + tagName + ">");
-	else 
-		return $("<" + tagName + ">");
-};
+    if (isClosed)
+        return $("<" + tagName + "></" + tagName + ">");
+    else
+        return $("<" + tagName + ">");
+}
+;
 
 function $attrs(id, listAttr) {
-	$.each(listAttr, function(k, v){
-		id.attr(k, v);
-	});
-	return id;
-};
+    $.each(listAttr, function (k, v) {
+        id.attr(k, v);
+    });
+    return id;
+}
+;
 
 function $tag(tagName) {
-	return $(tagName);
-};
+    return $(tagName);
+}
+;
 
 function $id(id) {
-	return $('#' + id);
-};
+    return $('#' + id);
+}
+;
 
 function $class(className) {
-	return $('.' + className);
-};
+    return $('.' + className);
+}
+;
 
 function $addListener(id, eventType, callBack) {
-	$(id)[eventType](function() { callBack(event); });
-};
-
-// WIND.Annotation2DisplayerProxy = function (el, group, displayer) {
-//     this._displayer = displayer;
-//     this._group = group;
-//     // Init the DDProxy
-//     WIND.Annotation2DisplayerProxy.superclass.constructor.call(this, el, "Annotation2Displayer", {
-//         dragElId: "annotation2DisplayerProxy"
-//     });
-
-//     this.isTarget = false;
-// };
-
-// YAHOO.lang.extend(WIND.Annotation2DisplayerProxy, YAHOO.util.DDProxy, {
-//     startDrag: function (e) {
-//         WIND.Annotation2DisplayerProxy.superclass.startDrag.call(this, e);
-//         var del = this.getDragEl();
-//         var lel = this.getEl();
-//         var innerHTML = "";
-//         var width = 0;
-//         for (var i = 0; i < this._group.annotedObjects.length; i++) {
-//             innerHTML += $id(this._group.annotedObjects[i].object).innerHTML + " ";
-//             width += Number($id(this._group.annotedObjects[i].object).innerHTML.length) * 5 + 4;
-//         }
-//         //del.innerHTML = lel.innerHTML;
-//         del.innerHTML = innerHTML;
-//         this.innerHTML = innerHTML;
-//         del.style.width = (width > 0) ? (width + "px") : "100px";
-//         //del.className = "Text2Drag";
-//     },
-
-//     endDrag: function (e) {},
-//     onDragDrop: function (e, ddTargets) {
-// 		var layerTarget = ddTargets;
-//         var del = this.getDragEl();
-//         var pos = YAHOO.util.Dom.getXY(del);
-//         var dislayerPos = YAHOO.util.Dom.getXY(ddTargets);
-
-//         if (this._displayer.type == "timeline") {
-//             var frise = this._displayer;
-//             var mindate = frise.tl.getBand(0).getMinVisibleDate();
-//             var maxdate = frise.tl.getBand(0).getMaxVisibleDate();
-//             var tlWidth = frise.width;
-//             var computedDate = new Date(Math.round((pos[0] - dislayerPos[0]) * (maxdate - mindate) / tlWidth) + (mindate - new Date(0)));
-//             var parseDateTimeFunction = frise.eventSource._events.getUnit().getParser("iso8601");
-//             var evt = new Timeline.DefaultEventSource.Event({
-//                 //'id': "Event " + this._part.word,
-//                 'id': this.innerHTML,
-//                 'start': computedDate, //parseDateTimeFunction("2000-09-20"), 
-//                 //'end': parseDateTimeFunction("2010-09-20"), 
-//                 //'latestStart': parseDateTimeFunction("2000-09-20"), 
-//                 //'earliestEnd': parseDateTimeFunction("2000-09-20"), 
-//                 'instant': true,
-//                 'text': this.innerHTML, //this._part.word, 
-//                 'description': this.innerHTML //this._part.word
-//             });
-//             frise.eventSource.add(evt);
-//             frise.tl.layout();
-//         }
-//         //var layerPos = YAHOO.util.Dom.getXY(ddTarget.container);
-
-//         //this._WINDMash.addSDLine(this._module, [pos[0]-layerPos[0], pos[1]-layerPos[1]]);
-//         //this._WINDMash.onLayerChanged();
-//     }
-// });
+    $(id)[eventType](function () {
+        callBack(event);
+    });
+}
+;
 
 /** 
  * Create an Interaction object.
@@ -139,7 +84,7 @@ function $addListener(id, eventType, callBack) {
  */
 WIND.Interaction = function (evt, reacts) {
     this.event = evt;
-    if (reacts == null) {
+    if (reacts === null) {
         this.reactions = [];
     } else if (reacts instanceof Array) {
         this.reactions = reacts;
@@ -148,13 +93,13 @@ WIND.Interaction = function (evt, reacts) {
     }
 };
 /** 
-	* Add a reaction object to the Interaction.
-	* @function.
-	* @param {WIND.SystemReaction[]} react - The reaction we want to add to the reaction. It can be either an InternalReaction or ExternalReaction object.
-	* @example var i1 = new WIND.Interaction(e, new Array(react11,react12,react13,react14,react15,react16));
-	var react17 = new WIND.ExternalReaction(annot, "zoom");
-	i1.addReaction(react17);
-*/
+ * Add a reaction object to the Interaction.
+ * @function.
+ * @param {WIND.SystemReaction[]} react - The reaction we want to add to the reaction. It can be either an InternalReaction or ExternalReaction object.
+ * @example var i1 = new WIND.Interaction(e, new Array(react11,react12,react13,react14,react15,react16));
+ var react17 = new WIND.ExternalReaction(annot, "zoom");
+ i1.addReaction(react17);
+ */
 WIND.Interaction.prototype.addReaction = function (react) {
     if (react instanceof Array) {
         for (var i = 0; i < react.length; i++) {
@@ -164,48 +109,23 @@ WIND.Interaction.prototype.addReaction = function (react) {
         this.reactions.push(react);
     }
 };
-// WIND.Interaction.prototype.runReactions_ = function () {
-//     var tmp = this.reactions;
-//     for (var j = 0; j < tmp.length; j++) {
-//         if (tmp[j] instanceof WIND.ExternalReaction) {
-//             var cible;
-//             if (tmp[j].annotationApplied == null) {
-//                 var newtab = new Array();
-//                 var temp2 = tmp[j];
-//                 while (temp2.dependency != null) {
-//                     newtab.push(temp2.dependency);
-//                     temp2 = temp2.dependency;
-//                 }
-//                 for (var i = newtab.length - 1; i > 0; i--) {
-//                     newtab[i - 1].source = newtab[i].raise();
-//                 }
-//                 cible = newtab[0].raise();
-//             } else
-//                 cible = tmp[j].annotationApplied;
-//             if (cible instanceof WIND.Annotation) {
-//                 for (var l = 0; l < cible.annotedObjects.length; l++) {
-//                     cible.annotedObjects[l].callFunction(tmp[j].effect_type, tmp[j].parameters);
-//                 }
-//             }
-//         }
-//     }
-// };
+
 /** 
-	* Activate the interaction.
-	* @function.
-	* @example var i1 = new WIND.Interaction(e, new Array(react11,react12,react13,react14,react15,react16));
-	i1.activate();
-*/
+ * Activate the interaction.
+ * @function.
+ * @example var i1 = new WIND.Interaction(e, new Array(react11,react12,react13,react14,react15,react16));
+ i1.activate();
+ */
 WIND.Interaction.prototype.activate = function () {
     var tmp = this.reactions;
     for (var j = 0; j < tmp.length; j++) {
         //alert("reaction " + j);
         if (tmp[j] instanceof WIND.ExternalReaction) {
             var cible;
-            if (tmp[j].annotationApplied == null) {
+            if (tmp[j].annotationApplied === null) {
                 var newtab = new Array();
                 var temp2 = tmp[j];
-                while (temp2.dependency != null) {
+                while (temp2.dependency !== null) {
                     newtab.push(temp2.dependency);
                     temp2 = temp2.dependency;
                 }
@@ -235,178 +155,168 @@ WIND.Interaction.prototype.activate = function () {
 WIND.UserEvent = function (type) {
     this.type = type;
 };
+
 /** 
-	* Create a SelectEvent object.
-	* @class Create an SelectEvent object.
-	* @constructor
-	* @param {String} evt - Defines the user's action.
-	* @param {WIND.Annotation} annot - The annotation where the event will be triggered.
-	* @example var carte = new WIND.Map('map',{});
-	var anot = carte.createAnnotation("Town",Bayonne","Polygon((1 1,2 2,3 3))");*
-	var evt = new WIND.SelectEvent("click",anot);
-	*/
+ * Create a SelectEvent object.
+ * @class Create an SelectEvent object.
+ * @constructor
+ * @param {String} evt - Defines the user's action.
+ * @param {WIND.Annotation} annot - The annotation where the event will be triggered.
+ * @param {String} rep
+ * @example var carte = new WIND.Map('map',{});
+ var anot = carte.createAnnotation("Town",Bayonne","Polygon((1 1,2 2,3 3))");*
+ var evt = new WIND.SelectEvent("click",anot);
+ */
 WIND.SelectEvent = function (evt, annot, rep) {
     this.event_type = evt;
     this.annotationSelected = annot;
-    if (rep == null)
+    if (rep === null)
         this.target = "all";
     else
         this.target = rep;
 };
+
 WIND.SelectEvent.prototype = new WIND.UserEvent("SelectEvent");
 /** 
-	* Trigger a javascript function when the UserEvent happens.
-	* @function.
-	* @param {Function} callback - The function that will be triggered.
-	* @example var carte = new WIND.Map('map',{});
-	var anot = carte.createAnnotation("Town",Bayonne","Polygon((1 1,2 2,3 3))");*
-	var evt = new WIND.SelectEvent("click",anot);
-	evt.trigger(function(e){});
-*/
+ * Trigger a javascript function when the UserEvent happens.
+ * @function.
+ * @param {Function} callback - The function that will be triggered.
+ * @example var carte = new WIND.Map('map',{});
+ var anot = carte.createAnnotation("Town",Bayonne","Polygon((1 1,2 2,3 3))");*
+ var evt = new WIND.SelectEvent("click",anot);
+ evt.trigger(function(e){});
+ */
 WIND.SelectEvent.prototype.trigger = function (callback) {
     if (this.annotationSelected instanceof Array) {
         var tmpAnnot = this.annotationSelected;
-		var tmpAnnot2;
-		for(var i=0;i<tmpAnnot.length;i++)
-		{
-			tmpAnnot2 = this.annotationSelected[i];
-			for (var ll = 0; ll < tmpAnnot2.annotedObjects.length; ll++) {
-				if(wind_map)
-				{
-					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
+        var tmpAnnot2;
+        for (var i = 0; i < tmpAnnot.length; i++)
+        {
+            tmpAnnot2 = this.annotationSelected[i];
+            for (var ll = 0; ll < tmpAnnot2.annotedObjects.length; ll++) {
+                if (wind_map)
+                {
+                    if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
 
-						$id(vector_layer_id)
-							.delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
-								this.event_type, 
-								function (e) {
-									callback(this);
-								});	
-						/*
-						var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
-							callback(this);
-						}, this, true);
-						*/
-					}
-				}
-				if(wind_text)
-				{
-					if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
-						tmpAnnot2.annotedObjects[ll].css({'text-decoration': 'underline', 'cursor':'pointer'});
-						// tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
-						$id(tmpAnnot2.annotedObjects[ll].object).bind(this.event_type, function(event) {
-							callback(this);
-						});
-						// YAHOO.util.Event.addListener($id(tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
-						// 	callback(this);
-						// }, tmpAnnot2, true);
-					}
-				}
-				// if(wind_timeline){
-				// 	if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
-				// 		if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
-				// 		{
-				// 			var aux = $class("timeline-event-label");
-				// 			for( var j=0; j<aux.length;j++)
-				// 			{
-				// 				if(aux[j].innerHTML==tmpAnnot2.entity)
-				// 				{
-				// 					var element = $id(aux[j].id);
-				// 					var element1 = $id(aux[j].id.replace("label","tape0"));
-				// 				}
-				// 			}
-				// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
-				// 				callback(this);
-				// 			}, this, true);
-				// 			var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
-				// 				callback(this);
-				// 			}, this, true);
-				// 		}
-				// 		else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
-				// 		{
-				// 			if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
-				// 				var aux = $class("timeline-event");
-				// 			else
-				// 				var aux = $class("timeline-event-dot-container");
-				// 			for( var j=0; j<aux.length;j++)
-				// 			{
-				// 				aux[j].id = aux[j].firstChild.innerHTML;
-				// 				if(aux[j].id==tmpAnnot2.entity)
-				// 				{
-				// 					var element = $id(aux[j].id);
-				// 				}
-				// 			}
-				// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
-				// 		}
-				// 	}
-				// }
-			}
-		}
+                        $id(vector_layer_id).delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
+                                this.event_type,
+                                function (e) {
+                                    callback(this);
+                                });
+                    }
+                }
+                if (wind_text) {
+                    if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
+                        tmpAnnot2.annotedObjects[ll].css({'text-decoration': 'underline', 'cursor': 'pointer'});
+                        // tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
+                        $id(tmpAnnot2.annotedObjects[ll].object).bind(this.event_type, function (event) {
+                            callback(this);
+                        });
+                    }
+                }
+                // if(wind_timeline){
+                // 	if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
+                // 		if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
+                // 		{
+                // 			var aux = $class("timeline-event-label");
+                // 			for( var j=0; j<aux.length;j++)
+                // 			{
+                // 				if(aux[j].innerHTML==tmpAnnot2.entity)
+                // 				{
+                // 					var element = $id(aux[j].id);
+                // 					var element1 = $id(aux[j].id.replace("label","tape0"));
+                // 				}
+                // 			}
+                // 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
+                // 				callback(this);
+                // 			}, this, true);
+                // 			var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
+                // 				callback(this);
+                // 			}, this, true);
+                // 		}
+                // 		else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
+                // 		{
+                // 			if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
+                // 				var aux = $class("timeline-event");
+                // 			else
+                // 				var aux = $class("timeline-event-dot-container");
+                // 			for( var j=0; j<aux.length;j++)
+                // 			{
+                // 				aux[j].id = aux[j].firstChild.innerHTML;
+                // 				if(aux[j].id==tmpAnnot2.entity)
+                // 				{
+                // 					var element = $id(aux[j].id);
+                // 				}
+                // 			}
+                // 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
+                // 		}
+                // 	}
+                // }
+            }
+        }
     } else {
-		var tmpAnnot2 = this.annotationSelected;
+        var tmpAnnot2 = this.annotationSelected;
         for (var ll = 0; ll < tmpAnnot2.annotedObjects.length; ll++) {
-			if(wind_map)
-			{
-				if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
+            if (wind_map)
+            {
+                if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Map.Part) {
 
-					$id(vector_layer_id)
-						.delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
-							this.event_type, 
-							function (e) {
-								callback(this);
-							});
-				}
-			}
-			// else if(wind_timeline){
-			// 	if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
-			// 		if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
-			// 		{
-			// 			var aux = $class("timeline-event-label");
-			// 			for( var i=0; i<aux.length;i++)
-			// 			{
-			// 				if(aux[i].innerHTML==tmpAnnot2.entity)
-			// 				{
-			// 					var element = $id(aux[i].id);
-			// 					var element1 = $id(aux[i].id.replace("label","tape0"));
-			// 				}
-			// 			}
-			// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
-			// 				callback(this);
-			// 			}, this, true);
-			// 			var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
-			// 				callback(this);
-			// 			}, this, true);
-			// 		}
-			// 		else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
-			// 		{
-			// 			if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
-			// 				var aux = $class("timeline-event");
-			// 			else
-			// 				var aux = $class("timeline-event-dot-container");
-			// 			for( var i=0; i<aux.length;i++)
-			// 			{
-			// 				aux[i].id = aux[i].firstChild.innerHTML;
-			// 				if(aux[i].id==tmpAnnot2.entity)
-			// 				{
-			// 					var element = $id(aux[i].id);
-			// 				}
-			// 			}
-			// 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
-			// 		}
-			// 	}
-			// }
-			else if(wind_text)
-			{
-				if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
-						tmpAnnot2.annotedObjects[ll].css({'text-decoration': 'underline', 'cursor':'pointer'});
-						// tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
-						$id(tmpAnnot2.annotedObjects[ll].object).bind(this.event_type, function(event) {
-							callback(this);
-						});
-						// YAHOO.util.Event.addListener($id(tmpAnnot2.annotedObjects[ll].object), this.event_type, function (e) {
-						// 	callback(this);
-						// }, this, true);
-				}
-			}
+                    $id(vector_layer_id)
+                            .delegate("path[id='" + tmpAnnot2.annotedObjects[ll].object + "']",
+                                    this.event_type,
+                                    function (e) {
+                                        callback(this);
+                                    });
+                }
+            }
+            // else if(wind_timeline){
+            // 	if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Timeline.Part) {
+            // 		if(tmpAnnot2.annotedObjects[ll].viewer.base=="Simile")
+            // 		{
+            // 			var aux = $class("timeline-event-label");
+            // 			for( var i=0; i<aux.length;i++)
+            // 			{
+            // 				if(aux[i].innerHTML==tmpAnnot2.entity)
+            // 				{
+            // 					var element = $id(aux[i].id);
+            // 					var element1 = $id(aux[i].id.replace("label","tape0"));
+            // 				}
+            // 			}
+            // 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {
+            // 				callback(this);
+            // 			}, this, true);
+            // 			var test1 = YAHOO.util.Event.addListener(element1, this.event_type, function (e) {
+            // 				callback(this);
+            // 			}, this, true);
+            // 		}
+            // 		else if(tmpAnnot2.annotedObjects[ll].viewer.base=="Chap")
+            // 		{
+            // 			if(tmpAnnot2.annotedObjects[ll].starting!=tmpAnnot2.annotedObjects[ll].ending)
+            // 				var aux = $class("timeline-event");
+            // 			else
+            // 				var aux = $class("timeline-event-dot-container");
+            // 			for( var i=0; i<aux.length;i++)
+            // 			{
+            // 				aux[i].id = aux[i].firstChild.innerHTML;
+            // 				if(aux[i].id==tmpAnnot2.entity)
+            // 				{
+            // 					var element = $id(aux[i].id);
+            // 				}
+            // 			}
+            // 			var test = YAHOO.util.Event.addListener(element, this.event_type, function (e) {callback(this);}, this, true);
+            // 		}
+            // 	}
+            // }
+            else if (wind_text)
+            {
+                if (tmpAnnot2.annotedObjects[ll] instanceof WIND.Text.Part) {
+                    tmpAnnot2.annotedObjects[ll].css({'text-decoration': 'underline', 'cursor': 'pointer'});
+                    // tmpAnnot2.annotedObjects[ll].setStyle("text-decoration:underline;cursor:pointer");
+                    $id(tmpAnnot2.annotedObjects[ll].object).bind(this.event_type, function (event) {
+                        callback(this);
+                    });
+                }
+            }
         }
     }
 };
@@ -433,98 +343,98 @@ WIND.InputEvent.prototype = new WIND.UserEvent("InputEvent");
 WIND.InputEvent.prototype.trigger = function (callback) {
     this.event_tool.button.on("checkedChange", function (e1) {
         if (!e1.prevValue) {
-            $id(this.event_tool.parentComponent.container).style.cursor = "url('" + lib_path + "images/crayon.png'), auto";
-            $('"' + this.event_tool.parentComponent.paragraphs[0].object + '"')
-            	.bind('mouseup', function(event) {
-            		alert("click");
-	                //clic sur le bouton Ajouter : mettre dans Georeferenceurs choisis		
-	                var str = null;
-	                if (window.getSelection) {
-	                    str = window.getSelection();
-	                } else if (document.getSelection) {
-	                    str = document.getSelection();
-	                } else {
-	                    str = document.selection.createRange();
-	                }
+            $id(this.event_tool.parentComponent.container).css("cursor", "url('" + lib_path + "images/crayon.png'), auto");
+            $id(this.event_tool.parentComponent.paragraphs[0].object).bind('mouseup', function (event) {
+                alert("click");
+                //clic sur le bouton Ajouter : mettre dans Georeferenceurs choisis		
+                var str = null;
+                if (window.getSelection) {
+                    str = window.getSelection();
+                } else if (document.getSelection) {
+                    str = document.getSelection();
+                } else {
+                    str = document.selection.createRange();
+                }
 
-	                var rang = null;
-	                if (str.getRangeAt) {
-	                    rang = str.getRangeAt(0);
-	                    rang.setStart(str.anchorNode, 0);
-	                    rang.setEnd(str.focusNode, str.focusNode.nodeValue.length);
-	                } else { // Safari!
-	                    rang = document.createRange();
-	                    rang.setStart(str.anchorNode, str.anchorOffset);
-	                    rang.setEnd(str.focusNode, str.focusOffset);
-	                }
+                var rang = null;
+                if (str.getRangeAt) {
+                    rang = str.getRangeAt(0);
+                    rang.setStart(str.anchorNode, 0);
+                    rang.setEnd(str.focusNode, str.focusNode.nodeValue.length);
+                } else { // Safari!
+                    rang = document.createRange();
+                    rang.setStart(str.anchorNode, str.anchorOffset);
+                    rang.setEnd(str.focusNode, str.focusOffset);
+                }
 
-	                var texteselectionne = rang.toString();
-	                //alert("..." + texteselectionne + "...");
-	                if (texteselectionne.endsWith(" ")) texteselectionne = texteselectionne.substring(0, texteselectionne.length - 1);
-	                //alert("..." + texteselectionne + "...");
-	                //alert(texteselectionne);
-	                var debut = -1;
-	                var fin = -1;
+                var texteselectionne = rang.toString();
+                //alert("..." + texteselectionne + "...");
+                if (texteselectionne.endsWith(" "))
+                    texteselectionne = texteselectionne.substring(0, texteselectionne.length - 1);
+                //alert("..." + texteselectionne + "...");
+                //alert(texteselectionne);
+                var debut = -1;
+                var fin = -1;
 
-	                var words = this.event_tool.parentComponent.paragraphs[0].words;
-	                for (var i = 0; i < words.length; i++) {
-	                    if (texteselectionne.startsWith(words[i])) {
-	                        var ok = true;
-	                        debut = i;
-	                        //alert(debut);
-	                        //if (debut >=0) {			
-	                        for (var j = debut; j < words.length; j++) {
-	                            if (texteselectionne.endsWith(words[j])) {
-	                                //alert("day roi: " + words[i]);
-	                                fin = j;
-	                                for (var k = debut; k <= fin; k++) {
-	                                    if (texteselectionne.indexOf(words[k]) == -1) {
-	                                        ok = false;
-	                                        break;
-	                                    }
-	                                }
-	                                break;
-	                            }
-	                        }
-	                        //}
-	                        if (ok) break;
-	                    }
-	                }
+                var words = this.event_tool.parentComponent.paragraphs[0].words;
+                for (var i = 0; i < words.length; i++) {
+                    if (texteselectionne.startsWith(words[i])) {
+                        var ok = true;
+                        debut = i;
+                        //alert(debut);
+                        //if (debut >=0) {			
+                        for (var j = debut; j < words.length; j++) {
+                            if (texteselectionne.endsWith(words[j])) {
+                                //alert("day roi: " + words[i]);
+                                fin = j;
+                                for (var k = debut; k <= fin; k++) {
+                                    if (texteselectionne.indexOf(words[k]) === -1) {
+                                        ok = false;
+                                        break;
+                                    }
+                                }
+                                break;
+                            }
+                        }
+                        //}
+                        if (ok)
+                            break;
+                    }
+                }
 
-	                //alert(debut + " ... " + fin);
-	                //alert(words[debut] + " ... " + words[fin]);
-	                //alert(this.event_tool.parentComponent.container);
-	                var tab = new Array();
-	                if (fin >= debut && debut >= 0) {
-	                    if (confirm('Do you want really to annotate "' + texteselectionne + '" in the text?')) {
-	                        for (var j = debut + 1; j <= fin + 1; j++) {
-	                            $id(this.event_tool.parentComponent.paragraphs[0].object + "_token" + j).css('color', '#008000');
-	                            tab.push(j);
-	                        }
-	                        str.removeAllRanges();
-	                        //var annot = {};
-	                        //annot.entity = texteselectionne;
-	                        //annot.annotedObjects = tab;
+                //alert(debut + " ... " + fin);
+                //alert(words[debut] + " ... " + words[fin]);
+                //alert(this.event_tool.parentComponent.container);
+                var tab = new Array();
+                if (fin >= debut && debut >= 0) {
+                    if (confirm('Do you want really to annotate "' + texteselectionne + '" in the text?')) {
+                        for (var j = debut + 1; j <= fin + 1; j++) {
+                            $id(this.event_tool.parentComponent.paragraphs[0].object + "_token" + j).css('color', '#008000');
+                            tab.push(j);
+                        }
+                        str.removeAllRanges();
+                        //var annot = {};
+                        //annot.entity = texteselectionne;
+                        //annot.annotedObjects = tab;
 
-	                        var annot = this.event_tool.parentComponent.createAnnotation("Place", texteselectionne, 1, debut + 1, fin + 1, null);
-	                        //if (($id("semanticInput").value) && ($id("semanticInput").value != ""))
-	                        //annot.semantics = $id("semanticInput").value;
-	                        //else
-	                        //	annot.semantics = "Place";
-	                        //valeurs.push(annot);
-	                        annot.contains = new Array();
-	                        var rep = new WIND.Representation("text", annot, this.event_tool.parentComponent);
-	                        this.annotationCreated = annot;
-	                        callback(this);
-	                    }
-	                }
-            	});
+                        var annot = this.event_tool.parentComponent.createAnnotation("Place", texteselectionne, 1, debut + 1, fin + 1, null);
+                        //if (($id("semanticInput").value) && ($id("semanticInput").value != ""))
+                        //annot.semantics = $id("semanticInput").value;
+                        //else
+                        //	annot.semantics = "Place";
+                        //valeurs.push(annot);
+                        annot.contains = new Array();
+                        var rep = new WIND.Representation("text", annot, this.event_tool.parentComponent);
+                        this.annotationCreated = annot;
+                        callback(this);
+                    }
+                }
+            });
         } else {
-            $id(this.event_tool.parentComponent.container).style.cursor = "auto";
-            $('"' + this.event_tool.parentComponent.paragraphs[0].object + '"')
-            	.bind('mouseup', function(event) {
-            		// nothing to do here
-            	});
+            $id(this.event_tool.parentComponent.container).css("cursor", "auto");
+            $id(this.event_tool.parentComponent.paragraphs[0].object).bind('mouseup', function (event) {
+                // nothing to do here
+            });
         }
     }, this, true);
 };
@@ -535,7 +445,8 @@ WIND.Tool = function (type) {
 
 
 // Reaction class
-WIND.SystemReaction = function () {};
+WIND.SystemReaction = function () {
+};
 WIND.SystemReaction.prototype.setDependency = function (reac) {
     this.dependency = reac;
 };
@@ -553,19 +464,21 @@ WIND.Projection = function (src, tgt) {
 WIND.Projection.prototype = new WIND.InternalReaction("Projection");
 WIND.Projection.prototype.raise = function () {
     var annot = false;
-    if (this.target.type == "text") {
+    if (this.target.type === "text") {
         // Tricher 
-        if (this.source == null) {
+        if (this.source === null) {
             this.source = this.dependency.result;
         }
         var p;
-        if (this.target.paragraphs.length == 0) p = this.target.createParagraph();
-        else p = this.target.paragraphs[0];
+        if (this.target.paragraphs.length === 0)
+            p = this.target.createParagraph();
+        else
+            p = this.target.paragraphs[0];
         p.setContent(this.source.entity);
         annot = this.target.createAnnotation(this.source.semantics, this.source.entity, 1, 1, this.source.annotedObjects.length);
-    } else if (this.target.type == "map") {
+    } else if (this.target.type === "map") {
         annot = new WIND.Annotation(this.source.semantics, this.source.entity, null);
-        var newtab = new Array();	
+        var newtab = new Array();
         for (var i = 0; i < this.source.annotedObjects.length; i++) {
             if (this.source.annotedObjects[i] instanceof WIND.Map.Part) {
                 newtab.push(this.source.annotedObjects[i]);
@@ -592,175 +505,145 @@ WIND.Calculation = function (src, func, tgt) {
 WIND.Calculation.prototype = new WIND.InternalReaction("Calculation");
 WIND.Calculation.prototype.raise = function () {
     var annot = false;
+    var cibleViewer = this.target;
 
-    if (this.func == "point_of_place") {
-        var xhr = createXHR();
-        var cibleViewer = this.target;
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var results = xhr.responseXML;
-                    if (results.getElementsByTagName("geoname")) {
-                        var pref = results.getElementsByTagName("geoname")[0];
-                        annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Town", pref.getElementsByTagName("name")[0].childNodes[0].nodeValue, null);
+    if (this.func === "point_of_place") {
+        $.ajax({
+            url: lib_path + "php/geonames_get.php?place=" + this.source.entity,
+            method: "GET",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8"
+        }).done(function (results) {
+            if (results.getElementsByTagName("geoname")) {
+                var pref = results.getElementsByTagName("geoname")[0];
+                annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Town", pref.getElementsByTagName("name")[0].childNodes[0].nodeValue, null);
 
-                        var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        mystyle.strokeColor = "#0033CC";
-                        mystyle.fillColor = "#809FFE";
-                        mystyle.fillOpacity = 0.3;
+                var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                mystyle.strokeColor = "#0033CC";
+                mystyle.fillColor = "#809FFE";
+                mystyle.fillOpacity = 0.3;
 
-                        var mappart = new WIND.Map.Part("POINT(" + pref.getElementsByTagName("lng")[0].childNodes[0].nodeValue + " " + pref.getElementsByTagName("lat")[0].childNodes[0].nodeValue + ")", null, mystyle);
-                        mappart.geoname = pref.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-                        mappart.display = false;
+                var mappart = new WIND.Map.Part("POINT(" + pref.getElementsByTagName("lng")[0].childNodes[0].nodeValue + " " + pref.getElementsByTagName("lat")[0].childNodes[0].nodeValue + ")", null, mystyle);
+                mappart.geoname = pref.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+                mappart.display = false;
 
-                        mappart.viewer = cibleViewer;
-                        mappart.vlayer = cibleViewer.vectorLayer;
-                        annot.addSensiblePart(mappart, true);
-
-                    }
-                }
+                mappart.viewer = cibleViewer;
+                mappart.vlayer = cibleViewer.vectorLayer;
+                annot.addSensiblePart(mappart, true);
             }
-        };
-        xhr.open("GET", lib_path + "php/geonames_get.php?place=" + this.source.entity, false);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-        xhr.send(null);
-    } else if (this.func == "geolocation_of_town") {
-        var xhr = createXHR();
-        var cibleViewer = this.target;
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var results = xhr.responseXML;
-                    if (results.getElementsByTagName("geoname")) {
-                        var pref = results.getElementsByTagName("geoname")[0];
-                        annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Town", pref.getElementsByTagName("nom_com")[0].childNodes[0].nodeValue, null);
+        });
+    } else if (this.func === "geolocation_of_town") {
+        $.ajax({
+            url: lib_path + "php/geolocation_of_town.php?place=" + this.source.entity,
+            method: "GET",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8"
+        }).done(function (results) {
+            if (results.getElementsByTagName("geoname")) {
+                var pref = results.getElementsByTagName("geoname")[0];
+                annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Town", pref.getElementsByTagName("nom_com")[0].childNodes[0].nodeValue, null);
 
-                        var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        mystyle.strokeColor = "#0033CC";
-                        mystyle.fillColor = "#809FFE";
-                        mystyle.fillOpacity = 0.3;
+                var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                mystyle.strokeColor = "#0033CC";
+                mystyle.fillColor = "#809FFE";
+                mystyle.fillOpacity = 0.3;
 
-                        var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
-                        mappart.geoname = pref.getElementsByTagName("nom_com")[0].childNodes[0].nodeValue;
-                        mappart.display = false;
+                var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
+                mappart.geoname = pref.getElementsByTagName("nom_com")[0].childNodes[0].nodeValue;
+                mappart.display = false;
 
-                        mappart.viewer = cibleViewer;
-                        mappart.vlayer = cibleViewer.vectorLayer;
-                        annot.addSensiblePart(mappart, true);
+                mappart.viewer = cibleViewer;
+                mappart.vlayer = cibleViewer.vectorLayer;
+                annot.addSensiblePart(mappart, true);
 
-                    }
-                }
             }
-        };
-        xhr.open("GET", lib_path + "php/geolocation_of_town.php?place=" + this.source.entity, false);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-        xhr.send(null);
-    } else if (this.func == "prefecture_of_town") {
-        var xhr = createXHR();
-        var cibleViewer = this.target;
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var results = xhr.responseXML;
-                    if (results.getElementsByTagName("geoname")) {
-                        var pref = results.getElementsByTagName("geoname")[0];
-                        annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Prefecture", pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue, null);
+        });
+    } else if (this.func === "prefecture_of_town") {
+        $.ajax({
+            url: lib_path + "php/prefecture_of_town.php?place=" + this.source.entity,
+            method: "GET",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8"
+        }).done(function (results) {
+            if (results.getElementsByTagName("geoname")) {
+                var pref = results.getElementsByTagName("geoname")[0];
+                annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Prefecture", pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue, null);
 
-                        var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        mystyle.strokeColor = "#0033CC";
-                        mystyle.fillColor = "#809FFE";
-                        mystyle.fillOpacity = 0.3;
+                var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                mystyle.strokeColor = "#0033CC";
+                mystyle.fillColor = "#809FFE";
+                mystyle.fillOpacity = 0.3;
 
-                        var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
-                        mappart.geoname = pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue;
-                        mappart.display = false;
+                var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
+                mappart.geoname = pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue;
+                mappart.display = false;
 
-                        mappart.viewer = cibleViewer;
-                        mappart.vlayer = cibleViewer.vectorLayer;
-                        annot.addSensiblePart(mappart, true);
-                    }
-                }
+                mappart.viewer = cibleViewer;
+                mappart.vlayer = cibleViewer.vectorLayer;
+                annot.addSensiblePart(mappart, true);
             }
-        };
-        xhr.open("GET", lib_path + "php/prefecture_of_town.php?place=" + this.source.entity, false);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-        xhr.send(null);
-    } else if (this.func == "prefecture_of_department") {
-        var xhr = createXHR();
-        var cibleViewer = this.target;
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var results = xhr.responseXML;
-                    if (results.getElementsByTagName("geoname")) {
-                        var pref = results.getElementsByTagName("geoname")[0];
-                        annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Prefecture", pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue, null);
+        });
+    } else if (this.func === "prefecture_of_department") {
+        $.ajax({
+            url: lib_path + "php/prefecture_of_department.php?place=" + this.source.entity,
+            method: "GET",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8"
+        }).done(function (results) {
+            if (results.getElementsByTagName("geoname")) {
+                var pref = results.getElementsByTagName("geoname")[0];
+                annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Prefecture", pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue, null);
 
-                        var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        mystyle.strokeColor = "#0033CC";
-                        mystyle.fillColor = "#809FFE";
-                        mystyle.fillOpacity = 0.3;
+                var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                mystyle.strokeColor = "#0033CC";
+                mystyle.fillColor = "#809FFE";
+                mystyle.fillOpacity = 0.3;
 
-                        var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
-                        mappart.geoname = pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue;
-                        mappart.display = false;
+                var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
+                mappart.geoname = pref.getElementsByTagName("nom_chf_l")[0].childNodes[0].nodeValue;
+                mappart.display = false;
 
-                        mappart.viewer = cibleViewer;
-                        mappart.vlayer = cibleViewer.vectorLayer;
-                        annot.addSensiblePart(mappart, true);
-                    }
-                }
+                mappart.viewer = cibleViewer;
+                mappart.vlayer = cibleViewer.vectorLayer;
+                annot.addSensiblePart(mappart, true);
             }
-        };
-        xhr.open("GET", lib_path + "php/prefecture_of_department.php?place=" + this.source.entity, false);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-        xhr.send(null);
-    } else if (this.func == "department_of_town") {
-        var xhr = createXHR();
-        var cibleViewer = this.target;
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var results = xhr.responseXML;
-                    if (results.getElementsByTagName("geoname")) {
-                        var pref = results.getElementsByTagName("geoname")[0];
-                        annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Department", pref.getElementsByTagName("nom_dept")[0].childNodes[0].nodeValue, null);
+        });
+    } else if (this.func === "department_of_town") {
+        $.ajax({
+            url: lib_path + "php/department_of_town.php?place=" + this.source.entity,
+            method: "GET",
+            contentType: "application/x-www-form-urlencoded; charset=utf-8"
+        }).done(function (results) {
+            if (results.getElementsByTagName("geoname")) {
+                var pref = results.getElementsByTagName("geoname")[0];
+                annot = new WIND.Annotation("http://geotopia.univ-pau.fr/GeotopiaService#Department", pref.getElementsByTagName("nom_dept")[0].childNodes[0].nodeValue, null);
 
-                        var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
-                        mystyle.strokeColor = "#0033CC";
-                        mystyle.fillColor = "#809FFE";
-                        mystyle.fillOpacity = 0.3;
+                var mystyle = OpenLayers.Util.extend({}, OpenLayers.Feature.Vector.style['default']);
+                mystyle.strokeColor = "#0033CC";
+                mystyle.fillColor = "#809FFE";
+                mystyle.fillOpacity = 0.3;
 
-                        var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
-                        mappart.geoname = pref.getElementsByTagName("nom_dept")[0].childNodes[0].nodeValue;
-                        mappart.display = false;
+                var mappart = new WIND.Map.Part(pref.getElementsByTagName("astext")[0].textContent, null, mystyle);
+                mappart.geoname = pref.getElementsByTagName("nom_dept")[0].childNodes[0].nodeValue;
+                mappart.display = false;
 
-                        mappart.viewer = cibleViewer;
-                        mappart.vlayer = cibleViewer.vectorLayer;
-                        annot.addSensiblePart(mappart, true);
-                    }
-                }
+                mappart.viewer = cibleViewer;
+                mappart.vlayer = cibleViewer.vectorLayer;
+                annot.addSensiblePart(mappart, true);
             }
-        };
-        xhr.open("GET", lib_path + "php/department_of_town.php?place=" + this.source.entity, false);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded; charset=utf-8");
-        xhr.send(null);
+        });
     }
 
     this.result = annot;
     return annot;
 };
 /** 
-	* Create an ExternalReaction object.
-	* @class Create an ExternalReaction object.
-	* @constructor
-	* @param {WIND.Annotation} annot - The annotation where the reaction will be occure.
-	* @param {String} func - The function that will occure.
-	* @param {JSON} [params]
-	* @example var carte = new WIND.Map('map',{});
-	var anot = carte.createAnnotation("Town",Bayonne","Polygon((1 1,2 2,3 3))");*
-	var react = new WIND.ExternalReaction(anot,"zoom");
-	*/
+ * Create an ExternalReaction object.
+ * @class Create an ExternalReaction object.
+ * @constructor
+ * @param {WIND.Annotation} annot - The annotation where the reaction will be occure.
+ * @param {String} func - The function that will occure.
+ * @param {JSON} [params]
+ * @example var carte = new WIND.Map('map',{});
+ var anot = carte.createAnnotation("Town",Bayonne","Polygon((1 1,2 2,3 3))");*
+ var react = new WIND.ExternalReaction(anot,"zoom");
+ */
 WIND.ExternalReaction = function (annot, func, params) {
     this.annotationApplied = annot;
     this.effect_type = func;
@@ -773,7 +656,7 @@ WIND.ExternalReaction.prototype = new WIND.SystemReaction();
 
 // Representation class
 WIND.Representation = function (type, annot, component) {
-    if (type == component.type) {
+    if (type === component.type) {
         this.type = type;
         this.annotation = annot;
         this.parentComponent = component;
@@ -790,9 +673,12 @@ WIND.GUI = function (iddiv, options) {
     this.title = null;
     this.description = null;
     if (options) {
-        if (options.author) this.author = options.author;
-        if (options.title) this.title = options.title;
-        if (options.description) this.description = options.description;
+        if (options.author)
+            this.author = options.author;
+        if (options.title)
+            this.title = options.title;
+        if (options.description)
+            this.description = options.description;
     }
     this.reactions = [];
     this.interactions = [];
@@ -806,43 +692,44 @@ WIND.GUI = function (iddiv, options) {
     }
     if (this.title) {
         var div = $create("div")
-        			.attr('id', this.container + "-applicationTitle")
-		        	.css({
-		        		position: 'absolute',
-		        		left: '10px',
-		        		top: '3px'
-		        	});
+                .attr('id', this.container + "-applicationTitle")
+                .css({
+                    position: 'absolute',
+                    left: '10px',
+                    top: '3px'
+                });
         var p = $create("p")
-        			.css({
-			        	color: '#3366CC',
-			        	fontWeight: 'bold',
-			        	fontSize: '20px'
-			        })
-			        .val(this.title);
+                .css({
+                    color: '#3366CC',
+                    fontWeight: 'bold',
+                    fontSize: '20px'
+                })
+                .val(this.title);
         div.append(p);
 
         var p = $create("p")
-        			.css('fontSize','15px')
-        			.val(this.description);
+                .css('fontSize', '15px')
+                .val(this.description);
         div.append(p);
         docDiv.append(div);
 
         var div = $create("div")
-        			.attr('id', this.container + "-applicationFooter")
-		        	.css({
-		        		position: 'absolute',
-		        		left: '10px',
-		        		bottom: '3px'
-		        	});
+                .attr('id', this.container + "-applicationFooter")
+                .css({
+                    position: 'absolute',
+                    left: '10px',
+                    bottom: '3px'
+                });
         var p = $create("p")
-        			.css({
-        				fontSize: '9px',
-        				fontStyle: 'italic'
-        			});
-        if (this.author == null)
-            p.val('This application is designed using WINDMash.');
+                .css({
+                    fontSize: '9px',
+                    fontStyle: 'italic'
+                });
+        if (this.author === null)
+            p.val('This application is designed using WINDAPI.');
         else
-            p.val('This application is designed by ' + this.author); /*+ " using WINDMash."*/ ;
+            p.val('This application is designed by ' + this.author); /*+ " using WINDMash."*/
+        ;
         div.append(p);
         docDiv.append(div);
     }
@@ -876,136 +763,136 @@ WIND.SensiblePart = function (type) {
 };
 WIND.SensiblePart.prototype.callFunction = function (func, params) {
     switch (this.type) {
-    case "text":
-    case "list":
-        switch (func) {
-        case "highlight":
-            this.highlight();
-            break;
-        case "bold":
-            this.bold();
-            break;
-        case "italicize":
-            this.italicize();
-            break;
-        case "underline":
-            this.underline();
-            break;
-        case "blink":
-            this.blink();
-            break;
-        case "setStyleByClass":
-            //var name = func.substring(16, func.length);
-            var param = params[0];
-            this.setStyleByClass(param);
-            break;
-        case "setStyle":
-            var param = params[0];
-            this.setStyle(param);
-            break;
-        case "show":
-            this.show();
-            break;
-        case "hide":
-            this.hide();
-            break;
-        case "setDraggable":
-            var param = params[0];
-            var param1 = params[1];
-            this.setDraggable(param, param1);
-            break;
-        }
-        break;
-    case "map":
-        switch (func) {
-        case "zoom":
-            this.zoomTo();
-            break;
-        case "zoomWith":
-            this.zoomWith(params[0]);
-            break;
-        case "highlight":
-            if (this.viewer.type == "map") {
-                this.highlight();
+        case "text":
+        case "list":
+            switch (func) {
+                case "highlight":
+                    this.highlight();
+                    break;
+                case "bold":
+                    this.bold();
+                    break;
+                case "italicize":
+                    this.italicize();
+                    break;
+                case "underline":
+                    this.underline();
+                    break;
+                case "blink":
+                    this.blink();
+                    break;
+                case "setStyleByClass":
+                    //var name = func.substring(16, func.length);
+                    var param = params[0];
+                    this.setStyleByClass(param);
+                    break;
+                case "setStyle":
+                    var param = params[0];
+                    this.setStyle(param);
+                    break;
+                case "show":
+                    this.show();
+                    break;
+                case "hide":
+                    this.hide();
+                    break;
+                case "setDraggable":
+                    var param = params[0];
+                    var param1 = params[1];
+                    this.setDraggable(param, param1);
+                    break;
             }
             break;
-        case "focus":
-            this.highlight();
-            this.zoomTo();
+        case "map":
+            switch (func) {
+                case "zoom":
+                    this.zoomTo();
+                    break;
+                case "zoomWith":
+                    this.zoomWith(params[0]);
+                    break;
+                case "highlight":
+                    if (this.viewer.type === "map") {
+                        this.highlight();
+                    }
+                    break;
+                case "focus":
+                    this.highlight();
+                    this.zoomTo();
+                    break;
+                case "setFeatureStyle":
+                    //var decor = func.substring(15, func.length);
+                    var decor = params[0];
+                    this.setFeatureStyle(decor);
+                    break;
+                case "show":
+                    this.show();
+                    break;
+                case "hide":
+                    this.hide();
+                    break;
+            }
             break;
-        case "setFeatureStyle":
-            //var decor = func.substring(15, func.length);
-            var decor = params[0];
-            this.setFeatureStyle(decor);
+        case "timeline":
+            switch (func) {
+                case "zoom":
+                    this.zoomTo();
+                    break;
+                case "focus":
+                    this.highlight();
+                    this.zoomTo();
+                    break;
+                case "highlight":
+                    this.highlight();
+                    break;
+            }
             break;
-        case "show":
-            this.show();
+            // Les fonctions de WIND.Calendar.Part
+        case "calendar":
+            if (func === "highlight")
+                this.highlight();
             break;
-        case "hide":
-            this.hide();
+            // Les fonctions de WIND.Photo.Part
+        case "photo":
+            switch (func) {
+                case "color":
+                    this.color(params[0], params[1]);
+                    break;
+                case "focus":
+                    this.focus();
+                    break;
+                case "show":
+                    this.show();
+                    break;
+                case "hide":
+                    this.hide();
+                    break;
+                case "move":
+                    this.move(params[0], params[1]);
+                    break;
+                case "showRestPhoto":
+                    this.showRestPhoto();
+                    break;
+                case "hideRestPhoto":
+                    this.hideRestPhoto(params[0]);
+                    break;
+            }
             break;
-        }
-        break;
-    case "timeline":
-        switch (func) {
-        case "zoom":
-            this.zoomTo();
+            // Les fonctions de WIND.Photo
+        case "photoviewer":
+            if (func === "switchTo")
+                this.switchTo(params[0]);
             break;
-        case "focus":
-            this.highlight();
-            this.zoomTo();
-            break;
-        case "highlight":
-            this.highlight();
-            break;
-        }
-        break;
-        // Les fonctions de WIND.Calendar.Part
-    case "calendar":
-        if (func == "highlight")
-            this.highlight();
-        break;
-        // Les fonctions de WIND.Photo.Part
-    case "photo":
-        switch (func) {
-        case "color":
-            this.color(params[0], params[1]);
-            break;
-        case "focus":
-            this.focus();
-            break;
-        case "show":
-            this.show();
-            break;
-        case "hide":
-            this.hide();
-            break;
-        case "move":
-            this.move(params[0], params[1]);
-            break;
-        case "showRestPhoto":
-            this.showRestPhoto();
-            break;
-        case "hideRestPhoto":
-            this.hideRestPhoto(params[0]);
-            break;
-        }
-        break;
-        // Les fonctions de WIND.Photo
-    case "photoviewer":
-        if (func == "switchTo")
-            this.switchTo(params[0]);
-        break;
-        // Les fonctions de WIND.Popup
-    case "popup":
-        switch (func) {
-        case "show":
-            this.show();
-            break;
-        case "hide":
-            this.hide();
-            break;
-        }
+            // Les fonctions de WIND.Popup
+        case "popup":
+            switch (func) {
+                case "show":
+                    this.show();
+                    break;
+                case "hide":
+                    this.hide();
+                    break;
+            }
     }
 };
 
@@ -1014,37 +901,37 @@ WIND.GUI.prototype.createViewer = function (type, options) {
     this.nbViewers++;
     var vizId = this.container + "_viewer" + this.nbViewers;
     options.parentEl = this.container;
-    if (type == "text") {
+    if (type === "text") {
         var t = new WIND.Text(vizId, options);
         t.parentDocument = this;
         this.viewers.push(t);
         return t;
-    } else if (type == "map") {
-		var m = new WIND.Map(vizId, options);
+    } else if (type === "map") {
+        var m = new WIND.Map(vizId, options);
         m.parentDocument = this;
         this.viewers.push(m);
         return m;
-    } else if (type == "calendar") {
+    } else if (type === "calendar") {
         var c = new WIND.Calendar(vizId, options);
         c.parentDocument = this;
         this.viewers.push(c);
         return c;
-    } else if (type == "timeline") {
+    } else if (type === "timeline") {
         var ti = new WIND.Timeline(vizId, options);
         ti.parentDocument = this;
         this.viewers.push(ti);
         return ti;
-    } else if (type == "list") {
+    } else if (type === "list") {
         var l = new WIND.List(vizId, options);
         l.parentDocument = this;
         this.viewers.push(l);
         return l;
-    } else if (type == "photo") {
+    } else if (type === "photo") {
         var p = new WIND.Photo(vizId, options);
         p.parentDocument = this;
         this.viewers.push(p);
         return p;
-    } else if (type == "video") {
+    } else if (type === "video") {
         var v = new WIND.Video(vizId, options);
         v.parentDocument = this;
         this.viewers.push(v);
@@ -1064,7 +951,7 @@ WIND.GUI.prototype.getValue = function () {
         title: this.title,
         description: (this.description) ? (this.description) : "",
         contain: viewerModules
-    }
+    };
 };
 
 WIND.LiveSensiblePart = function (afficheur, func) {
@@ -1083,7 +970,7 @@ WIND.LiveSensiblePart = function (afficheur, func) {
 WIND.Annotation = function (type, entity, sp) {
     this.semantics = type;
     this.entity = entity;
-    if (sp == null) {
+    if (sp === null) {
         this.annotedObjects = new Array();
     } else {
         if (sp instanceof Array) {
@@ -1116,21 +1003,21 @@ WIND.Popup = function (x, y, div) {
     this.x = x;
     this.y = y;
     this.container = div;
-    var closeDiv = document.createElement('div');
-    closeDiv.style.textAlign = 'right';
-    closeDiv.innerHTML = "<img src='close.gif' onclick='$id(\"" + div + "\").style.visibility = \"hidden\";'>";
-    $id(this.container).appendChild(closeDiv);
+    var $closeDiv = $create("div");
+    $closeDiv.css("textAlign", "right");
+    $closeDiv.html("<img src='close.gif' onclick='$id(\"" + div + "\").style.visibility = \"hidden\";'>");
+    $id(this.container).appendChild($closeDiv);
     this.content = '';
     this.hide();
 };
-WIND.Popup.prototype = new WIND.SensiblePart('popup', this.container);
+WIND.Popup.prototype = new WIND.SensiblePart("popup", this.container);
 WIND.Popup.prototype.setContent = function (text) {
     this.content = text;
-    var textDiv = document.createElement('div');
-    textDiv.id = this.container + 'Content';
-    textDiv.style.padding = '10px';
-    textDiv.innerHTML = text;
-    $id(this.container).appendChild(textDiv);
+    var $textDiv = $create("div");
+    $textDiv.attr("id", this.container + "Content");
+    $textDiv.css("padding", "10px");
+    $textDiv.html(text);
+    $id(this.container).appendChild($textDiv);
 };
 WIND.Popup.prototype.getContent = function () {
     return this.content;
@@ -1140,11 +1027,13 @@ WIND.Popup.prototype.createSensiblePart = function (exp) {
     var pivot = 0;
     var pos;
     var postab = [];
-    if (t.startsWith(exp)) postab.push(0);
-    while (pivot < t.length && pivot != -1) {
+    if (t.startsWith(exp))
+        postab.push(0);
+    while (pivot < t.length && pivot !== -1) {
         pos = t.indexOf(exp, pivot + 1);
         pivot = pos;
-        if (pivot != -1) postab.push(pivot);
+        if (pivot !== -1)
+            postab.push(pivot);
     }
     var newstr = "";
     var debut = 0;
@@ -1167,113 +1056,22 @@ WIND.Popup.prototype.createSensiblePartById = function (id) {
     return new WIND.TextPart(id);
 };
 WIND.Popup.prototype.show = function () {
-	var styleParams = {
-		'position' : 'absolute',
-		'left' : this.x,
-		'top' : this.y,
-		'border' : "1px #0033CC solid",
-		'backgroundColor' : '#BFCFFE',
-		'opacity' : '0.8',
-		'visibility' : 'visible'
-	};
+    var styleParams = {
+        'position': 'absolute',
+        'left': this.x,
+        'top': this.y,
+        'border': "1px #0033CC solid",
+        'backgroundColor': '#BFCFFE',
+        'opacity': '0.8',
+        'visibility': 'visible'
+    };
 
-	$id(this.container).css(styleParams);
-    // $id(this.container).style.position = 'absolute';
-    // $id(this.container).style.left = this.x;
-    // $id(this.container).style.top = this.y;
-    // $id(this.container).style.border = "1px #0033CC solid";
-    // $id(this.container).style.backgroundColor = '#BFCFFE';
-    // $id(this.container).style.opacity = 0.8;
-    // $id(this.container).style.visibility = 'visible';
+    $id(this.container).css(styleParams);
 };
 WIND.Popup.prototype.hide = function () {
-	$id(this.container).css('visibility', 'hidden');
-    // $id(this.container).style.visibility = 'hidden';
+    $id(this.container).css("visibility", "hidden");
 };
 
-// Create AJAX object
-createXHR = function () {
-    var request = null;
-    if (window.XMLHttpRequest) {
-        request = new XMLHttpRequest();
-    } else if (window.ActiveXObject) {
-        try {
-            request = new ActiveXObject("Msxml2.XMLHTTP");
-        } catch (e) {
-            try {
-                request = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {}
-        }
-    }
-    return request;
-};
-
-/*loadJS = function(url, callback) {
-	var added = false;
-	var heads = $tag('head');
-	var scripts = $tag('script');
-	if (heads.length > 0) {
-		var head = heads[0]; 
-		for (var i=0; i<scripts.length; i++) {
-			if (scripts[i].src == url) {
-				added = true;
-				break;
-			}
-		}
-	}
-
-	var script = document.createElement('script');
-	script.src = url;
-	
-	if (added) {
-		callback();
-	}
-	else {
-		if (heads.length > 0) {
-			var head = heads[0]; 
-			head.appendChild(script);
-		} else {
-			var head = document.createElement('head');    
-			head.appendChild(script);
-			document.body.parentNode.appendChild(head);
-		}
-
-		// most browsers
-		script.onload = callback;  
-
-		// IE 6 & 7
-		script.onreadystatechange = function() {
-			if (script.readyState == 'loaded' || script.readyState == 'complete') {
-				callback();
-			//console.log(url + ' is loaded, state= ' + script.readyState);
-			}
-		};
-	}
-};
-
-removeJS = function(url) {
-	var heads = $tag('head');
-	var scripts = $tag('script');
-	if (heads.length > 0) {
-		var head = heads[0]; 
-		for (var i=0; i<scripts.length; i++) {
-			if (scripts[i].src == url) {
-				head.removeChild(scripts[i]);
-			}
-		}
-	}
-};
-// Restart div
-restartDiv = function(divId) {
-	var removedDiv = $id(divId);
-	var sty = removedDiv.className;
-	document.body.removeChild(removedDiv);
-	var newDiv = document.createElement('div'); 
-	newDiv.id = divId + "n";
-	newDiv.className = sty;
-	document.body.appendChild(newDiv);
-};
-*/
 // This method fixes IE specific issues 
 fixIE = function () {
     if (!Array.indexOf) {
@@ -1281,13 +1079,13 @@ fixIE = function () {
             var index = -1;
             for (var i = 0; i < this.length; i++) {
                 var value = this[i];
-                if (value == arg) {
+                if (value === arg) {
                     index = i;
                     break;
                 }
             }
             return index;
-        }
+        };
     }
 
     if (!window.console) {
@@ -1298,14 +1096,14 @@ fixIE = function () {
             var messageDiv = document.createElement('div');
             messageDiv.innerHTML = message;
             body.insertBefore(messageDiv, body.lastChild);
-        }
+        };
     }
 };
 String.prototype.startsWith = function (str) {
-    return (this.length != 0 && this.indexOf(str) == 0);
+    return (this.length !== 0 && this.indexOf(str) === 0);
 };
 String.prototype.endsWith = function (str) {
-    return (this.length != 0 && this.lastIndexOf(str) == (this.length - str.length));
+    return (this.length !== 0 && this.lastIndexOf(str) === (this.length - str.length));
 };
 String.prototype.trim = function () {
     return this.replace(/\s+/g, '');
