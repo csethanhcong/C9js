@@ -12,3 +12,9 @@
 \contentsline {subsubsection}{\numberline {2.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{6}
 \contentsline {subsubsection}{\numberline {2.2.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{7}
 \contentsline {subsubsection}{\numberline {2.2.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{8}
+\contentsline {subsection}{\numberline {2.3}Th\IeC {\uhorn } vi\IeC {\d \ecircumflex }n \IeC {\dj }\IeC {\`\ocircumflex } th\IeC {\d i} C3.js}{8}
+\contentsline {subsubsection}{\numberline {2.3.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{8}
+\contentsline {subsubsection}{\numberline {2.3.2}M\IeC {\d u}c ti\IeC {\^e}u}{9}
+\contentsline {subsubsection}{\numberline {2.3.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{12}
+\contentsline {subsubsection}{\numberline {2.3.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{12}
+\contentsline {section}{\numberline {3}Ki\IeC {\'\ecircumflex }n th\IeC {\'\uhorn }c n\IeC {\`\ecircumflex }n}{12}

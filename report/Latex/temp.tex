@@ -44,15 +44,15 @@ Kể từ năm 2006 Gapminder cung cấp một lượng lớn các video thể h
 
 Từ năm 2008 Gapminder còn cung cấp các biểu đồ con (sub-graph) thể hiện xu hướng, sự khác biệt giữa các tiểu bang của Mỹ, các tỉnh thành của Trung Quốc, hay các đồ thị đặc biệt so sánh số liệu thống kê từ các thành phố ở Trung Quốc, Mỹ, Ấn Độ với các quốc gia khác trên thế giới. Từ Gapminder World, chỉ bằng một cú click chuột, các dữ liệu, thống kê liên quan nằm sau các đồ thị được thể hiện trên các biểu đồ con.
 
-\begin{center}
-    \begin{figure}[htp]
-    \begin{center}
-     \includegraphics[scale=.4]{image/gapminder}
-    \end{center}
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/gapminder}
     \caption{Đồ thị trực quan dữ liệu Gapminder World}
     \label{refhinh1}
-    \end{figure}
-\end{center}
+\end{figure}
+
+Như ở hình 1, chúng ta có thể thấy với 1 lượng dữ liệu lớn (ở đây là độ tuổi kỳ vọng ở các quốc gia trên thế giới), có thể được thể hiện trực quan bởi đồ thị bong bóng (bubble chart). Qua kích thước các bong bóng, có thể thấy sự tương quan khác biệt giữa các quốc gia như thế nào. Hay khi trỏ vào 1 bong bóng, chúng ta thấy được số liệu chi tiết ở quốc gia đó, như trong hình là độ tuổi kỳ vọng ở Ấn Độ, vào năm 1962 là 42.6. Ngoài ra ở phía dưới đồ thị, có 1 thanh thể hiện dòng thời gian (timeline), khi thanh thời gian trượt đi, kích thước các quả bóng thay đổi theo như số liệu tương ứng ở các năm của các quốc gia.
+
+
 
 \subsubsection{Phương pháp}
 Gapminder sử dụng D3.js, một thư việc JavaScript phổ biến trong việc thao tác với các thành phần của một trang web (Document Object Model) dựa trên dữ liệu. 
@@ -128,5 +128,71 @@ Một tính năng khác đó là việc tương tác giữa các giữa các đ�
 
 Do đó, đề tài đề xuất sử dụng nhiều đồ thị để biểu diễn cho nguồn dữ liệu đầu vào, và sự tương tác giữa các đồ thị.
 
+\subsection{Thư viện đồ thị C3.js}
+\subsubsection{Giới thiệu}
+C3.js là một thư viện mã nguồn mở [link c3js.org] dựa trên thư viện D3.js , nhằm cho phép người dùng có cái nhìn sâu hơn về các ứng dụng web tích hợp đồ thị.
 
+Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0812/c3
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/c3js}
+    \caption{Thư viện đồ thị C3js}
+    \label{refhinh5}
+\end{figure}
+
+\subsubsection{Mục tiêu}
+\begin{itemize}
+        \item[•]Sự thoải mái (Comfortable)
+        C3 giúp người dùng có thể dễ dàng tạo một đồ thị dựa trên D3 bằng cách gộp chung các đoạn code cần thiết để cấu trúc một đồ thị hoàn chỉnh. Qua đó, người dùng không cần phải viết các đoạn code D3 rườm rà như trước nữa.
+\begin{figure}[htp]
+    \includegraphics[scale=.3]{image/c3syntax}
+    \caption{Thư viện đồ thị C3js}
+    \label{refhinh6}
+\end{figure}
+[Hình 6] Thông qua một số câu lệnh định nghĩa dữ liệu, C3 khởi tạo một đồ thị cho phép tương tác một cách trực quan thông qua hover, click,.. các thành phần của đồ thị
+
+        \item[•]Khả năng tuỳ chỉnh (Customizable)
+        C3 cung cấp các class tương ứng cho mỗi đối tượng trong đồ thị khi khởi tạo. Qua đó, người dùng có thể định nghĩa các style theo ý muốn theo class cũng như mở rộng cấu trúc các thành phần của đồ thị (trục dữ liệu, hình dạng hiển thị, kiểu đồ thị,.. ) một cách trực tiếp.
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/c3custom}
+    \caption{Thư viện đồ thị C3js}
+    \label{refhinh7}
+\end{figure}      
+[Hình 7] Trục hoành của đồ thị được tuỳ chỉnh theo thời gian hiện tại với định dạng hoàn toàn tuỳ thuộc người sử dụng.
+ 
+        \item[•]Khả năng kiểm soát (Controllable)
+        C3 cung cấp đa dạng các APIs và các hàm callback để truy xuất trạng thái của đồ thị. Bằng cách đó, người dùng có thể cập nhật lại đồ thị thậm chí sau khi đồ thị đã được thể hiện.
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/c3apis}
+    \caption{Thư viện đồ thị C3js}
+    \label{refhinh8}
+\end{figure}
+[Hình 8] Trên hình là một số các thành phần được hỗ trợ bởi thư viện C3js
+\end{itemize}
+
+\subsubsection{Phương pháp}
+Như đã trình bày ở trên, C3js sử dụng thư viện D3js nhằm tạo các đồ thị có khả năng tái sử dụng, cũng như giúp người dùng đào sâu hơn vào khái niệm trực quan dữ liệu thông qua đồ thị trên nền ứng dụng web.
+
+Ngoài ra dựa theo cấu trúc mã nguồn mà C3js chia sẻ, có thể thấy cấu trúc tổ chức của C3js theo hướng hướng đối tượng, được tổ chức theo các class (trục, dữ liệu, đồ thị,.. ) và các phương thức, thuộc tính đi kèm class.
+
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/c3source}
+    \caption{Thư viện đồ thị C3js}
+    \label{refhinh9}
+\end{figure}
+
+\subsubsection{Đánh giá}
+Cách tổ chức và hiện thực theo hướng hướng đối tượng như trên giúp tiết kiệm số dòng mã, tận dụng khả năng tái sử dụng, đồng thời giúp việc mở rộng về sau rất hiệu quả.
+
+Đề tài đề xuất sử dụng cách hiện thực API theo hướng như C3js.
+
+\subsection{Ứng dụng tạo bản đồ online Mapme}
+\subsubsection{Giới thiệu}
+
+\subsubsection{Mục tiêu}
+
+\subsubsection{Phương pháp}
+
+\subsubsection{Đánh giá}
+
+\section{Kiến thức nền}
 \end{document}
