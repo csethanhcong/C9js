@@ -187,12 +187,43 @@ Cách tổ chức và hiện thực theo hướng hướng đối tượng như 
 
 \subsection{Ứng dụng tạo bản đồ online Mapme}
 \subsubsection{Giới thiệu}
+Mapme là một ứng dụng cho phép người dùng tạo bản đồ, dữ liệu đươc xử lý trực tiếp từ các file Excel đầu vào. Bản đồ tạo ra có các marker tương ứng với dữ liệu, có khả năng tương tác trực tiếp thông qua các sự kiện định nghĩa trước. Ngoài ra, bản đồ được tạo ra còn có thể được nhúng vào các trang web khác thông qua một đoạn mã nhúng. Đặc biệt toàn bộ tương tác từ những bước khởi tạo bản đồ đầu tiên, đến lúc xuất thành quả, đều không yêu cầu người dùng phải viết một dòng mã nào.
+
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/mapme}
+    \caption{Ứng dụng tạo bản đồ online Mapme}
+    \label{refhinh10}
+\end{figure}
 
 \subsubsection{Mục tiêu}
+Đầu tiên nói đến các đối tượng mà Mapme hướng tới, đó là các tổ chức, chính phủ, các doanh nghiệp hay các tổ chức cộng đồng phi lợi nhuận.
+
+Phục vụ trong các lĩnh vực khác nhau như giáo dục, các sự kiện, xuất bản hay truyền thụ cảm hứng trong đời sống hằng ngày.
 
 \subsubsection{Phương pháp}
+Sử dụng OpenStreetMap (viết tắt OSM), một dịch vụ bản đồ thế giới trực tuyến với nội dung mở, được bảo trợ bởi các công ty lớn như Google, Yahoo! và Multimap.com. OSM cho phép ứng dụng cập nhật dữ liệu địa lý trực tuyến một cách chính xác, luôn được cập nhật nhằm đảm bảo các dữ liệu luôn đi xát thực tế nhất.
+
+\begin{figure}[htp]
+    \includegraphics[scale=.4]{image/mapmeOSM}
+    \caption{Ứng dụng tạo bản đồ online Mapme}
+    \label{refhinh11}
+\end{figure}
+
+Như trên hình có thể thấy, các thông tin về khởi nghiệp ở quốc gia Ireland được trực quan thông qua các biểu tượng (marker). Cùng với đó là các số liệu tương ứng được xử lý trực tiếp từ các file Excel đầu vào.
+Ngoài ra, người dùng còn có thể tương tác với các marker này để thể hiện thông tin chi tiết ở các điểm chỉ định.
+
+\begin{figure}[htp]
+    \includegraphics[scale=.8]{image/mapmeExport}
+    \caption{Ứng dụng tạo bản đồ online Mapme}
+    \label{refhinh12}
+\end{figure}
+
+Đặc biệt, Mapme còn hỗ trợ sinh mã nhúng, dưới dạng iframe, giúp người dùng nhúng trực tiếp bản đồ mình vừa tạo vào các website tuỳ mục đích.
 
 \subsubsection{Đánh giá}
+Đầu tiên là về cách sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ, đảm bảo ứng dụng luôn chính xác về các dữ liệu địa lý so với thực tế. Đề tài đề xuất sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ cho API mà đề tài thực hiện.
+
+Ngoài ra, ứng dụng cho phép người dùng tương tác trực tiếp với các marker trên bản đồ, hiển thị các thông tin liên quan đến các địa điểm đó. Thay vì phải đọc các dữ liệu thô theo vùng miền, theo quốc gia, vùng lãnh thổ như trước, cách tương tác này giúp người dùng dễ dàng cập nhật thông tin cũng như có cái nhìn tổng quan, khả năng so sánh giữa các địa điểm khác nhau mà không phải chăm chú vào các con số nhàm chám như trước.
 
 \section{Kiến thức nền}
 \end{document}
