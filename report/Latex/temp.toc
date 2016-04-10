@@ -1,34 +1,35 @@
-\contentsline {section}{\numberline {1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u \IeC {\dj }\IeC {\`\ecircumflex } t\IeC {\`a}i}{2}
-\contentsline {subsection}{\numberline {1.1}B\IeC {\'\ocircumflex }i c\IeC {\h a}nh}{2}
-\contentsline {subsection}{\numberline {1.2}M\IeC {\d u}c ti\IeC {\^e}u}{2}
-\contentsline {section}{\numberline {2}C\IeC {\'a}c c\IeC {\^o}ng tr\IeC {\`\i }nh li\IeC {\^e}n quan}{3}
-\contentsline {subsection}{\numberline {2.1}C\IeC {\^o}ng c\IeC {\d u} h\IeC {\~\ocircumflex } tr\IeC {\d \ohorn } tr\IeC {\d \uhorn }c quan d\IeC {\~\uhorn } li\IeC {\d \ecircumflex }u ph\IeC {\^a}n t\IeC {\'a}n Gapminder}{3}
-\contentsline {subsubsection}{\numberline {2.1.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{3}
-\contentsline {subsubsection}{\numberline {2.1.2}M\IeC {\d u}c ti\IeC {\^e}u}{4}
-\contentsline {subsubsection}{\numberline {2.1.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{4}
-\contentsline {subsubsection}{\numberline {2.1.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{5}
-\contentsline {subsection}{\numberline {2.2}Global Health Atlas - WHO}{6}
-\contentsline {subsubsection}{\numberline {2.2.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{6}
-\contentsline {subsubsection}{\numberline {2.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{6}
-\contentsline {subsubsection}{\numberline {2.2.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{7}
-\contentsline {subsubsection}{\numberline {2.2.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{8}
-\contentsline {subsection}{\numberline {2.3}Th\IeC {\uhorn } vi\IeC {\d \ecircumflex }n \IeC {\dj }\IeC {\`\ocircumflex } th\IeC {\d i} C3.js}{8}
-\contentsline {subsubsection}{\numberline {2.3.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{8}
-\contentsline {subsubsection}{\numberline {2.3.2}M\IeC {\d u}c ti\IeC {\^e}u}{9}
-\contentsline {subsubsection}{\numberline {2.3.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{12}
-\contentsline {subsubsection}{\numberline {2.3.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{12}
-\contentsline {subsection}{\numberline {2.4}\IeC {\'\UHORN }ng d\IeC {\d u}ng t\IeC {\d a}o b\IeC {\h a}n \IeC {\dj }\IeC {\`\ocircumflex } online Mapme}{13}
-\contentsline {subsubsection}{\numberline {2.4.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{13}
-\contentsline {subsubsection}{\numberline {2.4.2}M\IeC {\d u}c ti\IeC {\^e}u}{13}
-\contentsline {subsubsection}{\numberline {2.4.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{14}
-\contentsline {subsubsection}{\numberline {2.4.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{14}
-\contentsline {section}{\numberline {3}Ki\IeC {\'\ecircumflex }n th\IeC {\'\uhorn }c n\IeC {\`\ecircumflex }n}{16}
-\contentsline {subsection}{\numberline {3.1}Javascript}{16}
-\contentsline {subsubsection}{\numberline {3.1.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{16}
-\contentsline {subsubsection}{\numberline {3.1.2}M\IeC {\d u}c ti\IeC {\^e}u}{16}
-\contentsline {subsubsection}{\numberline {3.1.3}T\IeC {\'\i }nh n\IeC {\u a}ng}{16}
-\contentsline {subsubsection}{\numberline {3.1.4}\IeC {\'\UHORN }ng d\IeC {\d u}ng}{17}
-\contentsline {subsection}{\numberline {3.2}jQuery}{17}
-\contentsline {subsubsection}{\numberline {3.2.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{17}
-\contentsline {subsubsection}{\numberline {3.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{17}
-\contentsline {subsubsection}{\numberline {3.2.3}\IeC {\'\UHORN }ng d\IeC {\d u}ng}{18}
+\contentsline {section}{\numberline {1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u \IeC {\dj }\IeC {\`\ecircumflex } t\IeC {\`a}i}{3}
+\contentsline {subsection}{\numberline {1.1}B\IeC {\'\ocircumflex }i c\IeC {\h a}nh}{3}
+\contentsline {subsection}{\numberline {1.2}M\IeC {\d u}c ti\IeC {\^e}u}{3}
+\contentsline {section}{\numberline {2}C\IeC {\'a}c c\IeC {\^o}ng tr\IeC {\`\i }nh li\IeC {\^e}n quan}{4}
+\contentsline {subsection}{\numberline {2.1}C\IeC {\^o}ng c\IeC {\d u} h\IeC {\~\ocircumflex } tr\IeC {\d \ohorn } tr\IeC {\d \uhorn }c quan d\IeC {\~\uhorn } li\IeC {\d \ecircumflex }u ph\IeC {\^a}n t\IeC {\'a}n Gapminder}{4}
+\contentsline {subsubsection}{\numberline {2.1.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{4}
+\contentsline {subsubsection}{\numberline {2.1.2}M\IeC {\d u}c ti\IeC {\^e}u}{5}
+\contentsline {subsubsection}{\numberline {2.1.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{5}
+\contentsline {subsubsection}{\numberline {2.1.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{6}
+\contentsline {subsection}{\numberline {2.2}Global Health Atlas - WHO}{7}
+\contentsline {subsubsection}{\numberline {2.2.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{7}
+\contentsline {subsubsection}{\numberline {2.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{7}
+\contentsline {subsubsection}{\numberline {2.2.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{8}
+\contentsline {subsubsection}{\numberline {2.2.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{9}
+\contentsline {subsection}{\numberline {2.3}Th\IeC {\uhorn } vi\IeC {\d \ecircumflex }n \IeC {\dj }\IeC {\`\ocircumflex } th\IeC {\d i} C3.js}{9}
+\contentsline {subsubsection}{\numberline {2.3.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{9}
+\contentsline {subsubsection}{\numberline {2.3.2}M\IeC {\d u}c ti\IeC {\^e}u}{10}
+\contentsline {subsubsection}{\numberline {2.3.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{13}
+\contentsline {subsubsection}{\numberline {2.3.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{13}
+\contentsline {subsection}{\numberline {2.4}\IeC {\'\UHORN }ng d\IeC {\d u}ng t\IeC {\d a}o b\IeC {\h a}n \IeC {\dj }\IeC {\`\ocircumflex } online Mapme}{14}
+\contentsline {subsubsection}{\numberline {2.4.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{14}
+\contentsline {subsubsection}{\numberline {2.4.2}M\IeC {\d u}c ti\IeC {\^e}u}{14}
+\contentsline {subsubsection}{\numberline {2.4.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{15}
+\contentsline {subsubsection}{\numberline {2.4.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{15}
+\contentsline {section}{\numberline {3}Ki\IeC {\'\ecircumflex }n th\IeC {\'\uhorn }c n\IeC {\`\ecircumflex }n}{17}
+\contentsline {subsection}{\numberline {3.1}Javascript}{17}
+\contentsline {subsubsection}{\numberline {3.1.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{17}
+\contentsline {subsubsection}{\numberline {3.1.2}M\IeC {\d u}c ti\IeC {\^e}u}{17}
+\contentsline {subsubsection}{\numberline {3.1.3}T\IeC {\'\i }nh n\IeC {\u a}ng}{17}
+\contentsline {subsubsection}{\numberline {3.1.4}\IeC {\'\UHORN }ng d\IeC {\d u}ng}{18}
+\contentsline {subsection}{\numberline {3.2}jQuery}{18}
+\contentsline {subsubsection}{\numberline {3.2.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{18}
+\contentsline {subsubsection}{\numberline {3.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{18}
+\contentsline {subsubsection}{\numberline {3.2.3}T\IeC {\'\i }nh n\IeC {\u a}ng}{18}
+\contentsline {subsubsection}{\numberline {3.2.4}\IeC {\'\UHORN }ng d\IeC {\d u}ng}{19}
