@@ -23,3 +23,12 @@
 \contentsline {subsubsection}{\numberline {2.4.3}Ph\IeC {\uhorn }\IeC {\ohorn }ng ph\IeC {\'a}p}{14}
 \contentsline {subsubsection}{\numberline {2.4.4}\IeC {\DJ }\IeC {\'a}nh gi\IeC {\'a}}{14}
 \contentsline {section}{\numberline {3}Ki\IeC {\'\ecircumflex }n th\IeC {\'\uhorn }c n\IeC {\`\ecircumflex }n}{16}
+\contentsline {subsection}{\numberline {3.1}Javascript}{16}
+\contentsline {subsubsection}{\numberline {3.1.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{16}
+\contentsline {subsubsection}{\numberline {3.1.2}M\IeC {\d u}c ti\IeC {\^e}u}{16}
+\contentsline {subsubsection}{\numberline {3.1.3}T\IeC {\'\i }nh n\IeC {\u a}ng}{16}
+\contentsline {subsubsection}{\numberline {3.1.4}\IeC {\'\UHORN }ng d\IeC {\d u}ng}{17}
+\contentsline {subsection}{\numberline {3.2}jQuery}{17}
+\contentsline {subsubsection}{\numberline {3.2.1}Gi\IeC {\'\ohorn }i thi\IeC {\d \ecircumflex }u}{17}
+\contentsline {subsubsection}{\numberline {3.2.2}M\IeC {\d u}c ti\IeC {\^e}u}{17}
+\contentsline {subsubsection}{\numberline {3.2.3}\IeC {\'\UHORN }ng d\IeC {\d u}ng}{18}

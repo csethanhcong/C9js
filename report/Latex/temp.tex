@@ -226,4 +226,68 @@ Ngoài ra, người dùng còn có thể tương tác với các marker này đ�
 Ngoài ra, ứng dụng cho phép người dùng tương tác trực tiếp với các marker trên bản đồ, hiển thị các thông tin liên quan đến các địa điểm đó. Thay vì phải đọc các dữ liệu thô theo vùng miền, theo quốc gia, vùng lãnh thổ như trước, cách tương tác này giúp người dùng dễ dàng cập nhật thông tin cũng như có cái nhìn tổng quan, khả năng so sánh giữa các địa điểm khác nhau mà không phải chăm chú vào các con số nhàm chám như trước.
 
 \section{Kiến thức nền}
+Qua việc tìm hiểu cũng như những phần trình bày về các công trình liên quan đến đề tài, đề tài nhận thấy cần phải nắm được những kiến thức cơ bản sau để hỗ trợ tốt hơn cho việc hiện thực API về trực quan dữ liệu:
+\subsection{Javascript}
+\subsubsection{Giới thiệu}
+JavaScript, theo phiên bản hiện hành, là một ngôn ngữ lập trình kịch bản (scripting language), đa nền tảng (cross-platform), nhỏ và nhẹ. Ngôn ngữ này được dùng rộng rãi cho các trang web, nhưng cũng được dùng để tạo khả năng viết script sử dụng các đối tượng nằm sẵn trong các ứng dụng.
+
+\subsubsection{Mục tiêu}
+Mục tiêu của JavaScript là nhằm cung cấp cho các nhà phát triển Web một số khả năng và quyền điều khiển chức năng cho trang Web. Mã Javascript có khả năng nhúng trong tài liệu HTML để điều khiển nội dung của trang Web và kiểm tra sự hợp lệ của dữ liệu mà người dùng nhập vào. Khi một trang hiển thị trong trình duyệt, các câu lệnh được trình duyệt thông dịch và thực thi.
+
+\subsubsection{Tính năng}
+JavaScript nâng cao tính động và khả năng tương tác cho web-site bằng cách sử dụng các hiệu ứng của nó như thực hiện các phép tính, kiểm tra form, viết các trò chơi, bổ sung các hiệu ứng đặc biệt, tuỳ biến các chọn lựa đồ hoạ, tạo ra các mật khẩu bảo mật và hơn thế nữa.
+
+Cụ thể, Javascript có thể được dùng để:
+ 
+\indent \indent \textbullet \ Tương tác với người dùng, chúng ta có thể viết mã để đáp lại các sự kiện. Các sự kiện này sẽ có thể phát sinh bởi người dùng: nhấp chuột hay được phát sinh từ hệ thống, định lại kích thước của trang …
+
+\indent \indent \textbullet \ Thay đổi nội dung động. Mã JavaScript có thể dùng để thay đổi nội dung và vị trí các phần tử một cách động trên một trang nhằm đáp lại sự tương tác với người dùng.
+
+\indent \indent \textbullet \ Kiểm tra tính hợp lệ dữ liệu. Chúng ta có thể viết mã nhằm kiểm tra tính hợp lệ của dữ liệu do người dùng nhập vào trước khi nó được gửi lên Web server để xử lý.
+
+\subsubsection{Ứng dụng}
+
+
+\subsection{jQuery}
+\subsubsection{Giới thiệu}
+jQuery là một thư viện đa nền tảng (cross-platform) mã nguồn mở dựa trên ngôn ngữ Javascript, được tạo bởi John Resig vào năm 2006. jQuery. jQuery là một thư viện Javascript phổ biến nhất được sử dụng hiện nay.
+
+Theo thống kê (link: http://w3techs.com/technologies/details/js-jquery/all/all), cho tới hiện nay thì jQuery được sử dụng bởi 96\% của tất cả các trang web có sử dụng thư viện Javascript.
+
+\subsubsection{Mục tiêu}
+Với phương châm là “write less, do more”, jQuery được thiết kế nhằm đơn giản hóa các nhiệm vụ khác nhau bằng cách viết ít mã hơn. 
+
+Thành phần quan trọng của jQuery là thư viện thao tác DOM (Document Object Model). DOM là 1 biểu diễn cấu trúc cây của tất cả các thành phần của 1 trang web và jQuery đơn giản hóa các cú pháp cho việc tìm kiếm, chọn lựa, và thao tác những phần tử DOM.
+
+Tính năng:
+
+\indent \indent \textbullet \ Việc lựa chọn các phần tử DOM sử dụng công cụ Sizzle (selector mã nguồn mở)
+
+\indent \indent \textbullet \ Thao tác với DOM dựa trên CSS Selector
+
+\indent \indent \textbullet \ Sư kiện (event)
+
+\indent \indent \textbullet \ Tạo chuyển động
+
+\indent \indent \textbullet \ Hỗ trợ AJAX
+
+\indent \indent \textbullet \ Có thể mở rộng thông qua các plug-in
+
+\indent \indent \textbullet \ Được hỗ trợ bởi nhiều trình duyệt
+
+\indent \indent \textbullet \ Cập nhật và hỗ trợ các công nghệ web mới nhất (HTML5 \& CSS3)
+
+\begin{center}
+    \begin{figure}[htp]
+    \begin{center}
+     \includegraphics[scale=.6]{image/js-jquery}
+    \end{center}
+    \caption{Vị trí của jQuery so với những thư viện Javascript khác}
+    \label{refhinh4}
+    \end{figure}
+\end{center}
+
+\subsubsection{Ứng dụng}
+Dựa trên những đặc điểm cũng như tính năng mạnh mẽ của jQuery nói trên, đề tài sẽ đề xuất sử dụng jQuery như là 1 ngôn ngữ chính, tạo ra một API dễ dàng tìm hiểu, sử dụng với một số lượng mã (code) ít nhất để có thể tạo được ứng dụng của riêng mình.
+
 \end{document}
