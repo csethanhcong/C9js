@@ -4,13 +4,24 @@ body {
   background-color: #D8E6E7;
 }
 
+.axis {
+    font: 10px sans-serif;
+  }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
 /*-------------svg border----------------------*/
-svg {
+/*svg {
     height: 500px;
     border: solid 1px #CADBE9;
-    /*border-bottom: solid 1px #881600;*/
+    border-bottom: solid 1px #881600;
     padding: 0px;
-}
+}*/
 
 
 /*-----------------Input-file-------------------*/
@@ -37,10 +48,10 @@ input[readonly] {
 }
 
 /*---------------Customize HR element------------------*/
-hr {
+/*hr {
   margin-top: 0px;
-  /*margin-bottom: 0px;*/
-}
+  margin-bottom: 0px;
+}*/
 
 /*--------------------Header-----------------*/
 header .navbar{
@@ -48,14 +59,14 @@ header .navbar{
   border-color: #4FB0C6;
 }
 
-d3-donut-chart {
+/*d3-donut-chart {
   display: inline-block;
   width: 100%;
   text-align: center;
-}
+}*/
 
 /*----------------Sortable Bar--------------------------*/
-.bar rect {
+/*.bar rect {
   fill: steelblue;
 }
 
@@ -67,10 +78,10 @@ d3-donut-chart {
   fill: none;
   stroke: black;
   shape-rendering: crispEdges;
-}
+}*/
 
 /*----------------Bar Chart--------------------------*/
-.chart {
+/*.chart {
   height: 400px;
   position: relative;
   background: #eee;
@@ -93,34 +104,34 @@ d3-donut-chart {
 
 .chart div:hover {
   background-color: #E53A40;
-}
+}*/
 /*----------------d3 ToolTip--------------------------*/
-.d3-tip {
+/*.d3-tip {
   line-height: 1;
   font-weight: bold;
   padding: 12px;
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   border-radius: 2px;
-}
+}*/
 
 /* Creates a small triangle extender for the tooltip */
-.d3-tip:after {
+/*.d3-tip:after {
   box-sizing: border-box;
   display: inline;
   font-size: 10px;
-  /*width: 100%;*/
+  width: 100%;
   line-height: 1;
   color: rgba(0, 0, 0, 0.8);
   content: "\276e";
   position: absolute;
   text-align: center;
   left: -10px;
-}
+}*/
 
 /* Style northward tooltips differently */
-.d3-tip.n:after {
+/*.d3-tip.n:after {
   margin: -1px 0 0 0;
   top: 100%;
   left: 0;
-}
+}*/
