@@ -86,8 +86,9 @@
 				</div>
 			</nav>
 		</header>
+		<div id="demo"></div>
 		<!-- Tab1 : Graph -->
-		<section class="col-lg-4 col-lg-offset-7">
+		<!-- <section class="col-lg-4 col-lg-offset-7">
 			<div class="container-fluid" id="input-data">
 				<div class="row">
 					<div class="input-group">
@@ -99,20 +100,32 @@
 						</div>
 						<input class="form-control" id="input-file" type="text" placeholder="Please select file..." readonly>
 					</div>
-				</div> <!-- Input-file -->
-				<div class="row">
+				</div> --> <!-- Input-file -->
+				<!-- <div class="row">
 					<div id="graph">
-						<!-- <d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars> -->
+						<d3-bars data="d3Data" label="name" on-click="d3OnClick(item)"></d3-bars>
 
 					</div>
 				</div>
 			</div>
-		</section>
+		</section> -->
 		<!-- Tab2: Map -->
-		<section class="col-lg-8">
-		</section><!-- Tab2: Map -->
+		<!-- <section class="col-lg-8">
+		</section> --><!-- Tab2: Map -->
 		<script type="text/javascript">
-			var chart123 = new Chart(960, 480);
+			var data = [ 
+					{ name : "A", value: ".08167" }, 
+					{ name : "C", value: ".02536" }, 
+					{ name : "D", value: ".02157" }, 
+					{ name : "E", value: ".06954" }, 
+					{ name : "T", value: ".0625" }, 
+					{ name : "F", value: ".1593" }, 
+					{ name : "H", value: ".15224" }, 
+					{ name : "G", value: ".26984" }, 
+					{ name : "I", value: ".69852" } 
+				];
+			var options = {"width": 960, "height": 480, "data": data};
+			var chart123 = new Chart("#demo", options);
 			chart123.draw();
 				// // Process choose file
 				// $('#choose-file').on('change', ':file', function() {

@@ -1,54 +1,74 @@
-class Chart {
-	constructor(width, height, data) {
-		this._width 	= width || 960;
-		this._height 	= height || 480;
-		this._data 		= data || [ 
-		{ name : "A", value: ".08167" }, 
-		{ name : "C", value: ".02536" }, 
-		{ name : "D", value: ".02157" }, 
-		{ name : "E", value: ".06954" }, 
-		{ name : "B", value: ".01492" } 
-		];
-	};
+'use strict';
 
-	/* Getter */
+class Chart {
+	constructor(id, options) {
+		var default_config = {
+			default_width: 960,
+			default_height: 480,
+			default_data: [ 
+				{ name : "A", value: ".08167" }, 
+				{ name : "C", value: ".02536" }, 
+				{ name : "D", value: ".02157" }, 
+				{ name : "E", value: ".06954" }, 
+				{ name : "B", value: ".01492" } 
+			]
+		};
+
+		this._id 		= id || "body";
+		this._width 	= options.width 	|| default_config.default_width;
+		this._height 	= options.height 	|| default_config.default_height;
+		this._data 		= options.data 		|| default_config.default_data;
+	}
+
+	/*====================== Getter ======================*/
+	get id() {
+		return this._id;
+	}
+
 	get width() {
 		return this._width;
-	};
+	}
 
 
 	get height() {
 		return this._height;
-	};
+	}
 
 
 	get data() {
 		return this._data;
-	};
+	}
 
-	/* Setter */	
+	/*====================== Setter ======================*/
+	set id(newId){
+        if(newId){ 
+            this._id = newId;
+        }
+    }
+
 	set height(newHeight){
         if(newHeight){ 
             this._height = newHeight;
         }
-    };
+    }
 
 	set width(newWidth){
         if(newWidth){ 
             this._width = newWidth;
         }
-    };
+    }
 
 	set data(newData){
         if(newData){ 
             this._data = newData;
         }
-    };
+    }
 
-	draw() {
+	draw () {
 		var margin = {top: 20, right: 20, bottom: 70, left: 40},
-	    width = this.width - margin.left - margin.right,
-	    height = this.height - margin.top - margin.bottom;
+			id = this.id,
+		    width = this.width - margin.left - margin.right,
+		    height = this.height - margin.top - margin.bottom;
 
 		var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
 
@@ -56,14 +76,14 @@ class Chart {
 
 		var xAxis = d3.svg.axis()
 		    .scale(x)
-		    .orient("bottom")
+		    .orient("bottom");
 
 		var yAxis = d3.svg.axis()
 		    .scale(y)
 		    .orient("left")
 		    .ticks(10);
 
-		var svg = d3.select("body").append("svg")
+		var svg = d3.select(id).append("svg")
 		    .attr("width", width + margin.left + margin.right)
 		    .attr("height", height + margin.top + margin.bottom)
 		  .append("g")
