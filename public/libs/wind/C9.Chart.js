@@ -5,6 +5,8 @@ class Chart {
 		var default_config = {
 			default_width: 960,
 			default_height: 480,
+			default_margin: {top: 20, right: 10, bottom: 20, left: 10},
+			default_bar_color: "steelblue",
 			default_data: [ 
 				{ name : "A", value: ".08167" }, 
 				{ name : "C", value: ".02536" }, 
@@ -14,9 +16,11 @@ class Chart {
 			]
 		};
 
-		this._id 		= id || "body";
+		this._id 		= id 				|| "body";
 		this._width 	= options.width 	|| default_config.default_width;
 		this._height 	= options.height 	|| default_config.default_height;
+		this._margin 	= options.margin 	|| default_config.default_margin;
+		this._bar_color = options.bar_color || default_config.default_bar_color;
 		this._data 		= options.data 		|| default_config.default_data;
 	}
 
@@ -34,6 +38,10 @@ class Chart {
 		return this._height;
 	}
 
+
+	get data() {
+		return this._data;
+	}
 
 	get data() {
 		return this._data;
