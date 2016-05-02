@@ -1,9 +1,10 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,a4paper,oneside]{article}
 \usepackage[utf8]{vietnam}
 \usepackage{graphicx}
+\usepackage{hyperref} 
+\usepackage{fancyhdr} % used for creating header/footer
 \begin{document}
-\tableofcontents{}
-
+\tableofcontents
 \newpage
 \section{Giới thiệu đề tài}
 \subsection{Bối cảnh}
@@ -311,4 +312,50 @@ D3.js được viết trong Javascript, do đó có thể sử dụng lại code
 
 D3.js rất thích hợp dùng trong đề tài, nó giúp xây dựng framework trực quan dữ liệu mà người dùng muốn, dễ dàng sử dụng, do đó giúp tạo ra API một cách dễ dàng hơn, API dễ hiểu, dễ sử dụng.
 
+\subsection{OpenLayers}
+\subsubsection{Giới thiệu}
+OpenLayers được tạo ra bởi MetaCarta sau hội nghị O'Reilly Where 2.0 (29-30/06/2005) và chính thức phát hành thành mã nguồn mở trước hội nghị  O'Reilly Where 2.0 (13-14/06/2006) bởi MetaCarta Labs. Hai dự án khác về công cụ xây dựng bản đồ phát hành bởi MetaCarta là FeatureServer và TileCache. Từ tháng 11/2007, OpenLayers trở thành dự án mã nguồn mở chính thức của Hội đồng Không gian địa lý.
+
+Sơ qua về OpenLayers, đây là một thư viện JavaScript mã nguồn mở (được chứng nhận bởi BSD License) nhằm phục vụ mục đích biểu diễn thông tin trên bản đồ  đối với các trình duyệt Web, không phụ thuộc phía server. Nó cung cấp API chuyên về xây dựng các ứng dụng địa lý trên nền Web tương tự như Google Maps[link] và Bing Maps[link], với một điểm khác biệt duy nhất, OpenLayers hoàn toàn miễn phí, được xây dựng và phát triển nên bởi cộng đồng phát triển phần mềm mã nguồn mở. Thư viện xây dựng trên Prototype JavaScript Framework [link].
+
+Hiện nay, OpenLayers đã ra tới phiên bản OpenLayers 3[link]. OpenLayers 3 được viết lại nhằm dễ hiểu hơn, hướng tới các tính năng của HTML5 và CSS3. Thư viện tiếp tục hỗ trợ trình chiếu, các giao thức tiêu chuẩn và các chức năng chỉnh sửa. Phiên bản mới này tập trung vào cải thiện hiệu năng, xây dựng đơn giản hơn, các thành phần trở nên trực quan hơn, API được cải tiến và còn nhiều hơn nữa.
+
+Source code của thư viện: \href{https://github.com/openlayers/ol3/}{https://github.com/openlayers/ol3/}
+
+\subsubsection{Mục tiêu}
+Như đã trình bày ở trên, OpenLayers hỗ trợ các lập trình viên hiển thị thông tin dưới dạng bản đồ, hay bất cứ nhu cầu nào liên quan về bản đồ một cách hiệu quả và đơn giản nhất.
+
+\subsubsection{Đặc điểm}
+	\begin{center}
+    	\begin{figure}[htp]
+    		\begin{center}
+     		\includegraphics[scale=.4]{image/ol-feature}
+    		\end{center}
+    	\caption{Các đặc điểm chính của OpenLayers}
+    	\label{refhinh15}
+    	\end{figure}
+	\end{center}
+OpenLayers có 4 đặc điểm chính:
+\begin{itemize}
+\item[•]Thể hiện Lớp dưới dạng ô (Tiled Layers): 
+Các lớp này được kéo về từ OpenStreetMap (OSM), Bing, MapBox, Stamen, MapQuest và bất cứ nguồn nào mà bạn có thể tìm thấy. Hỗ trợ đa dạng các Layer mà bạn có thể sử dụng trong ứng dụng của mình.
+
+\item[•]Thể hiện Lớp dưới dạng Vector (Vector Layers):
+Sinh ra dữ liệu dạng vector từ GeoJSON, TopoJSON, KML, GML và một số định dạng khác.
+
+\item[•]Tính đối ứng nhanh gọn (Fast \& Mobile Ready):
+Hỗ trợ tùy chỉnh các thành phần một cách nhanh gọn và thuận tiện nhất. Cho phép xây dựng một bản tùy chỉnh gọn nhẹ gồm các thành phần mà lập trình viên cần.
+
+\item[•]Mài dũa các góc cạnh và dễ dàng tùy chỉnh (Cutting Edge \& Easy to Customize):
+Bản đồ sinh ra bởi công nghệ WebGL, Canvas 2D, và từ những tính năng ưu việt nhất của HTML5. Dễ dàng tùy chỉnh style bằng CSS.
+
+\end{itemize}
+
+\subsubsection{Ứng dụng}
+Đề tài hướng tới xây dựng thư viện JavaScript cho phép tương tác giữa bản đồ và các đồ thị dựa trên dữ liệu đầu vào, cho nên OpenLayers, cụ thể OpenLayers 3 sẽ là công cụ đắc lực cho việc xây dựng thành phần bản đồ trong đề tài. 
+
+
+\section{Giải pháp đề xuất}
+
+\section{Kế hoạch thực hiện}
 \end{document}
