@@ -23,9 +23,9 @@ class Chart {
 			// interaction in chart
 			enable_interaction: true,
 			// mouse events
-			on_mouse_over: function(),
-			on_mouse_out: function(),
-			on_mouse_click: function(),
+			on_mouse_over: function() {},
+			on_mouse_out: function() {},
+			on_mouse_click: function() {},
 			// legend
 			legend_show: true,
 			legend_position: "bottom",
@@ -81,7 +81,7 @@ class Chart {
 			]
 		};
 		
-		this._id 		= id 				|| id;
+		this._id 		= id 				|| config.id;
 		this._width 	= options.width 	|| config.width;
 		this._height 	= options.height 	|| config.height;
 		this._margin 	= options.margin 	|| config.margin;
@@ -156,7 +156,7 @@ class Chart {
     }
 
 	draw () {
-		var margin = {top: 20, right: 20, bottom: 70, left: 40},
+		var margin = this.margin,
 			id = this.id,
 		    width = this.width - margin.left - margin.right,
 		    height = this.height - margin.top - margin.bottom;
@@ -181,7 +181,7 @@ class Chart {
 		    .attr("transform", 
 		          "translate(" + margin.left + "," + margin.top + ")");
 
-		var data = this._data;
+		var data = this.data;
 			
 		  x.domain(data.map(function(d) { return d.name; }));
 		  y.domain([0, d3.max(data, function(d) { return d.value; })]);
