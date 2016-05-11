@@ -10,8 +10,8 @@
 \fancyhead[R]{Thư viện Web hỗ trợ tương tác dữ liệu đa phương tiện}
 \fancyfoot[L]{Thực tập tốt nghiệp}
 \fancyfoot[R] {Trang | \thepage}
-\renewcommand{\headrulewidth}{0.6pt}
-\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\headrulewidth}{0.3pt}
+\renewcommand{\footrulewidth}{0.3pt}
 
 
 
@@ -368,6 +368,32 @@ Bản đồ sinh ra bởi công nghệ WebGL, Canvas 2D, và từ những tính 
 
 
 \section{Giải pháp đề xuất}
+\subsection{Mô tả bài toán}
+Qua các kiến thức thu được từ các công trình nghiên cứu liên quan đã tìm hiểu, nhóm đề xuất bài toán: "Xây dựng thư viện hỗ trợ phát triển các ứng dụng nền tảng Web trong tương tác dữ liệu đa phương tiện". Nhóm nhận thấy các công trình liên quan hiện tại chủ yếu hỗ trợ vào một thể hiện dữ liệu nhất định (hoặc dạng đồ thị, hoặc dạng bản đồ) mà chưa có công trình nào tập trung vào yếu tố tương tác giữa các mô hình này, dẫn đến sự tương quan trong việc biểu diễn các loại dữ liệu giảm tính hiệu quả cũng như chưa thể thoát hẳn khỏi các cách biểu diễn truyền thống. Hoặc là đã  xây dựng các mô hình trực quan cho phép tương tác giữa các loại mô hình (điển hình như công trình Global Health Atlas - WHO đã trình bày ở trên) nhưng công nghệ đã cũ và không tự sinh thư viện hay mã nguồn hỗ trợ người dùng có thể tự xây dựng ứng dụng tương tự.
+
+Do đó, nhóm nhận thấy bài toán đề xuất phù hợp để thực hiện và phát triển.
+
+\subsection{Mô hình dự kiến xây dựng}
+Qua bài toán đề xuất, nhóm nhận thấy cần xây dựng mô hình với 3 thành phần chính như hình dưới:
+
+\begin{figure}[htp]
+    \includegraphics[scale=.8]{model/model}
+    \caption{Mô hình dự kiến xây dựng}
+    \label{refhinh16}
+\end{figure}
+
+Với 3 thành phần (Component) chính là Map, Chart và Interaction, mỗi thành phần thể hiện rõ ràng chức năng tương ứng: 
+\begin{itemize}
+\item[•] Map: 
+Map là một đối tượng biểu diễn dữ liệu dưới dạng bản đồ
+\item[•] Chart:
+Chart biểu diễn dữ liệu đầu vào dưới dạng các dạng đồ thị định nghĩ trước (nhóm đề xuất một số dạng đồ thị phổ biến như đồ thị dạng thanh, dạng tròn, dạng mảnh và dạng dòng thời gian) phụ thuộc kiểu dữ liệu đầu vào cung cấp bởi người dùng.
+\item[•] Interaction:
+Liên kết hai thành phần thể hiện dữ liệu trên là lớp Interaction, cung cấp các sự kiện hỗ trợ tương tác như Click, Hover trên từng đối tượng dữ liệu; Highlight các Component tương ứng theo các sự kiện được định nghĩa bởi người dùng.
+
+\subsection{Phương pháp đề xuất}
 
 \section{Kế hoạch thực hiện}
+
+\section{Tài liệu tham khảo}
 \end{document}
