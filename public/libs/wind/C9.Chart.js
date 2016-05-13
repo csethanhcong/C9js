@@ -55,22 +55,6 @@ class Chart {
             },
             title_position: 'top-center',
 
-            // line chart
-            point_show: true,
-            point_radius: 5,
-            point_hover_enable: true,
-            line_color: "black",
-            // bar chart
-            bar_width: undefined,
-            bar_color: "steelblue",
-            // pie chart
-            pie_label_show: true,
-            pie_radius: 100,
-            pie_expand_duration: 50,
-            // donut
-            donut_label_show: true,
-            donut_width: undefined,
-            donut_expand_duration: 50,
             // data
             data: [{
                 name: "A",
