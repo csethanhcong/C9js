@@ -50,7 +50,7 @@ class Axis {
 
         this._svg.append("g")
             .attr("class", "x-axis")
-            .attr("transform", "translate(0," + height + ")")
+            .attr("transform", "translate(0," + (height-25) + ")")
             .call(this._xAxis)
             .append("text")
             .attr("dx", "-.8em")
