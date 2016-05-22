@@ -1,7 +1,8 @@
 \documentclass[12pt,a4paper,oneside]{article}
 \usepackage[utf8]{vietnam}
 \usepackage{graphicx}
-\usepackage{hyperref} 
+\usepackage{hyperref}
+\usepackage[super]{natbib} 
 \usepackage{fancyhdr} % used for creating header/footer
 \pagestyle{fancy}
 
@@ -20,7 +21,7 @@
 \subsection{Bối cảnh}
 Trực quan dữ liệu, được hiểu là cách dùng hình ảnh để biểu diễn thông tin, ngày nay đã trở nên phổ dụng bởi những lợi ích nó mang lại.
 
-Trực quan hóa khai thác hệ thống thị giác con người để cung cấp một cách trực quan, nhanh chóng, độc lập với ngôn ngữ để xem và hiển thị dữ liệu. Đây là công cụ đắc lực để phân tích và tìm hiểu thông tin. Cho đến nay, hệ thống thị giác con người là thứ đắt nhất, trực tiếp nhất, đem lại lượng thông tin lớn nhất lưu trong bộ nhớ con người. Lượng bộ nhớ tiêu tốn để xử lý thông tin thị giác vượt xa hơn so với những giác quan khác của con người. Một số nghiên cứu ước tính rằng hệ thống thị giác của con người có thể xử lý 9 megabit thông tin trên 1 giây, tương đương với gần 1 triệu kí tự trên 1 giây.
+Trực quan hóa khai thác hệ thống thị giác con người để cung cấp một cách trực quan, nhanh chóng, độc lập với ngôn ngữ để xem và hiển thị dữ liệu. Đây là công cụ đắc lực để phân tích và tìm hiểu thông tin. Cho đến nay, hệ thống thị giác con người là thứ đắt nhất, trực tiếp nhất, đem lại lượng thông tin lớn nhất lưu trong bộ nhớ con người. Lượng bộ nhớ tiêu tốn để xử lý thông tin thị giác vượt xa hơn so với những giác quan khác của con người. Một số nghiên cứu ước tính rằng hệ thống thị giác của con người có thể xử lý 9 megabit thông tin trên 1 giây, tương đương với gần 1 triệu kí tự trên 1 giây (2013)\cite{bigdata}.
 
 Mặc cho tiềm năng của nó, Trực quan dữ liệu vẫn chưa được đánh giá cao bởi sự thiếu hiểu biết về nó. Nhiều xu hướng ngày nay về Trực quan dữ liệu thực sự đã gây ra những tác dụng phụ mang tính tiêu cực, đó là sự nhầm lẫn thay vì thấu hiểu thực sự về Trực quan dữ liệu. 
 
@@ -38,15 +39,13 @@ Bởi vì những lợi ích mà Trực quan hoá mang lại, dựa trên nhữn
 \section{Các công trình liên quan}
 \subsection{Công cụ hỗ trợ trực quan dữ liệu phân tán Gapminder}
 \subsubsection{Giới thiệu}
-Gapminder được thành lập tại Stockholm bởi Ola Rosling, Anna Rosling Rönnlund và Hans Rosling vào ngày 25 tháng 2 năm 2005. 
+Gapminder\cite{gapminder} được thành lập tại Stockholm bởi Ola Rosling, Anna Rosling Rönnlund và Hans Rosling vào ngày 25 tháng 2 năm 2005. 
 
 Gapminder là một tổ chức phi lợi nhuận nhằm thúc đẩy sự phát triển bền vững toàn cầu, và là một thành tựu đánh dấu mục tiêu phát triển mang tầm thế kỷ của tổ chức Liên Hiệp Quốc (United Nations). Với mục tiêu đề ra nhằm gia tăng khả năng tìm hiểu, phân tích và đánh giá các thống kê , dữ liệu liên quan đến các vấn đề xã hội, tài chính và phát triển môi trường ở địa phương, quốc gia, và tầm thế giới.
 
 Gapminder hoạt động dựa trên nền tảng được xác định trước, xây dựng các dịch vụ bởi ban quản trị, đôi khi hợp tác với các dự án  tại các trường đại học, các tổ chức quốc tế, cơ quan Nhà nước cũng như các tổ chức phi chính phủ.
 
 \subsubsection{Mục tiêu}
-\lq Fighting devastating ignorance with fact-based worldviews everyone can understand. [link] \rq 
-
 Các hoạt động ban đầu là theo đuổi sự phát triển của ứng dụng Trendalyzer (tháng 3 năm 2006). Trendalyzer là một phần mềm biểu diễn chuỗi thời gian thống kê bằng cách chuyển đổi những con số khô khan, nhàm chán thành các đồ thị chuyển động thú vị, và đặc biệt là khả năng tương tác. Trendalyzer còn được biết đến dưới tên gọi Gapminder World, xây dựng trên nền tảng web biểu diễn dữ liệu thống kê theo dòng thời gian cho tất cả các quốc gia trên thế giới.
 
 Gapminder World cung cấp các video, bài thuyết trình bằng Flash và các đồ thị dưới dạng PDF thể hiện xu hướng phát triển mang tính toàn cầu. 
@@ -80,7 +79,7 @@ Về thư viện D3.js được sử dụng trong Gapminder World, đây là m�
 
 \subsection{Global Health Atlas - WHO}
 \subsubsection{Giới thiệu}
-Trong một môi trường điện tử, WHO’s Communicable Disease Global Atlas được dùng cho việc phân tích và so sánh dữ liệu chuẩn, thống kê các bệnh truyền nhiễm ở các quốc gia, vùng lãnh thổ, và toàn thế giới. Việc phân tích và biểu diễn dữ liệu ngày càng được hỗ trợ tốt hơn thông qua các thông tin về dân số, điều kiện kinh tế xã hội, và các yếu tố môi trường. Với việc làm đó, Atlas có thể biết được những yếu tố gây ra bệnh truyền nhiễm.
+Trong một môi trường điện tử, WHO’s Communicable Disease Global Atlas được dùng cho việc phân tích và so sánh dữ liệu chuẩn, thống kê các bệnh truyền nhiễm ở các quốc gia, vùng lãnh thổ, và toàn thế giới. Việc phân tích và biểu diễn dữ liệu ngày càng được hỗ trợ tốt hơn thông qua các thông tin về dân số, điều kiện kinh tế xã hội, và các yếu tố môi trường. Với việc làm đó, biểu đồ Atlas này có thể cho biết được những yếu tố gây ra bệnh truyền nhiễm (2007)\cite{gha}.
 
 \begin{center}
     \begin{figure}[htp]
@@ -98,7 +97,7 @@ Ban đầu, với mục đích cung cấp những dữ liệu, báo cáo về c�
 \subsubsection{Phương pháp}
 Trực quan dữ liệu thành nhiều dạng biểu đồ khác nhau, các biểu đồ có thể tương tác với nhau giúp cho việc nhìn nhận, phân tích, đánh giá thông tin một cách chính xác, đầy đủ.
 
-Ứng dụng bao gồm các thành phần:
+Ứng dụng\cite{ghaex} bao gồm các thành phần:
 
 \indent \indent \textbullet \ Bảng dữ liệu: được lấy từ database của WHO
 
@@ -261,9 +260,9 @@ Cụ thể, Javascript có thể được dùng để:
 
 \subsection{jQuery}
 \subsubsection{Giới thiệu}
-jQuery là một thư viện đa nền tảng (cross-platform) mã nguồn mở dựa trên ngôn ngữ Javascript, được tạo bởi John Resig vào năm 2006. jQuery. jQuery là một thư viện Javascript phổ biến nhất được sử dụng hiện nay.
+jQuery\cite{jqueryintro1}\cite{jqueryintro2} là một thư viện đa nền tảng (cross-platform) mã nguồn mở dựa trên ngôn ngữ Javascript, được tạo bởi John Resig vào năm 2006. jQuery là một thư viện Javascript phổ biến nhất được sử dụng hiện nay.
 
-Theo thống kê (link: http://w3techs.com/technologies/details/js-jquery/all/all), cho tới hiện nay thì jQuery được sử dụng bởi 96\% của tất cả các trang web có sử dụng thư viện Javascript.
+Theo thống kê (2016)\cite{jqueryusage}, cho tới hiện nay thì jQuery được sử dụng bởi 96\% của tất cả các trang web có sử dụng thư viện Javascript.
 
 \subsubsection{Mục tiêu}
 Với phương châm là “write less, do more”, jQuery được thiết kế nhằm đơn giản hóa các nhiệm vụ khác nhau bằng cách viết ít mã hơn. 
@@ -450,6 +449,50 @@ Bên cạnh việc thực hiện API, đề tài cũng thực hiện chương tr
 \end{itemize}
 
 \section{Kế hoạch thực hiện}
+Trong giai đoạn thực tập tốt nghiệp, nhóm đã thực hiện được:
 
+\begin{itemize}
+\item[•]Tìm hiểu về các công trình liên quan đến các thư viện web cho phép biểu diễn dữ liệu thành các dạng biểu đồ, bản đồ, và sự tương tác giữa chúng
+
+\item[•]Đề xuất bài toán cụ thể nhóm sẽ thực hiện
+
+\item[•]Tìm hiểu về các công cụ hỗ trợ cho việc thực hiện đề tài
+
+\item[•]Hiện thực được API cho phần biểu đồ
+
+\end{itemize}
+Kế hoạch dự kiến thực hiện trong giai đoạn luận văn tốt nghiệp:
+
+\begin{itemize}
+\item[•]Chuẩn hóa dữ liệu cho các dạng bản đồ, biểu đồ
+
+\item[•]Hiện thực một thư viện cho phép người dùng có thể tự tạo ra một ứng dụng web tương tác dựa trên các loại dữ liệu khác nhau.
+
+\item[•]Đánh giá và so sánh thư viện đã hiện thực được với những thư viện hiện có
+
+\item[•]Tổng hợp và viết báo cáo
+
+\end{itemize}
 \section{Tài liệu tham khảo}
+\begin{thebibliography}{}
+
+\bibitem{bigdata} T.Alan Keahey, IBM. Using visualization to understand big data, 2013. \url{www.iotdataviz.com/meetup/1/YTW03349USEN.PDF}
+
+\bibitem{gapminder} Gapminder. About Gapminder, 22, 5, 2016. \url{http://www.gapminder.org/about-gapminder/our-mission/}
+
+\bibitem{c3js} c3js. C3.js | D3-based reusable chart library, 22, 5, 2016. \url{http://c3js.org/}
+
+\bibitem{jqueryusage} W3Techs. Usage statistics and market share of JQuery for websites, 10, 4, 2016. \url{https://w3techs.com/technologies/details/js-jquery/all/all}
+
+\bibitem{jqueryintro1} jQuery. jQuery, 10, 4, 2016. \url{https://jquery.com/}
+
+\bibitem{jqueryintro2} Wikipedia. jQuery, 22, 5, 2016. \url{https://en.wikipedia.org/wiki/JQuery}
+
+\bibitem{gha} World Health Organization (WHO). Global Health Atlas, 10, 4, 2016. \url{http://apps.who.int/globalatlas/}
+
+\bibitem{ghaex} WHO. Health workforce: Density of physicsians, 10, 4, 2016. \url{http://gamapserver.who.int/gho/interactive_charts/health_workforce/PhysiciansDensity_Total/atlas.html}
+
+
+\end{thebibliography}
+
 \end{document}
