@@ -13,8 +13,6 @@
 \renewcommand{\headrulewidth}{0.3pt}
 \renewcommand{\footrulewidth}{0.3pt}
 
-
-
 \begin{document}
 \tableofcontents
 \newpage
@@ -373,7 +371,7 @@ Qua các kiến thức thu được từ các công trình nghiên cứu liên q
 
 Do đó, nhóm nhận thấy bài toán đề xuất phù hợp để thực hiện và phát triển.
 
-\subsection{Mô hình dự kiến xây dựng}
+\subsection{Kiến trúc thư viện dự kiến xây dựng}
 Qua bài toán đề xuất, nhóm nhận thấy cần xây dựng mô hình với 3 thành phần chính như hình dưới:
 
 \begin{figure}[htp]
@@ -390,9 +388,66 @@ Map là một đối tượng biểu diễn dữ liệu dưới dạng bản đ�
 Chart biểu diễn dữ liệu đầu vào dưới dạng các dạng đồ thị định nghĩ trước (nhóm đề xuất một số dạng đồ thị phổ biến như đồ thị dạng thanh, dạng tròn, dạng mảnh và dạng dòng thời gian) phụ thuộc kiểu dữ liệu đầu vào cung cấp bởi người dùng.
 \item[•] Interaction:
 Liên kết hai thành phần thể hiện dữ liệu trên là lớp Interaction, cung cấp các sự kiện hỗ trợ tương tác như Click, Hover trên từng đối tượng dữ liệu; Highlight các Component tương ứng theo các sự kiện được định nghĩa bởi người dùng.
+\end{itemize}
 
-\subsection{Phương pháp đề xuất}
+Hình dưới là kiến trúc mã nguồn đề tài dự kiến hiện thực, gồm các file mã nguồn JavaScript được tổ chức tương ứng theo các thành phần đã định nghĩa ở trên:
 
+
+\begin{figure}[htp]
+	\begin{center}
+    \includegraphics[scale=.8]{image/api_model}
+    \caption{Kiến trúc mã nguồn dự kiến hiện thực}
+    \label{refhinh20}
+    \end{center}
+\end{figure}
+
+
+\subsection{Mô hình dữ liệu dự kiến xây dựng}
+\begin{itemize}
+\item[•] Dữ liệu dạng bản đồ: 
+Dữ liệu được tham khảo từ nguồn: [https://mapzen.com/data/borders] [link]. 
+Dữ liệu bản đồ được thể hiện dạng JSON link, tổ chức theo các mức (administrative level) từ 1 tới 10, tương ứng từ biên giới quốc gia tới tỉnh, thành phố trực thuộc trung ương, quận, huyện, thị xã, thành phố thuộc tỉnh đến phường, xã, thị trấn.
+
+Đề tài dự kiến hỗ trợ bản đồ Việt Nam ở mức độ 4 (tỉnh, thành phố trực thuộc trung ương)
+
+Mô hình chuẩn hóa dữ liệu bản đồ từ người dùng:
+\begin{figure}[htp]
+    \includegraphics[scale=.8]{model/map_data_model}
+    \caption{Mô hình dữ liệu bản đồ dự kiến xây dựng}
+    \label{refhinh17}
+\end{figure}
+
+\item[•] Dữ liệu dạng thời gian:
+Đối với dạng dữ liệu thời gian, đề tài đề xuất mô hình chuẩn hóa dữ liệu đầu vào từ người dùng như hình dưới:
+\begin{figure}[htp]
+    \includegraphics[scale=.8]{model/timeline_data_model}
+    \caption{Mô hình dữ liệu thời gian dự kiến xây dựng}
+    \label{refhinh18}
+\end{figure}
+
+\item[•] Dữ liệu dạng số:
+Dữ liệu dạng số được thể hiện theo các cặp (name, value) như hình dưới:
+\begin{figure}[htp]
+    \includegraphics[scale=.8]{model/numerical_data_model}
+    \caption{Mô hình dữ liệu dạng số dự kiến xây dựng}
+    \label{refhinh19}
+\end{figure}
+
+\end{itemize}
+
+\section{Phương pháp đánh giá}
+Bên cạnh việc thực hiện API, đề tài cũng thực hiện chương trình xây dựng một trang web mẫu sử dụng API làm ra để thể hiện tương tác các loại dữ liệu khác nhau.
+
+\begin{figure}[htp]
+    \includegraphics[scale=.8]{image/api_sample}
+    \caption{Ví dụ về một output của API đã xây dựng}
+    \label{refhinh21}
+\end{figure}
+
+\begin{itemize}
+\item[•] Đầu vào là API đã được xây dựng mẫu
+\item[•] Đầu ra là thể hiện của dữ liệu đồ thị sau khi sử dụng API.
+\end{itemize}
 
 \section{Kế hoạch thực hiện}
 

@@ -57,8 +57,8 @@ class Axis {
             .attr("dy", "-.55em")
             .attr("x", "10")
             .attr("y", "20")
-            .style("text-anchor", "end")
-            .text(this._xAxisText);
+            .style("text-anchor", "end");
+            // .text(this._xAxisText);
             // .attr("transform", "rotate(-90)" );
 
         this._svg.append("g")
