@@ -3,20 +3,43 @@
 \usepackage{graphicx}
 \usepackage{hyperref}
 \usepackage[super]{natbib} 
-\usepackage{fancyhdr} % used for creating header/footer
-\pagestyle{fancy}
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+\usepackage[usenames,dvipsnames]{color} % Required for custom colors
+\usepackage{graphicx} % Required to insert images
 
-\fancyhead{}	% clean all default header/footer
-\fancyfoot{}
-\fancyhead[R]{Thư viện Web hỗ trợ tương tác dữ liệu đa phương tiện}
-\fancyfoot[L]{Thực tập tốt nghiệp}
-\fancyfoot[R] {Trang | \thepage}
-\renewcommand{\headrulewidth}{0.3pt}
-\renewcommand{\footrulewidth}{0.3pt}
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.5} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{} % Top left header
+%\chead{Center header} % Top center head
+\rhead{Thư viện Web hỗ trợ tương tác dữ liệu đa phương tiện} % Top right header
+\lfoot{Thực tập tốt nghiệp} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Trang | \thepage} % Bottom right footer
+\footskip = 60pt
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
 \setcitestyle{square}
+\thispagestyle{empty}
+
 
 \begin{document}
 \tableofcontents
+\thispagestyle{empty}
 \newpage
 \section{Giới thiệu đề tài}
 \subsection{Bối cảnh}
@@ -375,9 +398,11 @@ Do đó, nhóm nhận thấy bài toán đề xuất phù hợp để thực hi�
 Qua bài toán đề xuất, nhóm nhận thấy cần xây dựng mô hình với 3 thành phần chính như hình dưới:
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.8]{model/model}
     \caption{Mô hình dự kiến xây dựng}
     \label{refhinh16}
+	\end{center}
 \end{figure}
 
 Với 3 thành phần (Component) chính là Map, Chart và Interaction, mỗi thành phần thể hiện rõ ràng chức năng tương ứng: 
@@ -412,25 +437,31 @@ Dữ liệu bản đồ được thể hiện dạng JSON link, tổ chức theo
 
 Mô hình chuẩn hóa dữ liệu bản đồ từ người dùng:
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.8]{model/map_data_model}
     \caption{Mô hình dữ liệu bản đồ dự kiến xây dựng}
     \label{refhinh17}
+    \end{center}
 \end{figure}
 
 \item[•] Dữ liệu dạng thời gian:
 Đối với dạng dữ liệu thời gian, đề tài đề xuất mô hình chuẩn hóa dữ liệu đầu vào từ người dùng như hình dưới:
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.8]{model/timeline_data_model}
     \caption{Mô hình dữ liệu thời gian dự kiến xây dựng}
     \label{refhinh18}
+    \end{center}
 \end{figure}
 
 \item[•] Dữ liệu dạng số:
 Dữ liệu dạng số được thể hiện theo các cặp (name, value) như hình dưới:
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.8]{model/numerical_data_model}
     \caption{Mô hình dữ liệu dạng số dự kiến xây dựng}
     \label{refhinh19}
+    \end{center}
 \end{figure}
 
 \end{itemize}
@@ -439,9 +470,11 @@ Dữ liệu dạng số được thể hiện theo các cặp (name, value) như
 Bên cạnh việc thực hiện API, đề tài cũng thực hiện chương trình xây dựng một trang web mẫu sử dụng API làm ra để thể hiện tương tác các loại dữ liệu khác nhau.
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.8]{image/api_sample}
     \caption{Ví dụ về một output của API đã xây dựng}
     \label{refhinh21}
+    \end{center}
 \end{figure}
 
 \begin{itemize}
