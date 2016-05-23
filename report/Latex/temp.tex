@@ -56,7 +56,7 @@ Trực quan dữ liệu ngày càng đóng vai trò quan trọng trong mọi lĩ
 \subsection{Mục tiêu}
 Trực quan dữ liệu đã trở thành một lĩnh vực nghiên cứu trong những năm gần đây. Nhiều trường đại học đã mở các Khoa chyên nghiên cứu về Trực quan và có một số chương trình ưu việt phục vụ nhu cầu nghiên cứu và chế tạo các nguyên mẫu của sinh viên. Cộng đồng nghiên cứu này bao gồm các cá nhân đến từ nhiều lĩnh vực không chỉ riêng Khoa học Máy tính, như tâm thần học và thậm chí các doanh nghiệp, nơi tạo môi trường lý tưởng để phát triển lý thuyết Trực quan một cách thực tế và mang tính cách mạng nhất.
 
-Chúng ta đang bắt đầu nhận thấy các sản phẩm Trực quan dữ liệu đang thực sự tiện ích như thế nào. Khi một công ty có thể phân tích big data, họ sẽ được nhiều lợi ích. Trong một cuộc khảo sát [link bài báo], 63\% cho rằng họ tin tưởng việc hiểu biết và khai thác big data 1 cách hiệu quả có thể tạo ra lợi thế cạnh tranh cho tổ chức. Phân tích big data có thể giúp họ cải thiện việc ra quyết định, tạo ra 1 cái nhìn toàn diện về khách hàng của họ, tăng tính bảo mật và kiểm soát, phân tích hoạt động và gia tăng kho dữ liệu. Trực quan hóa có vai trò quan trọng trong việc sử dụng big data để có 1 cái nhìn đầy đủ về khách hàng của họ.
+Chúng ta đang bắt đầu nhận thấy các sản phẩm Trực quan dữ liệu đang thực sự tiện ích như thế nào. Khi một công ty có thể phân tích big data, họ sẽ được nhiều lợi ích. Trong một cuộc khảo sát \cite{paper1}, 63\% cho rằng họ tin tưởng việc hiểu biết và khai thác big data 1 cách hiệu quả có thể tạo ra lợi thế cạnh tranh cho tổ chức. Phân tích big data có thể giúp họ cải thiện việc ra quyết định, tạo ra 1 cái nhìn toàn diện về khách hàng của họ, tăng tính bảo mật và kiểm soát, phân tích hoạt động và gia tăng kho dữ liệu. Trực quan hóa có vai trò quan trọng trong việc sử dụng big data để có 1 cái nhìn đầy đủ về khách hàng của họ.
 
 Bởi vì những lợi ích mà Trực quan hoá mang lại, dựa trên những công trình nghiên cứu liên quan, mục tiêu của đề tài là xây dựng một thư viện hỗ trợ người dùng có thể dễ dàng tiếp cận và xây dựng một ứng dụng để trực quan dữ liệu. Đồng thời, so sánh  đánh giá các phương pháp đã có để tìm ra mô hình thiết kế phù hợp.  
 
@@ -72,11 +72,11 @@ Gapminder hoạt động dựa trên nền tảng được xác định trước
 \subsubsection{Mục tiêu}
 Các hoạt động ban đầu là theo đuổi sự phát triển của ứng dụng Trendalyzer (tháng 3 năm 2006). Trendalyzer là một phần mềm biểu diễn chuỗi thời gian thống kê bằng cách chuyển đổi những con số khô khan, nhàm chán thành các đồ thị chuyển động thú vị, và đặc biệt là khả năng tương tác. Trendalyzer còn được biết đến dưới tên gọi Gapminder World, xây dựng trên nền tảng web biểu diễn dữ liệu thống kê theo dòng thời gian cho tất cả các quốc gia trên thế giới.
 
-Gapminder World cung cấp các video, bài thuyết trình bằng Flash và các đồ thị dưới dạng PDF thể hiện xu hướng phát triển mang tính toàn cầu. 
+Gapminder World\cite{gapminderworld} cung cấp các video, bài thuyết trình bằng Flash và các đồ thị dưới dạng PDF thể hiện xu hướng phát triển mang tính toàn cầu. 
 
 Kể từ năm 2006 Gapminder cung cấp một lượng lớn các video thể hiện thực tế dưới góc nhìn toàn cầu. 
 
-Từ năm 2008 Gapminder còn cung cấp các biểu đồ con (sub-graph) thể hiện xu hướng, sự khác biệt giữa các tiểu bang của Mỹ, các tỉnh thành của Trung Quốc, hay các đồ thị đặc biệt so sánh số liệu thống kê từ các thành phố ở Trung Quốc, Mỹ, Ấn Độ với các quốc gia khác trên thế giới. Từ Gapminder World, chỉ bằng một cú click chuột, các dữ liệu, thống kê liên quan nằm sau các đồ thị được thể hiện trên các biểu đồ con.
+Từ năm 2008 Gapminder còn cung cấp các biểu đồ con (sub-graph)\cite{subgraph} thể hiện xu hướng, sự khác biệt giữa các tiểu bang của Mỹ, các tỉnh thành của Trung Quốc, hay các đồ thị đặc biệt so sánh số liệu thống kê từ các thành phố ở Trung Quốc, Mỹ, Ấn Độ với các quốc gia khác trên thế giới. Từ Gapminder World, chỉ bằng một cú click chuột, các dữ liệu, thống kê liên quan nằm sau các đồ thị được thể hiện trên các biểu đồ con.
 
 \begin{figure}[htp]
     \includegraphics[scale=.4]{image/gapminder}
@@ -164,7 +164,7 @@ Do đó, đề tài đề xuất sử dụng nhiều đồ thị để biểu di
 
 \subsection{Thư viện đồ thị C3.js}
 \subsubsection{Giới thiệu}
-C3.js là một thư viện mã nguồn mở [link c3js.org] dựa trên thư viện D3.js , nhằm cho phép người dùng có cái nhìn sâu hơn về các ứng dụng web tích hợp đồ thị.
+C3.js là một thư viện mã nguồn mở \cite{c3js} dựa trên thư viện D3.js , nhằm cho phép người dùng có cái nhìn sâu hơn về các ứng dụng web tích hợp đồ thị.
 
 Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0812/c3
 \begin{figure}[htp]
@@ -175,7 +175,7 @@ Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0
 
 \subsubsection{Mục tiêu}
 \begin{itemize}
-        \item[•]Sự thoải mái (Comfortable)
+        \item[•]Sự thoải mái (Comfortable):
         C3 giúp người dùng có thể dễ dàng tạo một đồ thị dựa trên D3 bằng cách gộp chung các đoạn code cần thiết để cấu trúc một đồ thị hoàn chỉnh. Qua đó, người dùng không cần phải viết các đoạn code D3 rườm rà như trước nữa.
 \begin{figure}[htp]
     \includegraphics[scale=.3]{image/c3syntax}
@@ -184,7 +184,7 @@ Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0
 \end{figure}
 [Hình 6] Thông qua một số câu lệnh định nghĩa dữ liệu, C3 khởi tạo một đồ thị cho phép tương tác một cách trực quan thông qua hover, click,.. các thành phần của đồ thị
 
-        \item[•]Khả năng tuỳ chỉnh (Customizable)
+        \item[•]Khả năng tuỳ chỉnh (Customizable):
         C3 cung cấp các class tương ứng cho mỗi đối tượng trong đồ thị khi khởi tạo. Qua đó, người dùng có thể định nghĩa các style theo ý muốn theo class cũng như mở rộng cấu trúc các thành phần của đồ thị (trục dữ liệu, hình dạng hiển thị, kiểu đồ thị,.. ) một cách trực tiếp.
 \begin{figure}[htp]
     \includegraphics[scale=.4]{image/c3custom}
@@ -193,7 +193,7 @@ Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0
 \end{figure}      
 [Hình 7] Trục hoành của đồ thị được tuỳ chỉnh theo thời gian hiện tại với định dạng hoàn toàn tuỳ thuộc người sử dụng.
  
-        \item[•]Khả năng kiểm soát (Controllable)
+        \item[•]Khả năng kiểm soát (Controllable):
         C3 cung cấp đa dạng các APIs và các hàm callback để truy xuất trạng thái của đồ thị. Bằng cách đó, người dùng có thể cập nhật lại đồ thị thậm chí sau khi đồ thị đã được thể hiện.
 \begin{figure}[htp]
     \includegraphics[scale=.4]{image/c3apis}
@@ -209,9 +209,11 @@ Như đã trình bày ở trên, C3js sử dụng thư viện D3js nhằm tạo 
 Ngoài ra dựa theo cấu trúc mã nguồn mà C3js chia sẻ, có thể thấy cấu trúc tổ chức của C3js theo hướng hướng đối tượng, được tổ chức theo các class (trục, dữ liệu, đồ thị,.. ) và các phương thức, thuộc tính đi kèm class.
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/c3source}
     \caption{Thư viện đồ thị C3js}
     \label{refhinh9}
+	\end{center}
 \end{figure}
 
 \subsubsection{Đánh giá}
@@ -221,12 +223,14 @@ Cách tổ chức và hiện thực theo hướng hướng đối tượng như 
 
 \subsection{Ứng dụng tạo bản đồ online Mapme}
 \subsubsection{Giới thiệu}
-Mapme là một ứng dụng cho phép người dùng tạo bản đồ, dữ liệu đươc xử lý trực tiếp từ các file Excel đầu vào. Bản đồ tạo ra có các marker tương ứng với dữ liệu, có khả năng tương tác trực tiếp thông qua các sự kiện định nghĩa trước. Ngoài ra, bản đồ được tạo ra còn có thể được nhúng vào các trang web khác thông qua một đoạn mã nhúng. Đặc biệt toàn bộ tương tác từ những bước khởi tạo bản đồ đầu tiên, đến lúc xuất thành quả, đều không yêu cầu người dùng phải viết một dòng mã nào.
+Mapme\cite{mapme} là một ứng dụng cho phép người dùng tạo bản đồ, dữ liệu đươc xử lý trực tiếp từ các file Excel đầu vào. Bản đồ tạo ra có các marker tương ứng với dữ liệu, có khả năng tương tác trực tiếp thông qua các sự kiện định nghĩa trước. Ngoài ra, bản đồ được tạo ra còn có thể được nhúng vào các trang web khác thông qua một đoạn mã nhúng. Đặc biệt toàn bộ tương tác từ những bước khởi tạo bản đồ đầu tiên, đến lúc xuất thành quả, đều không yêu cầu người dùng phải viết một dòng mã nào.
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/mapme}
     \caption{Ứng dụng tạo bản đồ online Mapme}
     \label{refhinh10}
+    \end{center}
 \end{figure}
 
 \subsubsection{Mục tiêu}
@@ -235,21 +239,25 @@ Mapme là một ứng dụng cho phép người dùng tạo bản đồ, dữ li
 Phục vụ trong các lĩnh vực khác nhau như giáo dục, các sự kiện, xuất bản hay truyền thụ cảm hứng trong đời sống hằng ngày.
 
 \subsubsection{Phương pháp}
-Sử dụng OpenStreetMap (viết tắt OSM), một dịch vụ bản đồ thế giới trực tuyến với nội dung mở, được bảo trợ bởi các công ty lớn như Google, Yahoo! và Multimap.com. OSM cho phép ứng dụng cập nhật dữ liệu địa lý trực tuyến một cách chính xác, luôn được cập nhật nhằm đảm bảo các dữ liệu luôn đi xát thực tế nhất.
+Sử dụng OpenStreetMap (viết tắt OSM)\cite{osm}, một dịch vụ bản đồ thế giới trực tuyến với nội dung mở, được bảo trợ bởi các công ty lớn như Google, Yahoo! và Multimap.com. OSM cho phép ứng dụng cập nhật dữ liệu địa lý trực tuyến một cách chính xác, luôn được cập nhật nhằm đảm bảo các dữ liệu luôn đi xát thực tế nhất.
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/mapmeOSM}
     \caption{Ứng dụng tạo bản đồ online Mapme}
     \label{refhinh11}
+	\end{center}
 \end{figure}
 
 Như trên hình có thể thấy, các thông tin về khởi nghiệp ở quốc gia Ireland được trực quan thông qua các biểu tượng (marker). Cùng với đó là các số liệu tương ứng được xử lý trực tiếp từ các file Excel đầu vào.
 Ngoài ra, người dùng còn có thể tương tác với các marker này để thể hiện thông tin chi tiết ở các điểm chỉ định.
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.8]{image/mapmeExport}
     \caption{Ứng dụng tạo bản đồ online Mapme}
     \label{refhinh12}
+	\end{center}
 \end{figure}
 
 Đặc biệt, Mapme còn hỗ trợ sinh mã nhúng, dưới dạng iframe, giúp người dùng nhúng trực tiếp bản đồ mình vừa tạo vào các website tuỳ mục đích.
@@ -263,7 +271,7 @@ Ngoài ra, ứng dụng cho phép người dùng tương tác trực tiếp vớ
 Qua việc tìm hiểu cũng như những phần trình bày về các công trình liên quan đến đề tài, đề tài nhận thấy cần phải nắm được những kiến thức cơ bản sau để hỗ trợ tốt hơn cho việc hiện thực API về trực quan dữ liệu:
 \subsection{Javascript}
 \subsubsection{Giới thiệu}
-JavaScript, theo phiên bản hiện hành, là một ngôn ngữ lập trình kịch bản (scripting language), đa nền tảng (cross-platform), nhỏ và nhẹ. Ngôn ngữ này được dùng rộng rãi cho các trang web, nhưng cũng được dùng để tạo khả năng viết script sử dụng các đối tượng nằm sẵn trong các ứng dụng.
+JavaScript\citep{jsintro}, theo phiên bản hiện hành, là một ngôn ngữ lập trình kịch bản (scripting language), đa nền tảng (cross-platform), nhỏ và nhẹ. Ngôn ngữ này được dùng rộng rãi cho các trang web, nhưng cũng được dùng để tạo khả năng viết script sử dụng các đối tượng nằm sẵn trong các ứng dụng.
 
 \subsubsection{Mục tiêu}
 Mục tiêu của JavaScript là nhằm cung cấp cho các nhà phát triển Web một số khả năng và quyền điều khiển chức năng cho trang Web. Mã Javascript có khả năng nhúng trong tài liệu HTML để điều khiển nội dung của trang Web và kiểm tra sự hợp lệ của dữ liệu mà người dùng nhập vào. Khi một trang hiển thị trong trình duyệt, các câu lệnh được trình duyệt thông dịch và thực thi.
@@ -294,7 +302,7 @@ Với phương châm là “write less, do more”, jQuery được thiết kế
 Thành phần quan trọng của jQuery là thư viện thao tác DOM (Document Object Model). DOM là 1 biểu diễn cấu trúc cây của tất cả các thành phần của 1 trang web và jQuery đơn giản hóa các cú pháp cho việc tìm kiếm, chọn lựa, và thao tác những phần tử DOM.
 
 \subsubsection{Tính năng}
-\indent \indent \textbullet \ Việc lựa chọn các phần tử DOM sử dụng công cụ Sizzle (selector mã nguồn mở)
+\indent \indent \textbullet \ Việc lựa chọn các phần tử DOM sử dụng công cụ Sizzle (selector mã nguồn mở)\cite{sizzle}
 
 \indent \textbullet \ Thao tác với DOM dựa trên CSS Selector
 
@@ -325,7 +333,7 @@ Dựa trên những đặc điểm cũng như tính năng mạnh mẽ của jQue
 
 \subsection{d3.js}
 \subsubsection{Giới thiệu}
-D3.js được viết bởi Mike Bostock, là 1 thư viện javascript dùng để thao tác với document dựa trên dữ liệu (data). D3 giúp mang dữ liệu đến cuộc sống bằng cách sử dụng HTML, SVG, và CSS. D3 trên chuẩn web cung cấp đầy đủ các tính năng của những trình duyệt hiện đại mà không buộc mình vào một khuôn khổ nhất định nào, kết hợp với các thành phần trực quan mạnh mẽ và một phương pháp hướng dữ liệu để thao tác DOM.
+D3.js\cite{d3jsintro1}. được viết bởi Mike Bostock, là 1 thư viện javascript dùng để thao tác với document dựa trên dữ liệu (data). D3 giúp mang dữ liệu đến cuộc sống bằng cách sử dụng HTML, SVG, và CSS. D3 trên chuẩn web cung cấp đầy đủ các tính năng của những trình duyệt hiện đại mà không buộc mình vào một khuôn khổ nhất định nào, kết hợp với các thành phần trực quan mạnh mẽ và một phương pháp hướng dữ liệu để thao tác DOM.
 
 \begin{center}
     \begin{figure}[htp]
@@ -341,33 +349,31 @@ D3.js được viết bởi Mike Bostock, là 1 thư viện javascript dùng đ�
 D3.js giúp nhúng dữ liệu vào trong các phần tử DOM. Sau đó, có thể áp dụng CSS3, HTML, và/hoặc SVG lên dữ liệu này. Cuối cùng, D3.js có thể giúp tạo ra dữ liệu tương tác thông qua việc sử dụng những sự biến đổi (transformation), chuyển đổi (transition) hướng dữ liệu của D3.js
 
 \subsubsection{Ứng dụng}
-D3.js được viết trong Javascript, do đó có thể sử dụng lại code và thêm những hàm chức năng mà người dùng muốn. Cách người dùng chọn để định dạng, thao tác, tương tác với dữ liệu là tùy thuộc ở họ.
+D3.js được viết trong Javascript, do đó có thể sử dụng lại code và thêm những hàm chức năng mà người dùng muốn. Cách người dùng chọn để định dạng, thao tác, tương tác với dữ liệu là tùy thuộc ở họ.\citep{d3jsintro2}
 
 D3.js rất thích hợp dùng trong đề tài, nó giúp xây dựng framework trực quan dữ liệu mà người dùng muốn, dễ dàng sử dụng, do đó giúp tạo ra API một cách dễ dàng hơn, API dễ hiểu, dễ sử dụng.
 
 \subsection{OpenLayers}
 \subsubsection{Giới thiệu}
-OpenLayers được tạo ra bởi MetaCarta sau hội nghị O'Reilly Where 2.0 (29-30/06/2005) và chính thức phát hành thành mã nguồn mở trước hội nghị  O'Reilly Where 2.0 (13-14/06/2006) bởi MetaCarta Labs. Hai dự án khác về công cụ xây dựng bản đồ phát hành bởi MetaCarta là FeatureServer và TileCache. Từ tháng 11/2007, OpenLayers trở thành dự án mã nguồn mở chính thức của Hội đồng Không gian địa lý.
+OpenLayers\cite{ol} được tạo ra bởi MetaCarta sau hội nghị O'Reilly Where 2.0 (29-30/06/2005) và chính thức phát hành thành mã nguồn mở trước hội nghị  O'Reilly Where 2.0 (13-14/06/2006) bởi MetaCarta Labs. Hai dự án khác về công cụ xây dựng bản đồ phát hành bởi MetaCarta là FeatureServer và TileCache. Từ tháng 11/2007, OpenLayers trở thành dự án mã nguồn mở chính thức của Hội đồng Không gian địa lý.
 
-Sơ qua về OpenLayers, đây là một thư viện JavaScript mã nguồn mở (được chứng nhận bởi BSD License) nhằm phục vụ mục đích biểu diễn thông tin trên bản đồ  đối với các trình duyệt Web, không phụ thuộc phía server. Nó cung cấp API chuyên về xây dựng các ứng dụng địa lý trên nền Web tương tự như Google Maps[link] và Bing Maps[link], với một điểm khác biệt duy nhất, OpenLayers hoàn toàn miễn phí, được xây dựng và phát triển nên bởi cộng đồng phát triển phần mềm mã nguồn mở. Thư viện xây dựng trên Prototype JavaScript Framework [link].
+Sơ qua về OpenLayers, đây là một thư viện JavaScript mã nguồn mở (được chứng nhận bởi BSD License) nhằm phục vụ mục đích biểu diễn thông tin trên bản đồ  đối với các trình duyệt Web, không phụ thuộc phía server. Nó cung cấp API chuyên về xây dựng các ứng dụng địa lý trên nền Web tương tự như Google Maps\cite{googlemap} và Bing Maps\cite{bingmap}, với một điểm khác biệt duy nhất, OpenLayers hoàn toàn miễn phí, được xây dựng và phát triển nên bởi cộng đồng phát triển phần mềm mã nguồn mở. Thư viện xây dựng trên Prototype JavaScript Framework\cite{prototypejs}.
 
-Hiện nay, OpenLayers đã ra tới phiên bản OpenLayers 3[link]. OpenLayers 3 được viết lại nhằm dễ hiểu hơn, hướng tới các tính năng của HTML5 và CSS3. Thư viện tiếp tục hỗ trợ trình chiếu, các giao thức tiêu chuẩn và các chức năng chỉnh sửa. Phiên bản mới này tập trung vào cải thiện hiệu năng, xây dựng đơn giản hơn, các thành phần trở nên trực quan hơn, API được cải tiến và còn nhiều hơn nữa.
+Hiện nay, OpenLayers đã ra tới phiên bản OpenLayers 3\cite{ol3}. OpenLayers 3 được viết lại nhằm dễ hiểu hơn, hướng tới các tính năng của HTML5 và CSS3. Thư viện tiếp tục hỗ trợ trình chiếu, các giao thức tiêu chuẩn và các chức năng chỉnh sửa. Phiên bản mới này tập trung vào cải thiện hiệu năng, xây dựng đơn giản hơn, các thành phần trở nên trực quan hơn, API được cải tiến và còn nhiều hơn nữa.
 
-Source code của thư viện: \href{https://github.com/openlayers/ol3/}{https://github.com/openlayers/ol3/}
+Mã nguồn của thư viện nằm ở địa chỉ sau: \href{https://github.com/openlayers/ol3/}{https://github.com/openlayers/ol3/}
 
 \subsubsection{Mục tiêu}
 Như đã trình bày ở trên, OpenLayers hỗ trợ các lập trình viên hiển thị thông tin dưới dạng bản đồ, hay bất cứ nhu cầu nào liên quan về bản đồ một cách hiệu quả và đơn giản nhất.
 
 \subsubsection{Đặc điểm}
-	\begin{center}
-    	\begin{figure}[htp]
-    		\begin{center}
-     		\includegraphics[scale=.4]{image/ol-feature}
-    		\end{center}
+    \begin{figure}[htp]
+		\begin{center}
+     	\includegraphics[scale=.4]{image/ol-feature}
     	\caption{Các đặc điểm chính của OpenLayers}
     	\label{refhinh15}
-    	\end{figure}
-	\end{center}
+		\end{center}
+    \end{figure}
 OpenLayers có 4 đặc điểm chính:
 \begin{itemize}
 \item[•]Thể hiện Lớp dưới dạng ô (Tiled Layers): 
@@ -430,8 +436,8 @@ Hình dưới là kiến trúc mã nguồn đề tài dự kiến hiện thực,
 \subsection{Mô hình dữ liệu dự kiến xây dựng}
 \begin{itemize}
 \item[•] Dữ liệu dạng bản đồ: 
-Dữ liệu được tham khảo từ nguồn: [https://mapzen.com/data/borders] [link]. 
-Dữ liệu bản đồ được thể hiện dạng JSON link, tổ chức theo các mức (administrative level) từ 1 tới 10, tương ứng từ biên giới quốc gia tới tỉnh, thành phố trực thuộc trung ương, quận, huyện, thị xã, thành phố thuộc tỉnh đến phường, xã, thị trấn.
+Dữ liệu được tham khảo từ nguồn: \href{https://mapzen.com/data/borders}{https://mapzen.com/data/borders}. 
+Dữ liệu bản đồ được thể hiện dạng JSON, tổ chức theo các mức (administrative level) từ 1 tới 10, tương ứng từ biên giới quốc gia tới tỉnh, thành phố trực thuộc trung ương, quận, huyện, thị xã, thành phố thuộc tỉnh đến phường, xã, thị trấn.
 
 Đề tài dự kiến hỗ trợ bản đồ Việt Nam ở mức độ 4 (tỉnh, thành phố trực thuộc trung ương)
 
@@ -510,11 +516,24 @@ Kế hoạch dự kiến thực hiện trong giai đoạn luận văn tốt nghi
 \section{Tài liệu tham khảo}
 \begin{thebibliography}{}
 
+\bibitem{paper1} Steve LaValle, Eric Lesser, Rebecca Shockley, Michael S. Hopkins and Nina Kruschwitz, MIT. Big Data, Analytics and the Path From Insights to Value, 2015. \url{http://search.proquest.com/openview/863e390a27e9a69d59ee5ffe2204f293/1?pq-origsite=gscholar}
+
 \bibitem{bigdata} T.Alan Keahey, IBM. Using visualization to understand big data, 2013. \url{www.iotdataviz.com/meetup/1/YTW03349USEN.PDF}
 
 \bibitem{gapminder} Gapminder. About Gapminder, 22, 5, 2016. \url{http://www.gapminder.org/about-gapminder/our-mission/}
 
+\bibitem{gapminderworld} Gapminder World?. How may I use Gapminder World?. \url{http://www.gapminder.org/faq_frequently_asked_questions/#13}
+
+\bibitem{subgraph} Gapminder Sub-graph. Examples about Gapminder sub-graph. \url{https://www.gapminder.org/tools/bubbles#_state_marker_size}
+
+
 \bibitem{c3js} c3js. C3.js | D3-based reusable chart library, 22, 5, 2016. \url{http://c3js.org/}
+
+\bibitem{mapme} Maps built with Mapme. Plot your Story - Combine maps, photos, videos \& words. \url{http://mapme.com/gallery/}
+
+\bibitem{osm} OpenStreetMap. The project that creates and distributes free geographic data for the world. \url{https://www.openstreetmap.org/}
+
+\bibitem{prototypejs} Prototype JavaScript Framework. A foundation for ambitious web applications, 2, 2005. \url{https://en.wikipedia.org/wiki/Prototype_JavaScript_Framework}
 
 \bibitem{jqueryusage} W3Techs. Usage statistics and market share of JQuery for websites, 10, 4, 2016. \url{https://w3techs.com/technologies/details/js-jquery/all/all}
 
@@ -522,10 +541,25 @@ Kế hoạch dự kiến thực hiện trong giai đoạn luận văn tốt nghi
 
 \bibitem{jqueryintro2} Wikipedia. jQuery, 22, 5, 2016. \url{https://en.wikipedia.org/wiki/JQuery}
 
+\bibitem{sizzle} Wiki. Sizzle. \url{https://github.com/jquery/sizzle/wiki}
+
 \bibitem{gha} World Health Organization (WHO). Global Health Atlas, 10, 4, 2016. \url{http://apps.who.int/globalatlas/}
 
 \bibitem{ghaex} WHO. Health workforce: Density of physicsians, 10, 4, 2016. \url{http://gamapserver.who.int/gho/interactive_charts/health_workforce/PhysiciansDensity_Total/atlas.html}
 
+\bibitem{d3jsintro1} D3.js. D3.js - Data-Driven Documents, 10, 4, 2016. \url{https://d3js.org/}
+
+\bibitem{d3jsintro2} Dashing D3.js. Why build Data Visualization with D3.js, 10, 4, 2016. \url{https://www.dashingd3js.com/why-build-with-d3js}
+
+\bibitem{jsintro} Mozilla Developer Network. Introduction - Javascript, 10, 4, 2016. \url{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction}
+
+\bibitem{ol} Open Layers 3. A high-performance, feature-packed library for all your mapping needs. \url{http://openlayers.org/en/latest/doc/}
+
+\bibitem{googlemap} Google Maps. Web mapping service developed by Google, 10, 2004. \url{https://en.wikipedia.org/wiki/Google_Maps}
+
+\bibitem{bingmap} Bing Maps. Web mapping service provided as a part of Microsoft's Bing suite of search engines and powered by the Bing Maps for Enterprise framework, 12, 5, 2010. \url{https://en.wikipedia.org/wiki/Bing_Maps}
+
+\bibitem{ol3} Open Layers 3. Release Builds \url{http://openlayers.org/download/}
 
 \end{thebibliography}
 
