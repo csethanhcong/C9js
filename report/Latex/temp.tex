@@ -239,7 +239,7 @@ Mapme\cite{mapme} là một ứng dụng cho phép người dùng tạo bản đ
 Phục vụ trong các lĩnh vực khác nhau như giáo dục, các sự kiện, xuất bản hay truyền thụ cảm hứng trong đời sống hằng ngày.
 
 \subsubsection{Phương pháp}
-Sử dụng OpenStreetMap (viết tắt OSM)\cite{osm}, một dịch vụ bản đồ thế giới trực tuyến với nội dung mở, được bảo trợ bởi các công ty lớn như Google, Yahoo! và Multimap.com. OSM cho phép ứng dụng cập nhật dữ liệu địa lý trực tuyến một cách chính xác, luôn được cập nhật nhằm đảm bảo các dữ liệu luôn đi xát thực tế nhất.
+Sử dụng OpenStreetMap (viết tắt OSM)\cite{osm}, một dịch vụ bản đồ thế giới trực tuyến với nội dung mở, nhằm mục đích cung cấp dữ liệu địa lý do nhiều người cùng cộng tác với nhau trên hệ thống Wiki. Nó thường được gọi "Wikipedia của bản đồ". Dự án OSM được sáng lập năm 2004, chủ yếu để cạnh tranh với các công ty và cơ quan chính phủ cung cấp dữ liệu địa lý theo các điều khoản sử dụng được coi là quá chặt chẽ. OSM cho phép ứng dụng cập nhật dữ liệu địa lý trực tuyến một cách chính xác, luôn được cập nhật nhằm đảm bảo các dữ liệu luôn đi sát thực tế nhất.
 
 \begin{figure}[htp]
 	\begin{center}
@@ -263,38 +263,40 @@ Ngoài ra, người dùng còn có thể tương tác với các marker này đ�
 Đặc biệt, Mapme còn hỗ trợ sinh mã nhúng, dưới dạng iframe, giúp người dùng nhúng trực tiếp bản đồ mình vừa tạo vào các website tuỳ mục đích.
 
 \subsubsection{Đánh giá}
-Đầu tiên là về cách sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ, đảm bảo ứng dụng luôn chính xác về các dữ liệu địa lý so với thực tế. Đề tài đề xuất sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ cho API mà đề tài thực hiện.
+Đầu tiên là về cách sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ, đảm bảo ứng dụng luôn chính xác về các dữ liệu địa lý so với thực tế. Nhóm đề tài đề xuất sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ cho API mà nhóm đề tài thực hiện.
 
 Ngoài ra, ứng dụng cho phép người dùng tương tác trực tiếp với các marker trên bản đồ, hiển thị các thông tin liên quan đến các địa điểm đó. Thay vì phải đọc các dữ liệu thô theo vùng miền, theo quốc gia, vùng lãnh thổ như trước, cách tương tác này giúp người dùng dễ dàng cập nhật thông tin cũng như có cái nhìn tổng quan, khả năng so sánh giữa các địa điểm khác nhau mà không phải chăm chú vào các con số nhàm chám như trước.
 
 \section{Kiến thức nền}
-Qua việc tìm hiểu cũng như những phần trình bày về các công trình liên quan đến đề tài, đề tài nhận thấy cần phải nắm được những kiến thức cơ bản sau để hỗ trợ tốt hơn cho việc hiện thực API về trực quan dữ liệu:
-\subsection{Javascript}
+Qua việc tìm hiểu cũng như những phần trình bày về các công trình liên quan đến đề tài, nhóm đề tài nhận thấy cần phải nắm được những kiến thức cơ bản sau để hỗ trợ tốt hơn cho việc hiện thực API về trực quan dữ liệu:
+\subsection{JavaScript}
 \subsubsection{Giới thiệu}
-JavaScript\citep{jsintro}, theo phiên bản hiện hành, là một ngôn ngữ lập trình kịch bản (scripting language), đa nền tảng (cross-platform), nhỏ và nhẹ. Ngôn ngữ này được dùng rộng rãi cho các trang web, nhưng cũng được dùng để tạo khả năng viết script sử dụng các đối tượng nằm sẵn trong các ứng dụng.
+JavaScript\citep{jsintro}, theo phiên bản hiện hành mới nhất ECMAScript 6\cite{es6}, là một ngôn ngữ lập trình kịch bản (scripting language), đa nền tảng (cross-platform), nhỏ và nhẹ (lightweight). Ngôn ngữ này được dùng rộng rãi cho các trang web, nhưng cũng được dùng để tạo khả năng viết script sử dụng các đối tượng nằm sẵn trong các ứng dụng.
 
 \subsubsection{Mục tiêu}
-Mục tiêu của JavaScript là nhằm cung cấp cho các nhà phát triển Web một số khả năng và quyền điều khiển chức năng cho trang Web. Mã Javascript có khả năng nhúng trong tài liệu HTML để điều khiển nội dung của trang Web và kiểm tra sự hợp lệ của dữ liệu mà người dùng nhập vào. Khi một trang hiển thị trong trình duyệt, các câu lệnh được trình duyệt thông dịch và thực thi.
+Mục tiêu của JavaScript là cung cấp cho các nhà phát triển Web một số khả năng và quyền điều khiển chức năng cho trang Web. Mã JavaScript có khả năng nhúng trong tài liệu HTML để điều khiển nội dung của trang Web và kiểm tra sự hợp lệ của dữ liệu mà người dùng nhập vào. Khi một trang hiển thị trong trình duyệt, các câu lệnh được trình duyệt thông dịch và thực thi.
 
 \subsubsection{Tính năng}
-JavaScript nâng cao tính động và khả năng tương tác cho web-site bằng cách sử dụng các hiệu ứng của nó như thực hiện các phép tính, kiểm tra form, viết các trò chơi, bổ sung các hiệu ứng đặc biệt, tuỳ biến các chọn lựa đồ hoạ, tạo ra các mật khẩu bảo mật và hơn thế nữa.
+JavaScript nâng cao sự linh động và khả năng tương tác cho website bằng cách sử dụng các hiệu ứng của nó như thực hiện các phép tính, kiểm tra form, viết các trò chơi, bổ sung các hiệu ứng đặc biệt, tuỳ biến các chọn lựa đồ hoạ, tạo ra các mật khẩu bảo mật và hơn thế nữa.
 
-Cụ thể, Javascript có thể được dùng để:
- 
-\indent \indent \textbullet \ Tương tác với người dùng, chúng ta có thể viết mã để đáp lại các sự kiện. Các sự kiện này sẽ có thể phát sinh bởi người dùng: nhấp chuột hay được phát sinh từ hệ thống, định lại kích thước của trang …
+Cụ thể, JavaScript có thể được dùng để:
+\begin{itemize}
+\item[•] Tương tác với người dùng: Chúng ta có thể viết mã để đáp lại các sự kiện. Các sự kiện này sẽ có thể phát sinh bởi người dùng: nhấp chuột hay được phát sinh từ hệ thống, định lại kích thước của trang …
 
-\indent \indent \textbullet \ Thay đổi nội dung động. Mã JavaScript có thể dùng để thay đổi nội dung và vị trí các phần tử một cách động trên một trang nhằm đáp lại sự tương tác với người dùng.
+\item[•] Thay đổi nội dung động: Mã JavaScript có thể dùng để thay đổi nội dung và vị trí các phần tử một cách động trên một trang nhằm đáp lại sự tương tác với người dùng.
 
-\indent \indent \textbullet \ Kiểm tra tính hợp lệ dữ liệu. Chúng ta có thể viết mã nhằm kiểm tra tính hợp lệ của dữ liệu do người dùng nhập vào trước khi nó được gửi lên Web server để xử lý.
+\item[•] Kiểm tra tính hợp lệ dữ liệu: Chúng ta có thể viết mã nhằm kiểm tra tính hợp lệ của dữ liệu do người dùng nhập vào trước khi nó được gửi lên Web server để xử lý.
+\end{itemize}
 
 \subsubsection{Ứng dụng}
-
+Dựa trên những đặc điểm và khả năng mạnh mẽ trong hỗ trợ lập trình API của JavaScript đã kể trên, nhóm đề xuất sử dụng JavaScript làm ngôn ngữ chính để hiện thực API.
+Ngoài ra, nhóm đề xuất sử dụng chuẩn mới nhất, ECMAScript 6 làm tiêu chuẩn cho các ràng buộc, quy tắc (coding conventions) khi hiện thực API.
 
 \subsection{jQuery}
 \subsubsection{Giới thiệu}
-jQuery\cite{jqueryintro1}\cite{jqueryintro2} là một thư viện đa nền tảng (cross-platform) mã nguồn mở dựa trên ngôn ngữ Javascript, được tạo bởi John Resig vào năm 2006. jQuery là một thư viện Javascript phổ biến nhất được sử dụng hiện nay.
+jQuery\cite{jqueryintro1}\cite{jqueryintro2} là một thư viện đa nền tảng (cross-platform) mã nguồn mở dựa trên ngôn ngữ JavaScript, được tạo bởi John Resig vào năm 2006. jQuery là một thư viện JavaScript phổ biến nhất được sử dụng hiện nay.
 
-Theo thống kê (2016)\cite{jqueryusage}, cho tới hiện nay thì jQuery được sử dụng bởi 96\% của tất cả các trang web có sử dụng thư viện Javascript.
+Theo thống kê (2016)\cite{jqueryusage}, cho tới hiện nay thì jQuery được sử dụng bởi 96\% của tất cả các trang web có sử dụng thư viện JavaScript.
 
 \subsubsection{Mục tiêu}
 Với phương châm là “write less, do more”, jQuery được thiết kế nhằm đơn giản hóa các nhiệm vụ khác nhau bằng cách viết ít mã hơn. 
@@ -323,7 +325,7 @@ Thành phần quan trọng của jQuery là thư viện thao tác DOM (Document 
     \begin{center}
      \includegraphics[scale=.6]{image/js-jquery}
     \end{center}
-    \caption{Vị trí của jQuery so với những thư viện Javascript khác}
+    \caption{Vị trí của jQuery so với những thư viện JavaScript khác}
     \label{refhinh13}
     \end{figure}
 \end{center}
@@ -333,7 +335,7 @@ Dựa trên những đặc điểm cũng như tính năng mạnh mẽ của jQue
 
 \subsection{d3.js}
 \subsubsection{Giới thiệu}
-D3.js\cite{d3jsintro1}. được viết bởi Mike Bostock, là 1 thư viện javascript dùng để thao tác với document dựa trên dữ liệu (data). D3 giúp mang dữ liệu đến cuộc sống bằng cách sử dụng HTML, SVG, và CSS. D3 trên chuẩn web cung cấp đầy đủ các tính năng của những trình duyệt hiện đại mà không buộc mình vào một khuôn khổ nhất định nào, kết hợp với các thành phần trực quan mạnh mẽ và một phương pháp hướng dữ liệu để thao tác DOM.
+D3.js\cite{d3jsintro1}. được viết bởi Mike Bostock, là 1 thư viện JavaScript dùng để thao tác với document dựa trên dữ liệu (data). D3 giúp mang dữ liệu đến cuộc sống bằng cách sử dụng HTML, SVG, và CSS. D3 trên chuẩn web cung cấp đầy đủ các tính năng của những trình duyệt hiện đại mà không buộc mình vào một khuôn khổ nhất định nào, kết hợp với các thành phần trực quan mạnh mẽ và một phương pháp hướng dữ liệu để thao tác DOM.
 
 \begin{center}
     \begin{figure}[htp]
@@ -349,7 +351,7 @@ D3.js\cite{d3jsintro1}. được viết bởi Mike Bostock, là 1 thư viện ja
 D3.js giúp nhúng dữ liệu vào trong các phần tử DOM. Sau đó, có thể áp dụng CSS3, HTML, và/hoặc SVG lên dữ liệu này. Cuối cùng, D3.js có thể giúp tạo ra dữ liệu tương tác thông qua việc sử dụng những sự biến đổi (transformation), chuyển đổi (transition) hướng dữ liệu của D3.js
 
 \subsubsection{Ứng dụng}
-D3.js được viết trong Javascript, do đó có thể sử dụng lại code và thêm những hàm chức năng mà người dùng muốn. Cách người dùng chọn để định dạng, thao tác, tương tác với dữ liệu là tùy thuộc ở họ.\citep{d3jsintro2}
+D3.js được viết trong JavaScript, do đó có thể sử dụng lại code và thêm những hàm chức năng mà người dùng muốn. Cách người dùng chọn để định dạng, thao tác, tương tác với dữ liệu là tùy thuộc ở họ.\citep{d3jsintro2}
 
 D3.js rất thích hợp dùng trong đề tài, nó giúp xây dựng framework trực quan dữ liệu mà người dùng muốn, dễ dàng sử dụng, do đó giúp tạo ra API một cách dễ dàng hơn, API dễ hiểu, dễ sử dụng.
 
@@ -513,6 +515,10 @@ Kế hoạch dự kiến thực hiện trong giai đoạn luận văn tốt nghi
 \item[•]Tổng hợp và viết báo cáo
 
 \end{itemize}
+
+
+\section{Kết luận}
+
 \section{Tài liệu tham khảo}
 \begin{thebibliography}{}
 
@@ -535,6 +541,8 @@ Kế hoạch dự kiến thực hiện trong giai đoạn luận văn tốt nghi
 
 \bibitem{prototypejs} Prototype JavaScript Framework. A foundation for ambitious web applications, 2, 2005. \url{https://en.wikipedia.org/wiki/Prototype_JavaScript_Framework}
 
+\bibitem{prototypejs} ECMAScript 6 — New Features: Overview \& Comparison. Copyright (c) 2015-2016 Ralf S. Engelschall. \url{http://es6-features.org/}
+
 \bibitem{jqueryusage} W3Techs. Usage statistics and market share of JQuery for websites, 10, 4, 2016. \url{https://w3techs.com/technologies/details/js-jquery/all/all}
 
 \bibitem{jqueryintro1} jQuery. jQuery, 10, 4, 2016. \url{https://jquery.com/}
@@ -551,7 +559,7 @@ Kế hoạch dự kiến thực hiện trong giai đoạn luận văn tốt nghi
 
 \bibitem{d3jsintro2} Dashing D3.js. Why build Data Visualization with D3.js, 10, 4, 2016. \url{https://www.dashingd3js.com/why-build-with-d3js}
 
-\bibitem{jsintro} Mozilla Developer Network. Introduction - Javascript, 10, 4, 2016. \url{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction}
+\bibitem{jsintro} Mozilla Developer Network. Introduction - JavaScript, 10, 4, 2016. \url{https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Introduction}
 
 \bibitem{ol} Open Layers 3. A high-performance, feature-packed library for all your mapping needs. \url{http://openlayers.org/en/latest/doc/}
 
