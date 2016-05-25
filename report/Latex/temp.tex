@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,oneside]{article}
+\documentclass[12pt,a4paper]{article}
 \usepackage[utf8]{vietnam}
 \usepackage{graphicx}
 \usepackage{hyperref}
@@ -21,12 +21,16 @@
 
 % Set up the header and footer
 \pagestyle{fancy}
-\lhead{} % Top left header
+%\lhead{\includegraphics[scale=0.05]{image/logo}} % Top left header
+\lhead{\fancyplain{}{
+	\begin{picture}(25,-15)(0,0)
+    	\put(0,0){\includegraphics[width=12mm, height=12mm]{image/logo}}
+   	\end{picture}}} % predefined ()
 %\chead{Center header} % Top center head
-\rhead{Thư viện Web hỗ trợ tương tác dữ liệu đa phương tiện} % Top right header
-\lfoot{Thực tập tốt nghiệp} % Bottom left footer
-\cfoot{} % Bottom center footer
-\rfoot{Trang | \thepage} % Bottom right footer
+\rhead{\textbf{Thư viện Web hỗ trợ tương tác dữ liệu đa phương tiện}} % Top right header
+\lfoot{\textbf{Thực tập tốt nghiệp}} % Bottom left footer
+\cfoot{} % Bottom center footer\
+\rfoot{\textbf{Trang | \thepage}} % Bottom right footer
 \footskip = 60pt
 \renewcommand\headrulewidth{0.4pt} % Size of the header rule
 \renewcommand\footrulewidth{0.4pt} % Size of the footer rule
@@ -38,6 +42,64 @@
 
 
 \begin{document}
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\large ĐẠI HỌC BÁCH KHOA THÀNH PHỐ HỒ CHÍ MINH}\\[0.2cm] % Name of your university/college
+\textsc{\Large \scshape khoa khoa học và kỹ thuật máy tính}\\[0.5cm] % Major heading such as course name 
+\begin{center}
+    \includegraphics[scale=.14]{image/logo}
+\end{center}
+
+\textsc{\large BÁO CÁO THỰC TẬP TỐT NGHIỆP}\\[0.2cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Thư viện Web hỗ trợ tương tác dữ liệu đa phương tiện}\\[0.4cm] % Title of your document
+\HRule \\[0.8cm]
+
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+\begin{flushright}
+\begin{minipage}{0.7\textwidth}
+
+\end{minipage}
+\end{flushright}
+
+\begin{flushleft} \large
+\textbf{Giáo viên hướng dẫn:}\\
+\tab[2cm] TS. Lương Thế Nhân\\[1.0cm]
+\end{flushleft}
+
+\begin{flushleft} \large
+\textbf{Sinh viên thực hiện:}\\
+\tab[2cm] Phạm Thành Công\quad \ - 51200399\\
+\tab[2cm] Đỗ Đặng Thanh Huy - 51201337\\[1.5cm]
+\end{flushleft}
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+%{\large \today}\\[3cm] % Date, change the \today to a set date if you want to be precise
+\large \emph{Thành phố Hồ Chí Minh, 05/2016}
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+\thispagestyle{empty}
 \tableofcontents
 \thispagestyle{empty}
 \newpage
@@ -79,9 +141,11 @@ Kể từ năm 2006 Gapminder cung cấp một lượng lớn các video thể h
 Từ năm 2008 Gapminder còn cung cấp các biểu đồ con (sub-graph)\cite{subgraph} thể hiện xu hướng, sự khác biệt giữa các tiểu bang của Mỹ, các tỉnh thành của Trung Quốc, hay các đồ thị đặc biệt so sánh số liệu thống kê từ các thành phố ở Trung Quốc, Mỹ, Ấn Độ với các quốc gia khác trên thế giới. Từ Gapminder World, chỉ bằng một cú click chuột, các dữ liệu, thống kê liên quan nằm sau các đồ thị được thể hiện trên các biểu đồ con.
 
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/gapminder}
     \caption{Đồ thị trực quan dữ liệu Gapminder World}
     \label{refhinh1}
+	\end{center}
 \end{figure}
 
 Như ở hình 1, chúng ta có thể thấy với 1 lượng dữ liệu lớn (ở đây là độ tuổi kỳ vọng ở các quốc gia trên thế giới), có thể được thể hiện trực quan bởi đồ thị bong bóng (bubble chart). Qua kích thước các bong bóng, có thể thấy sự tương quan khác biệt giữa các quốc gia như thế nào. Hay khi trỏ vào 1 bong bóng, chúng ta thấy được số liệu chi tiết ở quốc gia đó, như trong hình là độ tuổi kỳ vọng ở Ấn Độ, vào năm 1962 là 42.6. Ngoài ra ở phía dưới đồ thị, có 1 thanh thể hiện dòng thời gian (timeline), khi thanh thời gian trượt đi, kích thước các quả bóng thay đổi theo như số liệu tương ứng ở các năm của các quốc gia.
@@ -104,16 +168,13 @@ Về thư viện D3.js được sử dụng trong Gapminder World, đây là m�
 \subsection{Global Health Atlas - WHO}
 \subsubsection{Giới thiệu}
 Trong một môi trường điện tử, WHO’s Communicable Disease Global Atlas được dùng cho việc phân tích và so sánh dữ liệu chuẩn, thống kê các bệnh truyền nhiễm ở các quốc gia, vùng lãnh thổ, và toàn thế giới. Việc phân tích và biểu diễn dữ liệu ngày càng được hỗ trợ tốt hơn thông qua các thông tin về dân số, điều kiện kinh tế xã hội, và các yếu tố môi trường. Với việc làm đó, biểu đồ Atlas này có thể cho biết được những yếu tố gây ra bệnh truyền nhiễm (2007)\cite{gha}.
-
-\begin{center}
-    \begin{figure}[htp]
+\begin{figure}[htp]
     \begin{center}
-     \includegraphics[scale=.4]{image/globalatlas}
-    \end{center}
+    \includegraphics[scale=.4]{image/globalatlas}
     \caption{Biểu đồ tương tác về mật độ bác sĩ của WHO}
     \label{refhinh2}
-    \end{figure}
-\end{center}
+    \end{center}
+\end{figure}
 
 \subsubsection{Mục tiêu}
 Ban đầu, với mục đích cung cấp những dữ liệu, báo cáo về các bệnh truyền nhiễm chính (sốt rét, HIV/AIDS,..), thì ngày nay Global Atlas của WHO cũng dùng để phân tích, biểu diễn, so sánh dữ liệu từ những vấn đề liên quan đến y tế khác như: mật độ bác sĩ, số lượng người chết do tai nạn giao thông, tuổi thọ trung bình,… 
@@ -134,25 +195,21 @@ Trực quan dữ liệu thành nhiều dạng biểu đồ khác nhau, các bi�
 Tính năng: ứng dụng hỗ trợ tương tác giữa các biểu đồ, bảng dữ liệu:
 
 \indent \indent \textbullet \ Khi click vào 1 hàng trong bảng dữ liệu, bên map sẽ phóng to đến vùng tương ứng, bên biểu đồ cột sẽ nổi bật cột tương ứng. Các tương tác sẽ được thể hiện tương tự khi click vào các biểu đồ.
-\begin{center}
-    \begin{figure}[htp]
+\begin{figure}[htp]
     \begin{center}
-     \includegraphics[scale=.4]{image/clickatlas}
-    \end{center}
+    \includegraphics[scale=.4]{image/clickatlas}
     \caption{Tương tác khi click vào một hàng trong bảng dữ liệu}
     \label{refhinh3}
-    \end{figure}
-\end{center}
-\indent \indent \textbullet \ Khi hover lên 1 hàng trong bảng dữ liệu, bên các biểu đồ cũng sẽ được làm nổi bật vùng tương ứng như khi click, nhưng với 1 màu sắc khác (bên map sẽ không phóng to đến vùng tương ứng).
-\begin{center}
-    \begin{figure}[htp]
-    \begin{center}
-     \includegraphics[scale=.4]{image/hoveratlas}
     \end{center}
+\end{figure}
+\indent \indent \textbullet \ Khi hover lên 1 hàng trong bảng dữ liệu, bên các biểu đồ cũng sẽ được làm nổi bật vùng tương ứng như khi click, nhưng với 1 màu sắc khác (bên map sẽ không phóng to đến vùng tương ứng).
+\begin{figure}[htp]
+    \begin{center}
+    \includegraphics[scale=.4]{image/hoveratlas}
     \caption{Tương tác khi hover lên Map}
     \label{refhinh4}
-    \end{figure}
-\end{center}
+    \end{center}
+\end{figure}
 \subsubsection{Đánh giá}
 Dữ liệu được WHO thu thập trên toàn thế giới, cập nhật theo thời gian, đảm bảo tính chính xác của ứng dụng.
 
@@ -166,11 +223,13 @@ Do đó, đề tài đề xuất sử dụng nhiều đồ thị để biểu di
 \subsubsection{Giới thiệu}
 C3.js là một thư viện mã nguồn mở \cite{c3js} dựa trên thư viện D3.js , nhằm cho phép người dùng có cái nhìn sâu hơn về các ứng dụng web tích hợp đồ thị.
 
-Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0812/c3
+Toàn bộ mã nguồn của thư viện nằm ở: \url{https://github.com/masayuki0812/c3}
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/c3js}
     \caption{Thư viện đồ thị C3js}
     \label{refhinh5}
+	\end{center}
 \end{figure}
 
 \subsubsection{Mục tiêu}
@@ -178,29 +237,35 @@ Toàn bộ mã nguồn của thư viện nằm ở: https://github.com/masayuki0
         \item[•]Sự thoải mái (Comfortable):
         C3 giúp người dùng có thể dễ dàng tạo một đồ thị dựa trên D3 bằng cách gộp chung các đoạn code cần thiết để cấu trúc một đồ thị hoàn chỉnh. Qua đó, người dùng không cần phải viết các đoạn code D3 rườm rà như trước nữa.
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.3]{image/c3syntax}
     \caption{Thư viện đồ thị C3js}
     \label{refhinh6}
+	\end{center}
 \end{figure}
 [Hình 6] Thông qua một số câu lệnh định nghĩa dữ liệu, C3 khởi tạo một đồ thị cho phép tương tác một cách trực quan thông qua hover, click,.. các thành phần của đồ thị
 
         \item[•]Khả năng tuỳ chỉnh (Customizable):
         C3 cung cấp các class tương ứng cho mỗi đối tượng trong đồ thị khi khởi tạo. Qua đó, người dùng có thể định nghĩa các style theo ý muốn theo class cũng như mở rộng cấu trúc các thành phần của đồ thị (trục dữ liệu, hình dạng hiển thị, kiểu đồ thị,.. ) một cách trực tiếp.
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/c3custom}
     \caption{Thư viện đồ thị C3js}
     \label{refhinh7}
+	\end{center}
 \end{figure}      
 [Hình 7] Trục hoành của đồ thị được tuỳ chỉnh theo thời gian hiện tại với định dạng hoàn toàn tuỳ thuộc người sử dụng.
  
         \item[•]Khả năng kiểm soát (Controllable):
-        C3 cung cấp đa dạng các APIs và các hàm callback để truy xuất trạng thái của đồ thị. Bằng cách đó, người dùng có thể cập nhật lại đồ thị thậm chí sau khi đồ thị đã được thể hiện.
+        C3 cung cấp đa dạng các APIs và các hàm callback để truy xuất trạng thái của đồ thị. Bằng cách đó, người dùng có thể cập nhật lại đồ thị thậm chí sau khi đồ thị đã được thể hiện. [Hình 8] Thể hiện một số thành phần được hỗ trợ bởi thư viện C3js.
 \begin{figure}[htp]
+	\begin{center}
     \includegraphics[scale=.4]{image/c3apis}
     \caption{Thư viện đồ thị C3js}
     \label{refhinh8}
+	\end{center}
 \end{figure}
-[Hình 8] Trên hình là một số các thành phần được hỗ trợ bởi thư viện C3js
+
 \end{itemize}
 
 \subsubsection{Phương pháp}
@@ -219,7 +284,7 @@ Ngoài ra dựa theo cấu trúc mã nguồn mà C3js chia sẻ, có thể thấ
 \subsubsection{Đánh giá}
 Cách tổ chức và hiện thực theo hướng hướng đối tượng như trên giúp tiết kiệm số dòng mã, tận dụng khả năng tái sử dụng, đồng thời giúp việc mở rộng về sau rất hiệu quả.
 
-Đề tài đề xuất sử dụng cách hiện thực API theo hướng như C3js.
+Đề tài đề xuất sử dụng cách hiện thực API theo hướng như thư viện C3js.
 
 \subsection{Ứng dụng tạo bản đồ online Mapme}
 \subsubsection{Giới thiệu}
@@ -249,7 +314,7 @@ Sử dụng OpenStreetMap (viết tắt OSM)\cite{osm}, một dịch vụ bản 
 	\end{center}
 \end{figure}
 
-Như trên hình có thể thấy, các thông tin về khởi nghiệp ở quốc gia Ireland được trực quan thông qua các biểu tượng (marker). Cùng với đó là các số liệu tương ứng được xử lý trực tiếp từ các file Excel đầu vào.
+Như hình 11 có thể thấy, các thông tin về khởi nghiệp ở quốc gia Ireland được trực quan thông qua các biểu tượng (marker). Cùng với đó là các số liệu tương ứng được xử lý trực tiếp từ các file Excel đầu vào.
 Ngoài ra, người dùng còn có thể tương tác với các marker này để thể hiện thông tin chi tiết ở các điểm chỉ định.
 
 \begin{figure}[htp]
@@ -260,7 +325,7 @@ Ngoài ra, người dùng còn có thể tương tác với các marker này đ�
 	\end{center}
 \end{figure}
 
-Đặc biệt, Mapme còn hỗ trợ sinh mã nhúng, dưới dạng iframe, giúp người dùng nhúng trực tiếp bản đồ mình vừa tạo vào các website tuỳ mục đích.
+Đặc biệt, Mapme còn hỗ trợ sinh mã nhúng [Hình 12], dưới dạng iframe, giúp người dùng nhúng trực tiếp bản đồ mình vừa tạo vào các website tuỳ mục đích.
 
 \subsubsection{Đánh giá}
 Đầu tiên là về cách sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ, đảm bảo ứng dụng luôn chính xác về các dữ liệu địa lý so với thực tế. Nhóm đề tài đề xuất sử dụng OpenStreetMap làm dịch vụ cung cấp bản đồ cho API mà nhóm đề tài thực hiện.
@@ -298,37 +363,37 @@ jQuery\cite{jqueryintro1}\cite{jqueryintro2} là một thư viện đa nền t�
 
 Theo thống kê (2016)\cite{jqueryusage}, cho tới hiện nay thì jQuery được sử dụng bởi 96\% của tất cả các trang web có sử dụng thư viện JavaScript.
 
+\begin{figure}[htp]
+    \begin{center}
+     \includegraphics[scale=.6]{image/js-jquery}
+    \end{center}
+    \caption{Vị trí của jQuery so với những thư viện JavaScript khác}
+    \label{refhinh13}
+\end{figure}
+
 \subsubsection{Mục tiêu}
 Với phương châm là “write less, do more”, jQuery được thiết kế nhằm đơn giản hóa các nhiệm vụ khác nhau bằng cách viết ít mã hơn. 
 
 Thành phần quan trọng của jQuery là thư viện thao tác DOM (Document Object Model). DOM là 1 biểu diễn cấu trúc cây của tất cả các thành phần của 1 trang web và jQuery đơn giản hóa các cú pháp cho việc tìm kiếm, chọn lựa, và thao tác những phần tử DOM.
 
 \subsubsection{Tính năng}
-\indent \indent \textbullet \ Việc lựa chọn các phần tử DOM sử dụng công cụ Sizzle (selector mã nguồn mở)\cite{sizzle}
+\begin{itemize}
+\item[•] Việc lựa chọn các phần tử DOM sử dụng công cụ Sizzle (selector mã nguồn mở)\cite{sizzle}
 
-\indent \textbullet \ Thao tác với DOM dựa trên CSS Selector
+\item[•] Thao tác với DOM dựa trên CSS Selector
 
-\indent \textbullet \ Sư kiện (event)
+\item[•] Sư kiện (event)
 
-\indent \textbullet \ Tạo chuyển động
+\item[•] Tạo chuyển động
 
-\indent \textbullet \ Hỗ trợ AJAX
+\item[•] Hỗ trợ AJAX
 
-\indent \textbullet \ Có thể mở rộng thông qua các plug-in
+\item[•] Có thể mở rộng thông qua các plug-in
 
-\indent \textbullet \ Được hỗ trợ bởi nhiều trình duyệt
+\item[•] Được hỗ trợ bởi nhiều trình duyệt
 
-\indent \textbullet \ Cập nhật và hỗ trợ các công nghệ web mới nhất (HTML5 \& CSS3)
-
-\begin{center}
-    \begin{figure}[htp]
-    \begin{center}
-     \includegraphics[scale=.6]{image/js-jquery}
-    \end{center}
-    \caption{Vị trí của jQuery so với những thư viện JavaScript khác}
-    \label{refhinh13}
-    \end{figure}
-\end{center}
+\item[•] Cập nhật và hỗ trợ các công nghệ web mới nhất (HTML5 \& CSS3)
+\end{itemize}
 
 \subsubsection{Ứng dụng}
 Dựa trên những đặc điểm cũng như tính năng mạnh mẽ của jQuery nói trên, đề tài sẽ đề xuất sử dụng jQuery như là 1 ngôn ngữ chính, tạo ra một API dễ dàng tìm hiểu, sử dụng với một số lượng mã (code) ít nhất để có thể tạo được ứng dụng của riêng mình.
@@ -363,7 +428,7 @@ Sơ qua về OpenLayers, đây là một thư viện JavaScript mã nguồn mở
 
 Hiện nay, OpenLayers đã ra tới phiên bản OpenLayers 3\cite{ol3}. OpenLayers 3 được viết lại nhằm dễ hiểu hơn, hướng tới các tính năng của HTML5 và CSS3. Thư viện tiếp tục hỗ trợ trình chiếu, các giao thức tiêu chuẩn và các chức năng chỉnh sửa. Phiên bản mới này tập trung vào cải thiện hiệu năng, xây dựng đơn giản hơn, các thành phần trở nên trực quan hơn, API được cải tiến và còn nhiều hơn nữa.
 
-Mã nguồn của thư viện nằm ở địa chỉ sau: \href{https://github.com/openlayers/ol3/}{https://github.com/openlayers/ol3/}
+Mã nguồn của thư viện nằm ở địa chỉ sau: \url{https://github.com/openlayers/ol3/}
 
 \subsubsection{Mục tiêu}
 Như đã trình bày ở trên, OpenLayers hỗ trợ các lập trình viên hiển thị thông tin dưới dạng bản đồ, hay bất cứ nhu cầu nào liên quan về bản đồ một cách hiệu quả và đơn giản nhất.
@@ -403,15 +468,16 @@ Qua các kiến thức thu được từ các công trình nghiên cứu liên q
 Do đó, nhóm nhận thấy bài toán đề xuất phù hợp để thực hiện và phát triển.
 
 \subsection{Kiến trúc thư viện dự kiến xây dựng}
-Qua bài toán đề xuất, nhóm nhận thấy cần xây dựng mô hình với 3 thành phần chính như hình dưới:
+Qua bài toán đề xuất, nhóm nhận thấy cần xây dựng mô hình với 3 thành phần chính như hình 16:
 
-\begin{figure}[htp]
+%\begin{figure}[htp]
 	\begin{center}
-    \includegraphics[scale=.8]{model/model}
-    \caption{Mô hình dự kiến xây dựng}
-    \label{refhinh16}
+    \includegraphics[scale=.6]{model/model}
+    
+    Hình 16. Mô hình dự kiến xây dựng
+    %\label{refhinh16}
 	\end{center}
-\end{figure}
+%\end{figure}
 
 Với 3 thành phần (Component) chính là Map, Chart và Interaction, mỗi thành phần thể hiện rõ ràng chức năng tương ứng: 
 \begin{itemize}
@@ -423,67 +489,69 @@ Chart biểu diễn dữ liệu đầu vào dưới dạng các dạng đồ th�
 Liên kết hai thành phần thể hiện dữ liệu trên là lớp Interaction, cung cấp các sự kiện hỗ trợ tương tác như Click, Hover trên từng đối tượng dữ liệu; Highlight các Component tương ứng theo các sự kiện được định nghĩa bởi người dùng.
 \end{itemize}
 
-Hình dưới là kiến trúc mã nguồn đề tài dự kiến hiện thực, gồm các file mã nguồn JavaScript được tổ chức tương ứng theo các thành phần đã định nghĩa ở trên:
+Hình 17 là kiến trúc mã nguồn đề tài dự kiến hiện thực, gồm các file mã nguồn JavaScript được tổ chức tương ứng theo các thành phần đã định nghĩa ở trên:
 
-
-\begin{figure}[htp]
+%\begin{figure}[htp]
 	\begin{center}
     \includegraphics[scale=.8]{image/api_model}
-    \caption{Kiến trúc mã nguồn dự kiến hiện thực}
-    \label{refhinh20}
+    
+    Hình 17. Kiến trúc mã nguồn dự kiến hiện thực
+    %\label{refhinh17}
     \end{center}
-\end{figure}
+%\end{figure}
 
 
 \subsection{Mô hình dữ liệu dự kiến xây dựng}
 \begin{itemize}
 \item[•] Dữ liệu dạng bản đồ: 
-Dữ liệu được tham khảo từ nguồn: \href{https://mapzen.com/data/borders}{https://mapzen.com/data/borders}. 
+Dữ liệu được tham khảo từ nguồn: \url{https://mapzen.com/data/borders}{https://mapzen.com/data/borders}. 
 Dữ liệu bản đồ được thể hiện dạng JSON, tổ chức theo các mức (administrative level) từ 1 tới 10, tương ứng từ biên giới quốc gia tới tỉnh, thành phố trực thuộc trung ương, quận, huyện, thị xã, thành phố thuộc tỉnh đến phường, xã, thị trấn.
 
 Đề tài dự kiến hỗ trợ bản đồ Việt Nam ở mức độ 4 (tỉnh, thành phố trực thuộc trung ương)
 
 Mô hình chuẩn hóa dữ liệu bản đồ từ người dùng:
-\begin{figure}[htp]
 	\begin{center}
     \includegraphics[scale=.8]{model/map_data_model}
-    \caption{Mô hình dữ liệu bản đồ dự kiến xây dựng}
-    \label{refhinh17}
+    
+    Hình 18. Mô hình dữ liệu bản đồ dự kiến xây dựng
+    %\label{refhinh18}
     \end{center}
-\end{figure}
 
 \item[•] Dữ liệu dạng thời gian:
-Đối với dạng dữ liệu thời gian, đề tài đề xuất mô hình chuẩn hóa dữ liệu đầu vào từ người dùng như hình dưới:
-\begin{figure}[htp]
+Đối với dạng dữ liệu thời gian, đề tài đề xuất mô hình chuẩn hóa dữ liệu đầu vào từ người dùng như hình 19:
+%\begin{figure}[htp]
 	\begin{center}
     \includegraphics[scale=.8]{model/timeline_data_model}
-    \caption{Mô hình dữ liệu thời gian dự kiến xây dựng}
-    \label{refhinh18}
+    
+	Hình 19. Mô hình dữ liệu thời gian dự kiến xây dựng
+    %\label{refhinh19}
     \end{center}
-\end{figure}
+%\end{figure}
 
 \item[•] Dữ liệu dạng số:
-Dữ liệu dạng số được thể hiện theo các cặp (name, value) như hình dưới:
-\begin{figure}[htp]
+Dữ liệu dạng số được thể hiện theo các cặp (name, value) như hình 20:
+%\begin{figure}[htp]
 	\begin{center}
     \includegraphics[scale=.8]{model/numerical_data_model}
-    \caption{Mô hình dữ liệu dạng số dự kiến xây dựng}
-    \label{refhinh19}
+    
+    Hình 20. Mô hình dữ liệu dạng số dự kiến xây dựng
+    %\label{refhinh20}
     \end{center}
-\end{figure}
+%\end{figure}
 
 \end{itemize}
 
 \section{Phương pháp đánh giá}
 Bên cạnh việc thực hiện API, đề tài cũng thực hiện chương trình xây dựng một trang web mẫu sử dụng API làm ra để thể hiện tương tác các loại dữ liệu khác nhau.
 
-\begin{figure}[htp]
+%\begin{figure}[htp]
 	\begin{center}
     \includegraphics[scale=.8]{image/api_sample}
-    \caption{Ví dụ về một output của API đã xây dựng}
-    \label{refhinh21}
+    
+    Hình 21. Ví dụ về một output của API đã xây dựng
+    %\label{refhinh21}
     \end{center}
-\end{figure}
+%\end{figure}
 
 \begin{itemize}
 \item[•] Đầu vào là API đã được xây dựng mẫu
