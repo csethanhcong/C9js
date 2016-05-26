@@ -23,6 +23,9 @@ body {
     padding: 0px;
 }*/
 
+svg {
+    border: 1px solid;
+}
 
 /*-----------------Input-file-------------------*/
 btn-file {

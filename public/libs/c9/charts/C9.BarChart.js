@@ -11,12 +11,11 @@ class BarChart extends Chart {
         this._barWidth        = options.bar_width  ||  config.bar_width;
         this._barColor        = options.bar_color  ||  config.bar_color;
 
-        var x = d3.scale.ordinal().rangeRoundBands([0, this.width], .05);
+        var width = this.width - this.margin.left - this.margin.right;
+        var height = this.height - this.margin.top - this.margin.bottom;
 
-        var y = d3.scale.linear().range([this.height, 0]);
-
-        var width = this.width;
-        var height = this.height;
+        var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+        var y = d3.scale.linear().range([height, 0]);
 
         x.domain(this.data.map(function(d) {
             return d.name;
@@ -25,18 +24,18 @@ class BarChart extends Chart {
         y.domain([0, d3.max(this.data, function(d) {
             return d.value;
         })]);
-
-        this.svg.selectAll("bar")
+        this._svg.selectAll(".bar")
             .data(this.data)
             .enter().append("rect")
+            .attr("class", "bar")
             .style("fill", "steelblue")
             .attr("x", function(d) {
                 return x(d.name);
             })
-            .attr("width", x.rangeBand())
             .attr("y", function(d) {
                 return y(d.value);
             })
+            .attr("width", x.rangeBand())
             .attr("height", function(d) {
                 return height - y(d.value);
             });
@@ -78,7 +77,7 @@ class BarChart extends Chart {
     ======================================*/
     
     draw() {
-        var axis = new Axis({}, this.svg, this.data, this.width, this.height);
+        var axis = new Axis({}, this._svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom);
         console.dir(axis);
     }
     
