@@ -38,6 +38,10 @@
 	    <script src="/libs/c9/charts/C9.Chart.js"></script>
 	    <script src="/libs/c9/charts/C9.BarChart.js"></script>
 	    <script src="/libs/c9/utils/C9.Axis.js"></script>
+	    <script src="/libs/c9/utils/C9.Title.js"></script>
+		<!-- End of D3 & C9 -->
+
+
 	    <link rel="stylesheet" href="libs/openlayers3/build/ol.css">
 	    <link rel="stylesheet" href="libs/angular-openlayers-directive/dist/angular-openlayers-directive.css" />
 		<!-- END ANGULAR CUSTOM -->
@@ -142,7 +146,7 @@
 					{name: "Y", value:	.01974},
 					{name: "Z", value:	.00074},
 				];
-			var options = {"id": "#demo", "width": 960, "height": 500, "data": data};
+			var options = {id: "#demo", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data};
 			var chart123 = new BarChart(options);
 			chart123.draw();
 				// // Process choose file
@@ -155,7 +159,7 @@
 
 				// // Init data
 				// var d3Data = [
-				// 			{"name" : "Bayonne",
+				// 			{name" : "Bayonne",
 				// 			"data" : "10"},
 
 				// 			{"name" : "Pau",

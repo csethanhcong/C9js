@@ -38,16 +38,6 @@ class Chart {
             // tooltip - show when mouseover on each data
             tooltip_show: true,
             tooltip_position: undefined,
-            // title
-            title_show: true,
-            title_text: undefined,
-            title_padding: {
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0
-            },
-            title_position: 'top-center',
 
             // data
             data: [{
@@ -70,20 +60,21 @@ class Chart {
 
         this._id        = options.id        || config.id;
         this._width     = options.width     || config.width;
-        this._height    = options.height    || config.height;
-        this._margin    = options.margin    || config.margin;
-        this._padding   = options.padding   || config.padding;
         this._data      = options.data      || config.data;
+        this._height    = options.height    || config.height;
+        this._margin    = this.mergeObject(options.margin, config.margin);
+        this._padding   = this.mergeObject(options.padding, config.padding);
         this._svg       = null;
         this._x         = null;
         this._y         = null;
 
-        var margin = this._margin,
-            id = this._id,
-            width = this._width - margin.left - margin.right,
-            height = this._height - margin.top - margin.bottom;
+        var margin  = this._margin,
+            id      = this._id,
+            width   = this._width - margin.left - margin.right,
+            height  = this._height - margin.top - margin.bottom;
 
-        this._svg = d3.select(id).append("svg")
+        this._svg = d3.select(id)
+            .append("svg")
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom)
             .append("g")
@@ -196,6 +187,20 @@ class Chart {
     /*======================================
     =            Main Functions            =
     ======================================*/
+
+    
+    /**
+     * Overwrites obj2's values with obj1's and adds obj1's if non existent in obj2
+     * @param obj1
+     * @param obj2
+     * @returns obj3 a new object based on obj1 and obj2
+     */
+    mergeObject(obj1,obj2){
+        var obj3 = {};
+        for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+        for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+        return obj3;
+    }
 
     /*=====  End of Main Functions  ======*/
 

@@ -4,13 +4,13 @@ class Axis {
     constructor(options, svg, data, width, height) {
         var config = {
             x_axis_show     : true,
-            x_axis_padding  : {},
+            x_axis_padding  : {},   // TODO
             x_axis_text     : 'Name',
             y_axis_show     : true,
-            y_axis_padding  : {},
+            y_axis_padding  : {},   // TODO
             y_axis_text     : 'Value',
             y2_axis_show    : true,
-            y2_axis_padding : {},
+            y2_axis_padding : {},   // TODO
             y2_axis_text    : 'Value'
         };
 
@@ -38,7 +38,8 @@ class Axis {
 
         this._xAxis = d3.svg.axis()
             .scale(x)
-            .orient("bottom");
+            .orient("bottom")
+            .ticks(10);
 
         this._yAxis = d3.svg.axis()
             .scale(y)
@@ -48,28 +49,32 @@ class Axis {
         this._svg    = svg;
         this._data   = data;
 
-        this._svg.append("g")
-            .attr("class", "x-axis")
-            .attr("transform", "translate(0," + (height) + ")")
-            .call(this._xAxis)
-            .append("text")
-            .attr("dx", "-.8em")
-            .attr("dy", "-.55em")
-            .attr("x", "10")
-            .attr("y", "20")
-            .style("text-anchor", "end");
-            // .text(this._xAxisText);
-            // .attr("transform", "rotate(-90)" );
+        if (this._xAxisShow) {
+            this._svg.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + (height) + ")")
+                .call(this._xAxis)
+                .append("text")
+                .attr("dx", "-.8em")
+                .attr("dy", "-.55em")
+                .attr("x", width)
+                .attr("y", "20")
+                .style("text-anchor", "start")
+                .text(this._xAxisText);
+                // .attr("transform", "rotate(-90)" );
+        }
 
-        this._svg.append("g")
-            .attr("class", "y-axis")
-            .call(this._yAxis)
-            .append("text")
-            // .attr("transform", "rotate(-90)")
-            .attr("y", -10)
-            .attr("dy", ".10")
-            .style("text-anchor", "end")
-            .text(this._yAxisText);
+        if (this._yAxisShow) {
+            this._svg.append("g")
+                .attr("class", "y axis")
+                .call(this._yAxis)
+                .append("text")
+                // .attr("transform", "rotate(-90)")
+                .attr("y", -10)
+                .attr("dy", ".10")
+                .style("text-anchor", "end")
+                .text(this._yAxisText);
+        }
 
         /**
             TODO:
