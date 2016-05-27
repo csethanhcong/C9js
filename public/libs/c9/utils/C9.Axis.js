@@ -24,7 +24,7 @@ class Axis {
         this._y2AxisPadding = options.y2_axis_padding  || config.y2_axis_padding;
         this._y2AxisText    = options.y2_axis_text     || config.y2_axis_text;
 
-        var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
 
         var y = d3.scale.linear().range([height, 0]);
 
