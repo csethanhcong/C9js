@@ -31,10 +31,6 @@ class Chart {
             legend_position: "bottom",
             legend_inset_anchor: "top-left",
             legend_padding: 0,
-
-            // grid
-            grid_x_show: false,
-            grid_y_show: false,
             // tooltip - show when mouseover on each data
             tooltip_show: true,
             tooltip_position: undefined,

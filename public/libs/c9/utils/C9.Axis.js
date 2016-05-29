@@ -11,7 +11,9 @@ class Axis {
             y_axis_text     : 'Value',
             y2_axis_show    : true,
             y2_axis_padding : {},   // TODO
-            y2_axis_text    : 'Value'
+            y2_axis_text    : 'Value',
+            grid_x_show: true,
+            grid_y_show: true
         };
 
         this._xAxisShow     = options.x_axis_show      || config.x_axis_show;
@@ -23,6 +25,9 @@ class Axis {
         this._y2AxisShow    = options.y2_axis_show     || config.y2_axis_show;
         this._y2AxisPadding = options.y2_axis_padding  || config.y2_axis_padding;
         this._y2AxisText    = options.y2_axis_text     || config.y2_axis_text;
+        this._gridXShow     = options.grid_x_show       || config.grid_x_show;
+        this._gridYShow     = options.grid_y_show       || config.grid_y_show;
+
 
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
 
@@ -46,8 +51,27 @@ class Axis {
             .orient("left")
             .ticks(10);
 
+        // Grid
+        if (this._gridXShow) {
+            // Select CURRENT svg container, to make this axis outside
+            // as a SEPARATED component, just like AXIS, of CHART
+            // d3.select(this._svg[0][0].parentNode)
+            this._xAxis.innerTickSize(-height)
+                .outerTickSize(0);
+        }
+
+        if (this._gridYShow) {
+            // Select CURRENT svg container, to make this axis outside
+            // as a SEPARATED component, just like AXIS, of CHART
+            // d3.select(this._svg[0][0].parentNode)
+            this._yAxis.innerTickSize(-width)
+                .outerTickSize(0);
+        }
+
         this._svg    = svg;
         this._data   = data;
+        this._width  = width;   // TODO : ADD Getter/setter
+        this._height  = height;
 
         if (this._xAxisShow) {
             this._svg.append("g")
@@ -75,6 +99,7 @@ class Axis {
                 .style("text-anchor", "end")
                 .text(this._yAxisText);
         }
+
 
         /**
             TODO:
@@ -178,7 +203,6 @@ class Axis {
     /*======================================
     =            Main Functions            =
     ======================================*/
-    
     /*=====  End of Main Functions  ======*/
     
 }

@@ -11,8 +11,12 @@ body {
 .axis path,
 .axis line {
   fill: none;
-  stroke: #000;
+  stroke: black;
   shape-rendering: crispEdges;
+}
+
+.tick line {
+  opacity: 0.2;
 }
 
 /*-------------svg border----------------------*/

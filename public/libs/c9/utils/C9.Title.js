@@ -6,26 +6,26 @@ class Title {
             title_show      : true,
             title_text      : "Sample Chart",
             title_position  : 'top',
-            title_size      : "14px",
-            title_width     : "100"
+            title_size      : "14px"
         };
 
         this._titleShow     = options.title_show       || config.title_show;
         this._titleText     = options.title_text       || config.title_text;
         this._titlePosition = options.title_position   || config.title_position;
         this._titleSize     = options.title_size       || config.title_size;
-        this._titleWidth    = options.title_width      || config.title_width;
 
         this._svg    = svg;
 
         if (this._titleShow) {
             // Select CURRENT svg container, to make this axis outside
             // as a SEPARATED component, just like AXIS, of CHART
-            d3.select(this._svg[0][0].parentNode)
+            var text = d3.select(this._svg[0][0].parentNode)
                 .append("g")
                 .append("text")
-                .attr("class", "title")
-                .attr("x", ((width - this._titleWidth) / 2))             
+                .attr("class", "title");
+
+                // Get title width: text.node().getComputedTextLength()           
+                text.attr("x", (((width - text.node().getComputedTextLength()) / 2)))           
                 .attr("y", this.setYLocation(height, margin))
                 .attr("text-anchor", "middle")  
                 .style("font-size", this._titleSize)  

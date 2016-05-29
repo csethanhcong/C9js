@@ -81,8 +81,9 @@ class BarChart extends Chart {
     ======================================*/
 
     draw() {
-        var axis    = new Axis(options, this._svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom);
-        var title   = new Title(options, this._svg, this.width, this.height, this.margin);
+        var axis    = new Axis(options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom);
+        var title   = new Title(options, this.svg, this.width, this.height, this.margin);
+        
     }
     
     /*=====  End of Main Functions  ======*/
