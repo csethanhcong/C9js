@@ -58,11 +58,12 @@ class Chart {
         this._width     = options.width     || config.width;
         this._data      = options.data      || config.data;
         this._height    = options.height    || config.height;
-        this._margin    = this.mergeObject(options.margin, config.margin);
-        this._padding   = this.mergeObject(options.padding, config.padding);
+        this._margin    = this.extend(options.margin, config.margin);
+        this._padding   = this.extend(options.padding, config.padding);
         this._svg       = null;
         this._x         = null;
         this._y         = null;
+        this._options   = options;
 
         var margin  = this._margin,
             id      = this._id,
@@ -116,6 +117,10 @@ class Chart {
     
     get y() {
         return this._y;
+    }
+
+    get options() {
+        return this._options;
     }
     /*=====  End of Getter  ======*/
     
@@ -177,6 +182,12 @@ class Chart {
             this._y = newY;
         }
     }
+
+    set options(newOptions) {
+        if (newOptions) {
+            this._options = newOptions;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     
@@ -191,7 +202,7 @@ class Chart {
      * @param obj2
      * @returns obj3 a new object based on obj1 and obj2
      */
-    mergeObject(obj1,obj2){
+    extend(obj1,obj2){
         var obj3 = {};
         for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
         for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }

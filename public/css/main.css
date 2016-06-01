@@ -15,6 +15,11 @@ body {
   shape-rendering: crispEdges;
 }
 
+.axis text {
+  font-family: Lato;
+  font-size: 13px;
+}
+
 .tick line {
   opacity: 0.2;
 }

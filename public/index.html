@@ -38,6 +38,7 @@
 	    <script src="/libs/c9/charts/C9.Chart.js"></script>
 	    <script src="/libs/c9/charts/C9.TimeLine.js"></script>
 	    <script src="/libs/c9/charts/C9.BarChart.js"></script>
+	    <script src="/libs/c9/charts/C9.LineChart.js"></script>
 	    <script src="/libs/c9/utils/C9.Axis.js"></script>
 	    <script src="/libs/c9/utils/C9.Title.js"></script>
 		<!-- End of D3 & C9 -->
@@ -92,7 +93,11 @@
 				</div>
 			</nav>
 		</header>
-		<div id="demo" style="text-align:center;"></div>
+		<div id="demo1" style="text-align:center;"></div>
+		<hr>
+		<div id="demo2" style="text-align:center;"></div>
+		<hr>
+		<div id="demo3" style="text-align:center;"></div>
 		<!-- Tab1 : Graph -->
 		<!-- <section class="col-lg-4 col-lg-offset-7">
 			<div class="container-fluid" id="input-data">
@@ -119,7 +124,7 @@
 		<!-- <section class="col-lg-8">
 		</section> --><!-- Tab2: Map -->
 		<script type="text/javascript">
-			var data = [
+			var data1 = [
 					{name: "A", value:	.08167},
 					{name: "B",	value:  .01492},
 					{name: "C", value:	.02782},
@@ -147,14 +152,157 @@
 					{name: "Y", value:	.01974},
 					{name: "Z", value:	.00074},
 				];
-			data = [
-        {name: "person a", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Weeee", "starting_time": new Date("December 18, 2012 01:10:00")}]},
-        {name: "person b", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
-        {name: "person c", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
-      ];
-			var options = {id: "#demo", width: 960, height: 500, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data, stacked: true};
-			var chart123 = new TimeLine(options);
-			chart123.draw();
+			var data3 = [
+			        {name: "person a", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Weeee", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+			        {name: "person b", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+			        {name: "person c", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+		      	];
+			var options = {id: "#demo3", width: 960, height: 300, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data3, stacked: true};
+			var timeline = new TimeLine(options);
+			timeline.draw();
+			var options1 = {id: "#demo1", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data1};
+			var barChart = new BarChart(options1);
+			barChart.draw();
+			
+			var data2 = [{
+  "name": "Keylex",
+  "coordinate": [
+    {
+      "x": 1,
+      "y": 7
+    },
+    {
+      "x": 2,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 9
+    },
+    {
+      "x": 4,
+      "y": 5
+    },
+    {
+      "x": 5,
+      "y": 6
+    },
+    {
+      "x": 5,
+      "y": 3
+    },
+    {
+      "x": 3,
+      "y": 9
+    },
+    {
+      "x": 4,
+      "y": 6
+    },
+    {
+      "x": 4,
+      "y": 1
+    },
+    {
+      "x": 8,
+      "y": 9
+    }
+  ]
+}, {
+  "name": "Y-find",
+  "coordinate": [
+    {
+      "x": 1,
+      "y": 8
+    },
+    {
+      "x": 9,
+      "y": 3
+    },
+    {
+      "x": 7,
+      "y": 2
+    },
+    {
+      "x": 4,
+      "y": 10
+    },
+    {
+      "x": 8,
+      "y": 7
+    },
+    {
+      "x": 8,
+      "y": 8
+    },
+    {
+      "x": 2,
+      "y": 5
+    },
+    {
+      "x": 7,
+      "y": 2
+    },
+    {
+      "x": 8,
+      "y": 1
+    },
+    {
+      "x": 4,
+      "y": 1
+    }
+  ]
+}, {
+  "name": "Bigtax",
+  "coordinate": [
+    {
+      "x": 5,
+      "y": 10
+    },
+    {
+      "x": 9,
+      "y": 7
+    },
+    {
+      "x": 5,
+      "y": 10
+    },
+    {
+      "x": 4,
+      "y": 1
+    },
+    {
+      "x": 4,
+      "y": 9
+    },
+    {
+      "x": 8,
+      "y": 2
+    },
+    {
+      "x": 3,
+      "y": 8
+    },
+    {
+      "x": 4,
+      "y": 10
+    },
+    {
+      "x": 6,
+      "y": 10
+    },
+    {
+      "x": 4,
+      "y": 4
+    }
+  ]
+}];
+
+
+
+			var options2 = {id: "#demo2", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data2};
+			var lineChart = new LineChart(options2);
+			lineChart.draw();
 				// // Process choose file
 				// $('#choose-file').on('change', ':file', function() {
 				// 	var input_file = $('#input-file'),
