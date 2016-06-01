@@ -36,6 +36,7 @@
 	    <script src="/libs/c9/libs/d3.min.js"></script>
 	    <script src="/libs/c9/C9.js"></script>
 	    <script src="/libs/c9/charts/C9.Chart.js"></script>
+	    <script src="/libs/c9/charts/C9.TimeLine.js"></script>
 	    <script src="/libs/c9/charts/C9.BarChart.js"></script>
 	    <script src="/libs/c9/utils/C9.Axis.js"></script>
 	    <script src="/libs/c9/utils/C9.Title.js"></script>
@@ -146,8 +147,13 @@
 					{name: "Y", value:	.01974},
 					{name: "Z", value:	.00074},
 				];
-			var options = {id: "#demo", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data};
-			var chart123 = new BarChart(options);
+			data = [
+        {name: "person a", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Weeee", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+        {name: "person b", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+        {name: "person c", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+      ];
+			var options = {id: "#demo", width: 960, height: 500, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data, stacked: true};
+			var chart123 = new TimeLine(options);
 			chart123.draw();
 				// // Process choose file
 				// $('#choose-file').on('change', ':file', function() {

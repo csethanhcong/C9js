@@ -12,14 +12,14 @@ class Axis {
             y2_axis_show    : true,
             y2_axis_padding : {},   // TODO
             y2_axis_text    : 'Value',
-            grid_x_show: true,
-            grid_y_show: true
+            grid_x_show: false,
+            grid_y_show: false
         };
 
         this._xAxisShow     = options.x_axis_show      || config.x_axis_show;
         this._xAxisPadding  = options.x_axis_padding   || config.x_axis_padding;
         this._xAxisText     = options.x_axis_text      || config.x_axis_text;
-        this._yAxisShow     = options.y_axis_show      || config.y_axis_show;
+        this._yAxisShow     = options.y_axis_show      || (svg.c9Chart == "timeline" ? false : config.y_axis_show);
         this._yAxisPadding  = options.y_axis_padding   || config.y_axis_padding;
         this._yAxisText     = options.y_axis_text      || config.y_axis_text;
         this._y2AxisShow    = options.y2_axis_show     || config.y2_axis_show;
@@ -41,10 +41,24 @@ class Axis {
             return d.value;
         })]);
 
-        this._xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom")
-            .ticks(10);
+        if (svg.c9Chart == "timeline") {
+            var xScale = d3.time.scale()
+                .domain([options.starting, options.ending])
+                .range([0, width]);
+            this._xAxis = d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom")
+                .tickFormat(options.tickFormat === undefined ? d3.time.format("%I %p") : options.tickFormat.format)
+                .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
+                .ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
+            delete options.starting;
+            delete options.ending;
+        }
+        else
+            this._xAxis = d3.svg.axis()
+                .scale(x)
+                .orient("bottom")
+                .ticks(10);
 
         this._yAxis = d3.svg.axis()
             .scale(y)
