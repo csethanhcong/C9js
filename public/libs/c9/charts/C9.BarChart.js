@@ -11,7 +11,7 @@ class BarChart extends Chart {
         var width   = this.width - this.margin.left - this.margin.right;
         var height  = this.height - this.margin.top - this.margin.bottom;
 
-        // .05 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var y = d3.scale.linear().range([height, 0]);
 
@@ -81,8 +81,8 @@ class BarChart extends Chart {
     ======================================*/
 
     draw() {
-        var axis    = new Axis(options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom);
-        var title   = new Title(options, this.svg, this.width, this.height, this.margin);
+        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom);
+        var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
         
     }
     

@@ -90,10 +90,6 @@ class Title {
     =            Main Functions            =
     ======================================*/
     setYLocation(height, margin) {
-        console.log(height);
-        console.log(margin.top);
-        console.log(margin.bottom);
-
         if (this.titlePosition === 'top') {
             return (margin.top / 2);
         } else if (this.titlePosition === 'bottom') {
