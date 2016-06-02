@@ -14,77 +14,55 @@ class LineChart extends Chart {
         this._pointRadius       = options.point_radius          ||  config.point_radius;
         this._lineColor         = options.line_color            ||  config.line_color;
         this._pointHoverEnable  = options.point_hover_enable    ||  config.point_hover_enable;
+        this.svg.c9Chart = "line";
 
-        // Data format:[
-        // { name, 
-        //   coordinate: [
-        //   {
-        //      x, y
-        //   }
-        //  ]
-        // }
-        //] 
-        // Sort coordinate accesding after coor.x
+        var dataGroup = d3.nest()
+                        .key(function(d) {return d.Client;})
+                        .entries(this.data);
 
-
-        var _currentDataY = this.data;
-        _currentDataY.forEach(function(_currentValue,_index,_arr) {
-                                    _currentDataY[_index].coordinate.sort(function(a,b) {
-                                        return (a.y > b.y) ? 1 : ((b.y > a.y) ? -1 : 0);
-                                    });
-                                });
-        this.sortedDataY         = _currentDataY;
-
-        // Get maximum value of coordinate {x, y}
-        var tempMaxY = [];
-
-        for (var i=0; i<this.sortedDataY.length; i++) {
-            tempMaxY[i] = this.sortedDataY[i].coordinate[this.sortedDataY[i].coordinate.length - 1].y;
-        }
-
-        var _maxY = Math.max(...tempMaxY);
-
-        
-        var _currentDataX = this.data;
-        _currentDataX.forEach(function(currentValue,index,arr) {
-                                    _currentDataX[index].coordinate.sort(function(a,b) {
-                                        return (a.x > b.x) ? 1 : ((b.x > a.x) ? -1 : 0);
-                                    });
-                                });
-        this.sortedDataX         = _currentDataX;
-        var tempMaxX = [];
-        for (var i=0; i<this.sortedDataX.length; i++) {
-            tempMaxX[i] = this.sortedDataX[i].coordinate[this.sortedDataX[i].coordinate.length - 1].x;
-        }
-        var _maxX = Math.max(...tempMaxX);
-
-        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var width   = this.width - this.margin.left - this.margin.right;
         var height  = this.height - this.margin.top - this.margin.bottom;
 
         var x = d3.scale.linear().range([0, width]);
         var y = d3.scale.linear().range([height, 0]);
 
-        x.domain([_maxX, 0]);
-        y.domain([_maxY, 0]);
+        x.domain([d3.min(this.data, function(d) {
+                    return d.year;
+                }), d3.max(this.data, function(d) {
+                    return d.year;
+                })]);
+        y.domain([d3.min(this.data, function(d) {
+                    return d.sale;
+                }), d3.max(this.data, function(d) {
+                    return d.sale;
+                })]);
 
-        var lineFunc = d3.svg.line()
-            .x(function(d, i) { return x(d.x); })
-            .y(function(d, i) { return y(d.y); })
-            .interpolate("linear");
+        this.xAxis = d3.svg.axis()
+                        .scale(x);
+        this.yAxis = d3.svg.axis()
+                        .scale(y)
+                        .orient("left");
 
-        this.svg.selectAll('g')
-                .data(this.sortedDataX)
-                .enter()
-                .append('path')
-                // .attr('class', 'line')
-                .attr('d', function(d){
-                    console.log(lineFunc(d.coordinate));
-                    return lineFunc(d.coordinate);
-                })
-                .attr('stroke', 'green')
-                .attr('stroke-width', 2)
-                .attr('fill', 'none');
+        var lineGen = d3.svg.line()
+                        .x(function(d) {
+                            return x(d.year);
+                        })
+                        .y(function(d) {
+                            return y(d.sale);
+                        });
+        var _svg = this.svg;
+        dataGroup.forEach(function(d,i) {
+            _svg.append('path')
+            .attr('d', lineGen(d.values))
+            .attr('stroke', function(d,j) { 
+                    return "hsl(" + Math.random() * 360 + ",100%,50%)";
+            })
+            .attr('stroke-width', 2)
+            .attr('id', 'line_'+d.key)
+            .attr('fill', 'none');
+        });
+
+        
     }
 
     /*==============================
@@ -103,7 +81,7 @@ class LineChart extends Chart {
     ======================================*/
 
     draw() {
-        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom);
+        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
         
     }
@@ -113,3 +91,67 @@ class LineChart extends Chart {
     
 }
 
+// Backup - LOL
+// var _currentDataY = this.data;
+//         _currentDataY.forEach(function(_currentValue,_index,_arr) {
+//                                     _currentDataY[_index].coordinate.sort(function(a,b) {
+//                                         return (a.y > b.y) ? 1 : ((b.y > a.y) ? -1 : 0);
+//                                     });
+//                                 });
+//         this.sortedDataY         = _currentDataY;
+
+//         // Get maximum value of coordinate {x, y}
+//         var tempMaxY = [];
+
+//         for (var i=0; i<this.sortedDataY.length; i++) {
+//             tempMaxY[i] = this.sortedDataY[i].coordinate[this.sortedDataY[i].coordinate.length - 1].y;
+//         }
+
+//         var _maxY = Math.max(...tempMaxY);
+
+
+//         var _currentDataX = this.data;
+//         _currentDataX.forEach(function(currentValue,index,arr) {
+//                                     _currentDataX[index].coordinate.sort(function(a,b) {
+//                                         return (a.x > b.x) ? 1 : ((b.x > a.x) ? -1 : 0);
+//                                     });
+//                                 });
+//         this.sortedDataX         = _currentDataX;
+//         var tempMaxX = [];
+//         for (var i=0; i<this.sortedDataX.length; i++) {
+//             tempMaxX[i] = this.sortedDataX[i].coordinate[this.sortedDataX[i].coordinate.length - 1].x;
+//         }
+//         var _maxX = Math.max(...tempMaxX);
+
+//         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+//         var width   = this.width - this.margin.left - this.margin.right;
+//         var height  = this.height - this.margin.top - this.margin.bottom;
+
+//         var x = d3.scale.linear().range([0, width]);
+//         var y = d3.scale.linear().range([height, 0]);
+
+//         x.domain([_maxX, 0]);
+//         y.domain([_maxY, 0]);
+
+//         var lineFunc = d3.svg.line()
+//             .x(function(d, i) { return x(d.x); })
+//             .y(function(d, i) { return y(d.y); })
+//             .interpolate("linear");
+
+//         // this.svg.selectAll('g')
+//         //         .data(this.sortedDataX)
+//         //         .enter()
+//         //         .append('path')
+//         //         .attr('class', 'line')
+//         //         .attr('d', function(d){
+//         //             return lineFunc(d.coordinate);
+//         //         });
+//         this.svg.selectAll('dot')
+//                 .data(this.sortedDataX)
+//                 .selectAll('dot')
+//                 .data(function(d,i) {return d;})
+//                 .enter()
+//                 .append("circle")
+//                 .attr("r", 3.5)
+//                 .attr("cx", function(d, i) { console.log(d, i); return x(d.coordinate[i].x); })
+//                 .attr("cy", function(d, i) { console.log(d, i); return y(d.coordinate[i].y); });

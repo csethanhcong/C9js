@@ -74,7 +74,7 @@
 	<body ng-controller="DemoCtrl">
 
 		<!-- header -->
-		<header>
+		<!-- <header>
 			<nav class="navbar navbar-default navbar-fixed-top">
 				<div class="container">
 					<div class="navbar-header">
@@ -92,7 +92,7 @@
 					</div>
 				</div>
 			</nav>
-		</header>
+		</header> -->
 		<div id="demo1" style="text-align:center;"></div>
 		<hr>
 		<div id="demo2" style="text-align:center;"></div>
@@ -160,144 +160,84 @@
 			var options = {id: "#demo3", width: 960, height: 300, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data3, stacked: true};
 			var timeline = new TimeLine(options);
 			timeline.draw();
+			
 			var options1 = {id: "#demo1", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data1};
 			var barChart = new BarChart(options1);
 			barChart.draw();
 			
 			var data2 = [{
-  "name": "Keylex",
-  "coordinate": [
-    {
-      "x": 1,
-      "y": 7
-    },
-    {
-      "x": 2,
-      "y": 2
-    },
-    {
-      "x": 3,
-      "y": 9
-    },
-    {
-      "x": 4,
-      "y": 5
-    },
-    {
-      "x": 5,
-      "y": 6
-    },
-    {
-      "x": 5,
-      "y": 3
-    },
-    {
-      "x": 3,
-      "y": 9
-    },
-    {
-      "x": 4,
-      "y": 6
-    },
-    {
-      "x": 4,
-      "y": 1
-    },
-    {
-      "x": 8,
-      "y": 9
-    }
-  ]
-}, {
-  "name": "Y-find",
-  "coordinate": [
-    {
-      "x": 1,
-      "y": 8
-    },
-    {
-      "x": 9,
-      "y": 3
-    },
-    {
-      "x": 7,
-      "y": 2
-    },
-    {
-      "x": 4,
-      "y": 10
-    },
-    {
-      "x": 8,
-      "y": 7
-    },
-    {
-      "x": 8,
-      "y": 8
-    },
-    {
-      "x": 2,
-      "y": 5
-    },
-    {
-      "x": 7,
-      "y": 2
-    },
-    {
-      "x": 8,
-      "y": 1
-    },
-    {
-      "x": 4,
-      "y": 1
-    }
-  ]
-}, {
-  "name": "Bigtax",
-  "coordinate": [
-    {
-      "x": 5,
-      "y": 10
-    },
-    {
-      "x": 9,
-      "y": 7
-    },
-    {
-      "x": 5,
-      "y": 10
-    },
-    {
-      "x": 4,
-      "y": 1
-    },
-    {
-      "x": 4,
-      "y": 9
-    },
-    {
-      "x": 8,
-      "y": 2
-    },
-    {
-      "x": 3,
-      "y": 8
-    },
-    {
-      "x": 4,
-      "y": 10
-    },
-    {
-      "x": 6,
-      "y": 10
-    },
-    {
-      "x": 4,
-      "y": 4
-    }
-  ]
-}];
-
+	                        "Client": "ABC",
+	                        "sale": "202",
+	                        "year": "2000"
+	                    }, {
+	                        "Client": "ABC",
+	                        "sale": "215",
+	                        "year": "2002"
+	                    }, {
+	                        "Client": "ABC",
+	                        "sale": "179",
+	                        "year": "2004"
+	                    }, {
+	                        "Client": "ABC",
+	                        "sale": "360",
+	                        "year": "2006"
+	                    }, {
+	                        "Client": "ABC",
+	                        "sale": "301",
+	                        "year": "2008"
+	                    }, {
+	                        "Client": "ABC",
+	                        "sale": "176",
+	                        "year": "2010"
+	                    }, {
+	                        "Client": "XYZ",
+	                        "sale": "100",
+	                        "year": "2000"
+	                    }, {
+	                        "Client": "XYZ",
+	                        "sale": "215",
+	                        "year": "2002"
+	                    }, {
+	                        "Client": "XYZ",
+	                        "sale": "256",
+	                        "year": "2004"
+	                    }, {
+	                        "Client": "XYZ",
+	                        "sale": "199",
+	                        "year": "2006"
+	                    }, {
+	                        "Client": "XYZ",
+	                        "sale": "134",
+	                        "year": "2008"
+	                    }, {
+	                        "Client": "XYZ",
+	                        "sale": "100",
+	                        "year": "2013"
+	                    }, {
+	                        "Client": "AKA",
+	                        "sale": "200",
+	                        "year": "2000"
+	                    }, {
+	                        "Client": "AKA",
+	                        "sale": "150",
+	                        "year": "2002"
+	                    }, {
+	                        "Client": "AKA",
+	                        "sale": "350",
+	                        "year": "2004"
+	                    }, {
+	                        "Client": "AKA",
+	                        "sale": "260",
+	                        "year": "2006"
+	                    }, {
+	                        "Client": "AKA",
+	                        "sale": "400",
+	                        "year": "2008"
+	                    }, {
+	                        "Client": "AKA",
+	                        "sale": "580",
+	                        "year": "2013"
+	                    }];
 
 
 			var options2 = {id: "#demo2", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data2};

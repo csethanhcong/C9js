@@ -1,7 +1,7 @@
 'use strict';
 
 class Axis {
-    constructor(options, svg, data, width, height) {
+    constructor(options, svg, data, width, height, xAxe, yAxe) {
         var config = {
             x_axis_show     : true,
             x_axis_padding  : {},   // TODO
@@ -42,6 +42,7 @@ class Axis {
         })]);
 
         if (svg.c9Chart == "timeline") {
+
             var xScale = d3.time.scale()
                 .domain([options.starting, options.ending])
                 .range([0, width]);
@@ -53,17 +54,32 @@ class Axis {
                 .ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
             delete options.starting;
             delete options.ending;
-        }
-        else
+
+            // this._yAxis = d3.svg.axis()
+            //     .scale(y)
+            //     .orient("left")
+            //     .ticks(10);
+
+        } else if (svg.c9Chart == "line") {
+
+            this._xAxis = xAxe;
+            this._yAxis = yAxe;
+
+        } else {
+
             this._xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom")
                 .ticks(10);
 
-        this._yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left")
-            .ticks(10);
+            this._yAxis = d3.svg.axis()
+                .scale(y)
+                .orient("left")
+                .ticks(10);
+
+        }
+
+        
 
         // Grid
         if (this._gridXShow) {
