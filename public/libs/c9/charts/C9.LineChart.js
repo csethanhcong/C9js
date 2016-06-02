@@ -6,7 +6,7 @@ class LineChart extends Chart {
         var config = {
             point_show: true,
             point_radius: 5,
-            line_color: "black",
+            line_color: "steelblue",
             point_hover_enable: true
         };
 
@@ -50,13 +50,15 @@ class LineChart extends Chart {
                         .y(function(d) {
                             return y(d.sale);
                         });
-        var _svg = this.svg;
+        var _svg = this.svg,
+            __lineColor = this._lineColor;
         dataGroup.forEach(function(d,i) {
             _svg.append('path')
             .attr('d', lineGen(d.values))
-            .attr('stroke', function(d,j) { 
-                    return "hsl(" + Math.random() * 360 + ",100%,50%)";
-            })
+            // .attr('stroke', function(d,j) { 
+            //         return "hsl(" + Math.random() * 360 + ",100%,50%)";
+            // })
+            .attr('stroke', __lineColor)
             .attr('stroke-width', 2)
             .attr('id', 'line_'+d.key)
             .attr('fill', 'none');

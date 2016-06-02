@@ -204,9 +204,9 @@ class TimeLine extends Chart {
     ======================================*/
 
     draw() {
-        options.starting = this._starting;
-        options.ending = this._ending;
-        var axis    = new Axis(options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this._itemHeight + this._itemMargin) * this._maxStack, null, null);
+        this.options.starting = this._starting;
+        this.options.ending = this._ending;
+        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this._itemHeight + this._itemMargin) * this._maxStack, null, null);
     }
     
     /*=====  End of Main Functions  ======*/
