@@ -40,6 +40,7 @@
 	    <script src="/libs/c9/charts/C9.BarChart.js"></script>
 	    <script src="/libs/c9/charts/C9.LineChart.js"></script>
 	    <script src="/libs/c9/charts/C9.PieChart.js"></script>
+	    <script src="/libs/c9/charts/C9.DonutChart.js"></script>
 	    <script src="/libs/c9/utils/C9.Axis.js"></script>
 	    <script src="/libs/c9/utils/C9.Title.js"></script>
 		<!-- End of D3 & C9 -->
@@ -101,6 +102,9 @@
 		<div id="demo3" style="text-align:center;"></div>
 
 		<div id="demo4" style="text-align:center;"></div>
+
+		<div id="demo5" style="text-align:center;"></div>
+
 		<!-- Tab1 : Graph -->
 		<!-- <section class="col-lg-4 col-lg-offset-7">
 			<div class="container-fluid" id="input-data">
@@ -205,7 +209,16 @@
 			var pieChart = new PieChart(options4);
 			pieChart.draw();
 
-			
+			var data5 = [
+					{name: "A", value:	10},
+					{name: "B",	value:  25},
+					{name: "C", value:	35},
+					{name: "D", value:	20},
+					{name: "E", value:	10}
+				];
+			var options5 = {id: "#demo5", width: 960, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart'};
+			var donutChart = new DonutChart(options5);
+			donutChart.draw();
 			
 				// // Process choose file
 				// $('#choose-file').on('change', ':file', function() {

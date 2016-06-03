@@ -41,7 +41,7 @@ class PieChart extends Chart {
                 d.outerRadius = __radius;
                 return "translate(" + arc.centroid(d) + ")";})
             .attr("text-anchor", "middle")
-            .text( function(d, i) { console.dir(d.data.name); return d.data.name; });
+            .text( function(d, i) { return d.data.name; });
     }
 
     /*==============================
