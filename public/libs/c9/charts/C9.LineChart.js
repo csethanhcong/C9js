@@ -3,21 +3,75 @@
 class LineChart extends Chart {
     constructor(options) {
         super(options);
-        var config = {
-            point_show: true,
+        var self    = this;
+        var config  = {
+            point_show: false,
             point_radius: 5,
-            line_color: "steelblue",
-            point_hover_enable: true
+            point_hover_enable: false
         };
 
-        this._pointShow         = options.point_show            ||  config.point_show;
-        this._pointRadius       = options.point_radius          ||  config.point_radius;
-        this._lineColor         = options.line_color            ||  config.line_color;
-        this._pointHoverEnable  = options.point_hover_enable    ||  config.point_hover_enable;
-        this.svg.c9Chart = "line";
+        self._pointShow         = options.point_show            ||  config.point_show;
+        self._pointRadius       = options.point_radius          ||  config.point_radius;
+        self._pointHoverEnable  = options.point_hover_enable    ||  config.point_hover_enable;
+        self.svg.c9Chart = "line";
 
+        self.initLineChart();
+
+    }
+
+    /*==============================
+    =            Getter            =
+    ==============================*/
+
+    get pointShow() {
+        return this._pointShow;
+    }
+
+    get pointRadius() {
+        return this._pointRadius;
+    }
+
+    get pointHoverEnable() {
+        return this._pointHoverEnable;
+    }
+    
+    /*=====  End of Getter  ======*/
+
+    /*==============================
+    =            Setter            =
+    ==============================*/
+
+    set pointShow(newPointShow) {
+        if (newPointShow) {
+            this._pointShow = newPointShow;
+        }
+    }
+
+    set pointRadius(newPointRadius) {
+        if (newPointRadius) {
+            this._pointRadius = newPointRadius;
+        }
+    }
+
+    set pointHoverEnable(newPointHoverEnable) {
+        if (newPointHoverEnable) {
+            this._pointHoverEnable = newPointHoverEnable;
+        }
+    }
+
+    /*=====  End of Setter  ======*/
+    
+    /*======================================
+    =            Main Functions            =
+    ======================================*/
+
+    /**
+     * [First init Line Chart]
+     * @return {[type]} [description]
+     */
+    initLineChart() {
         var dataGroup = d3.nest()
-                        .key(function(d) {return d.Client;})
+                        .key(function(d) { return d.Client; })
                         .entries(this.data);
 
         var width   = this.width - this.margin.left - this.margin.right;
@@ -44,45 +98,28 @@ class LineChart extends Chart {
                         .orient("left");
 
         var lineGen = d3.svg.line()
-                        .x(function(d) {
-                            return x(d.year);
-                        })
-                        .y(function(d) {
-                            return y(d.sale);
-                        });
-        var _svg = this.svg,
-            __lineColor = this._lineColor;
+                        .x(function(d) { return x(d.year); })
+                        .y(function(d) { return y(d.sale); });
+
+        var _svg        = this.svg,
+            _colorRange = this.colorRange;
+
         dataGroup.forEach(function(d,i) {
             _svg.append('path')
             .attr('d', lineGen(d.values))
-            // .attr('stroke', function(d,j) { 
-            //         return "hsl(" + Math.random() * 360 + ",100%,50%)";
-            // })
-            .attr('stroke', __lineColor)
+            .attr('stroke', _colorRange(i))
             .attr('stroke-width', 2)
             .attr('id', 'line_'+d.key)
             .attr('fill', 'none');
         });
-
-        
     }
 
-    /*==============================
-    =            Getter            =
-    ==============================*/
-    
-    /*=====  End of Getter  ======*/
-
-    /*==============================
-    =            Setter            =
-    ==============================*/
-    /*=====  End of Setter  ======*/
-    
-    /*======================================
-    =            Main Functions            =
-    ======================================*/
-
+    /**
+     * [Main draw functon of Line Chart]
+     * @return {[type]} [description]
+     */
     draw() {
+
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
         

@@ -2,19 +2,14 @@
 
 class Chart {
     constructor(options) {
-        var config = {
+        var self    = this;
+        var config  = {
             // container
             id: "body",
             // size (width, height), margin, padding
             width: 960,
             height: 480,
             margin: {
-                top: 20,
-                right: 20,
-                bottom: 70,
-                left: 40,
-            },
-            padding: {
                 top: 20,
                 right: 20,
                 bottom: 70,
@@ -34,49 +29,22 @@ class Chart {
             // tooltip - show when mouseover on each data
             tooltip_show: true,
             tooltip_position: undefined,
-
+            // color range
+            color_range: "category20",
             // data
-            data: [{
-                name: "A",
-                value: ".08167"
-            }, {
-                name: "C",
-                value: ".02536"
-            }, {
-                name: "D",
-                value: ".02157"
-            }, {
-                name: "E",
-                value: ".06954"
-            }, {
-                name: "B",
-                value: ".01492"
-            }]
+            data: []
         };
 
-        this._id        = options.id        || config.id;
-        this._width     = options.width     || config.width;
-        this._data      = options.data      || config.data;
-        this._height    = options.height    || config.height;
-        this._margin    = this.extend(options.margin, config.margin);
-        this._padding   = this.extend(options.padding, config.padding);
-        this._svg       = null;
-        this._x         = null;
-        this._y         = null;
-        this._options   = options;
+        self._id        = options.id        || config.id;
+        self._width     = options.width     || config.width;
+        self._data      = options.data      || config.data;
+        self._height    = options.height    || config.height;
+        self._colorRange= options.color_range|| config.color_range;
+        self._margin    = self.extend(options.margin, config.margin);
+        self._svg       = null;
+        self._options   = options;
 
-        var margin  = this._margin,
-            id      = this._id,
-            width   = this._width - margin.left - margin.right,
-            height  = this._height - margin.top - margin.bottom;
-
-        this._svg = d3.select(id)
-            .append("svg")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
+        self.initConfig();
     }
 
     /*==============================
@@ -95,12 +63,12 @@ class Chart {
         return this._height;
     }
 
-    get margin() {
-        return this._margin;
+    get colorRange() {
+        return d3.scale[this._colorRange]();
     }
 
-    get padding() {
-        return this._padding;
+    get margin() {
+        return this._margin;
     }
 
     get data() {
@@ -109,14 +77,6 @@ class Chart {
 
     get svg() {
         return this._svg;
-    }
-
-    get x() {
-        return this._x;
-    }
-    
-    get y() {
-        return this._y;
     }
 
     get options() {
@@ -147,15 +107,15 @@ class Chart {
         }
     }
 
-    set margin(newMargin) {
-        if (newMargin) {
-            this._margin = newMargin;
+    set colorRange(newColorRange) {
+        if (newColorRange) {
+            this._colorRange = newColorRange;
         }
     }
 
-    set padding(newPadding) {
-        if (newPadding) {
-            this._padding = newPadding;
+    set margin(newMargin) {
+        if (newMargin) {
+            this._margin = newMargin;
         }
     }
 
@@ -171,18 +131,6 @@ class Chart {
         }
     }
 
-    set x(newX) {
-        if (newX) {
-            this._x = newX;
-        }
-    }
-    
-    set y(newY) {
-        if (newY) {
-            this._y = newY;
-        }
-    }
-
     set options(newOptions) {
         if (newOptions) {
             this._options = newOptions;
@@ -194,7 +142,25 @@ class Chart {
     /*======================================
     =            Main Functions            =
     ======================================*/
+    /**
+     * [First init config in parent Chart]
+     * @param  {[type]} self [description]
+     * @return {[type]}      [description]
+     */
+    initConfig() {
+        var margin  = this.margin,
+            id      = this.id,
+            width   = this.width - margin.left - margin.right,
+            height  = this.height - margin.top - margin.bottom;
 
+        this.svg = d3.select(id)
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+    }
     
     /**
      * Overwrites obj2's values with obj1's and adds obj1's if non existent in obj2
@@ -211,5 +177,4 @@ class Chart {
 
     /*=====  End of Main Functions  ======*/
 
-    
 }

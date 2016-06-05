@@ -1,7 +1,12 @@
 /** To make fixed top header smoothly **/
 body { 
 	padding-top:70px; 
-  background-color: #D8E6E7;
+  /*background-color: #D8E6E7;*/
+}
+
+pre {
+  background-color: #272822;
+  color: white;
 }
 
 .axis {
@@ -71,6 +76,7 @@ input[readonly] {
 header .navbar{
   background-color: #011638;
   border-color: #4FB0C6;
+  color: white;
 }
 
 /*d3-donut-chart {

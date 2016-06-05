@@ -3,63 +3,160 @@
 class TimeLine extends Chart {
     constructor(options) {
         super(options);
+        var self = this;
+
         var config = {
-            rowSeparators: null,
-            backgroundColor: null,
-            itemColors: d3.scale.category20(),
+            row_separator: null,
+            background_color: null,
             starting: 0,
             ending: 0,
-            stacked: false, //test
+            stack: false, //test
             // rotateTicks: false,
-            itemHeight: 20,
-            itemMargin: 5,
-            labelMargin: 20
+            item_height: 20,
+            item_margin: 5,
+            label_margin: 20
         };
 
-        this.svg.c9Chart = "timeline";
-        this._stacked           = options.stacked || config.stacked;
-        this._starting          = options.starting || config.starting;
-        this._ending            = options.ending || config.ending;
-        this._itemColors        = options.itemColors || config.itemColors;
-        this._rowSeparators     = options.rowSeparators || config.rowSeparators;
-        this._backgroundColor   = options.backgroundColor || config.backgroundColor;
-        this._itemHeight        = options.itemHeight || config.itemHeight;
-        this._itemMargin        = options.itemMargin || config.itemMargin;
-        this._labelMargin       = options.labelMargin || config.labelMargin;
+        self.svg.c9Chart        = "timeline";
+        self._stack             = options.stack || config.stack;
+        self._starting          = options.starting || config.starting;
+        self._ending            = options.ending || config.ending;
+        self._rowSeparator      = options.row_separator || config.row_separator;
+        self._backgroundColor   = options.background_color || config.background_color;
+        self._itemHeight        = options.item_height || config.item_height;
+        self._itemMargin        = options.item_margin || config.item_margin;
+        self._labelMargin       = options.label_margin || config.label_margin;
+        self._maxStack          = 1;
 
+        self.initTimelineConfig();
+    }
+
+    /*==============================
+    =            Getter            =
+    ==============================*/
+    get stack() {
+        return this._stack;
+    }
+
+    get backgroundColor() {
+        return this._backgroundColor;
+    }
+
+    get rowSeparator() {
+        return this._rowSeparator;
+    }
+
+    get starting() {
+        return this._starting;
+    }
+
+    get ending() {
+        return this._ending;
+    }
+
+    get itemHeight() {
+        return this._itemHeight;
+    }
+
+    get itemMargin() {
+        return this._itemMargin;
+    }
+
+    get labelMargin() {
+        return this._labelMargin;
+    }
+
+    get maxStack() {
+        return this._maxStack;
+    }
+    /*=====  End of Getter  ======*/
+
+    /*==============================
+    =            Setter            =
+    ==============================*/
+    set stack(newStack) {
+        if (newStack) {
+            this._stacked = newStack;
+        }
+    }
+
+    set backgroundColor(newBackgroundColor) {
+        if (newBackgroundColor) {
+            this.backgroundColor = newBackgroundColor;
+        }
+    }
+
+    set rowSeparator(newRowSeparator) {
+        if (newRowSeparator) {
+            this._rowSeparator = newRowSeparator;
+        }
+    }
+
+    set starting(newStarting) {
+        if (newStarting) {
+            this._starting = newStarting;
+        }
+    }
+
+    set ending(newEnding) {
+        if (newEnding) {
+            this._ending = newEnding;
+        }
+    }
+
+    set itemHeight(newItemHeight) {
+        if (newItemHeight) {
+            this._itemHeight = newItemHeight;
+        }
+    }
+
+    set itemMargin(newItemMargin) {
+        if (newItemMargin) {
+            this._itemMargin = newItemMargin;
+        }
+    }
+
+    set labelMargin(newLabelMargin) {
+        if (newLabelMargin) {
+            this._labelMargin = newLabelMargin;
+        }
+    }
+
+    set maxStack(newMaxStack) {
+        if (newMaxStack) {
+            this._maxStack = newMaxStack;
+        }
+    }
+    /*=====  End of Setter  ======*/
+    
+    /*======================================
+    =            Main Functions            =
+    ======================================*/
+
+    initTimelineConfig() {
+        var self = this;
         var stackList = {},
             maxStack = 0,
             minTime = 0,
             maxTime = 0,
-            stacked = this._stacked,
-            starting = this._starting,
-            ending = this._ending,
-            backgroundColor = this._backgroundColor,
-            itemHeight = this._itemHeight,
-            itemMargin = this._itemMargin,
-            svg = this.svg,
-            itemColors = this._itemColors,
-            width = this.width - this.margin.left - this.margin.right,
-            height = this.height - this.margin.top - this.margin.bottom,
-            rowSeparators = this._rowSeparators,
-            labelMargin = this._labelMargin,
-            margin = this.margin;
+            width = self.width - self.margin.left - self.margin.right,
+            height = self.height - self.margin.top - self.margin.bottom;
 
         // count number of stack and calculate min time, max time from data
-        if (this._stacked || this._ending === 0 || this._starting === 0) {
+        if (self.stack || self.ending === 0 || self.starting === 0) {
             
-            this.data.forEach(function (datum, index) {
+            self.data.forEach(function (datum, index) {
 
-                if (stacked && Object.keys(stackList).indexOf(index) == -1) {
+                if (self.stack && Object.keys(stackList).indexOf(index) == -1) {
                     stackList[index] = maxStack;
                     maxStack++;
                 }
 
                 datum.times.forEach(function (time, i) {
-                    if(starting === 0)
+                    if(self.starting === 0)
                         if (time.starting_time < minTime || minTime === 0)
                             minTime = time.starting_time;
-                    if(ending === 0) {
+                    if(self.ending === 0) {
                         if (time.starting_time > maxTime)
                             maxTime = time.starting_time;
                         if (time.ending_time > maxTime)
@@ -68,38 +165,35 @@ class TimeLine extends Chart {
                 });
             });
 
-            if (this._ending === 0) {
-              this._ending = maxTime;
-              ending = maxTime;
+            if (self.ending === 0) {
+              self.ending = maxTime;
             }
-            if (this._starting === 0) {
-              this._starting = minTime;
-              starting = minTime;
+            if (self.starting === 0) {
+              self.starting = minTime;
             }
         }
 
-        this._maxStack = maxStack;
-        var scale = width / (this._ending - this._starting);
+        self.maxStack = maxStack;
+        var scale = width / (self.ending - self.starting);
 
-        this.data.forEach( function(datum, index){
+        self.data.forEach( function(datum, index){
             var data = datum.times;
-
             //draw background
-            if (backgroundColor) { 
-                var barYAxis = ((itemHeight + itemMargin) * stackList[index]);
-                svg.selectAll("g")
+            if (self.backgroundColor) { 
+                var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
+                self.svg.selectAll("g")
                     .data(data).enter()
                     .insert("rect")
                     .attr("class", "timeline-background-bar")
                     .attr("x", 0)
                     .attr("width", width)
                     .attr("y", barYAxis)
-                    .attr("height", itemHeight)
-                    .attr("fill", backgroundColor instanceof Function ? backgroundColor(datum, index) : backgroundColor);
+                    .attr("height", self.itemHeight)
+                    .attr("fill", self.backgroundColor instanceof Function ? self.backgroundColor(index) : self.backgroundColor);
             }
 
             //draw item
-            svg.selectAll("g")
+            self.svg.selectAll("g")
                 .data(data).enter()
                 .append(function(d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, "ending_time" in d? "rect" : "circle");
@@ -110,18 +204,15 @@ class TimeLine extends Chart {
                     return (d.ending_time - d.starting_time) * scale;
                 })
                 .attr("cy", function(d, i) {
-                    return getStackPosition(d, i) + itemHeight/2;
+                    return getStackPosition(d, i) + self.itemHeight / 2;
                 })
                 .attr("cx", getXPos)
-                .attr("r", itemHeight / 2)
-                .attr("height", itemHeight)
-                .style("fill", function(d, i){
-                    if (d.color) return d.color;
-                    return itemColors(index);
-                });
+                .attr("r", self.itemHeight / 2)
+                .attr("height", self.itemHeight)
+                .style("fill", self.colorRange(index));
 
             //draw label inside item
-            svg.selectAll("g")
+            self.svg.selectAll("g")
                 .data(data).enter()
                 .append("text")
                 .attr("x", getXTextPos)
@@ -130,83 +221,64 @@ class TimeLine extends Chart {
                   return d.name;
                 });
 
-            if (rowSeparators && index < maxStack - 1) {
-                var lineYAxis = ( itemHeight + itemMargin / 2 + (itemHeight + itemMargin) * stackList[index]);
-                svg.append("svg:line")
+            if (self.rowSeparator && index < self.maxStack - 1) {
+                var lineYAxis = ( self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index]);
+                self.svg.append("svg:line")
                   .attr("class", "timeline-row-separator")
                   .attr("x1", 0)
                   .attr("x2", width)
                   .attr("y1", lineYAxis)
                   .attr("y2", lineYAxis)
                   .attr("stroke-width", 1)
-                  .attr("stroke", rowSeparators);
+                  .attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
             }
 
             //draw the label left side item
             if (typeof(datum.name) !== "undefined") { 
-                var rowsDown = margin.top + (itemHeight + itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + itemHeight * 0.75;
+                var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 
-                d3.select(svg[0][0].parentNode).append("text")
+                d3.select(self.svg[0][0].parentNode).append("text")
                     .attr("class", "timeline-label")
-                    .attr("transform", "translate(" + labelMargin + "," + rowsDown + ")")
+                    .attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")")
                     .text(datum.name);
             }
             //draw icon
             else if (typeof(datum.icon) !== "undefined") {
-                d3.select(svg[0][0].parentNode).append("image")
+                d3.select(self.svg[0][0].parentNode).append("image")
                     .attr("class", "timeline-label")
-                    .attr("transform", "translate("+ labelMargin +","+ (margin.top + (itemHeight + itemMargin) * stackList[index])+")")
+                    .attr("transform", "translate("+ self.labelMargin +","+ (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index])+")")
                     .attr("xlink:href", datum.icon)
-                    .attr("width", itemHeight)
-                    .attr("height", itemHeight);
+                    .attr("width", self.itemHeight)
+                    .attr("height", self.itemHeight);
             }
 
             function getStackPosition(d, i) {
-                if (stacked) {
-                    return (itemHeight + itemMargin) * stackList[index];
+                if (self.stack) {
+                    return (self.itemHeight + self.itemMargin) * stackList[index];
                 }
                 return 0;
             }
             function getStackTextPosition(d, i) {
-                if (stacked) {
-                    return (itemHeight + itemMargin) * stackList[index] + itemHeight * 0.75;
+                if (self.stack) {
+                    return (self.itemHeight + self.itemMargin) * stackList[index] + self.itemHeight * 0.75;
                 }
-                return itemHeight * 0.75;
+                return self.itemHeight * 0.75;
             }
         });
 
         function getXPos(d, i) {
-            return (d.starting_time - starting) * scale;
+            return (d.starting_time - self.starting) * scale;
         }
 
         function getXTextPos(d, i) {
-            return (d.starting_time - starting) * scale + 5;
+            return (d.starting_time - self.starting) * scale + 5;
         }
     }
 
-    /*==============================
-    =            Getter            =
-    ==============================*/
-    
-    /*=====  End of Getter  ======*/
-
-    /*==============================
-    =            Setter            =
-    ==============================*/
-    set stack(newStack) {
-        if (newStack)
-            this._stacked = newStack;
-    }
-    /*=====  End of Setter  ======*/
-    
-    /*======================================
-    =            Main Functions            =
-    ======================================*/
-
     draw() {
-        this.options.starting = this._starting;
-        this.options.ending = this._ending;
-        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this._itemHeight + this._itemMargin) * this._maxStack, null, null);
+        this.options.starting = this.starting;
+        this.options.ending = this.ending;
+        var axis = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
     }
     
     /*=====  End of Main Functions  ======*/

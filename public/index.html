@@ -76,35 +76,411 @@
 	<body ng-controller="DemoCtrl">
 
 		<!-- header -->
-		<!-- <header>
-			<nav class="navbar navbar-default navbar-fixed-top">
+		<header id="header" class="header header-style">
+			<nav class="navbar navbar-fixed-top">
 				<div class="container">
 					<div class="navbar-header">
-						<a class="navbar-brand" href="/">
-							<img src="images/icon.ico" alt="" width="32px" height="32px">
-						</a>
-						<a class="navbar-brand" href="/">d3Team</a>
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a class="navbar-brand" href="">
+							<img src="images/icon.ico" height="25px" />
+						</a> 
+						<a class="navbar-brand" href="">C9 API</a>
 					</div>
-					<div class="navbar-header navbar-right">
-						<ul class="nav navbar-nav">
-							<li class="active"><a href="/">Home</a></li>
-							<li><a href="/">About</a></li>
-							<li><p class="navbar-text">Version 1.0</p></li>
+					<div class="collapse navbar-collapse">
+						<ul class="nav navbar-nav navbar-right">
+							<li class="active"><a href="">Home</a></li>
+							<li><a href="https://github.com/csethanhcong/d3js" target="_blank">GitHub</a></li>
+							<li><p class="navbar-text">Version 1.0 <span class="glyphicon glyphicon-info-sign"></span></p></li>
 						</ul>
 					</div>
+					<!-- /.navbar-collapse -->
 				</div>
+				<!-- /.container-fluid -->
 			</nav>
-		</header> -->
-		<div id="demo1" style="text-align:center;"></div>
-		<hr>
-		<div id="demo2" style="text-align:center;"></div>
-		<hr>
-		<div id="demo3" style="text-align:center;"></div>
+		</header>
+		<!-- Ex1: Bar Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Bar Chart Examples</h3>
+		</div>
 
-		<div id="demo4" style="text-align:center;"></div>
+<!-- Ex2: Bar Chart -->
+		<div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data1</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[{</span><span style="color: #a6e22e">name</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">...,</span> <span style="color: #a6e22e">value</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">...}];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options1</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo1&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">500</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+		<span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+	<span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data1</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">bar_color</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Pink&#39;</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">barChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">BarChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options1</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">barChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo2" class="col-md-8"></div>
+</div>
 
-		<div id="demo5" style="text-align:center;"></div>
+<!-- Ex2: Bar Chart -->
+		<div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data1</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[{</span><span style="color: #a6e22e">name</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">...,</span> <span style="color: #a6e22e">value</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">...}];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options1</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo1&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">500</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+		<span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+	<span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data1</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">bar_width</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;20&#39;</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">barChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">BarChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options1</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">barChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo3" class="col-md-8"></div>
+</div>
 
+<!-- Ex1: Line Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Line Chart Examples</h3>
+		</div>
+<!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data2</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options4</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo4&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">500</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+	        <span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+		<span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+	<span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data2</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">x_axis_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39; &#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">y_axis_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Sale&#39;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Line Chart&#39;</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">lineChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">LineChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options4</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">lineChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo4" class="col-md-8"></div>
+</div>
+
+<!-- Ex1: TimeLine Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Timeline Chart Examples</h3>
+		</div>
+<!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+<span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #a6e22e">times</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">[</span> <span style="color: #f8f8f2">{</span>
+    <span style="color: #a6e22e">starting_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+    <span style="color: #a6e22e">ending_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...}</span> <span style="color: #f8f8f2">]</span>
+<span style="color: #f8f8f2">];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo5&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">300</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+	        <span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+        <span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data3</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Timeline Chart&#39;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">row_separator</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;steelblue&quot;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">true</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">timelineChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">TimeLine</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options5</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">timelineChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo5" class="col-md-8"></div>
+</div>
+
+<!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+<span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #a6e22e">times</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">[</span> <span style="color: #f8f8f2">{</span>
+    <span style="color: #a6e22e">starting_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+    <span style="color: #a6e22e">ending_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...}</span> <span style="color: #f8f8f2">]</span>
+<span style="color: #f8f8f2">];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo5&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">300</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+	        <span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+        <span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data3</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Timeline Chart&#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">false</span>
+<span style="color: #f8f8f2">};</span>
+	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">category20b</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">timelineChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">TimeLine</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options5</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">timelineChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo6" class="col-md-8"></div>
+</div>
+
+<!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+<span style="color: #a6e22e">icon</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #a6e22e">times</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">[</span> <span style="color: #f8f8f2">{</span>
+    <span style="color: #a6e22e">starting_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+    <span style="color: #a6e22e">ending_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...}</span> <span style="color: #f8f8f2">]</span>
+<span style="color: #f8f8f2">];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo5&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">300</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+	        <span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+        <span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data3</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Timeline Chart&#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">true</span>
+<span style="color: #f8f8f2">};</span>
+	<span style="color: #a6e22e">background_color</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">gray</span>
+	<span style="color: #a6e22e">label_margin</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">70</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">timelineChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">TimeLine</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options5</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">timelineChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo7" class="col-md-8"></div>
+</div>
+
+<!-- Ex1: Pie Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart Examples</h3>
+		</div>
+<!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data4</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+<span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #a6e22e">value</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #f8f8f2">];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options8</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo8&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">300</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+	        <span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+        <span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data4</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Pie Chart&#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">radius</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;200&#39;</span></span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;category20c&#39;</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">pieChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">PieChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options8</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">pieChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo8" class="col-md-8"></div>
+</div>
+
+<!-- Ex1: Donut Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart Examples</h3>
+		</div>
+<!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+<span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #a6e22e">value</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
+<span style="color: #f8f8f2">];</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options9</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo9&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">300</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
+	        <span style="color: #a6e22e">top</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">left</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">100</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">right</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">50</span><span style="color: #f8f8f2">,</span> 
+	        <span style="color: #a6e22e">bottom</span><span style="color: #f92672">:</span><span style="color: #ae81ff">100</span>
+        <span style="color: #f8f8f2">},</span> 
+	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data5</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Donut Chart&#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">outer_radius</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;200&#39;</span></span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">inner_radius</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;100&#39;</span></span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;category20&#39;</span>
+<span style="color: #f8f8f2">};</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">donutChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">DonutChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options9</span><span style="color: #f8f8f2">);</span>
+<span style="color: #a6e22e">donutChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
+</pre></td></tr></table>
+<div id="demo9" class="col-md-8"></div>
+</div>
 		<!-- Tab1 : Graph -->
 		<!-- <section class="col-lg-4 col-lg-offset-7">
 			<div class="container-fluid" id="input-data">
@@ -159,8 +535,37 @@
 					{name: "Y", value:	.01974},
 					{name: "Z", value:	.00074}
 				];
-			var options1 = {id: "#demo1", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data1, title_text: 'Bar Chart'};
-			var barChart = new BarChart(options1);
+
+			var options2 = {
+				id: "#demo2", 
+				width: 960, 
+				height: 500, 
+				margin: {
+					top: 100, 
+					left: 50, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data1, 
+				bar_color: 'pink'
+			};
+			var barChart = new BarChart(options2);
+			barChart.draw();
+
+			var options3 = {
+				id: "#demo3", 
+				width: 960, 
+				height: 500, 
+				margin: {
+					top: 100, 
+					left: 50, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data1, 
+				bar_width: 20
+			};
+			var barChart = new BarChart(options3);
 			barChart.draw();
 
 
@@ -183,8 +588,22 @@
 						 {"Client": "AKA","sale": "400","year": "2008"},
 						 {"Client": "AKA","sale": "580","year": "2013"}
 				];
-			var options2 = {id: "#demo2", width: 960, height: 500, margin: {top: 100, left: 50, right: 50, bottom:100}, data: data2, x_axis_text: ' ', y_axis_text: 'Sale', title_text: 'Line Chart'};
-			var lineChart = new LineChart(options2);
+			var options4 = {
+				id: "#demo4", 
+				width: 960, 
+				height: 500, 
+				margin: {
+					top: 100, 
+					left: 50, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data2, 
+				x_axis_text: ' ',
+				y_axis_text: 'Sale', 
+				title_text: 'Line Chart'
+			};
+			var lineChart = new LineChart(options4);
 			lineChart.draw();
 
 
@@ -193,8 +612,69 @@
 			        {name: "person b", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
 			        {name: "person c", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
 		      	];
-			var options3 = {id: "#demo3", width: 960, height: 300, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data3, stacked: true, title_text: 'Timeline Chart'};
-			var timelineChart = new TimeLine(options3);
+			var options5 = {
+				id: "#demo5", 
+				width: 960, 
+				height: 300, 
+				margin: {
+					top: 100, 
+					left: 100, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data3, 
+				title_text: 'Timeline Chart', 
+				row_separator: "steelblue",
+				stack: true
+			};
+			var timelineChart = new TimeLine(options5);
+			timelineChart.draw();
+
+			var data4 = [
+			        {times: [{"name":"First time", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"First time", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+			        {times: [{"name":"Second time", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+			        {times: [{"name":"Third time", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+		      	];
+			var options6 = {
+				id: "#demo6", 
+				width: 960, 
+				height: 300, 
+				margin: {
+					top: 100, 
+					left: 100, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data4, 
+				title_text: 'Timeline Chart', 
+				stack: false,
+				color_range: "category20b"
+			};
+			var timelineChart = new TimeLine(options6);
+			timelineChart.draw();
+
+			var data3 = [
+			        {icon: "images/icon.png", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Weeee", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+			        {icon: "images/icon.png", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+			        {icon: "images/icon.png", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+		      	];
+			var options7 = {
+				id: "#demo7", 
+				width: 960, 
+				height: 300, 
+				margin: {
+					top: 100, 
+					left: 100, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data3, 
+				title_text: 'Timeline Chart', 
+				stack: true,
+				background_color: "gray",
+				label_margin: 70
+			};
+			var timelineChart = new TimeLine(options7);
 			timelineChart.draw();
 
 
@@ -203,10 +683,24 @@
 					{name: "B",	value:  25},
 					{name: "C", value:	35},
 					{name: "D", value:	20},
-					{name: "E", value:	10}
+					{name: "E", value:	100}
 				];
-			var options4 = {id: "#demo4", width: 960, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data4, title_text: 'Pie Chart'};
-			var pieChart = new PieChart(options4);
+			var options8 = {
+				id: "#demo8", 
+				width: 960, 
+				height: 600, 
+				margin: {
+					top: 100, 
+					left: 100, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data4, 
+				title_text: 'Pie Chart',
+				radius: 200,
+				color_range: 'category20c'
+			};
+			var pieChart = new PieChart(options8);
 			pieChart.draw();
 
 			var data5 = [
@@ -214,10 +708,10 @@
 					{name: "B",	value:  25},
 					{name: "C", value:	35},
 					{name: "D", value:	20},
-					{name: "E", value:	10}
+					{name: "E", value:	60}
 				];
-			var options5 = {id: "#demo5", width: 960, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart'};
-			var donutChart = new DonutChart(options5);
+			var options9 = {id: "#demo9", width: 960, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart', color_range: "category20", outer_radius: 200, inner_radius: 100};
+			var donutChart = new DonutChart(options9);
 			donutChart.draw();
 			
 				// // Process choose file

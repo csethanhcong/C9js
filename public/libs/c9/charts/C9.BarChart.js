@@ -3,46 +3,33 @@
 class BarChart extends Chart {
     constructor(options) {
         super(options);
+        var self = this;
         var config = {
             bar_width: undefined,
             bar_color: "steelblue"
         };
 
-        var width   = this.width - this.margin.left - this.margin.right;
-        var height  = this.height - this.margin.top - this.margin.bottom;
+        var width   = self.width - self.margin.left - self.margin.right;
+        var height  = self.height - self.margin.top - self.margin.bottom;
 
         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var y = d3.scale.linear().range([height, 0]);
 
-        x.domain(this.data.map(function(d) {
+        x.domain(self.data.map(function(d) {
             return d.name;
         }));
 
-        y.domain([0, d3.max(this.data, function(d) {
+        y.domain([0, d3.max(self.data, function(d) {
             return d.value;
         })]);
 
         // Make flexible width according to bar_width
         config.bar_width      = x.rangeBand();
-        this._barWidth        = options.bar_width  ||  config.bar_width;
-        this._barColor        = options.bar_color  ||  config.bar_color;
+        self._barWidth        = options.bar_width  ||  config.bar_width;
+        self._barColor        = options.bar_color  ||  config.bar_color;
 
-        this.svg.selectAll(".bar")
-            .data(this.data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .style("fill", this._barColor)
-            .attr("x", function(d) {
-                return x(d.name);
-            })
-            .attr("y", function(d) {
-                return y(d.value);
-            })
-            .attr("width", this._barWidth) //x.rangeBand()
-            .attr("height", function(d) {
-                return height - y(d.value);
-            });
+        self.initBarChartConfig(height, x, y);
     }
 
     /*==============================
@@ -79,8 +66,37 @@ class BarChart extends Chart {
     /*======================================
     =            Main Functions            =
     ======================================*/
+    /**
+     * [First init config Bar Chart]
+     * @param  {[type]} height [Height of Bar Chart]
+     * @param  {[type]} x      [x scale]
+     * @param  {[type]} y      [y scale]
+     * @return {[type]}        [description]
+     */
+    initBarChartConfig(height, x, y) {
+        this.svg.selectAll(".bar")
+            .data(this.data)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .style("fill", this.barColor)
+            .attr("x", function(d) {
+                return x(d.name);
+            })
+            .attr("y", function(d) {
+                return y(d.value);
+            })
+            .attr("width", this.barWidth) //x.rangeBand()
+            .attr("height", function(d) {
+                return height - y(d.value);
+            });
+    }
 
+    /**
+     * [Main draw function of Bar Chart]
+     * @return {[type]} [description]
+     */
     draw() {
+
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
         
