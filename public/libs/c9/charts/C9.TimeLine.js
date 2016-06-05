@@ -135,6 +135,7 @@ class TimeLine extends Chart {
 
     initTimelineConfig() {
         var self = this;
+        var color = self.colorRange;
         var stackList = {},
             maxStack = 0,
             minTime = 0,
@@ -209,7 +210,7 @@ class TimeLine extends Chart {
                 .attr("cx", getXPos)
                 .attr("r", self.itemHeight / 2)
                 .attr("height", self.itemHeight)
-                .style("fill", self.colorRange(index));
+                .style("fill", color(index));
 
             //draw label inside item
             self.svg.selectAll("g")
@@ -278,7 +279,9 @@ class TimeLine extends Chart {
     draw() {
         this.options.starting = this.starting;
         this.options.ending = this.ending;
-        var axis = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
+        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
+        var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);    
+
     }
     
     /*=====  End of Main Functions  ======*/

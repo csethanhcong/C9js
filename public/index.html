@@ -163,8 +163,8 @@
 14
 15
 16</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data1</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[{</span><span style="color: #a6e22e">name</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">...,</span> <span style="color: #a6e22e">value</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">...}];</span>
-<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options1</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
-	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo1&quot;</span><span style="color: #f8f8f2">,</span> 
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options2</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo2&quot;</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">500</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
@@ -176,7 +176,7 @@
 	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data1</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">bar_width</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;20&#39;</span>
 <span style="color: #f8f8f2">};</span>
-<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">barChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">BarChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options1</span><span style="color: #f8f8f2">);</span>
+<span style="color: #66d9ef">var</span> <span style="color: #a6e22e">barChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">BarChart</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options2</span><span style="color: #f8f8f2">);</span>
 <span style="color: #a6e22e">barChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
 </pre></td></tr></table>
 <div id="demo3" class="col-md-8"></div>
@@ -251,7 +251,8 @@
 20
 21
 22
-23</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+23
+24</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
 <span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
 <span style="color: #a6e22e">times</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">[</span> <span style="color: #f8f8f2">{</span>
     <span style="color: #a6e22e">starting_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
@@ -269,6 +270,7 @@
         <span style="color: #f8f8f2">},</span> 
 	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data3</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Timeline Chart&#39;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">x_axis_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;&#39;</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">row_separator</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;steelblue&quot;</span><span style="color: #f8f8f2">,</span>
 	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">true</span>
 <span style="color: #f8f8f2">};</span>
@@ -300,15 +302,14 @@
 20
 21
 22
-23
-24</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+23</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data3</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
 <span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
 <span style="color: #a6e22e">times</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">[</span> <span style="color: #f8f8f2">{</span>
     <span style="color: #a6e22e">starting_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
     <span style="color: #a6e22e">ending_time</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...}</span> <span style="color: #f8f8f2">]</span>
 <span style="color: #f8f8f2">];</span>
 <span style="color: #66d9ef">var</span> <span style="color: #a6e22e">options5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">{</span>
-	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo5&quot;</span><span style="color: #f8f8f2">,</span> 
+	<span style="color: #a6e22e">id</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&quot;#demo6&quot;</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">width</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">960</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">height</span><span style="color: #f92672">:</span> <span style="color: #ae81ff">300</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">margin</span><span style="color: #f92672">:</span> <span style="color: #f8f8f2">{</span>
@@ -321,8 +322,7 @@
 	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Timeline Chart&#39;</span><span style="color: #f8f8f2">,</span>
 	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">false</span>
 <span style="color: #f8f8f2">};</span>
-	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">category20b</span>
-<span style="color: #f8f8f2">};</span>
+	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">category20b</span><span style="color: #f8f8f2">,</span>
 <span style="color: #66d9ef">var</span> <span style="color: #a6e22e">timelineChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">TimeLine</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options5</span><span style="color: #f8f8f2">);</span>
 <span style="color: #a6e22e">timelineChart</span><span style="color: #f8f8f2">.</span><span style="color: #a6e22e">draw</span><span style="color: #f8f8f2">();</span>
 </pre></td></tr></table>
@@ -371,9 +371,9 @@
         <span style="color: #f8f8f2">},</span> 
 	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data3</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Timeline Chart&#39;</span><span style="color: #f8f8f2">,</span>
-	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">true</span>
-<span style="color: #f8f8f2">};</span>
-	<span style="color: #a6e22e">background_color</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">gray</span>
+	<span style="color: #a6e22e">stack</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">true</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">["red", "green", "blue"]</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">background_color</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">gray</span><span style="color: #f8f8f2">,</span>
 	<span style="color: #a6e22e">label_margin</span><span style="color: #f92672">:</span> <span style="color: #66d9ef">70</span>
 <span style="color: #f8f8f2">};</span>
 <span style="color: #66d9ef">var</span> <span style="color: #a6e22e">timelineChart</span> <span style="color: #f92672">=</span> <span style="color: #66d9ef">new</span> <span style="color: #a6e22e">TimeLine</span><span style="color: #f8f8f2">(</span><span style="color: #a6e22e">options5</span><span style="color: #f8f8f2">);</span>
@@ -433,7 +433,7 @@
 
 <!-- Ex1: Donut Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart Examples</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Donut Chart Examples</h3>
 		</div>
 <!-- HTML generated using hilite.me --><div style="overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table class="col-md-3"><tr><td><pre style="margin: 0; line-height: 125%"> 1
  2
@@ -456,7 +456,9 @@
 19
 20
 21
-22</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
+22
+23
+24</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #66d9ef">var</span> <span style="color: #a6e22e">data5</span> <span style="color: #f92672">=</span> <span style="color: #f8f8f2">[</span>
 <span style="color: #a6e22e">name</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
 <span style="color: #a6e22e">value</span><span style="color: #f92672">:</span><span style="color: #f8f8f2">...,</span>
 <span style="color: #f8f8f2">];</span>
@@ -472,6 +474,8 @@
         <span style="color: #f8f8f2">},</span> 
 	<span style="color: #a6e22e">data</span><span style="color: #f92672">:</span> <span style="color: #a6e22e">data5</span><span style="color: #f8f8f2">,</span> 
 	<span style="color: #a6e22e">title_text</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;Donut Chart&#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">title_position</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;bottom&#39;</span><span style="color: #f8f8f2">,</span>
+	<span style="color: #a6e22e">title_size</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;20px&#39;</span><span style="color: #f8f8f2">,</span>
 	<span style="color: #a6e22e">outer_radius</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;200&#39;</span></span><span style="color: #f8f8f2">,</span>
 	<span style="color: #a6e22e">inner_radius</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;100&#39;</span></span><span style="color: #f8f8f2">,</span>
 	<span style="color: #a6e22e">color_range</span><span style="color: #f92672">:</span> <span style="color: #e6db74">&#39;category20&#39;</span>
@@ -608,9 +612,9 @@
 
 
 			var data3 = [
-			        {name: "person a", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Weeee", "starting_time": new Date("December 18, 2012 01:10:00")}]},
-			        {name: "person b", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
-			        {name: "person c", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+			        {name: "Doctor A", times: [{"name":"Alex", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Alex", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+			        {name: "Doctor B", times: [{"name":"Akai", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+			        {name: "Doctor C", times: [{"name":"Sam", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
 		      	];
 			var options5 = {
 				id: "#demo5", 
@@ -623,14 +627,15 @@
 					bottom:100
 				}, 
 				data: data3, 
-				title_text: 'Timeline Chart', 
+				title_text: 'Timeline Chart',
+				x_axis_text: ' ',
 				row_separator: "steelblue",
 				stack: true
 			};
 			var timelineChart = new TimeLine(options5);
 			timelineChart.draw();
 
-			var data4 = [
+			var data100 = [
 			        {times: [{"name":"First time", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"First time", "starting_time": new Date("December 18, 2012 01:10:00")}]},
 			        {times: [{"name":"Second time", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
 			        {times: [{"name":"Third time", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
@@ -645,7 +650,7 @@
 					right: 50, 
 					bottom:100
 				}, 
-				data: data4, 
+				data: data100, 
 				title_text: 'Timeline Chart', 
 				stack: false,
 				color_range: "category20b"
@@ -654,9 +659,9 @@
 			timelineChart.draw();
 
 			var data3 = [
-			        {icon: "images/icon.png", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Weeee", "starting_time": new Date("December 18, 2012 01:10:00")}]},
-			        {icon: "images/icon.png", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
-			        {icon: "images/icon.png", times: [{"name":"Weeee", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+			        {icon: "images/icon.png", times: [{"name":"Me", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"Me", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+			        {icon: "images/icon.png", times: [{"name":"Her", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+			        {icon: "images/icon.png", times: [{"name":"Him", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
 		      	];
 			var options7 = {
 				id: "#demo7", 
@@ -672,6 +677,7 @@
 				title_text: 'Timeline Chart', 
 				stack: true,
 				background_color: "gray",
+				color_range: ["red", "green", "blue"],
 				label_margin: 70
 			};
 			var timelineChart = new TimeLine(options7);
@@ -679,11 +685,11 @@
 
 
 			var data4 = [
-					{name: "A", value:	10},
-					{name: "B",	value:  25},
-					{name: "C", value:	35},
-					{name: "D", value:	20},
-					{name: "E", value:	100}
+					{name: "Spring", value:	20},
+					{name: "Summer",	value:  25},
+					{name: "Autumn", value:	35},
+					{name: "Winter", value:	20},
+					{name: "Others", value:	100}
 				];
 			var options8 = {
 				id: "#demo8", 
@@ -704,13 +710,12 @@
 			pieChart.draw();
 
 			var data5 = [
-					{name: "A", value:	10},
-					{name: "B",	value:  25},
-					{name: "C", value:	35},
-					{name: "D", value:	20},
-					{name: "E", value:	60}
+					{name: "Male", value:	10},
+					{name: "Female",	value:  25},
+					{name: "LGBT", value:	35},
+					{name: "Others", value:	20}
 				];
-			var options9 = {id: "#demo9", width: 960, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart', color_range: "category20", outer_radius: 200, inner_radius: 100};
+			var options9 = {id: "#demo9", width: 960, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart', color_range: "category20", outer_radius: 200, inner_radius: 100, title_position: 'bottom', title_size: '20px'};
 			var donutChart = new DonutChart(options9);
 			donutChart.draw();
 			

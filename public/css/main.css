@@ -9,6 +9,11 @@ pre {
   color: white;
 }
 
+.page-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 .axis {
     font: 10px sans-serif;
   }

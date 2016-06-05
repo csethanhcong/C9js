@@ -64,7 +64,11 @@ class Chart {
     }
 
     get colorRange() {
-        return d3.scale[this._colorRange]();
+        if (typeof this._colorRange == 'string') {
+            return d3.scale[this._colorRange]();
+        } else if (typeof this._colorRange == 'object') {
+            return d3.scale.ordinal().range(this._colorRange);
+        }
     }
 
     get margin() {
