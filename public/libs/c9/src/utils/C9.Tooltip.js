@@ -1,6 +1,6 @@
 'use strict';
 
-class Tooltip {
+export default class Tooltip {
     constructor(options, svg, width, height, margin) {
         var config = {
             tooltip_show: true,

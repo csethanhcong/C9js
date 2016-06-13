@@ -1,4 +1,5 @@
-'use strict';
+import Axis from './utils/Axis';
+import Title from './utils/Title';
 
 class TimeLine extends Chart {
     constructor(options) {
