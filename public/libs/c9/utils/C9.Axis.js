@@ -1,6 +1,6 @@
 'use strict';
 
-class Axis {
+export default class Axis {
     constructor(options, svg, data, width, height, xAxe, yAxe) {
         var config = {
             x_axis_show     : true,

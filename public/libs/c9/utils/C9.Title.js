@@ -1,6 +1,6 @@
 'use strict';
 
-class Title {
+export default class Title {
     constructor(options, svg, width, height, margin) {
         var config = {
             title_show      : true,
