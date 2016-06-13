@@ -1,5 +1,6 @@
-var Axis = require('./utils/Axis');
-var Title = require('./utils/Title');
+import Chart from 'C9.Chart';
+import Axis from './utils/C9.Axis';
+import Title from './utils/C9.Title';
 
 class DonutChart extends Chart {
     constructor(options) {
