@@ -1,4 +1,4 @@
-import Chart from 'C9.Chart';
+import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 
