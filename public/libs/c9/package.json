@@ -2,10 +2,10 @@
   "name": "c9",
   "version": "1.0.0",
   "description": "A JavaScript library, used for interactive map-chart generator based on various types of data",
-  "main": "./dist/C9.js",
+  "main": "./C9.js",
   "scripts": {
     "build": "babel src --presets babel-preset-es2015 --out-dir dist",
-	"prepublish": "npm run build"
+    "prepublish": "npm run build"
   },
   "keywords": [
     "api",
@@ -23,6 +23,9 @@
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0"
+    "babel-core": "^6.9.1",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.9.0",
+    "webpack": "^1.13.1"
   }
 }

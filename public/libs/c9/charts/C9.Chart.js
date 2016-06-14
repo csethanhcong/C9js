@@ -1,6 +1,4 @@
-'use strict';
-
-class Chart {
+export default class Chart {
     constructor(options) {
         var self    = this;
         var config  = {
