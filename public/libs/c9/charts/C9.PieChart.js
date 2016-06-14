@@ -2,7 +2,7 @@ import Chart from './C9.Chart';
 import Axis from '../utils/C9.Axis';
 import Title from '../utils/C9.Title';
 
-class PieChart extends Chart {
+export default class PieChart extends Chart {
     constructor(options) {
         super(options);
         var self    = this;

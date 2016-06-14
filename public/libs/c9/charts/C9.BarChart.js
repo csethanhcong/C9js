@@ -2,7 +2,7 @@ import Chart from './C9.Chart';
 import Axis from '../utils/C9.Axis';
 import Title from '../utils/C9.Title';
 
-class BarChart extends Chart {
+export default class BarChart extends Chart {
     constructor(options) {
         super(options);
         var self = this;
