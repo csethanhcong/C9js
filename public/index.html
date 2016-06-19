@@ -557,15 +557,15 @@
 	    <script src="./libs/c9/C9.js"></script>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: "A", value:	.08167},
+					{name: "A", value:	2},
 					{name: "B",	value:  .01492},
 					{name: "C", value:	.02782},
 					{name: "D", value:	.04253},
-					{name: "E", value:	.12702},
+					{name: "E", value:	1},
 					{name: "F", value:	.02288},
 					{name: "G", value:	.02015},
 					{name: "H", value:	.06094},
-					{name: "I", value:	.06966},
+					{name: "I", value:	.5},
 					{name: "J", value:	.00153},
 					{name: "K", value:	.00772},
 					{name: "L", value:	.04025},
@@ -596,7 +596,8 @@
 					bottom:100
 				}, 
 				data: data1, 
-				bar_color: 'pink'
+				bar_color: 'pink',
+				is_logaric_variant: true
 			};
 			var barChart = new C9.BarChart(options1);
 			barChart.draw();
@@ -666,7 +667,7 @@
 				}, 
 				data: data2, 
 				x_axis_text: ' ',
-				y_axis_text: 'Sale', 
+				y_axis_text: 'Sale',
 				title_text: 'Line Chart',
 				interpolate: 'monotone',
 				point_show: true,

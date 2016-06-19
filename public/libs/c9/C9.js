@@ -463,6 +463,9 @@ var C9 =
 	            y_axis_show: true,
 	            y_axis_padding: {}, // TODO
 	            y_axis_text: 'Value',
+	            num_of_tick_y: 5,
+	            tick_format: "s", // refer: https://github.com/d3/d3-format
+	            is_logaric_variant: false, // TODO: Add logaric variant for x axis
 	            y2_axis_show: true,
 	            y2_axis_padding: {}, // TODO
 	            y2_axis_text: 'Value',
@@ -476,6 +479,9 @@ var C9 =
 	        this._yAxisShow = options.y_axis_show || (svg.c9Chart == "timeline" ? false : config.y_axis_show);
 	        this._yAxisPadding = options.y_axis_padding || config.y_axis_padding;
 	        this._yAxisText = options.y_axis_text || config.y_axis_text;
+	        this._isLogaricVariant = options.is_logaric_variant || config.is_logaric_variant;
+	        this._tickFormat = options.tick_format || config.tick_format;
+	        this._numOfTickY = options.num_of_tick_y || config.num_of_tick_y;
 	        this._y2AxisShow = options.y2_axis_show || config.y2_axis_show;
 	        this._y2AxisPadding = options.y2_axis_padding || config.y2_axis_padding;
 	        this._y2AxisText = options.y2_axis_text || config.y2_axis_text;
@@ -483,14 +489,21 @@ var C9 =
 	        this._gridYShow = options.grid_y_show || config.grid_y_show;
 
 	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
+	        var y;
 
-	        var y = d3.scale.linear().range([height, 0]);
+	        if (this._isLogaricVariant) {
+	            y = d3.scale.log().range([height, 0]);
+	        } else {
+	            y = d3.scale.linear().range([height, 0]);
+	        }
 
 	        x.domain(data.map(function (d) {
 	            return d.name;
 	        }));
 
-	        y.domain([0, d3.max(data, function (d) {
+	        y.domain([d3.min(data, function (d) {
+	            return d.value;
+	        }), d3.max(data, function (d) {
 	            return d.value;
 	        })]);
 
@@ -510,10 +523,19 @@ var C9 =
 	                this._xAxis = xAxe;
 	                this._yAxis = yAxe;
 	            } else {
+	                var _tickFormat = d3.format(this._tickFormat);
+	                var _numOfTickY = this._numOfTickY;
 
 	                this._xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
 
-	                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(10);
+	                // In LOG scale, can't specify default number of ticks
+	                // must be filter with tickFormat instead
+	                if (this._isLogaricVariant) {
+	                    this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY, _tickFormat) // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
+	                    .tickSize(10, 0);
+	                } else {
+	                    this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
+	                }
 	            }
 
 	        // Grid
@@ -623,6 +645,16 @@ var C9 =
 	        set: function set(newYAxisPadding) {
 	            if (newYAxisPadding) {
 	                this._yAxisPadding = newYAxisPadding;
+	            }
+	        }
+	    }, {
+	        key: 'isLogaricVariant',
+	        get: function get() {
+	            return this._isLogaricVariant;
+	        },
+	        set: function set(newIsLogaricVariant) {
+	            if (newIsLogaricVariant) {
+	                this._isLogaricVariant = newIsLogaricVariant;
 	            }
 	        }
 	    }, {
