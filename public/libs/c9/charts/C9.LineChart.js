@@ -8,13 +8,21 @@ export default class LineChart extends Chart {
         var self    = this;
         var config  = {
             point_show: false,
+            point_fill: "#fb8072",
+            point_stroke: "#d26b5f",
+            point_opacity: 1.0,
             point_radius: 5,
-            point_hover_enable: false
+            point_hover_enable: false,
+            interpolate: "linear" // refer: https://www.dashingd3js.com/svg-paths-and-d3js
         };
 
         self._pointShow         = options.point_show            ||  config.point_show;
         self._pointRadius       = options.point_radius          ||  config.point_radius;
+        self._pointFill         = options.point_fill            ||  config.point_fill;
+        self._pointStroke       = options.point_stroke          ||  config.point_stroke;
+        self._pointOpacity      = options.point_opacity         ||  config.point_opacity;
         self._pointHoverEnable  = options.point_hover_enable    ||  config.point_hover_enable;
+        self._interpolate       = options.interpolate           ||  config.interpolate;
         self.svg.c9Chart = "line";
 
         self.initLineChart();
@@ -29,12 +37,28 @@ export default class LineChart extends Chart {
         return this._pointShow;
     }
 
+    get pointFill() {
+        return this._pointFill;
+    }
+
+    get pointStroke() {
+        return this._pointStroke;
+    }
+
+    get pointOpacity() {
+        return this._pointOpacity;
+    }
+
     get pointRadius() {
         return this._pointRadius;
     }
 
     get pointHoverEnable() {
         return this._pointHoverEnable;
+    }
+
+    get interpolate() {
+        return this._interpolate;
     }
     
     /*=====  End of Getter  ======*/
@@ -46,6 +70,24 @@ export default class LineChart extends Chart {
     set pointShow(newPointShow) {
         if (newPointShow) {
             this._pointShow = newPointShow;
+        }
+    }
+
+    set pointFill(newPointFill) {
+        if (newPointFill) {
+            this._pointFill = newPointFill;
+        }
+    }
+
+    set pointStroke(newPointStroke) {
+        if (newPointStroke) {
+            this._pointStroke = newPointStroke;
+        }
+    }
+
+    set pointOpacity(newPointOpacity) {
+        if (newPointOpacity) {
+            this._pointOpacity = newPointOpacity;
         }
     }
 
@@ -61,6 +103,11 @@ export default class LineChart extends Chart {
         }
     }
 
+    set interpolate(newInterpolate) {
+        if (newInterpolate) {
+            this._interpolate = newInterpolate;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -101,18 +148,37 @@ export default class LineChart extends Chart {
 
         var lineGen = d3.svg.line()
                         .x(function(d) { return x(d.year); })
-                        .y(function(d) { return y(d.sale); });
+                        .y(function(d) { return y(d.sale); })
+                        .interpolate(this.interpolate);
 
         var _svg        = this.svg,
-            _colorRange = this.colorRange;
+            _colorRange = this.colorRange,
+            _pointShow  = this.pointShow,
+            _pointRadius= this.pointRadius,
+            _pointFill  = this.pointFill,
+            _pointStroke= this.pointStroke,
+            _pointOpacity= this.pointOpacity;
 
         dataGroup.forEach(function(d,i) {
             _svg.append('path')
-            .attr('d', lineGen(d.values))
-            .attr('stroke', _colorRange(i))
-            .attr('stroke-width', 2)
-            .attr('id', 'line_'+d.key)
-            .attr('fill', 'none');
+                .attr('d', lineGen(d.values))
+                .attr('stroke', _colorRange(i))
+                .attr('stroke-width', 2)
+                .attr('id', 'line_'+d.key)
+                .attr('fill', 'none');
+
+            if (_pointShow) {
+                _svg.selectAll("dot")
+                    .data(d.values)
+                    .enter()
+                    .append("circle")
+                    .attr("r", _pointRadius)
+                    .attr("cx", function(_d) { return x(_d.year); })
+                    .attr("cy", function(_d) { return y(_d.sale); })
+                    .style("fill", _pointFill) 
+                    .style("stroke", _pointStroke)
+                    .style("opacity", _pointOpacity);
+            }
         });
     }
 

@@ -667,7 +667,11 @@
 				data: data2, 
 				x_axis_text: ' ',
 				y_axis_text: 'Sale', 
-				title_text: 'Line Chart'
+				title_text: 'Line Chart',
+				interpolate: 'monotone',
+				point_show: true,
+				point_radius: 5,
+				point_opacity: 0.8
 			};
 			var lineChart = new C9.LineChart(options4);
 			lineChart.draw();
