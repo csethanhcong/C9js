@@ -1,6 +1,7 @@
 import Chart from './C9.Chart';
 import Axis from '../utils/C9.Axis';
 import Title from '../utils/C9.Title';
+import Legend from '../utils/C9.Legend';
 
 export default class LineChart extends Chart {
     constructor(options) {
@@ -159,6 +160,7 @@ export default class LineChart extends Chart {
             _pointStroke= this.pointStroke,
             _pointOpacity= this.pointOpacity;
 
+        var legendDomain = [];
         dataGroup.forEach(function(d,i) {
             _svg.append('path')
                 .attr('d', lineGen(d.values))
@@ -179,7 +181,11 @@ export default class LineChart extends Chart {
                     .style("stroke", _pointStroke)
                     .style("opacity", _pointOpacity);
             }
+
+            //use for legend
+            legendDomain.push(d.key);
         });
+        this.legendDomain = legendDomain;
     }
 
     /**
@@ -190,7 +196,7 @@ export default class LineChart extends Chart {
 
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        
+        var legend  = new Legend(this.options, this.svg, this.colorRange, this.legendDomain);
     }
     
     /*=====  End of Main Functions  ======*/

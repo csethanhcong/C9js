@@ -59,11 +59,11 @@ var C9 =
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(7);
+	var _C7 = __webpack_require__(8);
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(8);
+	var _C9 = __webpack_require__(9);
 
 	var _C10 = _interopRequireDefault(_C9);
 
@@ -179,13 +179,11 @@ var C9 =
 	         */
 	        value: function initBarChartConfig(height, x, y) {
 	            var color = this.barColor;
-	            // var data = this.data;
 
 	            var bar = this.svg.selectAll(".bar").data(this.data).enter().append("g").attr("class", "gBar").attr("transform", function (d) {
 	                return "translate(" + x(d.name) + ",0)";
 	            });
-	            //normal bar chart
-	            // if (typeof(d.value) === "number")
+
 	            bar.selectAll("rect").data(function (d) {
 	                return d.stack;
 	            }).enter().append("rect").attr("class", "bar").style("fill", function (d, i) {
@@ -196,29 +194,6 @@ var C9 =
 	            .attr("height", function (d) {
 	                return y(d.y0) - y(d.y1);
 	            });
-	            // //stacked bar chart
-	            // else {
-	            //     var data = this.data;
-	            //     data.forEach(function(d) {
-	            //         var y0 = 0;
-	            //         d.ages = d.value.map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
-	            //         d.total = d.ages[d.ages.length - 1].y1;
-	            //     });
-
-	            //     var state = svg.selectAll(".state")
-	            //         .data(this.data)
-	            //         .enter().append("g")
-	            //         .attr("class", "stackedBar")
-	            //         .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
-
-	            //     state.selectAll("rect")
-	            //         .data(function(d) { return d.ages; })
-	            //         .enter().append("rect")
-	            //         .attr("width", x.rangeBand())
-	            //         .attr("y", function(d) { return y(d.y1); })
-	            //         .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-	            //         .style("fill", function(d) { return color(d.name); });
-	            // }
 	        }
 
 	        /**
@@ -1026,6 +1001,10 @@ var C9 =
 
 	var _C6 = _interopRequireDefault(_C5);
 
+	var _C7 = __webpack_require__(7);
+
+	var _C8 = _interopRequireDefault(_C7);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1123,6 +1102,7 @@ var C9 =
 	                _pointStroke = this.pointStroke,
 	                _pointOpacity = this.pointOpacity;
 
+	            var legendDomain = [];
 	            dataGroup.forEach(function (d, i) {
 	                _svg.append('path').attr('d', lineGen(d.values)).attr('stroke', _colorRange(i)).attr('stroke-width', 2).attr('id', 'line_' + d.key).attr('fill', 'none');
 
@@ -1133,7 +1113,11 @@ var C9 =
 	                        return y(_d.sale);
 	                    }).style("fill", _pointFill).style("stroke", _pointStroke).style("opacity", _pointOpacity);
 	                }
+
+	                //use for legend
+	                legendDomain.push(d.key);
 	            });
+	            this.legendDomain = legendDomain;
 	        }
 
 	        /**
@@ -1147,6 +1131,7 @@ var C9 =
 
 	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.legendDomain);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1303,6 +1288,146 @@ var C9 =
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Legend = function () {
+	    function Legend(options, svg, color, legendDomain) {
+	        _classCallCheck(this, Legend);
+
+	        var config = {
+	            legend_show: true,
+	            legend_position: [0, 0],
+	            legend_box: true,
+	            legend_size: 18,
+	            legend_text_size: "14px",
+	            legend_margin: [5, 5, 5, 5],
+	            legend_space: 5,
+	            legend_style: "rect"
+	        };
+
+	        this._legendShow = options.legend_show || config.legend_show;
+	        this._legendTextSize = options.legend_text_size || config.legend_text_size;
+	        this._legendPosition = options.legend_position || config.legend_position;
+	        this._legendSize = options.legend_size || config.legend_size;
+	        this._legendBox = options.legend_box || config.legend_box;
+	        this._legendMargin = options.legend_margin || config.legend_margin;
+	        this._legendSpace = options.legend_space || config.legend_space;
+	        this._legendStyle = options.legend_style || config.legend_style;
+	        this._legendDomain = options._legend_domain || legendDomain;
+
+	        this._svg = svg;
+
+	        if (this._legendShow) {
+	            var self = this;
+	            var legend = d3.select(self._svg[0][0].parentNode).append("g").attr("class", "legend").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
+
+	            color.domain(this._legendDomain);
+	            var legendBox = legend.selectAll(".legendBox").data([true]).enter().append("rect");
+	            var legendItem = legend.selectAll(".legendItem").data(color.domain()).enter().append("g").attr("class", "legendItem").attr("transform", function (d, i) {
+	                return "translate(" + self._legendMargin[3] + "," + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + ")";
+	            });
+	            legendItem.append(self._legendStyle).attr("width", self._legendSize).attr("height", self._legendSize).attr("r", self._legendSize).style("fill", color).style("stroke", color);
+
+	            legendItem.append("text").attr("x", self._legendSize + self._legendSpace).attr("y", self._legendSize - self._legendSpace).text(function (d) {
+	                return d;
+	            });
+
+	            if (self._legendBox) {
+	                var box = legend[0][0].getBBox();
+	                legendBox.attr("class", "legendBox").attr("x", 0).attr("y", 0).attr("width", box.width + self._legendMargin[1] + self._legendMargin[3]).attr("height", box.height + self._legendMargin[2] + self._legendMargin[0]).style("fill", "none").style("stroke", "black");
+	            }
+	        }
+	    }
+
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+
+	    _createClass(Legend, [{
+	        key: "setYLocation",
+
+
+	        /*=====  End of Setter  ======*/
+
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function setYLocation(height, margin) {
+	            if (this.legendPosition === 'top') {
+	                return margin.top / 2;
+	            } else if (this.legendPosition === 'bottom') {
+	                return height - margin.bottom / 2;
+	            }
+	        }
+	        /*=====  End of Main Functions  ======*/
+
+	    }, {
+	        key: "legendShow",
+	        get: function get() {
+	            return this._legendShow;
+	        },
+
+
+	        /*=====  End of Getter  ======*/
+
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+
+	        set: function set(newlegendShow) {
+	            if (newlegendShow) {
+	                this._legendShow = newlegendShow;
+	            }
+	        }
+	    }, {
+	        key: "legendText",
+	        get: function get() {
+	            return this._legendText;
+	        },
+	        set: function set(newlegendText) {
+	            if (newlegendText) {
+	                this._legendText = newlegendText;
+	            }
+	        }
+	    }, {
+	        key: "legendPosition",
+	        get: function get() {
+	            return this._legendPosition;
+	        },
+	        set: function set(newlegendPosition) {
+	            if (newlegendPosition) {
+	                this._legendPosition = newlegendPosition;
+	            }
+	        }
+	    }, {
+	        key: "legendSize",
+	        get: function get() {
+	            return this._legendSize;
+	        },
+	        set: function set(newlegendSize) {
+	            if (newlegendSize) {
+	                this._legendSize = newlegendSize;
+	            }
+	        }
+	    }]);
+
+	    return Legend;
+	}();
+
+	exports.default = Legend;
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1442,7 +1567,7 @@ var C9 =
 	exports.default = PieChart;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

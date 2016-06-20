@@ -1,6 +1,7 @@
 import Chart from './C9.Chart';
 import Axis from '../utils/C9.Axis';
 import Title from '../utils/C9.Title';
+import Legend from '../utils/C9.Legend';
 
 export default class BarChart extends Chart {
     constructor(options) {
@@ -96,55 +97,29 @@ export default class BarChart extends Chart {
      */
     initBarChartConfig(height, x, y) {
         var color = this.barColor;
-        // var data = this.data;
         
         var bar = this.svg.selectAll(".bar")
             .data(this.data)
             .enter().append("g")
             .attr("class", "gBar")
             .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
-        //normal bar chart
-        // if (typeof(d.value) === "number")
-            bar.selectAll("rect")
-                .data(function(d) {
-                    return d.stack;
-                })
-                .enter().append("rect")
-                .attr("class", "bar")
-                .style("fill", function(d, i) {
-                    return color(i);
-                })
-                .attr("y", function(d) {
-                    return y(d.y1);
-                })
-                .attr("width", this.barWidth) //x.rangeBand()
-                .attr("height", function(d) {
-                    return y(d.y0) - y(d.y1);
-                });
-        // //stacked bar chart
-        // else {
-        //     var data = this.data;
-        //     data.forEach(function(d) {
-        //         var y0 = 0;
-        //         d.ages = d.value.map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
-        //         d.total = d.ages[d.ages.length - 1].y1;
-        //     });
 
-
-        //     var state = svg.selectAll(".state")
-        //         .data(this.data)
-        //         .enter().append("g")
-        //         .attr("class", "stackedBar")
-        //         .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
-
-        //     state.selectAll("rect")
-        //         .data(function(d) { return d.ages; })
-        //         .enter().append("rect")
-        //         .attr("width", x.rangeBand())
-        //         .attr("y", function(d) { return y(d.y1); })
-        //         .attr("height", function(d) { return y(d.y0) - y(d.y1); })
-        //         .style("fill", function(d) { return color(d.name); });
-        // }
+        bar.selectAll("rect")
+            .data(function(d) {
+                return d.stack;
+            })
+            .enter().append("rect")
+            .attr("class", "bar")
+            .style("fill", function(d, i) {
+                return color(i);
+            })
+            .attr("y", function(d) {
+                return y(d.y1);
+            })
+            .attr("width", this.barWidth) //x.rangeBand()
+            .attr("height", function(d) {
+                return y(d.y0) - y(d.y1);
+            });
     }
 
     /**
