@@ -87,6 +87,8 @@ var C9 =
 	    value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _C = __webpack_require__(2);
@@ -120,11 +122,21 @@ var C9 =
 	        var self = _this;
 	        var config = {
 	            bar_width: undefined,
-	            bar_color: "steelblue"
+	            bar_color: "category20"
 	        };
 
 	        var width = self.width - self.margin.left - self.margin.right;
 	        var height = self.height - self.margin.top - self.margin.bottom;
+
+	        self.svg.c9Chart = "bar";
+
+	        self.data.forEach(function (d) {
+	            var y0 = 0;
+	            d.stack = _typeof(d.value) === "object" ? d.value.map(function (v) {
+	                return { name: d.name, y0: y0, y1: y0 += v };
+	            }) : [{ y0: y0, y1: d.value }];
+	            d.total = d.stack[d.stack.length - 1].y1;
+	        });
 
 	        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
 	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
@@ -135,9 +147,8 @@ var C9 =
 	        }));
 
 	        y.domain([0, d3.max(self.data, function (d) {
-	            return d.value;
+	            return d.total;
 	        })]);
-
 	        // Make flexible width according to bar_width
 	        config.bar_width = x.rangeBand();
 	        self._barWidth = options.bar_width || config.bar_width;
@@ -167,14 +178,47 @@ var C9 =
 	         * @return {[type]}        [description]
 	         */
 	        value: function initBarChartConfig(height, x, y) {
-	            this.svg.selectAll(".bar").data(this.data).enter().append("rect").attr("class", "bar").style("fill", this.barColor).attr("x", function (d) {
-	                return x(d.name);
+	            var color = this.barColor;
+	            // var data = this.data;
+
+	            var bar = this.svg.selectAll(".bar").data(this.data).enter().append("g").attr("class", "gBar").attr("transform", function (d) {
+	                return "translate(" + x(d.name) + ",0)";
+	            });
+	            //normal bar chart
+	            // if (typeof(d.value) === "number")
+	            bar.selectAll("rect").data(function (d) {
+	                return d.stack;
+	            }).enter().append("rect").attr("class", "bar").style("fill", function (d, i) {
+	                return color(i);
 	            }).attr("y", function (d) {
-	                return y(d.value);
+	                return y(d.y1);
 	            }).attr("width", this.barWidth) //x.rangeBand()
 	            .attr("height", function (d) {
-	                return height - y(d.value);
+	                return y(d.y0) - y(d.y1);
 	            });
+	            // //stacked bar chart
+	            // else {
+	            //     var data = this.data;
+	            //     data.forEach(function(d) {
+	            //         var y0 = 0;
+	            //         d.ages = d.value.map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+	            //         d.total = d.ages[d.ages.length - 1].y1;
+	            //     });
+
+	            //     var state = svg.selectAll(".state")
+	            //         .data(this.data)
+	            //         .enter().append("g")
+	            //         .attr("class", "stackedBar")
+	            //         .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+
+	            //     state.selectAll("rect")
+	            //         .data(function(d) { return d.ages; })
+	            //         .enter().append("rect")
+	            //         .attr("width", x.rangeBand())
+	            //         .attr("y", function(d) { return y(d.y1); })
+	            //         .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+	            //         .style("fill", function(d) { return color(d.name); });
+	            // }
 	        }
 
 	        /**
@@ -213,7 +257,18 @@ var C9 =
 	    }, {
 	        key: 'barColor',
 	        get: function get() {
-	            return this._barColor;
+	            var color = this._barColor;
+	            if (typeof color == 'string') {
+	                try {
+	                    return d3.scale[color]();
+	                } catch (err) {
+	                    return function (i) {
+	                        return color;
+	                    };
+	                }
+	            } else if ((typeof color === 'undefined' ? 'undefined' : _typeof(color)) == 'object') {
+	                return d3.scale.ordinal().range(color);
+	            }
 	        },
 	        set: function set(newBarColor) {
 	            if (newBarColor) {
@@ -501,7 +556,11 @@ var C9 =
 	            return d.name;
 	        }));
 
-	        y.domain([d3.min(data, function (d) {
+	        if (svg.c9Chart == "bar") y.domain([d3.min(data, function (d) {
+	            return d.total;
+	        }), d3.max(data, function (d) {
+	            return d.total;
+	        })]);else y.domain([d3.min(data, function (d) {
 	            return d.value;
 	        }), d3.max(data, function (d) {
 	            return d.value;
@@ -513,30 +572,27 @@ var C9 =
 	            this._xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(options.tickFormat === undefined ? d3.time.format("%I %p") : options.tickFormat.format).tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize).ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
 	            delete options.starting;
 	            delete options.ending;
-
-	            // this._yAxis = d3.svg.axis()
-	            //     .scale(y)
-	            //     .orient("left")
-	            //     .ticks(10);
 	        } else if (svg.c9Chart == "line") {
 
-	                this._xAxis = xAxe;
-	                this._yAxis = yAxe;
+	            this._xAxis = xAxe;
+	            this._yAxis = yAxe;
+	        } else {
+	            // Currently, support logaric axis only for y-axis on bar-chart
+	            // TODO: add for line-chart too
+	            var _tickFormat = d3.format(this._tickFormat);
+	            var _numOfTickY = this._numOfTickY;
+
+	            this._xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
+
+	            // In LOG scale, can't specify default number of ticks
+	            // must be filter with tickFormat instead
+	            // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
+	            if (this._isLogaricVariant) {
+	                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY, _tickFormat).tickSize(10, 0);
 	            } else {
-	                var _tickFormat = d3.format(this._tickFormat);
-	                var _numOfTickY = this._numOfTickY;
-
-	                this._xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
-
-	                // In LOG scale, can't specify default number of ticks
-	                // must be filter with tickFormat instead
-	                if (this._isLogaricVariant) {
-	                    this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY, _tickFormat) // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
-	                    .tickSize(10, 0);
-	                } else {
-	                    this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
-	                }
+	                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
 	            }
+	        }
 
 	        // Grid
 	        if (this._gridXShow) {

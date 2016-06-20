@@ -8,11 +8,19 @@ export default class BarChart extends Chart {
         var self = this;
         var config = {
             bar_width: undefined,
-            bar_color: "steelblue"
+            bar_color: "category20"
         };
 
         var width   = self.width - self.margin.left - self.margin.right;
         var height  = self.height - self.margin.top - self.margin.bottom;
+
+        self.svg.c9Chart = "bar";
+
+        self.data.forEach(function(d) {
+            var y0 = 0;
+            d.stack = typeof d.value === "object" ? d.value.map(function(v) { return {name: d.name, y0: y0, y1: y0 += v}; }) : [{y0: y0, y1: d.value}];
+            d.total = d.stack[d.stack.length - 1].y1;
+        });
 
         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
@@ -23,9 +31,8 @@ export default class BarChart extends Chart {
         }));
 
         y.domain([0, d3.max(self.data, function(d) {
-            return d.value;
+            return d.total;
         })]);
-
         // Make flexible width according to bar_width
         config.bar_width      = x.rangeBand();
         self._barWidth        = options.bar_width  ||  config.bar_width;
@@ -43,7 +50,19 @@ export default class BarChart extends Chart {
     }
 
     get barColor() {
-        return this._barColor;
+        var color = this._barColor;
+        if (typeof color == 'string') {
+            try {
+                return d3.scale[color]();    
+            }
+            catch(err) {
+                return function(i) {
+                    return color;
+                };
+            }
+        } else if (typeof color == 'object') {
+            return d3.scale.ordinal().range(color);
+        }
     }
     
     /*=====  End of Getter  ======*/
@@ -76,21 +95,56 @@ export default class BarChart extends Chart {
      * @return {[type]}        [description]
      */
     initBarChartConfig(height, x, y) {
-        this.svg.selectAll(".bar")
+        var color = this.barColor;
+        // var data = this.data;
+        
+        var bar = this.svg.selectAll(".bar")
             .data(this.data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .style("fill", this.barColor)
-            .attr("x", function(d) {
-                return x(d.name);
-            })
-            .attr("y", function(d) {
-                return y(d.value);
-            })
-            .attr("width", this.barWidth) //x.rangeBand()
-            .attr("height", function(d) {
-                return height - y(d.value);
-            });
+            .enter().append("g")
+            .attr("class", "gBar")
+            .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+        //normal bar chart
+        // if (typeof(d.value) === "number")
+            bar.selectAll("rect")
+                .data(function(d) {
+                    return d.stack;
+                })
+                .enter().append("rect")
+                .attr("class", "bar")
+                .style("fill", function(d, i) {
+                    return color(i);
+                })
+                .attr("y", function(d) {
+                    return y(d.y1);
+                })
+                .attr("width", this.barWidth) //x.rangeBand()
+                .attr("height", function(d) {
+                    return y(d.y0) - y(d.y1);
+                });
+        // //stacked bar chart
+        // else {
+        //     var data = this.data;
+        //     data.forEach(function(d) {
+        //         var y0 = 0;
+        //         d.ages = d.value.map(function(name) { return {name: name, y0: y0, y1: y0 += +d[name]}; });
+        //         d.total = d.ages[d.ages.length - 1].y1;
+        //     });
+
+
+        //     var state = svg.selectAll(".state")
+        //         .data(this.data)
+        //         .enter().append("g")
+        //         .attr("class", "stackedBar")
+        //         .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+
+        //     state.selectAll("rect")
+        //         .data(function(d) { return d.ages; })
+        //         .enter().append("rect")
+        //         .attr("width", x.rangeBand())
+        //         .attr("y", function(d) { return y(d.y1); })
+        //         .attr("height", function(d) { return y(d.y0) - y(d.y1); })
+        //         .style("fill", function(d) { return color(d.name); });
+        // }
     }
 
     /**

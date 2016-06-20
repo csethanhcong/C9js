@@ -557,32 +557,32 @@
 	    <script src="./libs/c9/C9.js"></script>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: "A", value:	2},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
-					{name: "J", value:	.00153},
-					{name: "K", value:	.00772},
-					{name: "L", value:	.04025},
-					{name: "M", value:	.02406},
-					{name: "N", value:	.06749},
-					{name: "O", value:	.07507},
-					{name: "P", value:	.01929},
-					{name: "Q", value:	.00095},
-					{name: "R", value:	.05987},
-					{name: "S", value:	.06327},
-					{name: "T", value:	.09056},
-					{name: "U", value:	.02758},
-					{name: "V", value:	.00978},
-					{name: "W", value:	.02360},
-					{name: "X", value:	.00150},
-					{name: "Y", value:	.01974},
-					{name: "Z", value:	.00074}
+					{name: "A", value:	[2, .02782]},
+					{name: "B",	value:  [.01492, .02782]},
+					{name: "C", value:	[.02782, .02782]},
+					{name: "D", value:	[.04253, .02782]},
+					{name: "E", value:	[1, .02782]},
+					{name: "F", value:	[.02288, .02782]},
+					{name: "G", value:	[.02015, .02782]},
+					{name: "H", value:	[.06094, .02782]},
+					{name: "I", value:	[.5, .02782]},
+					{name: "J", value:	[.00153, .02782]},
+					{name: "K", value:	[.00772, .02782]},
+					{name: "L", value:	[.04025, .02782]},
+					{name: "M", value:	[.02406, .02782]},
+					{name: "N", value:	[.06749, .02782]},
+					{name: "O", value:	[.07507, .02782]},
+					{name: "P", value:	[.01929, .02782]},
+					{name: "Q", value:	[.00095, .02782]},
+					{name: "R", value:	[.05987, .02782]},
+					{name: "S", value:	[.06327, .02782]},
+					{name: "T", value:	[.09056, .02782]},
+					{name: "U", value:	[.02758, .02782]},
+					{name: "V", value:	[.00978, .02782]},
+					{name: "W", value:	[.02360, .02782]},
+					{name: "X", value:	[.00150, .02782]},
+					{name: "Y", value:	[.01974, .02782]},
+					{name: "Z", value:	[.00074, .02782]}
 				];
 
 			var options1 = {
@@ -596,7 +596,7 @@
 					bottom:100
 				}, 
 				data: data1, 
-				bar_color: 'pink',
+				bar_color: "pink",
 				is_logaric_variant: true
 			};
 			var barChart = new C9.BarChart(options1);

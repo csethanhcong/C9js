@@ -48,14 +48,24 @@ export default class Axis {
             return d.name;
         }));
 
-        y.domain([
-            d3.min(data, function(d) {
-                return d.value;
-            }), 
-            d3.max(data, function(d) {
-                return d.value;
-            })
-        ]);
+        if (svg.c9Chart == "bar")
+            y.domain([
+                d3.min(data, function(d) {
+                    return d.total;
+                }), 
+                d3.max(data, function(d) {
+                    return d.total;
+                })
+            ]);
+        else
+            y.domain([
+                d3.min(data, function(d) {
+                    return d.value;
+                }), 
+                d3.max(data, function(d) {
+                    return d.value;
+                })
+            ]);
 
         if (svg.c9Chart == "timeline") {
 
