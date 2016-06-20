@@ -130,7 +130,7 @@ export default class BarChart extends Chart {
 
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        
+        var legend  = new Legend(this.options, this.svg, this.barColor, this.data);
     }
     
     /*=====  End of Main Functions  ======*/

@@ -15,7 +15,7 @@ export default class DonutChart extends Chart {
 
         self._outerRadius    = options.outer_radius || config.outer_radius;
         self._innerRadius    = options.inner_radius || config.inner_radius;
-
+        self.svg.c9Chart = 'donut';
         self.initDonutChartConfig();
     }
 
@@ -78,15 +78,17 @@ export default class DonutChart extends Chart {
             .style('fill', function(d, i) { return color(i); });
 
         arcs.append('text')
-            .attr('transform', function(d) { return "translate(" + arc.centroid(d) + ")"; })
+            .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
             .attr('dy', '.35em')
+            .attr('text-anchor', 'middle')
             .text(function(d) { return d.data.name; });
     }
 
     draw() {
         
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        
+        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
+
     }
     
     /*=====  End of Main Functions  ======*/

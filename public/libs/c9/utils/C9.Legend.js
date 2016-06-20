@@ -1,11 +1,11 @@
 'use strict';
 
 export default class Legend {
-    constructor(options, svg, color, legendDomain) {
+    constructor(options, svg, color, data) {
         var config = {
-            legend_show      : true,
+            legend_show      : false,
             legend_position  : [0, 0],
-            legend_box       : true,
+            legend_box       : false,
             legend_size      : 18,
             legend_text_size : "14px",
             legend_margin   : [5, 5, 5, 5],
@@ -21,18 +21,51 @@ export default class Legend {
         this._legendMargin       = options.legend_margin     || config.legend_margin;
         this._legendSpace        = options.legend_space      || config.legend_space;
         this._legendStyle        = options.legend_style      || config.legend_style;
-        this._legendDomain       = options._legend_domain    || legendDomain;
 
         this._svg    = svg;
-
+        this._data   = data;
         if (this._legendShow) {
             var self = this;
+            var legendDomain = [];
+            if (self._svg.c9Chart == "line") {
+                var dataGroup = d3.nest()
+                    .key(function(d) { return d.Client; })
+                    .entries(self._data);
+                dataGroup.forEach(function(d, i) {
+                    legendDomain.push(d.key);
+                })
+            } else if (self._svg.c9Chart == "bar") {
+                try {
+                    if (typeof options.legend_domain === "string")
+                        legendDomain.push(options.legend_domain);
+                    else if (typeof options.legend_domain === "object")
+                        legendDomain = options.legend_domain;
+                }
+                catch (err) {
+                    throw "Legend domain is not defined";
+                }
+            } else if (self._svg.c9Chart == "pie" || self._svg.c9Chart == "donut" || self._svg.c9Chart == "timeline") {
+                self._data.forEach(function(d) {
+                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
+                });
+            }
+
+            var i = 0;
+            for (i; i < legendDomain.length; i++) {
+                if (legendDomain[i] != "")
+                    break;
+            };
+
+            if (i == legendDomain.length)
+                legendDomain = [];
+
+            color.domain(legendDomain);
+
             var legend = d3.select(self._svg[0][0].parentNode)
                 .append("g")
                 .attr("class", "legend")
                 .attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
-            
-            color.domain(this._legendDomain);
+        
             var legendBox = legend.selectAll(".legendBox").data([true]).enter().append("rect");
             var legendItem = legend.selectAll(".legendItem")
                 .data(color.domain())
@@ -53,7 +86,7 @@ export default class Legend {
                 .attr("y", self._legendSize - self._legendSpace)
                 .text(function(d) { return d; });
 
-            if (self._legendBox) {
+            if (self._legendBox && legendDomain.length > 0) {
                 var box = legend[0][0].getBBox();
                 legendBox.attr("class", "legendBox")
                     .attr("x", 0)

@@ -160,7 +160,6 @@ export default class LineChart extends Chart {
             _pointStroke= this.pointStroke,
             _pointOpacity= this.pointOpacity;
 
-        var legendDomain = [];
         dataGroup.forEach(function(d,i) {
             _svg.append('path')
                 .attr('d', lineGen(d.values))
@@ -182,10 +181,7 @@ export default class LineChart extends Chart {
                     .style("opacity", _pointOpacity);
             }
 
-            //use for legend
-            legendDomain.push(d.key);
         });
-        this.legendDomain = legendDomain;
     }
 
     /**
@@ -196,7 +192,7 @@ export default class LineChart extends Chart {
 
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        var legend  = new Legend(this.options, this.svg, this.colorRange, this.legendDomain);
+        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
     }
     
     /*=====  End of Main Functions  ======*/

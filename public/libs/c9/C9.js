@@ -51,11 +51,11 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(5);
+	var _C3 = __webpack_require__(6);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(6);
+	var _C5 = __webpack_require__(7);
 
 	var _C6 = _interopRequireDefault(_C5);
 
@@ -102,6 +102,10 @@ var C9 =
 	var _C5 = __webpack_require__(4);
 
 	var _C6 = _interopRequireDefault(_C5);
+
+	var _C7 = __webpack_require__(5);
+
+	var _C8 = _interopRequireDefault(_C7);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -207,6 +211,7 @@ var C9 =
 
 	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.svg, this.barColor, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -844,6 +849,175 @@ var C9 =
 
 /***/ },
 /* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Legend = function () {
+	    function Legend(options, svg, color, data) {
+	        _classCallCheck(this, Legend);
+
+	        var config = {
+	            legend_show: false,
+	            legend_position: [0, 0],
+	            legend_box: false,
+	            legend_size: 18,
+	            legend_text_size: "14px",
+	            legend_margin: [5, 5, 5, 5],
+	            legend_space: 5,
+	            legend_style: "rect"
+	        };
+
+	        this._legendShow = options.legend_show || config.legend_show;
+	        this._legendTextSize = options.legend_text_size || config.legend_text_size;
+	        this._legendPosition = options.legend_position || config.legend_position;
+	        this._legendSize = options.legend_size || config.legend_size;
+	        this._legendBox = options.legend_box || config.legend_box;
+	        this._legendMargin = options.legend_margin || config.legend_margin;
+	        this._legendSpace = options.legend_space || config.legend_space;
+	        this._legendStyle = options.legend_style || config.legend_style;
+
+	        this._svg = svg;
+	        this._data = data;
+	        if (this._legendShow) {
+	            var self = this;
+	            var legendDomain = [];
+	            if (self._svg.c9Chart == "line") {
+	                var dataGroup = d3.nest().key(function (d) {
+	                    return d.Client;
+	                }).entries(self._data);
+	                dataGroup.forEach(function (d, i) {
+	                    legendDomain.push(d.key);
+	                });
+	            } else if (self._svg.c9Chart == "bar") {
+	                try {
+	                    if (typeof options.legend_domain === "string") legendDomain.push(options.legend_domain);else if (_typeof(options.legend_domain) === "object") legendDomain = options.legend_domain;
+	                } catch (err) {
+	                    throw "Legend domain is not defined";
+	                }
+	            } else if (self._svg.c9Chart == "pie" || self._svg.c9Chart == "donut" || self._svg.c9Chart == "timeline") {
+	                self._data.forEach(function (d) {
+	                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
+	                });
+	            }
+
+	            var i = 0;
+	            for (i; i < legendDomain.length; i++) {
+	                if (legendDomain[i] != "") break;
+	            };
+
+	            if (i == legendDomain.length) legendDomain = [];
+
+	            color.domain(legendDomain);
+
+	            var legend = d3.select(self._svg[0][0].parentNode).append("g").attr("class", "legend").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
+
+	            var legendBox = legend.selectAll(".legendBox").data([true]).enter().append("rect");
+	            var legendItem = legend.selectAll(".legendItem").data(color.domain()).enter().append("g").attr("class", "legendItem").attr("transform", function (d, i) {
+	                return "translate(" + self._legendMargin[3] + "," + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + ")";
+	            });
+	            legendItem.append(self._legendStyle).attr("width", self._legendSize).attr("height", self._legendSize).attr("r", self._legendSize).style("fill", color).style("stroke", color);
+
+	            legendItem.append("text").attr("x", self._legendSize + self._legendSpace).attr("y", self._legendSize - self._legendSpace).text(function (d) {
+	                return d;
+	            });
+
+	            if (self._legendBox && legendDomain.length > 0) {
+	                var box = legend[0][0].getBBox();
+	                legendBox.attr("class", "legendBox").attr("x", 0).attr("y", 0).attr("width", box.width + self._legendMargin[1] + self._legendMargin[3]).attr("height", box.height + self._legendMargin[2] + self._legendMargin[0]).style("fill", "none").style("stroke", "black");
+	            }
+	        }
+	    }
+
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+
+	    _createClass(Legend, [{
+	        key: "setYLocation",
+
+
+	        /*=====  End of Setter  ======*/
+
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function setYLocation(height, margin) {
+	            if (this.legendPosition === 'top') {
+	                return margin.top / 2;
+	            } else if (this.legendPosition === 'bottom') {
+	                return height - margin.bottom / 2;
+	            }
+	        }
+	        /*=====  End of Main Functions  ======*/
+
+	    }, {
+	        key: "legendShow",
+	        get: function get() {
+	            return this._legendShow;
+	        },
+
+
+	        /*=====  End of Getter  ======*/
+
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+
+	        set: function set(newlegendShow) {
+	            if (newlegendShow) {
+	                this._legendShow = newlegendShow;
+	            }
+	        }
+	    }, {
+	        key: "legendText",
+	        get: function get() {
+	            return this._legendText;
+	        },
+	        set: function set(newlegendText) {
+	            if (newlegendText) {
+	                this._legendText = newlegendText;
+	            }
+	        }
+	    }, {
+	        key: "legendPosition",
+	        get: function get() {
+	            return this._legendPosition;
+	        },
+	        set: function set(newlegendPosition) {
+	            if (newlegendPosition) {
+	                this._legendPosition = newlegendPosition;
+	            }
+	        }
+	    }, {
+	        key: "legendSize",
+	        get: function get() {
+	            return this._legendSize;
+	        },
+	        set: function set(newlegendSize) {
+	            if (newlegendSize) {
+	                this._legendSize = newlegendSize;
+	            }
+	        }
+	    }]);
+
+	    return Legend;
+	}();
+
+	exports.default = Legend;
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -865,6 +1039,10 @@ var C9 =
 	var _C5 = __webpack_require__(4);
 
 	var _C6 = _interopRequireDefault(_C5);
+
+	var _C7 = __webpack_require__(5);
+
+	var _C8 = _interopRequireDefault(_C7);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -891,7 +1069,7 @@ var C9 =
 
 	        self._outerRadius = options.outer_radius || config.outer_radius;
 	        self._innerRadius = options.inner_radius || config.inner_radius;
-
+	        self.svg.c9Chart = 'donut';
 	        self.initDonutChartConfig();
 	        return _this;
 	    }
@@ -930,8 +1108,8 @@ var C9 =
 	            });
 
 	            arcs.append('text').attr('transform', function (d) {
-	                return "translate(" + arc.centroid(d) + ")";
-	            }).attr('dy', '.35em').text(function (d) {
+	                return 'translate(' + arc.centroid(d) + ')';
+	            }).attr('dy', '.35em').attr('text-anchor', 'middle').text(function (d) {
 	                return d.data.name;
 	            });
 	        }
@@ -940,6 +1118,7 @@ var C9 =
 	        value: function draw() {
 
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -978,7 +1157,7 @@ var C9 =
 	exports.default = DonutChart;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1001,7 +1180,7 @@ var C9 =
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(7);
+	var _C7 = __webpack_require__(5);
 
 	var _C8 = _interopRequireDefault(_C7);
 
@@ -1102,7 +1281,6 @@ var C9 =
 	                _pointStroke = this.pointStroke,
 	                _pointOpacity = this.pointOpacity;
 
-	            var legendDomain = [];
 	            dataGroup.forEach(function (d, i) {
 	                _svg.append('path').attr('d', lineGen(d.values)).attr('stroke', _colorRange(i)).attr('stroke-width', 2).attr('id', 'line_' + d.key).attr('fill', 'none');
 
@@ -1113,11 +1291,7 @@ var C9 =
 	                        return y(_d.sale);
 	                    }).style("fill", _pointFill).style("stroke", _pointStroke).style("opacity", _pointOpacity);
 	                }
-
-	                //use for legend
-	                legendDomain.push(d.key);
 	            });
-	            this.legendDomain = legendDomain;
 	        }
 
 	        /**
@@ -1131,7 +1305,7 @@ var C9 =
 
 	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.legendDomain);
+	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1287,146 +1461,6 @@ var C9 =
 	exports.default = LineChart;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var Legend = function () {
-	    function Legend(options, svg, color, legendDomain) {
-	        _classCallCheck(this, Legend);
-
-	        var config = {
-	            legend_show: true,
-	            legend_position: [0, 0],
-	            legend_box: true,
-	            legend_size: 18,
-	            legend_text_size: "14px",
-	            legend_margin: [5, 5, 5, 5],
-	            legend_space: 5,
-	            legend_style: "rect"
-	        };
-
-	        this._legendShow = options.legend_show || config.legend_show;
-	        this._legendTextSize = options.legend_text_size || config.legend_text_size;
-	        this._legendPosition = options.legend_position || config.legend_position;
-	        this._legendSize = options.legend_size || config.legend_size;
-	        this._legendBox = options.legend_box || config.legend_box;
-	        this._legendMargin = options.legend_margin || config.legend_margin;
-	        this._legendSpace = options.legend_space || config.legend_space;
-	        this._legendStyle = options.legend_style || config.legend_style;
-	        this._legendDomain = options._legend_domain || legendDomain;
-
-	        this._svg = svg;
-
-	        if (this._legendShow) {
-	            var self = this;
-	            var legend = d3.select(self._svg[0][0].parentNode).append("g").attr("class", "legend").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
-
-	            color.domain(this._legendDomain);
-	            var legendBox = legend.selectAll(".legendBox").data([true]).enter().append("rect");
-	            var legendItem = legend.selectAll(".legendItem").data(color.domain()).enter().append("g").attr("class", "legendItem").attr("transform", function (d, i) {
-	                return "translate(" + self._legendMargin[3] + "," + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + ")";
-	            });
-	            legendItem.append(self._legendStyle).attr("width", self._legendSize).attr("height", self._legendSize).attr("r", self._legendSize).style("fill", color).style("stroke", color);
-
-	            legendItem.append("text").attr("x", self._legendSize + self._legendSpace).attr("y", self._legendSize - self._legendSpace).text(function (d) {
-	                return d;
-	            });
-
-	            if (self._legendBox) {
-	                var box = legend[0][0].getBBox();
-	                legendBox.attr("class", "legendBox").attr("x", 0).attr("y", 0).attr("width", box.width + self._legendMargin[1] + self._legendMargin[3]).attr("height", box.height + self._legendMargin[2] + self._legendMargin[0]).style("fill", "none").style("stroke", "black");
-	            }
-	        }
-	    }
-
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-
-	    _createClass(Legend, [{
-	        key: "setYLocation",
-
-
-	        /*=====  End of Setter  ======*/
-
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	        value: function setYLocation(height, margin) {
-	            if (this.legendPosition === 'top') {
-	                return margin.top / 2;
-	            } else if (this.legendPosition === 'bottom') {
-	                return height - margin.bottom / 2;
-	            }
-	        }
-	        /*=====  End of Main Functions  ======*/
-
-	    }, {
-	        key: "legendShow",
-	        get: function get() {
-	            return this._legendShow;
-	        },
-
-
-	        /*=====  End of Getter  ======*/
-
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-
-	        set: function set(newlegendShow) {
-	            if (newlegendShow) {
-	                this._legendShow = newlegendShow;
-	            }
-	        }
-	    }, {
-	        key: "legendText",
-	        get: function get() {
-	            return this._legendText;
-	        },
-	        set: function set(newlegendText) {
-	            if (newlegendText) {
-	                this._legendText = newlegendText;
-	            }
-	        }
-	    }, {
-	        key: "legendPosition",
-	        get: function get() {
-	            return this._legendPosition;
-	        },
-	        set: function set(newlegendPosition) {
-	            if (newlegendPosition) {
-	                this._legendPosition = newlegendPosition;
-	            }
-	        }
-	    }, {
-	        key: "legendSize",
-	        get: function get() {
-	            return this._legendSize;
-	        },
-	        set: function set(newlegendSize) {
-	            if (newlegendSize) {
-	                this._legendSize = newlegendSize;
-	            }
-	        }
-	    }]);
-
-	    return Legend;
-	}();
-
-	exports.default = Legend;
-
-/***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1450,6 +1484,10 @@ var C9 =
 
 	var _C6 = _interopRequireDefault(_C5);
 
+	var _C7 = __webpack_require__(5);
+
+	var _C8 = _interopRequireDefault(_C7);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1472,7 +1510,7 @@ var C9 =
 	        };
 
 	        self._radius = options.radius || config.radius;
-
+	        self.svg.c9Chart = "pie";
 	        self.initPieChartConfig();
 	        return _this;
 	    }
@@ -1537,6 +1575,7 @@ var C9 =
 	        value: function draw() {
 
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1589,6 +1628,10 @@ var C9 =
 	var _C5 = __webpack_require__(4);
 
 	var _C6 = _interopRequireDefault(_C5);
+
+	var _C7 = __webpack_require__(5);
+
+	var _C8 = _interopRequireDefault(_C7);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1756,6 +1799,7 @@ var C9 =
 	            this.options.ending = this.ending;
 	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/

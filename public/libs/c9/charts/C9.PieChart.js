@@ -12,7 +12,7 @@ export default class PieChart extends Chart {
         };
 
         self._radius    = options.radius || config.radius;
-
+        self.svg.c9Chart = "pie";
         self.initPieChartConfig();
     }
 
@@ -93,7 +93,8 @@ export default class PieChart extends Chart {
     draw() {
 
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        
+        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
+
     }
     
     /*=====  End of Main Functions  ======*/

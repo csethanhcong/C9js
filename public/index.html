@@ -630,7 +630,10 @@
 					bottom:100
 				}, 
 				data: data1, 
-				bar_width: 20
+				bar_width: 20,
+				legend_show: true,
+				legend_domain: ["ABC", "XYZ"],
+				legend_box: true
 			};
 			var barChart = new C9.BarChart(options3);
 			barChart.draw();
@@ -784,7 +787,7 @@
 					{name: "LGBT", value:	35},
 					{name: "Others", value:	20}
 				];
-			var options9 = {id: "#demo9", width: 750, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart', color_range: "category20", outer_radius: 200, inner_radius: 100, title_position: 'bottom', title_size: '20px'};
+			var options9 = {id: "#demo9", width: 750, height: 600, margin: {top: 100, left: 100, right: 50, bottom:100}, data: data5, title_text: 'Donut Chart', color_range: "category20", outer_radius: 200, inner_radius: 100, title_position: 'bottom', title_size: '20px', legend_show: true, legend_position: [350, 250]};
 			var donutChart = new C9.DonutChart(options9);
 			donutChart.draw();
 			

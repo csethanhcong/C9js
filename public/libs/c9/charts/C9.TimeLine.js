@@ -284,7 +284,7 @@ export default class TimeLine extends Chart {
         this.options.ending = this.ending;
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);    
-
+        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
     }
     
     /*=====  End of Main Functions  ======*/
