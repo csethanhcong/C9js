@@ -4,33 +4,19 @@ export default class Map {
         var config  = {
             // container
             id: "body",
-            // size (width, height), margin, padding
-            width: 960,
-            height: 480,
-            margin: {
-                top: 20,
-                right: 20,
-                bottom: 70,
-                left: 40,
+            
+            // Layers:
+            // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
+            // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
+            layer: "OSM", 
+            controls: ol.control.defaults({
+                attribution: false
+            }),
+            viewSetting: {
+                center: [0, 0],
+                zoom: 2
             },
-            // interaction in chart
-            enable_interaction: true,
-            // mouse events
-            on_mouse_over: function() {},
-            on_mouse_out: function() {},
-            on_mouse_click: function() {},
-            // legend
-            legend_show: true,
-            legend_position: "bottom",
-            legend_inset_anchor: "top-left",
-            legend_padding: 0,
-            // tooltip - show when mouseover on each data
-            tooltip_show: true,
-            tooltip_position: undefined,
-            // color range
-            color_range: "category20",
-            // data
-            data: []
+            
         };
 
         self._id        = options.id        || config.id;
@@ -42,7 +28,7 @@ export default class Map {
         self._svg       = null;
         self._options   = options;
 
-        self.initConfig();
+        self.initMapConfig();
     }
 
     /*==============================
@@ -60,6 +46,19 @@ export default class Map {
     /*======================================
     =            Main Functions            =
     ======================================*/
+    
+    initMapConfig() {
+        self.map = new ol.Map({
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            controls: self.controls.extend([self.attribution]),
+            target: self.id,
+            view: new ol.View(self.viewSetting)
+        });
+    }
 
     /*=====  End of Main Functions  ======*/
 
