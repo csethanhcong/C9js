@@ -1,7 +1,8 @@
 import Chart from './C9.Chart';
-import Axis from 'utils/C9.Axis';
-import Title from 'utils/C9.Title';
-import Legend from 'utils/C9.Legend';
+import Axis from './utils/C9.Axis';
+import Title from './utils/C9.Title';
+import Legend from './utils/C9.Legend';
+import Tooltip from './utils/C9.Tooltip';
 
 export default class BarChart extends Chart {
     constructor(options) {
@@ -131,6 +132,46 @@ export default class BarChart extends Chart {
         var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
         var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
         var legend  = new Legend(this.options, this.svg, this.barColor, this.data);
+        
+
+        this.updateInteraction();
+    }
+    
+    /**
+     * Update Interaction: Hover
+     * @return {} 
+     */
+    updateInteraction() {
+
+        if (this.hover.enable) {
+            // var tooltip = new Tooltip(this.options, this.svg, this.data);
+
+            // Define the div for the tooltip
+var div = d3.select("body").append("div")   
+    .attr("class", "tooltip")               
+    .style("opacity", 0);
+
+    // Add the scatterplot
+    this.svg.selectAll(".bar")    
+        .data(this.data)         
+    .enter().append("circle")                               
+        .attr("r", 5)    
+        .on("mouseover", function(d) { 
+        console.log(d)     ;
+            div.transition()        
+                .duration(200)      
+                .style("opacity", .9);      
+            div .html(d.name + "<br/>"  + d.value)  
+                .style("left", (d3.event.pageX) + "px")     
+                .style("top", (d3.event.pageY - 28) + "px");    
+            })                  
+        .on("mouseout", function(d) {       
+            div.transition()        
+                .duration(500)      
+                .style("opacity", 0);   
+        });
+
+        }
     }
     
     /*=====  End of Main Functions  ======*/

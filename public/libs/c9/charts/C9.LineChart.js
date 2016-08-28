@@ -1,7 +1,7 @@
 import Chart from './C9.Chart';
-import Axis from 'utils/C9.Axis';
-import Title from 'utils/C9.Title';
-import Legend from 'utils/C9.Legend';
+import Axis from './utils/C9.Axis';
+import Title from './utils/C9.Title';
+import Legend from './utils/C9.Legend';
 
 export default class LineChart extends Chart {
     constructor(options) {
