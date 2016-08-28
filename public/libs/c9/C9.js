@@ -67,6 +67,10 @@ var C9 =
 
 	var _C10 = _interopRequireDefault(_C9);
 
+	var _C11 = __webpack_require__(10);
+
+	var _C12 = _interopRequireDefault(_C11);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	module.exports = {
@@ -74,7 +78,8 @@ var C9 =
 		DonutChart: _C4.default,
 		LineChart: _C6.default,
 		PieChart: _C8.default,
-		TimeLine: _C10.default
+		TimeLine: _C10.default,
+		Map: _C12.default
 	};
 
 /***/ },
@@ -121,7 +126,7 @@ var C9 =
 	    function BarChart(options) {
 	        _classCallCheck(this, BarChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BarChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (BarChart.__proto__ || Object.getPrototypeOf(BarChart)).call(this, options));
 
 	        var self = _this;
 	        var config = {
@@ -765,7 +770,7 @@ var C9 =
 	            // as a SEPARATED component, just like AXIS, of CHART
 	            var text = d3.select(this._svg[0][0].parentNode).append("g").append("text").attr("class", "title");
 
-	            // Get title width: text.node().getComputedTextLength()          
+	            // Get title width: text.node().getComputedTextLength()           
 	            text.attr("x", (width - text.node().getComputedTextLength()) / 2).attr("y", this.setYLocation(height, margin)).attr("text-anchor", "middle").style("font-size", this._titleSize).text(this._titleText);
 	        }
 	    }
@@ -1058,7 +1063,7 @@ var C9 =
 	    function DonutChart(options) {
 	        _classCallCheck(this, DonutChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DonutChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (DonutChart.__proto__ || Object.getPrototypeOf(DonutChart)).call(this, options));
 
 	        var self = _this;
 	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
@@ -1198,7 +1203,7 @@ var C9 =
 	    function LineChart(options) {
 	        _classCallCheck(this, LineChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LineChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (LineChart.__proto__ || Object.getPrototypeOf(LineChart)).call(this, options));
 
 	        var self = _this;
 	        var config = {
@@ -1411,6 +1416,7 @@ var C9 =
 
 	//         var _maxY = Math.max(...tempMaxY);
 
+
 	//         var _currentDataX = this.data;
 	//         _currentDataX.forEach(function(currentValue,index,arr) {
 	//                                     _currentDataX[index].coordinate.sort(function(a,b) {
@@ -1502,7 +1508,7 @@ var C9 =
 	    function PieChart(options) {
 	        _classCallCheck(this, PieChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PieChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (PieChart.__proto__ || Object.getPrototypeOf(PieChart)).call(this, options));
 
 	        var self = _this;
 	        var config = {
@@ -1647,7 +1653,7 @@ var C9 =
 	    function TimeLine(options) {
 	        _classCallCheck(this, TimeLine);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TimeLine).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (TimeLine.__proto__ || Object.getPrototypeOf(TimeLine)).call(this, options));
 
 	        var self = _this;
 
@@ -1906,6 +1912,175 @@ var C9 =
 	}(_C2.default);
 
 	exports.default = TimeLine;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Map = function () {
+	    function Map(options) {
+	        _classCallCheck(this, Map);
+
+	        var self = this;
+	        var config = {
+	            // container
+	            id: "body",
+
+	            // Layers:
+	            // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
+	            // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
+	            layer: "OSM",
+	            view: {
+	                lat: 0,
+	                lon: 0,
+	                zoom: 2
+	            },
+	            controls: ol.control.defaults({
+	                attribution: false
+	            })
+	        };
+
+	        self._id = options.id || config.id;
+	        self._width = options.width || config.width;
+	        self._data = options.data || config.data;
+	        self._height = options.height || config.height;
+	        self._view = options.view || config.view;
+	        self._markers = options.markers || [];
+	        self._options = options;
+	        self.initMapConfig();
+	    }
+
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+
+	    _createClass(Map, [{
+	        key: "initMapConfig",
+
+
+	        /*=====  End of Setter  ======*/
+
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+
+	        value: function initMapConfig() {
+	            var vectorSource = new ol.source.Vector({});
+	            var styles = {};
+	            this.markers.forEach(function (m, i) {
+	                var marker = new ol.Feature({
+	                    type: 'c9GeoMarker' + i,
+	                    geometry: new ol.geom.Point(ol.proj.fromLonLat([m[1], m[0]]))
+	                });
+	                if (m[2] === undefined) styles['c9GeoMarker' + i] = new ol.style.Style({
+	                    image: new ol.style.Icon({
+	                        anchor: [0.5, 1],
+	                        src: 'https://farm9.staticflickr.com/8427/28670431094_0c20eb415a_o_d.png'
+	                    })
+	                });else styles['c9GeoMarker' + i] = new ol.style.Style({
+	                    image: new ol.style.Icon({
+	                        anchor: [0.5, 1],
+	                        src: m[2],
+	                        scale: m[3] === undefined ? 1 : m[3]
+	                    })
+	                });
+
+	                vectorSource.addFeature(marker);
+	            });
+
+	            this.map = new ol.Map({
+	                target: this.id,
+	                layers: [new ol.layer.Tile({
+	                    source: new ol.source.OSM()
+	                }), new ol.layer.Vector({
+	                    source: vectorSource,
+	                    style: function style(feature) {
+	                        return styles[feature.get('type')];
+	                    }
+	                })],
+	                view: new ol.View({
+	                    center: ol.proj.fromLonLat([this.view.lon, this.view.lat]),
+	                    zoom: this.view.zoom
+	                })
+	            });
+	        }
+
+	        /*=====  End of Main Functions  ======*/
+
+	    }, {
+	        key: "id",
+	        get: function get() {
+	            return this._id;
+	        },
+
+
+	        /*=====  End of Getter  ======*/
+
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+
+	        set: function set(newId) {
+	            if (newId) {
+	                this._id = newId;
+	            }
+	        }
+	    }, {
+	        key: "height",
+	        get: function get() {
+	            return this._height;
+	        },
+	        set: function set(newHeight) {
+	            if (newHeight) {
+	                this._height = newHeight;
+	            }
+	        }
+	    }, {
+	        key: "width",
+	        get: function get() {
+	            return this._width;
+	        },
+	        set: function set(newWidth) {
+	            if (newWidth) {
+	                this._width = newWidth;
+	            }
+	        }
+	    }, {
+	        key: "view",
+	        get: function get() {
+	            return this._view;
+	        },
+	        set: function set(newView) {
+	            if (newView) {
+	                this._view = newView;
+	            }
+	        }
+	    }, {
+	        key: "markers",
+	        get: function get() {
+	            return this._markers;
+	        },
+	        set: function set(newMarkers) {
+	            if (newMarkers) {
+	                this._markers = newMarkers;
+	            }
+	        }
+	    }]);
+
+	    return Map;
+	}();
+
+	exports.default = Map;
 
 /***/ }
 /******/ ]);

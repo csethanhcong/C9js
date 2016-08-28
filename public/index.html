@@ -556,8 +556,25 @@
 		<!-- Tab2: Map -->
 		<!-- <section class="col-lg-8">
 		</section> --><!-- Tab2: Map -->
-		
+	<hr/>
+	<div class="container">
+		<!-- Ex1: Bar Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Map Examples</h3>
+		</div>
+		<div id="map" style="width: 100%; height: 400px;"></div>
+	</div>
 	    <script type="text/javascript" charset="utf-8">
+	    	var o = {
+	    		id: "map",
+	    		view: {
+	                lat: 10.8142,
+	                lon: 106.6438,
+	                zoom: 15
+	            },
+	            markers: [[10.8142, 106.6438, 'http://www.sailingeurope.com/images/sea/review_location.png', .5]]
+	    	}
+	    	var map = new C9.Map(o);
 			var data1 = [
 					{name: "A", value:	[2, .02782]},
 					{name: "B",	value:  [.01492, .02782]},
