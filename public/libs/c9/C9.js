@@ -121,7 +121,7 @@ var C9 =
 	    function BarChart(options) {
 	        _classCallCheck(this, BarChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BarChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (BarChart.__proto__ || Object.getPrototypeOf(BarChart)).call(this, options));
 
 	        var self = _this;
 	        var config = {
@@ -765,7 +765,7 @@ var C9 =
 	            // as a SEPARATED component, just like AXIS, of CHART
 	            var text = d3.select(this._svg[0][0].parentNode).append("g").append("text").attr("class", "title");
 
-	            // Get title width: text.node().getComputedTextLength()          
+	            // Get title width: text.node().getComputedTextLength()           
 	            text.attr("x", (width - text.node().getComputedTextLength()) / 2).attr("y", this.setYLocation(height, margin)).attr("text-anchor", "middle").style("font-size", this._titleSize).text(this._titleText);
 	        }
 	    }
@@ -1058,7 +1058,7 @@ var C9 =
 	    function DonutChart(options) {
 	        _classCallCheck(this, DonutChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(DonutChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (DonutChart.__proto__ || Object.getPrototypeOf(DonutChart)).call(this, options));
 
 	        var self = _this;
 	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
@@ -1198,7 +1198,7 @@ var C9 =
 	    function LineChart(options) {
 	        _classCallCheck(this, LineChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LineChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (LineChart.__proto__ || Object.getPrototypeOf(LineChart)).call(this, options));
 
 	        var self = _this;
 	        var config = {
@@ -1411,6 +1411,7 @@ var C9 =
 
 	//         var _maxY = Math.max(...tempMaxY);
 
+
 	//         var _currentDataX = this.data;
 	//         _currentDataX.forEach(function(currentValue,index,arr) {
 	//                                     _currentDataX[index].coordinate.sort(function(a,b) {
@@ -1502,7 +1503,7 @@ var C9 =
 	    function PieChart(options) {
 	        _classCallCheck(this, PieChart);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(PieChart).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (PieChart.__proto__ || Object.getPrototypeOf(PieChart)).call(this, options));
 
 	        var self = _this;
 	        var config = {
@@ -1647,7 +1648,7 @@ var C9 =
 	    function TimeLine(options) {
 	        _classCallCheck(this, TimeLine);
 
-	        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TimeLine).call(this, options));
+	        var _this = _possibleConstructorReturn(this, (TimeLine.__proto__ || Object.getPrototypeOf(TimeLine)).call(this, options));
 
 	        var self = _this;
 
