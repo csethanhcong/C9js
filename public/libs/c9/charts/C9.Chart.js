@@ -14,11 +14,11 @@ export default class Chart {
                 left: 40,
             },
             // interaction in chart
-            enable_interaction: true,
-            // mouse events
-            on_mouse_over: function() {},
-            on_mouse_out: function() {},
-            on_mouse_click: function() {},
+            hover: {
+                enable: true,
+                callback: function(){},
+            },
+
             // legend
             legend_show: true,
             legend_position: "bottom",
@@ -41,6 +41,7 @@ export default class Chart {
         self._margin    = self.extend(options.margin, config.margin);
         self._svg       = null;
         self._options   = options;
+        self._hover     = options.hover     || config.hover;
 
         self.initConfig();
     }
@@ -83,6 +84,10 @@ export default class Chart {
 
     get options() {
         return this._options;
+    }
+
+    get hover() {
+        return this._hover;
     }
     /*=====  End of Getter  ======*/
     
@@ -136,6 +141,12 @@ export default class Chart {
     set options(newOptions) {
         if (newOptions) {
             this._options = newOptions;
+        }
+    }
+
+    set hover(newHover) {
+        if (newHover) {
+            this._hover = newHover;
         }
     }
     /*=====  End of Setter  ======*/

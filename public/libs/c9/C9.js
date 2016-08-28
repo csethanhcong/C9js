@@ -51,19 +51,19 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(6);
+	var _C3 = __webpack_require__(7);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(7);
+	var _C5 = __webpack_require__(8);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(8);
+	var _C7 = __webpack_require__(9);
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(9);
+	var _C9 = __webpack_require__(10);
 
 	var _C10 = _interopRequireDefault(_C9);
 
@@ -111,6 +111,10 @@ var C9 =
 	var _C7 = __webpack_require__(5);
 
 	var _C8 = _interopRequireDefault(_C7);
+
+	var _C9 = __webpack_require__(6);
+
+	var _C10 = _interopRequireDefault(_C9);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -217,6 +221,34 @@ var C9 =
 	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
 	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
 	            var legend = new _C8.default(this.options, this.svg, this.barColor, this.data);
+
+	            this.updateInteraction();
+	        }
+
+	        /**
+	         * Update Interaction: Hover
+	         * @return {} 
+	         */
+
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+
+	            if (this.hover.enable) {
+	                // var tooltip = new Tooltip(this.options, this.svg, this.data);
+
+	                // Define the div for the tooltip
+	                var div = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+
+	                // Add the scatterplot
+	                this.svg.selectAll(".bar").data(this.data).enter().append("circle").attr("r", 5).on("mouseover", function (d) {
+	                    console.log(d);
+	                    div.transition().duration(200).style("opacity", .9);
+	                    div.html(d.name + "<br/>" + d.value).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
+	                }).on("mouseout", function (d) {
+	                    div.transition().duration(500).style("opacity", 0);
+	                });
+	            }
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -301,11 +333,11 @@ var C9 =
 	                left: 40
 	            },
 	            // interaction in chart
-	            enable_interaction: true,
-	            // mouse events
-	            on_mouse_over: function on_mouse_over() {},
-	            on_mouse_out: function on_mouse_out() {},
-	            on_mouse_click: function on_mouse_click() {},
+	            hover: {
+	                enable: true,
+	                callback: function callback() {}
+	            },
+
 	            // legend
 	            legend_show: true,
 	            legend_position: "bottom",
@@ -328,6 +360,7 @@ var C9 =
 	        self._margin = self.extend(options.margin, config.margin);
 	        self._svg = null;
 	        self._options = options;
+	        self._hover = options.hover || config.hover;
 
 	        self.initConfig();
 	    }
@@ -469,6 +502,16 @@ var C9 =
 	        set: function set(newOptions) {
 	            if (newOptions) {
 	                this._options = newOptions;
+	            }
+	        }
+	    }, {
+	        key: "hover",
+	        get: function get() {
+	            return this._hover;
+	        },
+	        set: function set(newHover) {
+	            if (newHover) {
+	                this._hover = newHover;
 	            }
 	        }
 	    }]);
@@ -1023,6 +1066,75 @@ var C9 =
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var Tooltip = function () {
+	    function Tooltip(options, svg, data) {
+	        _classCallCheck(this, Tooltip);
+
+	        var config = {
+	            show: true,
+	            position: top,
+	            offset: [-10, 0],
+	            class: 'd3-tip'
+	        };
+
+	        this._show = options.show || config.show;
+	        this._position = options.position || config.position;
+	        this._offset = options.offset || config.offset;
+	        this._class = options.class || config.class;
+	    }
+
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+
+
+	    _createClass(Tooltip, [{
+	        key: 'show',
+	        get: function get() {
+	            return this._show;
+	        }
+
+	        /*=====  End of Getter  ======*/
+
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        ,
+	        set: function set(newShow) {
+	            if (newShow) {
+	                this._show = newShow;
+	            }
+	        }
+
+	        /*=====  End of Setter  ======*/
+
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+
+	        /*=====  End of Main Functions  ======*/
+
+	    }]);
+
+	    return Tooltip;
+	}();
+
+	exports.default = Tooltip;
+
+/***/ },
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1162,7 +1274,7 @@ var C9 =
 	exports.default = DonutChart;
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1467,7 +1579,7 @@ var C9 =
 	exports.default = LineChart;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1612,7 +1724,7 @@ var C9 =
 	exports.default = PieChart;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
