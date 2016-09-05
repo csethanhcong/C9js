@@ -147,7 +147,7 @@ var C9 =
 	            var y0 = 0;
 	            d.stack = _typeof(d.value) === "object" ? d.value.map(function (v) {
 	                return { name: d.name, y0: y0, y1: y0 += v };
-	            }) : [{ y0: y0, y1: d.value }];
+	            }) : [{ name: d.name, y0: y0, y1: d.value }];
 	            d.total = d.stack[d.stack.length - 1].y1;
 	        });
 
@@ -236,16 +236,21 @@ var C9 =
 	            var self = this;
 	            if (self.hover.enable) {
 	                // var tooltip = new Tooltip(this.options, this.svg, this.data);
-	                console.log('enable');
 	                // Define the div for the tooltip
 	                var div = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
 	                // Add the scatterplot
 
 	                var siblings = self.svg.selectAll('g').selectAll('.bar');
 
+	                var value = function value(value1, value2) {
+	                    var d1 = Math.floor(value1) === value1 ? 0 : value1.toString().split(".")[1].length;
+	                    var d2 = Math.floor(value2) === value2 ? 0 : value2.toString().split(".")[1].length;
+	                    return d1 > d2 ? (value2 - value1).toFixed(d1) : (value2 - value1).toFixed(d2);
+	                };
+
 	                siblings.on("mouseover", function (d) {
 	                    div.transition().duration(200).style("opacity", .9);
-	                    div.html(d.name + "<br/>" + d.value).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
+	                    div.html(d.name + "<br/>" + value(d.y0, d.y1)).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
 	                }).on("mouseout", function (d) {
 	                    div.transition().duration(500).style("opacity", 0);
 	                });
