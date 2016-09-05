@@ -1,58 +1,61 @@
 var webpack = require("webpack");
 module.exports = function(grunt) {
-	grunt.loadNpmTasks('grunt-webpack');
-	webpack: {
-	  C9: {
-	    // webpack options
-	    entry: "./entry.js",
-	    output: {
-	        path: __dirname,
-	        filename: "C9.js",
-	        // export itself to a global var
-	        libraryTarget: "var",
-	        // name of the global var: "Foo"
-	        library: "C9"
-	    },
+	require("matchdep").filterAll("grunt-*").forEach(grunt.loadNpmTasks);
+	var webpack = require("webpack");
+	var webpackConfig = require("./webpack.config.js");
+	grunt.initConfig({
+		webpack: {
+			options: webpackConfig,
+			build: {
+				plugins: webpackConfig.plugins.concat(
+					new webpack.DefinePlugin({
+						"process.env": {
+							// This has effect on the react lib size
+							"NODE_ENV": JSON.stringify("production")
+						}
+					}),
+					new webpack.optimize.DedupePlugin(),
+					new webpack.optimize.UglifyJsPlugin()
+				)
+			},
+			"build-dev": {
+				devtool: "sourcemap",
+				debug: true
+			}
+		},
+		"webpack-dev-server": {
+			options: {
+				webpack: webpackConfig,
+				publicPath: "/" + webpackConfig.output.path
+			},
+			start: {
+				keepAlive: true,
+				webpack: {
+					devtool: "eval",
+					debug: true
+				}
+			}
+		},
+		watch: {
+			app: {
+				files: ["public/**/*", "web_modules/**/*"],
+				tasks: ["webpack:build-dev"],
+				options: {
+					spawn: false,
+				}
+			}
+		}
+	});
 
-	    stats: {
-	        // Configure the console output
-	        colors: false,
-	        modules: true,
-	        reasons: true
-	    },
-	    // stats: false disables the stats output
+	// The development server (the recommended option for development)
+	grunt.registerTask("default", ["webpack-dev-server:start"]);
 
-	    storeStatsTo: "xyz", // writes the status to a variable named xyz
-	    // you may use it later in grunt i.e. <%= xyz.hash %>
+	// Build and watch cycle (another option for development)
+	// Advantage: No server required, can run app from filesystem
+	// Disadvantage: Requests are not blocked until bundle is available,
+	//               can serve an old app on too fast refresh
+	grunt.registerTask("dev", ["webpack:build-dev", "watch:app"]);
 
-	    progress: false, // Don't show progress
-	    // Defaults to true
-
-	    failOnError: false, // don't report error to grunt if webpack find errors
-	    // Use this if webpack errors are tolerable and grunt should continue
-
-	    watch: true, // use webpacks watcher
-	    // You need to keep the grunt process alive
-
-	    keepalive: true, // don't finish the grunt task
-	    // Use this in combination with the watch option
-
-	    inline: true,  // embed the webpack-dev-server runtime into the bundle
-	    // Defaults to false
-
-	    hot: true, // adds the HotModuleReplacementPlugin and switch the server to hot mode
-	    // Use this in combination with the inline option
-
-        module: {
-            loaders: [{
-                test: /\.jsx?$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'babel', // 'babel-loader' is also a legal name to reference
-                query: {
-                    presets: ['es2015']
-                }
-            }]
-        }
-	  }
-	}
+	// Production build
+	grunt.registerTask("build", ["webpack:build"]);
 };

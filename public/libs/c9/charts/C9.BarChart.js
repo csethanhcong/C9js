@@ -142,34 +142,34 @@ export default class BarChart extends Chart {
      * @return {} 
      */
     updateInteraction() {
-
-        if (this.hover.enable) {
+        var self = this;
+        if (self.hover.enable) {
             // var tooltip = new Tooltip(this.options, this.svg, this.data);
-
+            console.log('enable');
             // Define the div for the tooltip
-var div = d3.select("body").append("div")   
-    .attr("class", "tooltip")               
-    .style("opacity", 0);
+        var div = d3.select("body")
+                    .append("div")   
+                    .attr("class", "tooltip")               
+                    .style("opacity", 0);
+        // Add the scatterplot
+        
+        var siblings = self.svg.selectAll('g')
+            .selectAll('.bar');
 
-    // Add the scatterplot
-    this.svg.selectAll(".bar")    
-        .data(this.data)         
-    .enter().append("circle")                               
-        .attr("r", 5)    
-        .on("mouseover", function(d) { 
-        console.log(d)     ;
-            div.transition()        
-                .duration(200)      
-                .style("opacity", .9);      
-            div .html(d.name + "<br/>"  + d.value)  
-                .style("left", (d3.event.pageX) + "px")     
-                .style("top", (d3.event.pageY - 28) + "px");    
-            })                  
-        .on("mouseout", function(d) {       
-            div.transition()        
-                .duration(500)      
-                .style("opacity", 0);   
-        });
+        siblings
+            .on("mouseover", function(d) { 
+                div.transition()        
+                    .duration(200)      
+                    .style("opacity", .9);      
+                div .html(d.name + "<br/>"  + d.value)  
+                    .style("left", (d3.event.pageX) + "px")     
+                    .style("top", (d3.event.pageY - 28) + "px");    
+                })                  
+            .on("mouseout", function(d) {       
+                div.transition()        
+                    .duration(500)      
+                    .style("opacity", 0);   
+            });
 
         }
     }

@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Demo d3js - Chart</title>
+		<!-- ICON -->
+		<link rel="icon" href="./images/icon.ico">
+		<!-- CSS -->
+		<link rel="stylesheet" href="./libs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="./css/main.css"> <!-- custom styles -->
+		<!-- JS -->
+		<script src="./libs/angular/angular.min.js"></script>
+		<script src="./libs/angular-route/angular-route.min.js"></script>
+		<script src="./libs/c9/libs/jquery.min.js"></script>
+		<!-- ANGULAR CUSTOM -->
+		<script src="./js/app.js"></script>
+		<!-- CONTROLLERS -->
+		<!-- <script src="js/controllers/DemoCtrl.js"></script> -->
+		<!-- <script src="js/factory/UploadFactory.js"></script> -->
+		<!-- SERVICES -->
+		<!-- <script src="js/services/d3.js"></script> -->
+		<!-- DIRECTIVES -->
+		<!-- <script src="js/directives/d3Bar.js"></script> -->
+		<!-- <script src="js/directives/d3DonutChart.js"></script> -->
+		<!-- <script src="js/directives/d3SortableBar.js"></script>
+		<script src="js/directives/ngFileSelect.js"></script>
+		<script src="js/directives/userInteraction.js"></script> -->
+		<!-- <script src="js/appRoutes.js"></script> -->
+		<!-- Open-layer Angular Directives -->
+		<!-- <script src="libs/openlayers3/build/ol.js"></script> -->
+	    <!-- <script src="libs/angular-openlayers-directive/dist/angular-openlayers-directive.min.js"></script> -->
+	    <!-- <script src="libs/angular-sanitize/angular-sanitize.min.js"></script> -->
+
+	    <!-- D3 & OL3 & C9 -->
+	    <script src="./libs/c9/libs/d3.min.js"></script>
+	    <script src="./libs/c9/libs/ol3/ol.js"></script>
+	    <link rel="stylesheet" href="./libs/c9/libs/ol3/ol.css" />
+	    <script src="./libs/c9/C9.js"></script>
+	    <!-- <script src="/libs/c9/charts/C9.Chart.js"></script>
+	    <script src="/libs/c9/charts/C9.TimeLine.js"></script>
+	    <script src="/libs/c9/charts/C9.BarChart.js"></script>
+	    <script src="/libs/c9/charts/C9.LineChart.js"></script>
+	    <script src="/libs/c9/charts/C9.PieChart.js"></script>
+	    <script src="/libs/c9/charts/C9.DonutChart.js"></script>
+	    <script src="/libs/c9/utils/C9.Axis.js"></script>
+	    <script src="/libs/c9/utils/C9.Title.js"></script> -->
+		<!-- End of D3 & OL3 & C9 -->
+
+
+	    <!-- <link rel="stylesheet" href="libs/openlayers3/build/ol.css"> -->
+	    <!-- <link rel="stylesheet" href="libs/angular-openlayers-directive/dist/angular-openlayers-directive.css" /> -->
+		<!-- END ANGULAR CUSTOM -->
+		<!-- <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND"></script>
+        <script type="text/javascript" src="http://erozate.iutbayonne.univ-pau.fr/windapi/?v=2.1&file=WIND.Map"></script> -->
+        <!-- WIND API -->
+        <script>
+        	var lib_path = "libs/wind/lib",
+        		IGN_key = "ohy4xq0hzfex6nv6rn6dw6s2",
+				BING_key = "Agzyehf8tjuXKKk5sIkuIAcE-S4NNlHmgOAaqRX062b4UsCNGWOXUEc1EJLrpvcL";
+        </script>
+        <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <!-- <script src="libs/wind/lib/OpenLayers.v2.13.js"></script>
+        <script src="libs/wind/yahoo.js"></script>
+        <script src="libs/wind/lib/yui/build/event/event.js"></script>
+        <script src="libs/wind/lib/yui/build/event-mouseenter/event-mouseenter.js"></script>
+        <script src="libs/wind/lib/yui/build/yahoo-dom-event/yahoo-dom-event.js"></script>
+        <script src="libs/wind/lib/yui/build/element/element.js"></script> -->
+        <!-- <script src="libs/wind/lib/yui/build/button/button.js"></script> -->
+       <!--  <script src="libs/wind/lib/yui/build/event-delegate/event-delegate.js"></script>
+        <script src="libs/wind/lib/yui/build/selector/selector.js"></script>
+        <script src="libs/wind/lib/yui/build/dom/dom.js"></script> -->
+        <!-- <script src="libs/wind/WIND.js"></script>
+        <script src="libs/wind/WIND.Common.js"></script>
+        <script src="libs/wind/WIND.Map.js"></script> -->
+        <!-- END WIND API -->
+	</head>
+	<body ng-controller="DemoCtrl">
+
+	<!-- header -->
+	<header id="header" class="header header-style">
+		<nav class="navbar navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="">
+						<img src="images/icon.ico" height="25px" />
+					</a> 
+					<a class="navbar-brand" href="">C9 API</a>
+				</div>
+				<div class="collapse navbar-collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="active"><a href="">Home</a></li>
+						<li><a href="https://github.com/csethanhcong/d3js" target="_blank">GitHub</a></li>
+						<li><p class="navbar-text">Version 1.0 <span class="glyphicon glyphicon-info-sign"></span></p></li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+	</header>
+
+	<div class="container">
+		<!-- Ex1: Bar Chart -->
+		<div class="page-header">
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Bar Chart Examples</h3>
+		</div>
+		<div id="demo1"></div>
+	    <script type="text/javascript" charset="utf-8">
+			var data1 = [
+					{name: "A", value:	[2, .5]},
+					{name: "B",	value:  [.01492, .02782]},
+					{name: "C", value:	[.02782, .02782]},
+					{name: "D", value:	[.04253, .02782]},
+					{name: "E", value:	[1, .02782]},
+					{name: "F", value:	[.02288, .02782]},
+					{name: "G", value:	[.02015, .02782]},
+					{name: "H", value:	[.06094, .02782]},
+					{name: "I", value:	[.5, .02782]},
+					{name: "J", value:	[.00153, .02782]},
+					{name: "K", value:	[.00772, .02782]},
+					{name: "L", value:	[.04025, .02782]},
+					{name: "M", value:	[.02406, .02782]},
+					{name: "N", value:	[.06749, .02782]},
+					{name: "O", value:	[.07507, .02782]},
+					{name: "P", value:	[.01929, .02782]},
+					{name: "Q", value:	[.00095, .02782]},
+					{name: "R", value:	[.05987, .02782]},
+					{name: "S", value:	[.06327, .02782]},
+					{name: "T", value:	[.09056, .02782]},
+					{name: "U", value:	[.02758, .02782]},
+					{name: "V", value:	[.00978, .02782]},
+					{name: "W", value:	[.02360, .02782]},
+					{name: "X", value:	[.00150, .02782]},
+					{name: "Y", value:	[.01974, .02782]},
+					{name: "Z", value:	[.00074, .02782]}
+				];
+
+			var options1 = {
+				id: "#demo1", 
+				width: 750, 
+				height: 500, 
+				margin: {
+					top: 100, 
+					left: 50, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data1, 
+				bar_color: "pink",
+				is_logaric_variant: true
+			};
+			var barChart = new C9.BarChart(options1);
+			barChart.draw();
+			
+		</script>
+	</body>
+
+</html>

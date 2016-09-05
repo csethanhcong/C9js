@@ -6,8 +6,16 @@ module.exports = function(app) {
 
 	// frontend routes =========================================================
 	// route to handle all angular requests
-	app.get('*', function(req, res) {
-		res.sendfile('./public/index.html');
+	app.get('/', function(req, res) {
+		res.sendfile('./public/views/index.html');
+	});
+
+	app.get('/map', function(req, res) {
+		res.sendfile('./public/views/map.html');
+	});
+
+	app.get('/chart', function(req, res) {
+		res.sendfile('./public/views/chart.html');
 	});
 
 };
