@@ -1,7 +1,7 @@
 'use strict';
 
 export default class Tooltip {
-    constructor(options, svg, data) {
+    constructor(options, body, data) {
         var config = {
             show: true,
             position: top,

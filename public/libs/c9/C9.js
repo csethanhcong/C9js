@@ -156,7 +156,7 @@ var C9 =
 	        var width = self.width - self.margin.left - self.margin.right;
 	        var height = self.height - self.margin.top - self.margin.bottom;
 
-	        self.svg.c9Chart = "bar";
+	        self.body.type = "bar";
 
 	        self.data.forEach(function (d) {
 	            var y0 = 0;
@@ -181,7 +181,8 @@ var C9 =
 	        config.bar_width = x.rangeBand();
 	        self._barWidth = options.bar_width || config.bar_width;
 	        self._barColor = options.bar_color || config.bar_color;
-
+	        self._x = x;
+	        self._y = y;
 	        self.initBarChartConfig(height, x, y);
 	        return _this;
 	    }
@@ -208,7 +209,7 @@ var C9 =
 	        value: function initBarChartConfig(height, x, y) {
 	            var color = this.barColor;
 
-	            var bar = this.svg.selectAll(".bar").data(this.data).enter().append("g").attr("class", "gBar").attr("transform", function (d) {
+	            var bar = this.body.selectAll(".bar").data(this.data).enter().append("g").attr("class", "gBar").attr("transform", function (d) {
 	                return "translate(" + x(d.name) + ",0)";
 	            });
 
@@ -233,9 +234,9 @@ var C9 =
 	        key: 'draw',
 	        value: function draw() {
 
-	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
-	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.svg, this.barColor, this.data);
+	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
+	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.body, this.barColor, this.data);
 
 	            this.updateInteraction();
 	        }
@@ -259,7 +260,7 @@ var C9 =
 	        value: function selectAllBar() {
 	            var self = this;
 
-	            return self.svg.selectAll('g').selectAll('.bar');
+	            return self.body.selectAll('g').selectAll('.bar');
 	        }
 
 	        /**
@@ -280,21 +281,25 @@ var C9 =
 	            if (hoverEnable) {
 	                // Define the div for the tooltip
 	                // TODO: Allow user to add custom DIV, CLASS
-	                var div = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
+	                // Make sure that: 
+	                // - Rect not overflow the bar, if not, hover effect will be messed
+	                // -> So, just align the rect to right/left (x: 25) to avoid it
+	                // -> And, the text will be align also
+	                var div = self.body.append('g').style('opacity', 0);
+	                // Rect Container
+	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	                // First line
+	                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
+	                // Second line
+	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
 
 	                selector.on("mouseover", function (d) {
-	                    onMouseOverCallback(d);
-	                    // div.transition()        
-	                    //     .duration(hoverOptions.onMouseOver.fadeIn)
-	                    //     .style("opacity", .9);      
-	                    // div .html(d.name + "<br/>"  + self.retrieveValue(d.y0, d.y1))  
-	                    //     .style("left", (d3.event.pageX) + "px")     
-	                    //     .style("top", (d3.event.pageY - 28) + "px");
+	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("opacity", .9).attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
+
+	                    text_1.text('Name: ' + d.name);
+	                    text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
 	                }).on("mouseout", function (d) {
-	                    onMouseOutCallback(d);
-	                    // div.transition()
-	                    //     .duration(hoverOptions.onMouseOut.fadeOut)      
-	                    //     .style("opacity", 0);
+	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style("opacity", 0);
 	                });
 	            }
 	        }
@@ -339,6 +344,16 @@ var C9 =
 	            if (newBarColor) {
 	                this._barColor = newBarColor;
 	            }
+	        }
+	    }, {
+	        key: 'x',
+	        get: function get() {
+	            return this._x;
+	        }
+	    }, {
+	        key: 'y',
+	        get: function get() {
+	            return this._y;
 	        }
 	    }]);
 
@@ -386,16 +401,10 @@ var C9 =
 	                options: {
 	                    template: '',
 	                    onMouseOver: {
-	                        fadeIn: 200,
-	                        callback: function callback(data) {
-	                            console.dir(data);
-	                        }
+	                        fadeIn: 200
 	                    },
 	                    onMouseOut: {
-	                        fadeOut: 500,
-	                        callback: function callback(data) {
-	                            console.dir(data);
-	                        }
+	                        fadeOut: 500
 	                    }
 	                }
 	            },
@@ -420,7 +429,13 @@ var C9 =
 	        self._height = options.height || config.height;
 	        self._colorRange = options.color_range || config.color_range;
 	        self._margin = self.extend(options.margin, config.margin);
+
+	        // Skeleton: 
+	        // SVG
+	        // ---BODY (g)
+	        // -------BlaBla
 	        self._svg = null;
+	        self._body = null;
 	        self._options = options;
 	        self._hover = options.hover || config.hover;
 
@@ -450,7 +465,9 @@ var C9 =
 	                width = this.width - margin.left - margin.right,
 	                height = this.height - margin.top - margin.bottom;
 
-	            this.svg = d3.select(id).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	            this.svg = d3.select(id).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom);
+
+	            this.body = this.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	        }
 
 	        /**
@@ -557,6 +574,16 @@ var C9 =
 	            }
 	        }
 	    }, {
+	        key: "body",
+	        get: function get() {
+	            return this._body;
+	        },
+	        set: function set(newBody) {
+	            if (newBody) {
+	                this._body = newBody;
+	            }
+	        }
+	    }, {
 	        key: "options",
 	        get: function get() {
 	            return this._options;
@@ -598,7 +625,7 @@ var C9 =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Axis = function () {
-	    function Axis(options, svg, data, width, height, xAxe, yAxe) {
+	    function Axis(options, body, data, width, height, xAxe, yAxe) {
 	        _classCallCheck(this, Axis);
 
 	        var config = {
@@ -621,7 +648,7 @@ var C9 =
 	        this._xAxisShow = options.x_axis_show || config.x_axis_show;
 	        this._xAxisPadding = options.x_axis_padding || config.x_axis_padding;
 	        this._xAxisText = options.x_axis_text || config.x_axis_text;
-	        this._yAxisShow = options.y_axis_show || (svg.c9Chart == "timeline" ? false : config.y_axis_show);
+	        this._yAxisShow = options.y_axis_show || (body.type == "timeline" ? false : config.y_axis_show);
 	        this._yAxisPadding = options.y_axis_padding || config.y_axis_padding;
 	        this._yAxisText = options.y_axis_text || config.y_axis_text;
 	        this._isLogaricVariant = options.is_logaric_variant || config.is_logaric_variant;
@@ -646,7 +673,7 @@ var C9 =
 	            return d.name;
 	        }));
 
-	        if (svg.c9Chart == "bar") y.domain([d3.min(data, function (d) {
+	        if (body.type == "bar") y.domain([d3.min(data, function (d) {
 	            return d.total;
 	        }), d3.max(data, function (d) {
 	            return d.total;
@@ -656,13 +683,13 @@ var C9 =
 	            return d.value;
 	        })]);
 
-	        if (svg.c9Chart == "timeline") {
+	        if (body.type == "timeline") {
 
 	            var xScale = d3.time.scale().domain([options.starting, options.ending]).range([0, width]);
 	            this._xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(options.tickFormat === undefined ? d3.time.format("%I %p") : options.tickFormat.format).tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize).ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
 	            delete options.starting;
 	            delete options.ending;
-	        } else if (svg.c9Chart == "line") {
+	        } else if (body.type == "line") {
 
 	            this._xAxis = xAxe;
 	            this._yAxis = yAxe;
@@ -699,18 +726,18 @@ var C9 =
 	            this._yAxis.innerTickSize(-width).outerTickSize(0);
 	        }
 
-	        this._svg = svg;
+	        this._body = body;
 	        this._data = data;
 	        this._width = width; // TODO : ADD Getter/setter
 	        this._height = height;
 
 	        if (this._xAxisShow) {
-	            this._svg.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(this._xAxis).append("text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", width).attr("y", "20").style("text-anchor", "start").text(this._xAxisText);
+	            this._body.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(this._xAxis).append("text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", width).attr("y", "20").style("text-anchor", "start").text(this._xAxisText);
 	            // .attr("transform", "rotate(-90)" );
 	        }
 
 	        if (this._yAxisShow) {
-	            this._svg.append("g").attr("class", "y axis").call(this._yAxis).append("text")
+	            this._body.append("g").attr("class", "y axis").call(this._yAxis).append("text")
 	            // .attr("transform", "rotate(-90)")
 	            .attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(this._yAxisText);
 	        }
@@ -853,7 +880,7 @@ var C9 =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Title = function () {
-	    function Title(options, svg, width, height, margin) {
+	    function Title(options, body, width, height, margin) {
 	        _classCallCheck(this, Title);
 
 	        var config = {
@@ -868,12 +895,12 @@ var C9 =
 	        this._titlePosition = options.title_position || config.title_position;
 	        this._titleSize = options.title_size || config.title_size;
 
-	        this._svg = svg;
+	        this._body = body;
 
 	        if (this._titleShow) {
-	            // Select CURRENT svg container, to make this axis outside
+	            // Select CURRENT body container, to make this axis outside
 	            // as a SEPARATED component, just like AXIS, of CHART
-	            var text = d3.select(this._svg[0][0].parentNode).append("g").append("text").attr("class", "title");
+	            var text = d3.select(this._body[0][0].parentNode).append("g").append("text").attr("class", "title");
 
 	            // Get title width: text.node().getComputedTextLength()           
 	            text.attr("x", (width - text.node().getComputedTextLength()) / 2).attr("y", this.setYLocation(height, margin)).attr("text-anchor", "middle").style("font-size", this._titleSize).text(this._titleText);
@@ -974,7 +1001,7 @@ var C9 =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Legend = function () {
-	    function Legend(options, svg, color, data) {
+	    function Legend(options, body, color, data) {
 	        _classCallCheck(this, Legend);
 
 	        var config = {
@@ -997,25 +1024,25 @@ var C9 =
 	        this._legendSpace = options.legend_space || config.legend_space;
 	        this._legendStyle = options.legend_style || config.legend_style;
 
-	        this._svg = svg;
+	        this._body = body;
 	        this._data = data;
 	        if (this._legendShow) {
 	            var self = this;
 	            var legendDomain = [];
-	            if (self._svg.c9Chart == "line") {
+	            if (self._body.type == "line") {
 	                var dataGroup = d3.nest().key(function (d) {
 	                    return d.Client;
 	                }).entries(self._data);
 	                dataGroup.forEach(function (d, i) {
 	                    legendDomain.push(d.key);
 	                });
-	            } else if (self._svg.c9Chart == "bar") {
+	            } else if (self._body.type == "bar") {
 	                try {
 	                    if (typeof options.legend_domain === "string") legendDomain.push(options.legend_domain);else if (_typeof(options.legend_domain) === "object") legendDomain = options.legend_domain;
 	                } catch (err) {
 	                    throw "Legend domain is not defined";
 	                }
-	            } else if (self._svg.c9Chart == "pie" || self._svg.c9Chart == "donut" || self._svg.c9Chart == "timeline") {
+	            } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 	                self._data.forEach(function (d) {
 	                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
 	                });
@@ -1030,7 +1057,7 @@ var C9 =
 
 	            color.domain(legendDomain);
 
-	            var legend = d3.select(self._svg[0][0].parentNode).append("g").attr("class", "legend").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
+	            var legend = d3.select(self._body[0][0].parentNode).append("g").attr("class", "legend").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
 
 	            var legendBox = legend.selectAll(".legendBox").data([true]).enter().append("rect");
 	            var legendItem = legend.selectAll(".legendItem").data(color.domain()).enter().append("g").attr("class", "legendItem").attr("transform", function (d, i) {
@@ -1141,7 +1168,7 @@ var C9 =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Tooltip = function () {
-	    function Tooltip(options, svg, data) {
+	    function Tooltip(options, body, data) {
 	        _classCallCheck(this, Tooltip);
 
 	        var config = {
@@ -1344,7 +1371,7 @@ var C9 =
 
 	        self._outerRadius = options.outer_radius || config.outer_radius;
 	        self._innerRadius = options.inner_radius || config.inner_radius;
-	        self.svg.c9Chart = 'donut';
+	        self.body.type = 'donut';
 	        self.initDonutChartConfig();
 	        return _this;
 	    }
@@ -1376,7 +1403,7 @@ var C9 =
 	            });
 
 	            //draw chart
-	            var arcs = this.svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('g.arc').data(pie(this.data)).enter().append('g').attr('class', 'arc');
+	            var arcs = this.body.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('g.arc').data(pie(this.data)).enter().append('g').attr('class', 'arc');
 
 	            arcs.append('path').attr('d', arc).style('fill', function (d, i) {
 	                return color(i);
@@ -1392,8 +1419,8 @@ var C9 =
 	        key: 'draw',
 	        value: function draw() {
 
-	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
+	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1493,7 +1520,7 @@ var C9 =
 	        self._pointOpacity = options.point_opacity || config.point_opacity;
 	        self._pointHoverEnable = options.point_hover_enable || config.point_hover_enable;
 	        self._interpolate = options.interpolate || config.interpolate;
-	        self.svg.c9Chart = "line";
+	        self.body.type = "line";
 
 	        self.initLineChart();
 
@@ -1548,7 +1575,7 @@ var C9 =
 	                return y(d.sale);
 	            }).interpolate(this.interpolate);
 
-	            var _svg = this.svg,
+	            var _body = this.body,
 	                _colorRange = this.colorRange,
 	                _pointShow = this.pointShow,
 	                _pointRadius = this.pointRadius,
@@ -1557,10 +1584,10 @@ var C9 =
 	                _pointOpacity = this.pointOpacity;
 
 	            dataGroup.forEach(function (d, i) {
-	                _svg.append('path').attr('d', lineGen(d.values)).attr('stroke', _colorRange(i)).attr('stroke-width', 2).attr('id', 'line_' + d.key).attr('fill', 'none');
+	                _body.append('path').attr('d', lineGen(d.values)).attr('stroke', _colorRange(i)).attr('stroke-width', 2).attr('id', 'line_' + d.key).attr('fill', 'none');
 
 	                if (_pointShow) {
-	                    _svg.selectAll("dot").data(d.values).enter().append("circle").attr("r", _pointRadius).attr("cx", function (_d) {
+	                    _body.selectAll("dot").data(d.values).enter().append("circle").attr("r", _pointRadius).attr("cx", function (_d) {
 	                        return x(_d.year);
 	                    }).attr("cy", function (_d) {
 	                        return y(_d.sale);
@@ -1578,9 +1605,9 @@ var C9 =
 	        key: 'draw',
 	        value: function draw() {
 
-	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
-	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
+	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
+	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1715,7 +1742,7 @@ var C9 =
 	//             .y(function(d, i) { return y(d.y); })
 	//             .interpolate("linear");
 
-	//         // this.svg.selectAll('g')
+	//         // this.body.selectAll('g')
 	//         //         .data(this.sortedDataX)
 	//         //         .enter()
 	//         //         .append('path')
@@ -1723,7 +1750,7 @@ var C9 =
 	//         //         .attr('d', function(d){
 	//         //             return lineFunc(d.coordinate);
 	//         //         });
-	//         this.svg.selectAll('dot')
+	//         this.body.selectAll('dot')
 	//                 .data(this.sortedDataX)
 	//                 .selectAll('dot')
 	//                 .data(function(d,i) {return d;})
@@ -1786,7 +1813,7 @@ var C9 =
 	        };
 
 	        self._radius = options.radius || config.radius;
-	        self.svg.c9Chart = "pie";
+	        self.body.type = "pie";
 	        self.initPieChartConfig();
 	        return _this;
 	    }
@@ -1825,7 +1852,7 @@ var C9 =
 	            var color = this.colorRange;
 
 	            // select paths, use arc generator to draw
-	            var arcs = this.svg.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('g.slice').data(pie(this.data)).enter().append('g').attr('class', 'slice');
+	            var arcs = this.body.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('g.slice').data(pie(this.data)).enter().append('g').attr('class', 'slice');
 
 	            arcs.append('path').attr('d', arc).attr('fill', function (d, i) {
 	                return color(i);
@@ -1850,8 +1877,8 @@ var C9 =
 	        key: 'draw',
 	        value: function draw() {
 
-	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
+	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1939,7 +1966,7 @@ var C9 =
 	            label_margin: 20
 	        };
 
-	        self.svg.c9Chart = "timeline";
+	        self.body.type = "timeline";
 	        self._stack = options.stack || config.stack;
 	        self._starting = options.starting || config.starting;
 	        self._ending = options.ending || config.ending;
@@ -2013,11 +2040,11 @@ var C9 =
 	                //draw background
 	                if (self.backgroundColor) {
 	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.svg.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis).attr("height", self.itemHeight).attr("fill", self.backgroundColor instanceof Function ? self.backgroundColor(index) : self.backgroundColor);
+	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis).attr("height", self.itemHeight).attr("fill", self.backgroundColor instanceof Function ? self.backgroundColor(index) : self.backgroundColor);
 	                }
 
 	                //draw item
-	                self.svg.selectAll("g").data(data).enter().append(function (d, i) {
+	                self.body.selectAll("g").data(data).enter().append(function (d, i) {
 	                    return document.createElementNS(d3.ns.prefix.svg, "ending_time" in d ? "rect" : "circle");
 	                }).attr("x", getXPos).attr("y", getStackPosition).attr("width", function (d, i) {
 	                    return (d.ending_time - d.starting_time) * scale;
@@ -2026,24 +2053,24 @@ var C9 =
 	                }).attr("cx", getXPos).attr("r", self.itemHeight / 2).attr("height", self.itemHeight).style("fill", color(index));
 
 	                //draw label inside item
-	                self.svg.selectAll("g").data(data).enter().append("text").attr("x", getXTextPos).attr("y", getStackTextPosition).text(function (d) {
+	                self.body.selectAll("g").data(data).enter().append("text").attr("x", getXTextPos).attr("y", getStackTextPosition).text(function (d) {
 	                    return d.name;
 	                });
 
 	                if (self.rowSeparator && index < self.maxStack - 1) {
 	                    var lineYAxis = self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.svg.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 1).attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
+	                    self.body.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 1).attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
 	                }
 
 	                //draw the label left side item
 	                if (typeof datum.name !== "undefined") {
 	                    var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 
-	                    d3.select(self.svg[0][0].parentNode).append("text").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")").text(datum.name);
+	                    d3.select(self.body[0][0].parentNode).append("text").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")").text(datum.name);
 	                }
 	                //draw icon
 	                else if (typeof datum.icon !== "undefined") {
-	                        d3.select(self.svg[0][0].parentNode).append("image").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.itemHeight).attr("height", self.itemHeight);
+	                        d3.select(self.body[0][0].parentNode).append("image").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.itemHeight).attr("height", self.itemHeight);
 	                    }
 
 	                function getStackPosition(d, i) {
@@ -2073,9 +2100,9 @@ var C9 =
 	        value: function draw() {
 	            this.options.starting = this.starting;
 	            this.options.ending = this.ending;
-	            var axis = new _C4.default(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
-	            var title = new _C6.default(this.options, this.svg, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.svg, this.colorRange, this.data);
+	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
+	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
+	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
 	        }
 
 	        /*=====  End of Main Functions  ======*/

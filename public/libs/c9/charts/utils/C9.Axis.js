@@ -1,7 +1,7 @@
 'use strict';
 
 export default class Axis {
-    constructor(options, svg, data, width, height, xAxe, yAxe) {
+    constructor(options, body, data, width, height, xAxe, yAxe) {
         var config = {
             x_axis_show     : true,
             x_axis_padding  : {},   // TODO
@@ -22,7 +22,7 @@ export default class Axis {
         this._xAxisShow     = options.x_axis_show      || config.x_axis_show;
         this._xAxisPadding  = options.x_axis_padding   || config.x_axis_padding;
         this._xAxisText     = options.x_axis_text      || config.x_axis_text;
-        this._yAxisShow     = options.y_axis_show      || (svg.c9Chart == "timeline" ? false : config.y_axis_show);
+        this._yAxisShow     = options.y_axis_show      || (body.type == "timeline" ? false : config.y_axis_show);
         this._yAxisPadding  = options.y_axis_padding   || config.y_axis_padding;
         this._yAxisText     = options.y_axis_text      || config.y_axis_text;
         this._isLogaricVariant     = options.is_logaric_variant      || config.is_logaric_variant;
@@ -48,7 +48,7 @@ export default class Axis {
             return d.name;
         }));
 
-        if (svg.c9Chart == "bar")
+        if (body.type == "bar")
             y.domain([
                 d3.min(data, function(d) {
                     return d.total;
@@ -67,7 +67,7 @@ export default class Axis {
                 })
             ]);
 
-        if (svg.c9Chart == "timeline") {
+        if (body.type == "timeline") {
 
             var xScale = d3.time.scale()
                 .domain([options.starting, options.ending])
@@ -81,7 +81,7 @@ export default class Axis {
             delete options.starting;
             delete options.ending;
 
-        } else if (svg.c9Chart == "line") {
+        } else if (body.type == "line") {
 
             this._xAxis = xAxe;
             this._yAxis = yAxe;
@@ -135,13 +135,13 @@ export default class Axis {
                 .outerTickSize(0);
         }
 
-        this._svg    = svg;
+        this._body    = body;
         this._data   = data;
         this._width  = width;   // TODO : ADD Getter/setter
         this._height  = height;
 
         if (this._xAxisShow) {
-            this._svg.append("g")
+            this._body.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + (height) + ")")
                 .call(this._xAxis)
@@ -156,7 +156,7 @@ export default class Axis {
         }
 
         if (this._yAxisShow) {
-            this._svg.append("g")
+            this._body.append("g")
                 .attr("class", "y axis")
                 .call(this._yAxis)
                 .append("text")
