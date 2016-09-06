@@ -51,36 +51,47 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(7);
+	var _C3 = __webpack_require__(8);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(8);
+	var _C5 = __webpack_require__(9);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(9);
+	var _C7 = __webpack_require__(10);
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(10);
+	var _C9 = __webpack_require__(11);
 
 	var _C10 = _interopRequireDefault(_C9);
 
-	var _C11 = __webpack_require__(11);
+	var _C11 = __webpack_require__(12);
 
 	var _C12 = _interopRequireDefault(_C11);
 
+	var _C13 = __webpack_require__(7);
+
+	var _C14 = _interopRequireDefault(_C13);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// Map Importer
 	module.exports = {
 		BarChart: _C2.default,
 		DonutChart: _C4.default,
 		LineChart: _C6.default,
 		PieChart: _C8.default,
 		TimeLine: _C10.default,
-		Map: _C12.default
+
+		Map: _C12.default,
+
+		Helper: _C14.default
 	};
+
+	// Helper Importer
+	// Chart Importer
 
 /***/ },
 /* 1 */
@@ -115,6 +126,10 @@ var C9 =
 	var _C9 = __webpack_require__(6);
 
 	var _C10 = _interopRequireDefault(_C9);
+
+	var _C11 = __webpack_require__(7);
+
+	var _C12 = _interopRequireDefault(_C11);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -226,6 +241,28 @@ var C9 =
 	        }
 
 	        /**
+	         * Retrieve value from upper and lower bounds of each stack
+	         * @param  {String} lower Lower bound of value
+	         * @param  {String} upper Upper bound of value
+	         * @return {String}       Value to return
+	         */
+
+	    }, {
+	        key: 'retrieveValue',
+	        value: function retrieveValue(lower, upper) {
+	            var d1 = Math.floor(lower) === lower ? 0 : lower.toString().split(".")[1].length;
+	            var d2 = Math.floor(upper) === upper ? 0 : upper.toString().split(".")[1].length;
+	            return d1 > d2 ? (upper - lower).toFixed(d1) : (upper - lower).toFixed(d2);
+	        }
+	    }, {
+	        key: 'selectAllBar',
+	        value: function selectAllBar() {
+	            var self = this;
+
+	            return self.svg.selectAll('g').selectAll('.bar');
+	        }
+
+	        /**
 	         * Update Interaction: Hover
 	         * @return {} 
 	         */
@@ -233,26 +270,31 @@ var C9 =
 	    }, {
 	        key: 'updateInteraction',
 	        value: function updateInteraction() {
-	            var self = this;
-	            if (self.hover.enable) {
-	                // var tooltip = new Tooltip(this.options, this.svg, this.data);
+	            var self = this,
+	                hoverEnable = self.hover.enable,
+	                hoverOptions = self.hover.options,
+	                selector = self.selectAllBar(),
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+
+	            if (hoverEnable) {
 	                // Define the div for the tooltip
+	                // TODO: Allow user to add custom DIV, CLASS
 	                var div = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
-	                // Add the scatterplot
 
-	                var siblings = self.svg.selectAll('g').selectAll('.bar');
-
-	                var value = function value(value1, value2) {
-	                    var d1 = Math.floor(value1) === value1 ? 0 : value1.toString().split(".")[1].length;
-	                    var d2 = Math.floor(value2) === value2 ? 0 : value2.toString().split(".")[1].length;
-	                    return d1 > d2 ? (value2 - value1).toFixed(d1) : (value2 - value1).toFixed(d2);
-	                };
-
-	                siblings.on("mouseover", function (d) {
-	                    div.transition().duration(200).style("opacity", .9);
-	                    div.html(d.name + "<br/>" + value(d.y0, d.y1)).style("left", d3.event.pageX + "px").style("top", d3.event.pageY - 28 + "px");
+	                selector.on("mouseover", function (d) {
+	                    onMouseOverCallback(d);
+	                    // div.transition()        
+	                    //     .duration(hoverOptions.onMouseOver.fadeIn)
+	                    //     .style("opacity", .9);      
+	                    // div .html(d.name + "<br/>"  + self.retrieveValue(d.y0, d.y1))  
+	                    //     .style("left", (d3.event.pageX) + "px")     
+	                    //     .style("top", (d3.event.pageY - 28) + "px");
 	                }).on("mouseout", function (d) {
-	                    div.transition().duration(500).style("opacity", 0);
+	                    onMouseOutCallback(d);
+	                    // div.transition()
+	                    //     .duration(hoverOptions.onMouseOut.fadeOut)      
+	                    //     .style("opacity", 0);
 	                });
 	            }
 	        }
@@ -341,7 +383,21 @@ var C9 =
 	            // interaction in chart
 	            hover: {
 	                enable: true,
-	                callback: function callback() {}
+	                options: {
+	                    template: '',
+	                    onMouseOver: {
+	                        fadeIn: 200,
+	                        callback: function callback(data) {
+	                            console.dir(data);
+	                        }
+	                    },
+	                    onMouseOut: {
+	                        fadeOut: 500,
+	                        callback: function callback(data) {
+	                            console.dir(data);
+	                        }
+	                    }
+	                }
 	            },
 
 	            // legend
@@ -1141,6 +1197,102 @@ var C9 =
 
 /***/ },
 /* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var Helper = {
+
+	    each: function each(loopable, callback, self, reverse) {
+	        // Check to see if null or undefined firstly.
+	        var i, len;
+	        if (self.isArray(loopable)) {
+	            len = loopable.length;
+	            if (reverse) {
+	                for (i = len - 1; i >= 0; i--) {
+	                    callback.call(self, loopable[i], i);
+	                }
+	            } else {
+	                for (i = 0; i < len; i++) {
+	                    callback.call(self, loopable[i], i);
+	                }
+	            }
+	        } else if ((typeof loopable === 'undefined' ? 'undefined' : _typeof(loopable)) === 'object') {
+	            var keys = Object.keys(loopable);
+	            len = keys.length;
+	            for (i = 0; i < len; i++) {
+	                callback.call(self, loopable[keys[i]], keys[i]);
+	            }
+	        }
+	    },
+
+	    // setDefaultConfig: function() {
+	    //     var self = this;
+
+	    //     if (self.defaultConfig == null || self.defaultConfig === undefined) {
+	    //         return;
+	    //     } else {
+	    //         self.lastConfig = self.merge(Chart._options, Chart);
+	    //         self.each(self.lastConfig, function(value, index) {
+	    //             // var prefixCfg = self.setPrefix(index);
+	    //             self.setValue(self.lastConfig[index], index);
+	    //         }, self);
+	    //     }
+	    // }
+
+	    setValue: function setValue(value, key) {
+	        var self = this;
+	        self[key] = value;
+	    },
+
+	    setPrefix: function setPrefix(config) {
+	        var constPrefix = '_';
+	        if (config) {
+	            return constPrefix + config;
+	        }
+	    },
+
+	    isEmpty: function isEmpty(value) {
+	        return value === null || value === undefined;
+	    },
+
+	    isObject: function isObject(object) {
+	        return !Util.isEmpty(object) && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object';
+	    },
+
+	    isArray: function isArray(array) {
+	        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
+	    },
+
+	    isFunction: function isFunction(func) {
+	        return !Util.isEmpty(func) && typeof func === 'function';
+	    },
+
+	    merge: function merge(obj1, obj2) {
+	        var obj3 = {};
+	        for (var attrname in obj2) {
+	            obj3[attrname] = obj2[attrname];
+	        }
+	        for (var attrname in obj1) {
+	            obj3[attrname] = obj1[attrname];
+	        }
+	        return obj3;
+	    }
+
+	};
+
+	var Util = {
+	    isEmpty: function isEmpty(value) {
+	        return value === null || value === undefined;
+	    }
+	};
+
+	module.exports = Helper;
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1280,7 +1432,7 @@ var C9 =
 	exports.default = DonutChart;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1585,7 +1737,7 @@ var C9 =
 	exports.default = LineChart;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1730,7 +1882,7 @@ var C9 =
 	exports.default = PieChart;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2032,7 +2184,7 @@ var C9 =
 	exports.default = TimeLine;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";

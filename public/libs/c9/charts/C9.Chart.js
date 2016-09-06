@@ -16,7 +16,21 @@ export default class Chart {
             // interaction in chart
             hover: {
                 enable: true,
-                callback: function(){},
+                options: {
+                    template: '',
+                    onMouseOver: {
+                        fadeIn: 200,
+                        // callback: function(data) {
+                        //     console.dir(data);
+                        // },
+                    },
+                    onMouseOut: {
+                        fadeOut: 500,
+                        // callback: function(data) {
+                        //     console.dir(data);
+                        // },
+                    }
+                }
             },
 
             // legend

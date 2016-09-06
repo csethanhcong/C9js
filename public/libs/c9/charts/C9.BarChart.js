@@ -3,6 +3,7 @@ import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
 import Tooltip from './utils/C9.Tooltip';
+import Helper from '../helper/C9.Helper';
 
 export default class BarChart extends Chart {
     constructor(options) {
@@ -136,46 +137,69 @@ export default class BarChart extends Chart {
 
         this.updateInteraction();
     }
+
+    /**
+     * Retrieve value from upper and lower bounds of each stack
+     * @param  {String} lower Lower bound of value
+     * @param  {String} upper Upper bound of value
+     * @return {String}       Value to return
+     */
+    retrieveValue(lower, upper) {
+        var d1 = Math.floor(lower) === lower ? 0 : lower.toString().split(".")[1].length;
+        var d2 = Math.floor(upper) === upper ? 0 : upper.toString().split(".")[1].length;
+        return d1 > d2 ? (upper - lower).toFixed(d1) : (upper - lower).toFixed(d2);
+    }
     
+    selectAllBar() {
+        var self = this;
+
+        return self.svg
+                .selectAll('g')
+                    .selectAll('.bar');
+    }
+
     /**
      * Update Interaction: Hover
      * @return {} 
      */
     updateInteraction() {
-        var self = this;
-        if (self.hover.enable) {
-            // var tooltip = new Tooltip(this.options, this.svg, this.data);
+        var self = this,
+            hoverEnable     = self.hover.enable,
+            hoverOptions    = self.hover.options,
+            selector        = self.selectAllBar(),
+            onMouseOverCallback = hoverOptions.onMouseOver.callback,
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback;
+
+        if (hoverEnable) {
             // Define the div for the tooltip
-        var div = d3.select("body")
-                    .append("div")   
-                    .attr("class", "tooltip")               
-                    .style("opacity", 0);
-        // Add the scatterplot
-        
-        var siblings = self.svg.selectAll('g')
-            .selectAll('.bar');
+            // TODO: Allow user to add custom DIV, CLASS
+            var div = d3.select('body')
+                        .append('g')   
+                        .attr('class', 'c9-tooltip-custom-box')               
+                        .style('opacity', 0)
+                        .append('rect')
+                        .style('fill', rgb(254, 229, 226))
+                        .style('stroke', rgb(253, 204, 198))
+                        .style('stroke-width', 2)
+                        .style('rx', 5)
+                        .style('ry', 5)
+                        .style('opacity', 0.95)
 
-        var value = function (value1, value2) {
-            var d1 = Math.floor(value1) === value1 ? 0 : value1.toString().split(".")[1].length;
-            var d2 = Math.floor(value2) === value2 ? 0 : value2.toString().split(".")[1].length;
-            return d1 > d2 ? (value2 - value1).toFixed(d1) : (value2 - value1).toFixed(d2);
-        }
-
-        siblings
-            .on("mouseover", function(d) { 
-                div.transition()        
-                    .duration(200)      
-                    .style("opacity", .9);      
-                div .html(d.name + "<br/>"  + value(d.y0, d.y1))  
-                    .style("left", (d3.event.pageX) + "px")     
-                    .style("top", (d3.event.pageY - 28) + "px");    
-                })                  
-            .on("mouseout", function(d) {       
-                div.transition()        
-                    .duration(500)      
-                    .style("opacity", 0);   
-            });
-
+            selector
+                .on("mouseover", function(d) {
+                    div.transition()
+                        .duration(hoverOptions.onMouseOver.fadeIn)
+                        .style("opacity", .9);      
+                    div .html(d.name + "<br/>"  + self.retrieveValue(d.y0, d.y1))  
+                        .style("left", (d3.event.pageX) + "px")     
+                        .style("top", (d3.event.pageY - 28) + "px");
+                })
+                .on("mouseout", function(d) { 
+                    onMouseOutCallback(d);      
+                    // div.transition()
+                    //     .duration(hoverOptions.onMouseOut.fadeOut)      
+                    //     .style("opacity", 0);
+                });
         }
     }
     
