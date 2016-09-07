@@ -42,7 +42,8 @@ export default class BarChart extends Chart {
         self._barColor        = options.bar_color  ||  config.bar_color;
         self._x               = x;
         self._y               = y;
-        self.initBarChartConfig(height, x, y);
+
+        self.updateConfig();
     }
 
     /*==============================
@@ -94,43 +95,49 @@ export default class BarChart extends Chart {
             this._barColor = newBarColor;
         }
     }
+
+    set x(newX) {
+        if (newX) {
+            this._x = newX;
+        }
+    }
+
+    set y(newY) {
+        if (newY) {
+            this._y = newY;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
     =            Main Functions            =
     ======================================*/
     /**
-     * [First init config Bar Chart]
-     * @param  {[type]} height [Height of Bar Chart]
-     * @param  {[type]} x      [x scale]
-     * @param  {[type]} y      [y scale]
-     * @return {[type]}        [description]
+     * Init Bar Chart Config
      */
-    initBarChartConfig(height, x, y) {
-        var color = this.barColor;
-        
-        var bar = this.body.selectAll(".bar")
-            .data(this.data)
-            .enter().append("g")
-            .attr("class", "gBar")
-            .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+    updateConfig() {
+        var self  = this,
+            color = self.barColor,
+            x     = self._x,
+            y     = self._y;
+
+        var bar = self.body
+                    .selectAll(".c9-chart-bar.c9-custom-bar")
+                    .data(self.data)
+                    .enter()
+                        .append("g")
+                        .attr("class", "c9-chart-bar c9-custom-bar")
+                        .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
 
         bar.selectAll("rect")
-            .data(function(d) {
-                return d.stack;
-            })
-            .enter().append("rect")
-            .attr("class", "bar")
-            .style("fill", function(d, i) {
-                return color(i);
-            })
-            .attr("y", function(d) {
-                return y(d.y1);
-            })
-            .attr("width", this.barWidth) //x.rangeBand()
-            .attr("height", function(d) {
-                return y(d.y0) - y(d.y1);
-            });
+            .data(function(d) { return d.stack; })
+            .enter()
+                .append("rect")
+                .attr("class", "c9-chart-bar c9-custom-rect")
+                .style("fill", function(d, i) { return color(i); })
+                .attr("y", function(d) { return y(d.y1); })
+                .attr("width", self.barWidth) //x.rangeBand()
+                .attr("height", function(d) { return y(d.y0) - y(d.y1); });
     }
 
     /**
@@ -159,12 +166,15 @@ export default class BarChart extends Chart {
         return d1 > d2 ? (upper - lower).toFixed(d1) : (upper - lower).toFixed(d2);
     }
     
+    /**
+     * Select all bars as type RECT in Bar Chart via its CLASS
+     */
     selectAllBar() {
         var self = this;
 
         return self.body
                 .selectAll('g')
-                    .selectAll('.bar');
+                    .selectAll('.c9-chart-bar.c9-custom-rect');
     }
 
     /**
