@@ -16,7 +16,21 @@ export default class Chart {
             // interaction in chart
             hover: {
                 enable: true,
-                callback: function(){},
+                options: {
+                    template: '',
+                    onMouseOver: {
+                        fadeIn: 200,
+                        // callback: function(data) {
+                        //     console.dir(data);
+                        // },
+                    },
+                    onMouseOut: {
+                        fadeOut: 500,
+                        // callback: function(data) {
+                        //     console.dir(data);
+                        // },
+                    }
+                }
             },
 
             // legend
@@ -39,7 +53,13 @@ export default class Chart {
         self._height    = options.height    || config.height;
         self._colorRange= options.color_range|| config.color_range;
         self._margin    = self.extend(options.margin, config.margin);
+
+        // Skeleton: 
+        // SVG
+        // ---BODY (g)
+        // -------BlaBla
         self._svg       = null;
+        self._body      = null;
         self._options   = options;
         self._hover     = options.hover     || config.hover;
 
@@ -80,6 +100,10 @@ export default class Chart {
 
     get svg() {
         return this._svg;
+    }
+
+    get body() {
+        return this._body;
     }
 
     get options() {
@@ -138,6 +162,12 @@ export default class Chart {
         }
     }
 
+    set body(newBody) {
+        if (newBody) {
+            this._body = newBody;
+        }
+    }
+
     set options(newOptions) {
         if (newOptions) {
             this._options = newOptions;
@@ -169,10 +199,10 @@ export default class Chart {
         this.svg = d3.select(id)
             .append("svg")
             .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform",
-                "translate(" + margin.left + "," + margin.top + ")");
+            .attr("height", height + margin.top + margin.bottom);
+
+        this.body = this.svg.append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
     
     /**

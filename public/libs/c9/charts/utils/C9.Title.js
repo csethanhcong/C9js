@@ -1,7 +1,7 @@
 'use strict';
 
 export default class Title {
-    constructor(options, svg, width, height, margin) {
+    constructor(options, body, width, height, margin) {
         var config = {
             title_show      : true,
             title_text      : "Sample Chart",
@@ -14,12 +14,12 @@ export default class Title {
         this._titlePosition = options.title_position   || config.title_position;
         this._titleSize     = options.title_size       || config.title_size;
 
-        this._svg    = svg;
+        this._body    = body;
 
         if (this._titleShow) {
-            // Select CURRENT svg container, to make this axis outside
+            // Select CURRENT body container, to make this axis outside
             // as a SEPARATED component, just like AXIS, of CHART
-            var text = d3.select(this._svg[0][0].parentNode)
+            var text = d3.select(this._body[0][0].parentNode)
                 .append("g")
                 .append("text")
                 .attr("class", "title");

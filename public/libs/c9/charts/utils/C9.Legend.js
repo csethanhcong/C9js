@@ -1,7 +1,7 @@
 'use strict';
 
 export default class Legend {
-    constructor(options, svg, color, data) {
+    constructor(options, body, color, data) {
         var config = {
             legend_show      : false,
             legend_position  : [0, 0],
@@ -22,19 +22,19 @@ export default class Legend {
         this._legendSpace        = options.legend_space      || config.legend_space;
         this._legendStyle        = options.legend_style      || config.legend_style;
 
-        this._svg    = svg;
+        this._body    = body;
         this._data   = data;
         if (this._legendShow) {
             var self = this;
             var legendDomain = [];
-            if (self._svg.c9Chart == "line") {
+            if (self._body.type == "line") {
                 var dataGroup = d3.nest()
                     .key(function(d) { return d.Client; })
                     .entries(self._data);
                 dataGroup.forEach(function(d, i) {
                     legendDomain.push(d.key);
                 })
-            } else if (self._svg.c9Chart == "bar") {
+            } else if (self._body.type == "bar") {
                 try {
                     if (typeof options.legend_domain === "string")
                         legendDomain.push(options.legend_domain);
@@ -44,7 +44,7 @@ export default class Legend {
                 catch (err) {
                     throw "Legend domain is not defined";
                 }
-            } else if (self._svg.c9Chart == "pie" || self._svg.c9Chart == "donut" || self._svg.c9Chart == "timeline") {
+            } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
                 self._data.forEach(function(d) {
                     d.name ? legendDomain.push(d.name) : legendDomain.push("");
                 });
@@ -61,7 +61,7 @@ export default class Legend {
 
             color.domain(legendDomain);
 
-            var legend = d3.select(self._svg[0][0].parentNode)
+            var legend = d3.select(self._body[0][0].parentNode)
                 .append("g")
                 .attr("class", "legend")
                 .attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");

@@ -20,7 +20,7 @@ export default class TimeLine extends Chart {
             label_margin: 20
         };
 
-        self.svg.c9Chart        = "timeline";
+        self.body.type        = "timeline";
         self._stack             = options.stack || config.stack;
         self._starting          = options.starting || config.starting;
         self._ending            = options.ending || config.ending;
@@ -185,7 +185,7 @@ export default class TimeLine extends Chart {
             //draw background
             if (self.backgroundColor) { 
                 var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
-                self.svg.selectAll("g")
+                self.body.selectAll("g")
                     .data(data).enter()
                     .insert("rect")
                     .attr("class", "timeline-background-bar")
@@ -197,7 +197,7 @@ export default class TimeLine extends Chart {
             }
 
             //draw item
-            self.svg.selectAll("g")
+            self.body.selectAll("g")
                 .data(data).enter()
                 .append(function(d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, "ending_time" in d? "rect" : "circle");
@@ -216,7 +216,7 @@ export default class TimeLine extends Chart {
                 .style("fill", color(index));
 
             //draw label inside item
-            self.svg.selectAll("g")
+            self.body.selectAll("g")
                 .data(data).enter()
                 .append("text")
                 .attr("x", getXTextPos)
@@ -227,7 +227,7 @@ export default class TimeLine extends Chart {
 
             if (self.rowSeparator && index < self.maxStack - 1) {
                 var lineYAxis = ( self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index]);
-                self.svg.append("svg:line")
+                self.body.append("svg:line")
                   .attr("class", "timeline-row-separator")
                   .attr("x1", 0)
                   .attr("x2", width)
@@ -241,14 +241,14 @@ export default class TimeLine extends Chart {
             if (typeof(datum.name) !== "undefined") { 
                 var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 
-                d3.select(self.svg[0][0].parentNode).append("text")
+                d3.select(self.body[0][0].parentNode).append("text")
                     .attr("class", "timeline-label")
                     .attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")")
                     .text(datum.name);
             }
             //draw icon
             else if (typeof(datum.icon) !== "undefined") {
-                d3.select(self.svg[0][0].parentNode).append("image")
+                d3.select(self.body[0][0].parentNode).append("image")
                     .attr("class", "timeline-label")
                     .attr("transform", "translate("+ self.labelMargin +","+ (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index])+")")
                     .attr("xlink:href", datum.icon)
@@ -282,9 +282,9 @@ export default class TimeLine extends Chart {
     draw() {
         this.options.starting = this.starting;
         this.options.ending = this.ending;
-        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
-        var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);    
-        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
+        var axis    = new Axis(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
+        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);    
+        var legend  = new Legend(this.options, this.body, this.colorRange, this.data);
     }
     
     /*=====  End of Main Functions  ======*/

@@ -24,7 +24,7 @@ export default class LineChart extends Chart {
         self._pointOpacity      = options.point_opacity         ||  config.point_opacity;
         self._pointHoverEnable  = options.point_hover_enable    ||  config.point_hover_enable;
         self._interpolate       = options.interpolate           ||  config.interpolate;
-        self.svg.c9Chart = "line";
+        self.body.type = "line";
 
         self.initLineChart();
 
@@ -152,7 +152,7 @@ export default class LineChart extends Chart {
                         .y(function(d) { return y(d.sale); })
                         .interpolate(this.interpolate);
 
-        var _svg        = this.svg,
+        var _body        = this.body,
             _colorRange = this.colorRange,
             _pointShow  = this.pointShow,
             _pointRadius= this.pointRadius,
@@ -161,7 +161,7 @@ export default class LineChart extends Chart {
             _pointOpacity= this.pointOpacity;
 
         dataGroup.forEach(function(d,i) {
-            _svg.append('path')
+            _body.append('path')
                 .attr('d', lineGen(d.values))
                 .attr('stroke', _colorRange(i))
                 .attr('stroke-width', 2)
@@ -169,7 +169,7 @@ export default class LineChart extends Chart {
                 .attr('fill', 'none');
 
             if (_pointShow) {
-                _svg.selectAll("dot")
+                _body.selectAll("dot")
                     .data(d.values)
                     .enter()
                     .append("circle")
@@ -190,9 +190,9 @@ export default class LineChart extends Chart {
      */
     draw() {
 
-        var axis    = new Axis(this.options, this.svg, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
-        var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
+        var axis    = new Axis(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
+        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);
+        var legend  = new Legend(this.options, this.body, this.colorRange, this.data);
     }
     
     /*=====  End of Main Functions  ======*/
@@ -247,7 +247,7 @@ export default class LineChart extends Chart {
 //             .y(function(d, i) { return y(d.y); })
 //             .interpolate("linear");
 
-//         // this.svg.selectAll('g')
+//         // this.body.selectAll('g')
 //         //         .data(this.sortedDataX)
 //         //         .enter()
 //         //         .append('path')
@@ -255,7 +255,7 @@ export default class LineChart extends Chart {
 //         //         .attr('d', function(d){
 //         //             return lineFunc(d.coordinate);
 //         //         });
-//         this.svg.selectAll('dot')
+//         this.body.selectAll('dot')
 //                 .data(this.sortedDataX)
 //                 .selectAll('dot')
 //                 .data(function(d,i) {return d;})

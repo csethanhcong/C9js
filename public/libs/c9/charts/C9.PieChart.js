@@ -12,7 +12,7 @@ export default class PieChart extends Chart {
         };
 
         self._radius    = options.radius || config.radius;
-        self.svg.c9Chart = "pie";
+        self.body.type = "pie";
         self.initPieChartConfig();
     }
 
@@ -60,7 +60,7 @@ export default class PieChart extends Chart {
         var color = this.colorRange;
 
         // select paths, use arc generator to draw
-        var arcs = this.svg
+        var arcs = this.body
                     .append('g')
                     .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
                     .selectAll('g.slice')
@@ -92,8 +92,8 @@ export default class PieChart extends Chart {
      */
     draw() {
 
-        var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
+        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);
+        var legend  = new Legend(this.options, this.body, this.colorRange, this.data);
 
     }
     

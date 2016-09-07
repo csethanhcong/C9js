@@ -15,7 +15,7 @@ export default class DonutChart extends Chart {
 
         self._outerRadius    = options.outer_radius || config.outer_radius;
         self._innerRadius    = options.inner_radius || config.inner_radius;
-        self.svg.c9Chart = 'donut';
+        self.body.type = 'donut';
         self.initDonutChartConfig();
     }
 
@@ -65,7 +65,7 @@ export default class DonutChart extends Chart {
             .value(function(d) { return d.value; });
 
         //draw chart
-        var arcs = this.svg
+        var arcs = this.body
                     .append('g')
                     .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
                     .selectAll('g.arc')
@@ -86,8 +86,8 @@ export default class DonutChart extends Chart {
 
     draw() {
         
-        var title   = new Title(this.options, this.svg, this.width, this.height, this.margin);
-        var legend  = new Legend(this.options, this.svg, this.colorRange, this.data);
+        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);
+        var legend  = new Legend(this.options, this.body, this.colorRange, this.data);
 
     }
     
