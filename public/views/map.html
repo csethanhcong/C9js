@@ -110,7 +110,7 @@
 		<div class="page-header">
 		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Map Examples</h3>
 		</div>
-		<div id="map" style="width: 100%; height: 400px;"></div>
+		<div id="map" style="width: 100%; height: 500px; padding: 10px 10px 10px 10px"></div>
 	</div>
 	    <script type="text/javascript" charset="utf-8">
 	    	var o = {
@@ -120,7 +120,15 @@
 	                lon: 106.6438,
 	                zoom: 15
 	            },
-	            markers: [[10.8142, 106.6438, 'http://www.sailingeurope.com/images/sea/review_location.png', .5]]
+	            layers: [
+	            	{
+	            		type: "Tile",
+	            		source: "TileArcGISRest",
+	            		url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/' +
+	          				'Specialty/ESRI_StateCityHighway_USA/MapServer',
+	            	},
+	            ],
+            	
 	    	}
 	    	var map = new C9.Map(o);
 		</script>

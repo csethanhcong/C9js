@@ -2041,6 +2041,8 @@ var C9 =
 	    value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2057,7 +2059,10 @@ var C9 =
 	            // Layers:
 	            // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
 	            // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
-	            layer: "OSM",
+	            layers: {
+	                type: "Tile",
+	                source: "OSM"
+	            },
 	            view: {
 	                lat: 0,
 	                lon: 0,
@@ -2069,12 +2074,11 @@ var C9 =
 	        };
 
 	        self._id = options.id || config.id;
-	        self._width = options.width || config.width;
 	        self._data = options.data || config.data;
-	        self._height = options.height || config.height;
 	        self._view = options.view || config.view;
 	        self._markers = options.markers || [];
 	        self._options = options;
+	        self._layers = options.layers || config.layers;
 	        self.initMapConfig();
 	    }
 
@@ -2093,17 +2097,94 @@ var C9 =
 	        ======================================*/
 
 	        value: function initMapConfig() {
+	            var self = this;
+	            var view = self.view;
+
+	            //layers
+	            self.c9Layers = [];
+	            self.initLayer();
+
+	            //quick markers
+	            self.initMarker();
+
+	            self.map = new ol.Map({
+	                target: self.id,
+	                layers: self.c9Layers,
+	                view: new ol.View({
+	                    center: ol.proj.fromLonLat([view.lon, view.lat]),
+	                    zoom: view.zoom
+	                })
+	            });
+	        }
+
+	        /*=====  End of Main Functions  ======*/
+
+	        //tile layer setup
+
+	    }, {
+	        key: "initLayer",
+	        value: function initLayer() {
+	            var self = this;
+	            self.layers.forEach(function (l, i) {
+	                var layer = new ol.layer[l.type]();
+	                if (l.type === 'Tile') {
+	                    var source = undefined;
+	                    switch (l.source) {
+	                        case 'OSM':
+	                            source = new ol.source.OSM();
+	                            break;
+	                        case 'BingMaps':
+	                            source = new ol.source.BingMaps({
+	                                key: l.key,
+	                                imagerySet: l.imagerySet === undefined ? 'Road' : l.imagerySet
+	                            });
+	                            break;
+	                        case 'Stamen':
+	                            source = new ol.source.Stamen({
+	                                layer: l.layer === undefined ? 'watercolor' : l.layer
+	                            });
+	                            break;
+	                        /********** TileJSON require ol >= v3.8.2 **********/
+	                        // case 'TileJSON':
+	                        //     source = new ol.source.TileJSON({
+	                        //         url: l.url,
+	                        //         crossOrigin: l.crossOrigin === undefined ? 'anonymous' : l.crossOrigin
+	                        //     });
+	                        //     break;
+	                        case 'TileArcGISRest':
+	                            source = new ol.source.TileArcGISRest({
+	                                url: l.url
+	                            });
+	                            break;
+	                    }
+	                    layer.setSource(source);
+	                }
+	                self.c9Layers.push(layer);
+	            });
+	        }
+
+	        //marker setup
+
+	    }, {
+	        key: "initMarker",
+	        value: function initMarker() {
+	            var self = this;
+	            var markers = this.markers;
+
+	            if (markers.length === 0) return;
+
 	            var vectorSource = new ol.source.Vector({});
 	            var styles = {};
-	            this.markers.forEach(function (m, i) {
+	            if (_typeof(markers[0]) === 'object') markers.forEach(function (m, i) {
 	                var marker = new ol.Feature({
 	                    type: 'c9GeoMarker' + i,
 	                    geometry: new ol.geom.Point(ol.proj.fromLonLat([m[1], m[0]]))
 	                });
+
 	                if (m[2] === undefined) styles['c9GeoMarker' + i] = new ol.style.Style({
 	                    image: new ol.style.Icon({
 	                        anchor: [0.5, 1],
-	                        src: 'https://farm9.staticflickr.com/8427/28670431094_0c20eb415a_o_d.png'
+	                        src: 'https://cdn1.iconfinder.com/data/icons/Map-Markers-Icons-Demo-PNG/48/Map-Marker-Marker-Outside-Chartreuse.png'
 	                    })
 	                });else styles['c9GeoMarker' + i] = new ol.style.Style({
 	                    image: new ol.style.Icon({
@@ -2115,32 +2196,41 @@ var C9 =
 
 	                vectorSource.addFeature(marker);
 	            });
+	            //only 1 marker
+	            else {
+	                    var marker = new ol.Feature({
+	                        type: 'c9GeoMarker',
+	                        geometry: new ol.geom.Point(ol.proj.fromLonLat([markers[1], markers[0]]))
+	                    });
 
-	            this.map = new ol.Map({
-	                target: this.id,
-	                layers: [new ol.layer.Tile({
-	                    source: new ol.source.OSM()
-	                }), new ol.layer.Vector({
-	                    source: vectorSource,
-	                    style: function style(feature) {
-	                        return styles[feature.get('type')];
-	                    }
-	                })],
-	                view: new ol.View({
-	                    center: ol.proj.fromLonLat([this.view.lon, this.view.lat]),
-	                    zoom: this.view.zoom
-	                })
-	            });
+	                    if (markers[2] === undefined) styles['c9GeoMarker'] = new ol.style.Style({
+	                        image: new ol.style.Icon({
+	                            anchor: [0.5, 1],
+	                            src: 'https://cdn1.iconfinder.com/data/icons/Map-Markers-Icons-Demo-PNG/48/Map-Marker-Marker-Outside-Chartreuse.png'
+	                        })
+	                    });else styles['c9GeoMarker'] = new ol.style.Style({
+	                        image: new ol.style.Icon({
+	                            anchor: [0.5, 1],
+	                            src: markers[2],
+	                            scale: markers[3] === undefined ? 1 : markers[3]
+	                        })
+	                    });
+
+	                    vectorSource.addFeature(marker);
+	                }
+
+	            self.c9Layers.push(new ol.layer.Vector({
+	                source: vectorSource,
+	                style: function style(feature) {
+	                    return styles[feature.get('type')];
+	                }
+	            }));
 	        }
-
-	        /*=====  End of Main Functions  ======*/
-
 	    }, {
 	        key: "id",
 	        get: function get() {
 	            return this._id;
 	        },
-
 
 	        /*=====  End of Getter  ======*/
 
@@ -2191,6 +2281,16 @@ var C9 =
 	        set: function set(newMarkers) {
 	            if (newMarkers) {
 	                this._markers = newMarkers;
+	            }
+	        }
+	    }, {
+	        key: "layers",
+	        get: function get() {
+	            return this._layers;
+	        },
+	        set: function set(newLayers) {
+	            if (newLayers) {
+	                this._layers = newLayers;
 	            }
 	        }
 	    }]);
