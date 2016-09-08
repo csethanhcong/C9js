@@ -19,7 +19,7 @@ e.g: {name: a, value: 2} -> {name: a, y0: lowerbound(2), y1: upperbound(2)}
 
 #### TODO:
 
-00. `Remake Hover Interaction`: 
+00. `Remake Hover Interaction for Donut/Pie Chart`: 
 http://bl.ocks.org/erichoco/6694616  
 http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 
