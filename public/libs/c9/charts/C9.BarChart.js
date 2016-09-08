@@ -150,7 +150,6 @@ export default class BarChart extends Chart {
         var title   = new Title(this.options, this.body, this.width, this.height, this.margin);
         var legend  = new Legend(this.options, this.body, this.barColor, this.data);
         
-
         this.updateInteraction();
     }
 

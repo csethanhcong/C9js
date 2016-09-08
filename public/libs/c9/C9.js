@@ -1534,7 +1534,16 @@ var C9 =
 	        self._interpolate = options.interpolate || config.interpolate;
 	        self.body.type = "line";
 
-	        self.initLineChart();
+	        var width = self.width - self.margin.left - self.margin.right;
+	        var height = self.height - self.margin.top - self.margin.bottom;
+
+	        var x = d3.scale.linear().range([0, width]);
+	        var y = d3.scale.linear().range([height, 0]);
+
+	        self._x = x;
+	        self._y = y;
+
+	        self.updateConfig();
 
 	        return _this;
 	    }
@@ -1544,7 +1553,7 @@ var C9 =
 	    ==============================*/
 
 	    _createClass(LineChart, [{
-	        key: 'initLineChart',
+	        key: 'updateConfig',
 
 	        /*=====  End of Setter  ======*/
 
@@ -1553,53 +1562,52 @@ var C9 =
 	        ======================================*/
 
 	        /**
-	         * [First init Line Chart]
-	         * @return {[type]} [description]
+	         * First init Line Chart
 	         */
-	        value: function initLineChart() {
-	            var dataGroup = d3.nest().key(function (d) {
+	        value: function updateConfig() {
+	            var self = this,
+	                x = self._x,
+	                y = self._y;
+
+	            self._dataGroup = d3.nest().key(function (d) {
 	                return d.Client;
-	            }).entries(this.data);
+	            }).entries(self.data);
 
-	            var width = this.width - this.margin.left - this.margin.right;
-	            var height = this.height - this.margin.top - this.margin.bottom;
+	            var dataGroup = self._dataGroup;
 
-	            var x = d3.scale.linear().range([0, width]);
-	            var y = d3.scale.linear().range([height, 0]);
-
-	            x.domain([d3.min(this.data, function (d) {
+	            x.domain([d3.min(self.data, function (d) {
 	                return d.year;
-	            }), d3.max(this.data, function (d) {
+	            }), d3.max(self.data, function (d) {
 	                return d.year;
 	            })]);
-	            y.domain([d3.min(this.data, function (d) {
+	            y.domain([d3.min(self.data, function (d) {
 	                return d.sale;
-	            }), d3.max(this.data, function (d) {
+	            }), d3.max(self.data, function (d) {
 	                return d.sale;
 	            })]);
 
-	            this.xAxis = d3.svg.axis().scale(x);
-	            this.yAxis = d3.svg.axis().scale(y).orient("left");
+	            self.xAxis = d3.svg.axis().scale(x);
+	            self.yAxis = d3.svg.axis().scale(y).orient("left");
 
 	            var lineGen = d3.svg.line().x(function (d) {
 	                return x(d.year);
 	            }).y(function (d) {
 	                return y(d.sale);
-	            }).interpolate(this.interpolate);
+	            }).interpolate(self.interpolate);
 
-	            var _body = this.body,
-	                _colorRange = this.colorRange,
-	                _pointShow = this.pointShow,
-	                _pointRadius = this.pointRadius,
-	                _pointFill = this.pointFill,
-	                _pointStroke = this.pointStroke,
-	                _pointOpacity = this.pointOpacity;
+	            var _body = self.body,
+	                _colorRange = self.colorRange,
+	                _pointShow = self.pointShow,
+	                _pointRadius = self.pointRadius,
+	                _pointFill = self.pointFill,
+	                _pointStroke = self.pointStroke,
+	                _pointOpacity = self.pointOpacity;
 
 	            dataGroup.forEach(function (d, i) {
 	                _body.append('path').attr('d', lineGen(d.values)).attr('stroke', _colorRange(i)).attr('stroke-width', 2).attr('id', 'line_' + d.key).attr('fill', 'none');
 
 	                if (_pointShow) {
-	                    _body.selectAll("dot").data(d.values).enter().append("circle").attr("r", _pointRadius).attr("cx", function (_d) {
+	                    _body.selectAll("dot").data(d.values).enter().append("circle").attr('class', 'c9-chart-line c9-circle-custom').attr("r", _pointRadius).attr("cx", function (_d) {
 	                        return x(_d.year);
 	                    }).attr("cy", function (_d) {
 	                        return y(_d.sale);
@@ -1609,8 +1617,7 @@ var C9 =
 	        }
 
 	        /**
-	         * [Main draw functon of Line Chart]
-	         * @return {[type]} [description]
+	         * Main draw function of Line Chart
 	         */
 
 	    }, {
@@ -1620,6 +1627,65 @@ var C9 =
 	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
 	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
 	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
+
+	            this.updateInteraction();
+	        }
+
+	        /**
+	         * Select all circle as type CIRCLE in Line Chart via its CLASS
+	         */
+
+	    }, {
+	        key: 'selectAllCircle',
+	        value: function selectAllCircle() {
+	            var self = this;
+
+	            return self.body.selectAll('circle.c9-chart-line.c9-circle-custom');
+	        }
+
+	        /**
+	         * Update Interaction: Hover
+	         */
+
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                hoverEnable = self.hover.enable,
+	                hoverOptions = self.hover.options,
+	                selector = self.selectAllCircle(),
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+
+	            if (hoverEnable) {
+	                // Define the div for the tooltip
+	                // TODO: Allow user to add custom DIV, CLASS
+	                // Make sure that: 
+	                // - Rect not overflow the bar, if not, hover effect will be messed
+	                // -> So, just align the rect to right/left (x: 25) to avoid it
+	                // -> And, the text will be align also
+	                var div = self.body.append('g').style('z-index', '100').style('display', 'none');
+	                // .style('opacity', 0);
+	                // Rect Container
+	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	                // First line
+	                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
+	                // Second line
+	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+
+	                selector.on("mouseover", function (d) {
+	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn)
+	                    // .style("opacity", .9)
+	                    .style("display", 'block').attr("transform", "translate(" + self.x(d.year) + "," + self.y(d.sale) + ")");
+
+	                    text_1.text('Name: ' + d.year);
+	                    text_2.text('Value: ' + d.sale);
+	                }).on("mouseout", function (d) {
+	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut)
+	                    // .style("opacity", 0);
+	                    .style("display", 'none');
+	                });
+	            }
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1629,7 +1695,6 @@ var C9 =
 	        get: function get() {
 	            return this._pointShow;
 	        },
-
 
 	        /*=====  End of Getter  ======*/
 
@@ -1700,6 +1765,36 @@ var C9 =
 	        set: function set(newInterpolate) {
 	            if (newInterpolate) {
 	                this._interpolate = newInterpolate;
+	            }
+	        }
+	    }, {
+	        key: 'x',
+	        get: function get() {
+	            return this._x;
+	        },
+	        set: function set(newX) {
+	            if (newX) {
+	                this._x = newX;
+	            }
+	        }
+	    }, {
+	        key: 'y',
+	        get: function get() {
+	            return this._y;
+	        },
+	        set: function set(newY) {
+	            if (newY) {
+	                this._y = newY;
+	            }
+	        }
+	    }, {
+	        key: 'dataGroup',
+	        get: function get() {
+	            return this._dataGroup;
+	        },
+	        set: function set(newDataGroup) {
+	            if (newDataGroup) {
+	                this._dataGroup = newDataGroup;
 	            }
 	        }
 	    }]);
@@ -2318,8 +2413,8 @@ var C9 =
 	            var self = this;
 	            self.layers.forEach(function (l, i) {
 	                var layer = new ol.layer[l.type]();
+	                var source = undefined;
 	                if (l.type === 'Tile') {
-	                    var source = undefined;
 	                    switch (l.source) {
 	                        case 'OSM':
 	                            source = new ol.source.OSM();
@@ -2348,8 +2443,13 @@ var C9 =
 	                            });
 	                            break;
 	                    }
-	                    layer.setSource(source);
+	                } else if (l.type === 'Vector') {
+	                    switch (l.source) {
+	                        case 'Vector':
+
+	                    }
 	                }
+	                layer.setSource(source);
 	                self.c9Layers.push(layer);
 	            });
 	        }
