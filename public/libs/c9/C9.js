@@ -71,7 +71,7 @@ var C9 =
 
 	var _C12 = _interopRequireDefault(_C11);
 
-	var _C13 = __webpack_require__(7);
+	var _C13 = __webpack_require__(3);
 
 	var _C14 = _interopRequireDefault(_C13);
 
@@ -111,23 +111,23 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(3);
+	var _C3 = __webpack_require__(4);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(4);
+	var _C5 = __webpack_require__(5);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(5);
+	var _C7 = __webpack_require__(6);
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(6);
+	var _C9 = __webpack_require__(7);
 
 	var _C10 = _interopRequireDefault(_C9);
 
-	var _C11 = __webpack_require__(7);
+	var _C11 = __webpack_require__(3);
 
 	var _C12 = _interopRequireDefault(_C11);
 
@@ -183,7 +183,8 @@ var C9 =
 	        self._barColor = options.bar_color || config.bar_color;
 	        self._x = x;
 	        self._y = y;
-	        self.initBarChartConfig(height, x, y);
+
+	        self.updateConfig();
 	        return _this;
 	    }
 
@@ -192,7 +193,7 @@ var C9 =
 	    ==============================*/
 
 	    _createClass(BarChart, [{
-	        key: 'initBarChartConfig',
+	        key: 'updateConfig',
 
 	        /*=====  End of Setter  ======*/
 
@@ -200,26 +201,25 @@ var C9 =
 	        =            Main Functions            =
 	        ======================================*/
 	        /**
-	         * [First init config Bar Chart]
-	         * @param  {[type]} height [Height of Bar Chart]
-	         * @param  {[type]} x      [x scale]
-	         * @param  {[type]} y      [y scale]
-	         * @return {[type]}        [description]
+	         * Init Bar Chart Config
 	         */
-	        value: function initBarChartConfig(height, x, y) {
-	            var color = this.barColor;
+	        value: function updateConfig() {
+	            var self = this,
+	                color = self.barColor,
+	                x = self._x,
+	                y = self._y;
 
-	            var bar = this.body.selectAll(".bar").data(this.data).enter().append("g").attr("class", "gBar").attr("transform", function (d) {
+	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
 	                return "translate(" + x(d.name) + ",0)";
 	            });
 
 	            bar.selectAll("rect").data(function (d) {
 	                return d.stack;
-	            }).enter().append("rect").attr("class", "bar").style("fill", function (d, i) {
+	            }).enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d, i) {
 	                return color(i);
 	            }).attr("y", function (d) {
 	                return y(d.y1);
-	            }).attr("width", this.barWidth) //x.rangeBand()
+	            }).attr("width", self.barWidth) //x.rangeBand()
 	            .attr("height", function (d) {
 	                return y(d.y0) - y(d.y1);
 	            });
@@ -255,12 +255,17 @@ var C9 =
 	            var d2 = Math.floor(upper) === upper ? 0 : upper.toString().split(".")[1].length;
 	            return d1 > d2 ? (upper - lower).toFixed(d1) : (upper - lower).toFixed(d2);
 	        }
+
+	        /**
+	         * Select all bars as type RECT in Bar Chart via its CLASS
+	         */
+
 	    }, {
 	        key: 'selectAllBar',
 	        value: function selectAllBar() {
 	            var self = this;
 
-	            return self.body.selectAll('g').selectAll('.bar');
+	            return self.body.selectAll('g').selectAll('.c9-chart-bar.c9-custom-rect');
 	        }
 
 	        /**
@@ -349,11 +354,21 @@ var C9 =
 	        key: 'x',
 	        get: function get() {
 	            return this._x;
+	        },
+	        set: function set(newX) {
+	            if (newX) {
+	                this._x = newX;
+	            }
 	        }
 	    }, {
 	        key: 'y',
 	        get: function get() {
 	            return this._y;
+	        },
+	        set: function set(newY) {
+	            if (newY) {
+	                this._y = newY;
+	            }
 	        }
 	    }]);
 
@@ -364,9 +379,9 @@ var C9 =
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -375,6 +390,12 @@ var C9 =
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _C = __webpack_require__(3);
+
+	var _C2 = _interopRequireDefault(_C);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -428,7 +449,7 @@ var C9 =
 	        self._data = options.data || config.data;
 	        self._height = options.height || config.height;
 	        self._colorRange = options.color_range || config.color_range;
-	        self._margin = self.extend(options.margin, config.margin);
+	        self._margin = _C2.default.merge(options.margin, config.margin);
 
 	        // Skeleton: 
 	        // SVG
@@ -447,7 +468,7 @@ var C9 =
 	    ==============================*/
 
 	    _createClass(Chart, [{
-	        key: "initConfig",
+	        key: 'initConfig',
 
 	        /*=====  End of Setter  ======*/
 
@@ -455,9 +476,7 @@ var C9 =
 	        =            Main Functions            =
 	        ======================================*/
 	        /**
-	         * [First init config in parent Chart]
-	         * @param  {[type]} self [description]
-	         * @return {[type]}      [description]
+	         * Init & Update Parent Chart Config
 	         */
 	        value: function initConfig() {
 	            var margin = this.margin,
@@ -467,7 +486,7 @@ var C9 =
 
 	            this.svg = d3.select(id).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom);
 
-	            this.body = this.svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	            this.body = this.svg.append("g").attr('class', 'c9-chart c9-custom-container').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	        }
 
 	        /**
@@ -476,24 +495,17 @@ var C9 =
 	         * @param obj2
 	         * @returns obj3 a new object based on obj1 and obj2
 	         */
-
-	    }, {
-	        key: "extend",
-	        value: function extend(obj1, obj2) {
-	            var obj3 = {};
-	            for (var attrname in obj2) {
-	                obj3[attrname] = obj2[attrname];
-	            }
-	            for (var attrname in obj1) {
-	                obj3[attrname] = obj1[attrname];
-	            }
-	            return obj3;
-	        }
+	        // extend(obj1,obj2){
+	        //     var obj3 = {};
+	        //     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+	        //     for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+	        //     return obj3;
+	        // }
 
 	        /*=====  End of Main Functions  ======*/
 
 	    }, {
-	        key: "id",
+	        key: 'id',
 	        get: function get() {
 	            return this._id;
 	        },
@@ -510,7 +522,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "width",
+	        key: 'width',
 	        get: function get() {
 	            return this._width;
 	        },
@@ -520,7 +532,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "height",
+	        key: 'height',
 	        get: function get() {
 	            return this._height;
 	        },
@@ -530,7 +542,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "colorRange",
+	        key: 'colorRange',
 	        get: function get() {
 	            if (typeof this._colorRange == 'string') {
 	                return d3.scale[this._colorRange]();
@@ -544,7 +556,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "margin",
+	        key: 'margin',
 	        get: function get() {
 	            return this._margin;
 	        },
@@ -554,7 +566,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "data",
+	        key: 'data',
 	        get: function get() {
 	            return this._data;
 	        },
@@ -564,7 +576,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "svg",
+	        key: 'svg',
 	        get: function get() {
 	            return this._svg;
 	        },
@@ -574,7 +586,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "body",
+	        key: 'body',
 	        get: function get() {
 	            return this._body;
 	        },
@@ -584,7 +596,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "options",
+	        key: 'options',
 	        get: function get() {
 	            return this._options;
 	        },
@@ -594,7 +606,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "hover",
+	        key: 'hover',
 	        get: function get() {
 	            return this._hover;
 	        },
@@ -612,6 +624,102 @@ var C9 =
 
 /***/ },
 /* 3 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	var Helper = {
+
+	    each: function each(loopable, callback, self, reverse) {
+	        // Check to see if null or undefined firstly.
+	        var i, len;
+	        if (self.isArray(loopable)) {
+	            len = loopable.length;
+	            if (reverse) {
+	                for (i = len - 1; i >= 0; i--) {
+	                    callback.call(self, loopable[i], i);
+	                }
+	            } else {
+	                for (i = 0; i < len; i++) {
+	                    callback.call(self, loopable[i], i);
+	                }
+	            }
+	        } else if ((typeof loopable === 'undefined' ? 'undefined' : _typeof(loopable)) === 'object') {
+	            var keys = Object.keys(loopable);
+	            len = keys.length;
+	            for (i = 0; i < len; i++) {
+	                callback.call(self, loopable[keys[i]], keys[i]);
+	            }
+	        }
+	    },
+
+	    // setDefaultConfig: function() {
+	    //     var self = this;
+
+	    //     if (self.defaultConfig == null || self.defaultConfig === undefined) {
+	    //         return;
+	    //     } else {
+	    //         self.lastConfig = self.merge(Chart._options, Chart);
+	    //         self.each(self.lastConfig, function(value, index) {
+	    //             // var prefixCfg = self.setPrefix(index);
+	    //             self.setValue(self.lastConfig[index], index);
+	    //         }, self);
+	    //     }
+	    // }
+
+	    setValue: function setValue(value, key) {
+	        var self = this;
+	        self[key] = value;
+	    },
+
+	    setPrefix: function setPrefix(config) {
+	        var constPrefix = '_';
+	        if (config) {
+	            return constPrefix + config;
+	        }
+	    },
+
+	    isEmpty: function isEmpty(value) {
+	        return value === null || value === undefined;
+	    },
+
+	    isObject: function isObject(object) {
+	        return !Util.isEmpty(object) && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object';
+	    },
+
+	    isArray: function isArray(array) {
+	        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
+	    },
+
+	    isFunction: function isFunction(func) {
+	        return !Util.isEmpty(func) && typeof func === 'function';
+	    },
+
+	    merge: function merge(obj1, obj2) {
+	        var obj3 = {};
+	        for (var attrname in obj2) {
+	            obj3[attrname] = obj2[attrname];
+	        }
+	        for (var attrname in obj1) {
+	            obj3[attrname] = obj1[attrname];
+	        }
+	        return obj3;
+	    }
+
+	};
+
+	var Util = {
+	    isEmpty: function isEmpty(value) {
+	        return value === null || value === undefined;
+	    }
+	};
+
+	module.exports = Helper;
+
+/***/ },
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -866,7 +974,7 @@ var C9 =
 	exports.default = Axis;
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -985,7 +1093,7 @@ var C9 =
 	exports.default = Title;
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1154,7 +1262,7 @@ var C9 =
 	exports.default = Legend;
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1223,102 +1331,6 @@ var C9 =
 	exports.default = Tooltip;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-	var Helper = {
-
-	    each: function each(loopable, callback, self, reverse) {
-	        // Check to see if null or undefined firstly.
-	        var i, len;
-	        if (self.isArray(loopable)) {
-	            len = loopable.length;
-	            if (reverse) {
-	                for (i = len - 1; i >= 0; i--) {
-	                    callback.call(self, loopable[i], i);
-	                }
-	            } else {
-	                for (i = 0; i < len; i++) {
-	                    callback.call(self, loopable[i], i);
-	                }
-	            }
-	        } else if ((typeof loopable === 'undefined' ? 'undefined' : _typeof(loopable)) === 'object') {
-	            var keys = Object.keys(loopable);
-	            len = keys.length;
-	            for (i = 0; i < len; i++) {
-	                callback.call(self, loopable[keys[i]], keys[i]);
-	            }
-	        }
-	    },
-
-	    // setDefaultConfig: function() {
-	    //     var self = this;
-
-	    //     if (self.defaultConfig == null || self.defaultConfig === undefined) {
-	    //         return;
-	    //     } else {
-	    //         self.lastConfig = self.merge(Chart._options, Chart);
-	    //         self.each(self.lastConfig, function(value, index) {
-	    //             // var prefixCfg = self.setPrefix(index);
-	    //             self.setValue(self.lastConfig[index], index);
-	    //         }, self);
-	    //     }
-	    // }
-
-	    setValue: function setValue(value, key) {
-	        var self = this;
-	        self[key] = value;
-	    },
-
-	    setPrefix: function setPrefix(config) {
-	        var constPrefix = '_';
-	        if (config) {
-	            return constPrefix + config;
-	        }
-	    },
-
-	    isEmpty: function isEmpty(value) {
-	        return value === null || value === undefined;
-	    },
-
-	    isObject: function isObject(object) {
-	        return !Util.isEmpty(object) && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object';
-	    },
-
-	    isArray: function isArray(array) {
-	        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
-	    },
-
-	    isFunction: function isFunction(func) {
-	        return !Util.isEmpty(func) && typeof func === 'function';
-	    },
-
-	    merge: function merge(obj1, obj2) {
-	        var obj3 = {};
-	        for (var attrname in obj2) {
-	            obj3[attrname] = obj2[attrname];
-	        }
-	        for (var attrname in obj1) {
-	            obj3[attrname] = obj1[attrname];
-	        }
-	        return obj3;
-	    }
-
-	};
-
-	var Util = {
-	    isEmpty: function isEmpty(value) {
-	        return value === null || value === undefined;
-	    }
-	};
-
-	module.exports = Helper;
-
-/***/ },
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -1334,15 +1346,15 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(3);
+	var _C3 = __webpack_require__(4);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(4);
+	var _C5 = __webpack_require__(5);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(5);
+	var _C7 = __webpack_require__(6);
 
 	var _C8 = _interopRequireDefault(_C7);
 
@@ -1474,15 +1486,15 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(3);
+	var _C3 = __webpack_require__(4);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(4);
+	var _C5 = __webpack_require__(5);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(5);
+	var _C7 = __webpack_require__(6);
 
 	var _C8 = _interopRequireDefault(_C7);
 
@@ -1779,15 +1791,15 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(3);
+	var _C3 = __webpack_require__(4);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(4);
+	var _C5 = __webpack_require__(5);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(5);
+	var _C7 = __webpack_require__(6);
 
 	var _C8 = _interopRequireDefault(_C7);
 
@@ -1924,15 +1936,15 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(3);
+	var _C3 = __webpack_require__(4);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(4);
+	var _C5 = __webpack_require__(5);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(5);
+	var _C7 = __webpack_require__(6);
 
 	var _C8 = _interopRequireDefault(_C7);
 

@@ -1,3 +1,5 @@
+import Helper from '../helper/C9.Helper';
+
 export default class Chart {
     constructor(options) {
         var self    = this;
@@ -52,7 +54,7 @@ export default class Chart {
         self._data      = options.data      || config.data;
         self._height    = options.height    || config.height;
         self._colorRange= options.color_range|| config.color_range;
-        self._margin    = self.extend(options.margin, config.margin);
+        self._margin    = Helper.merge(options.margin, config.margin);
 
         // Skeleton: 
         // SVG
@@ -186,9 +188,7 @@ export default class Chart {
     =            Main Functions            =
     ======================================*/
     /**
-     * [First init config in parent Chart]
-     * @param  {[type]} self [description]
-     * @return {[type]}      [description]
+     * Init & Update Parent Chart Config
      */
     initConfig() {
         var margin  = this.margin,
@@ -201,8 +201,10 @@ export default class Chart {
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
-        this.body = this.svg.append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        this.body = this.svg
+                    .append("g")
+                    .attr('class', 'c9-chart c9-custom-container')
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
     
     /**
@@ -211,12 +213,12 @@ export default class Chart {
      * @param obj2
      * @returns obj3 a new object based on obj1 and obj2
      */
-    extend(obj1,obj2){
-        var obj3 = {};
-        for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-        for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-        return obj3;
-    }
+    // extend(obj1,obj2){
+    //     var obj3 = {};
+    //     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+    //     for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+    //     return obj3;
+    // }
 
     /*=====  End of Main Functions  ======*/
 
