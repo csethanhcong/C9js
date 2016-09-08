@@ -149,8 +149,8 @@ var C9 =
 
 	        var self = _this;
 	        var config = {
-	            bar_width: undefined,
-	            bar_color: "category20"
+	            barWidth: undefined,
+	            barColor: "category20"
 	        };
 
 	        var width = self.width - self.margin.left - self.margin.right;
@@ -177,10 +177,10 @@ var C9 =
 	        y.domain([0, d3.max(self.data, function (d) {
 	            return d.total;
 	        })]);
-	        // Make flexible width according to bar_width
-	        config.bar_width = x.rangeBand();
-	        self._barWidth = options.bar_width || config.bar_width;
-	        self._barColor = options.bar_color || config.bar_color;
+	        // Make flexible width according to barWidth
+	        config.barWidth = x.rangeBand();
+	        self._barWidth = options.barWidth || config.barWidth;
+	        self._barColor = options.barColor || config.barColor;
 	        self._x = x;
 	        self._y = y;
 
@@ -290,7 +290,7 @@ var C9 =
 	                // - Rect not overflow the bar, if not, hover effect will be messed
 	                // -> So, just align the rect to right/left (x: 25) to avoid it
 	                // -> And, the text will be align also
-	                var div = self.body.append('g').style('opacity', 0);
+	                var div = self.body.append('g').style('display', 'none');
 	                // Rect Container
 	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
 	                // First line
@@ -299,12 +299,12 @@ var C9 =
 	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
 
 	                selector.on("mouseover", function (d) {
-	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("opacity", .9).attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
+	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
 
 	                    text_1.text('Name: ' + d.name);
 	                    text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
 	                }).on("mouseout", function (d) {
-	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style("opacity", 0);
+	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
 	                });
 	            }
 	        }
@@ -431,15 +431,15 @@ var C9 =
 	            },
 
 	            // legend
-	            legend_show: true,
-	            legend_position: "bottom",
-	            legend_inset_anchor: "top-left",
-	            legend_padding: 0,
+	            legendShow: true,
+	            legendPosition: "bottom",
+	            legendInsetAnchor: "top-left",
+	            legendPadding: 0,
 	            // tooltip - show when mouseover on each data
-	            tooltip_show: true,
-	            tooltip_position: undefined,
+	            tooltipShow: true,
+	            tooltipPosition: undefined,
 	            // color range
-	            color_range: "category20",
+	            colorRange: "category20",
 	            // data
 	            data: []
 	        };
@@ -448,7 +448,7 @@ var C9 =
 	        self._width = options.width || config.width;
 	        self._data = options.data || config.data;
 	        self._height = options.height || config.height;
-	        self._colorRange = options.color_range || config.color_range;
+	        self._colorRange = options.colorRange || config.colorRange;
 	        self._margin = _C2.default.merge(options.margin, config.margin);
 
 	        // Skeleton: 
@@ -484,23 +484,11 @@ var C9 =
 	                width = this.width - margin.left - margin.right,
 	                height = this.height - margin.top - margin.bottom;
 
-	            this.svg = d3.select(id).append("svg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom);
+	            this.svg = d3.select(id).append("svg").style('overflow', 'visible') // to overwrite overflow: hidden by Boostrap as default
+	            .attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom);
 
 	            this.body = this.svg.append("g").attr('class', 'c9-chart c9-custom-container').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	        }
-
-	        /**
-	         * Overwrites obj2's values with obj1's and adds obj1's if non existent in obj2
-	         * @param obj1
-	         * @param obj2
-	         * @returns obj3 a new object based on obj1 and obj2
-	         */
-	        // extend(obj1,obj2){
-	        //     var obj3 = {};
-	        //     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-	        //     for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-	        //     return obj3;
-	        // }
 
 	        /*=====  End of Main Functions  ======*/
 
@@ -737,36 +725,36 @@ var C9 =
 	        _classCallCheck(this, Axis);
 
 	        var config = {
-	            x_axis_show: true,
-	            x_axis_padding: {}, // TODO
-	            x_axis_text: 'Name',
-	            y_axis_show: true,
-	            y_axis_padding: {}, // TODO
-	            y_axis_text: 'Value',
-	            num_of_tick_y: 5,
-	            tick_format: "s", // refer: https://github.com/d3/d3-format
-	            is_logaric_variant: false, // TODO: Add logaric variant for x axis
-	            y2_axis_show: true,
-	            y2_axis_padding: {}, // TODO
-	            y2_axis_text: 'Value',
-	            grid_x_show: false,
-	            grid_y_show: false
+	            xAxisShow: true,
+	            xAxisPadding: {}, // TODO
+	            xAxisText: 'Name',
+	            yAxisShow: true,
+	            yAxisPadding: {}, // TODO
+	            yAxisText: 'Value',
+	            numOfTickY: 5,
+	            tickFormat: "s", // refer: https://github.com/d3/d3-format
+	            isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
+	            y2AxisShow: true,
+	            y2AxisPadding: {}, // TODO
+	            y2AxisText: 'Value',
+	            gridXShow: false,
+	            gridYShow: false
 	        };
 
-	        this._xAxisShow = options.x_axis_show || config.x_axis_show;
-	        this._xAxisPadding = options.x_axis_padding || config.x_axis_padding;
-	        this._xAxisText = options.x_axis_text || config.x_axis_text;
-	        this._yAxisShow = options.y_axis_show || (body.type == "timeline" ? false : config.y_axis_show);
-	        this._yAxisPadding = options.y_axis_padding || config.y_axis_padding;
-	        this._yAxisText = options.y_axis_text || config.y_axis_text;
-	        this._isLogaricVariant = options.is_logaric_variant || config.is_logaric_variant;
-	        this._tickFormat = options.tick_format || config.tick_format;
-	        this._numOfTickY = options.num_of_tick_y || config.num_of_tick_y;
-	        this._y2AxisShow = options.y2_axis_show || config.y2_axis_show;
-	        this._y2AxisPadding = options.y2_axis_padding || config.y2_axis_padding;
-	        this._y2AxisText = options.y2_axis_text || config.y2_axis_text;
-	        this._gridXShow = options.grid_x_show || config.grid_x_show;
-	        this._gridYShow = options.grid_y_show || config.grid_y_show;
+	        this._xAxisShow = options.xAxisShow || config.xAxisShow;
+	        this._xAxisPadding = options.xAxisPadding || config.xAxisPadding;
+	        this._xAxisText = options.xAxisText || config.xAxisText;
+	        this._yAxisShow = options.yAxisShow || (body.type == "timeline" ? false : config.yAxisShow);
+	        this._yAxisPadding = options.yAxisPadding || config.yAxisPadding;
+	        this._yAxisText = options.yAxisText || config.yAxisText;
+	        this._isLogaricVariant = options.isLogaric || config.isLogaric;
+	        this._tickFormat = options.tickFormat || config.tickFormat;
+	        this._numOfTickY = options.numOfTickY || config.numOfTickY;
+	        this._y2AxisShow = options.y2AxisShow || config.y2AxisShow;
+	        this._y2AxisPadding = options.y2AxisPadding || config.y2AxisPadding;
+	        this._y2AxisText = options.y2AxisText || config.y2AxisText;
+	        this._gridXShow = options.gridXShow || config.gridXShow;
+	        this._gridYShow = options.gridYShow || config.gridYShow;
 
 	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
 	        var y;
@@ -992,23 +980,24 @@ var C9 =
 	        _classCallCheck(this, Title);
 
 	        var config = {
-	            title_show: true,
-	            title_text: "Sample Chart",
-	            title_position: 'top',
-	            title_size: "14px"
+	            titleShow: true,
+	            titleText: "Sample Chart",
+	            titlePosition: 'top',
+	            titleSize: "14px"
 	        };
 
-	        this._titleShow = options.title_show || config.title_show;
-	        this._titleText = options.title_text || config.title_text;
-	        this._titlePosition = options.title_position || config.title_position;
-	        this._titleSize = options.title_size || config.title_size;
+	        this._titleShow = options.titleShow || config.titleShow;
+	        this._titleText = options.titleText || config.titleText;
+	        this._titlePosition = options.titlePosition || config.titlePosition;
+	        this._titleSize = options.titleSize || config.titleSize;
 
 	        this._body = body;
 
 	        if (this._titleShow) {
+	            var self = this;
 	            // Select CURRENT body container, to make this axis outside
 	            // as a SEPARATED component, just like AXIS, of CHART
-	            var text = d3.select(this._body[0][0].parentNode).append("g").append("text").attr("class", "title");
+	            var text = d3.select(self._body[0][0].parentNode).append("g").append("text").attr("class", "title");
 
 	            // Get title width: text.node().getComputedTextLength()           
 	            text.attr("x", (width - text.node().getComputedTextLength()) / 2).attr("y", this.setYLocation(height, margin)).attr("text-anchor", "middle").style("font-size", this._titleSize).text(this._titleText);
@@ -1113,24 +1102,24 @@ var C9 =
 	        _classCallCheck(this, Legend);
 
 	        var config = {
-	            legend_show: false,
-	            legend_position: [0, 0],
-	            legend_box: false,
-	            legend_size: 18,
-	            legend_text_size: "14px",
-	            legend_margin: [5, 5, 5, 5],
-	            legend_space: 5,
-	            legend_style: "rect"
+	            legendShow: false,
+	            legendPosition: [0, 0],
+	            legendBox: false,
+	            legendSize: 18,
+	            legendTextSize: "14px",
+	            legendMargin: [5, 5, 5, 5],
+	            legendSpace: 5,
+	            legendStyle: "rect"
 	        };
 
-	        this._legendShow = options.legend_show || config.legend_show;
-	        this._legendTextSize = options.legend_text_size || config.legend_text_size;
-	        this._legendPosition = options.legend_position || config.legend_position;
-	        this._legendSize = options.legend_size || config.legend_size;
-	        this._legendBox = options.legend_box || config.legend_box;
-	        this._legendMargin = options.legend_margin || config.legend_margin;
-	        this._legendSpace = options.legend_space || config.legend_space;
-	        this._legendStyle = options.legend_style || config.legend_style;
+	        this._legendShow = options.legendShow || config.legendShow;
+	        this._legendTextSize = options.legendTextSize || config.legendTextSize;
+	        this._legendPosition = options.legendPosition || config.legendPosition;
+	        this._legendSize = options.legendSize || config.legendSize;
+	        this._legendBox = options.legendBox || config.legendBox;
+	        this._legendMargin = options.legendMargin || config.legendMargin;
+	        this._legendSpace = options.legendSpace || config.legendSpace;
+	        this._legendStyle = options.legendStyle || config.legendStyle;
 
 	        this._body = body;
 	        this._data = data;
@@ -1253,6 +1242,11 @@ var C9 =
 	            if (newlegendSize) {
 	                this._legendSize = newlegendSize;
 	            }
+	        }
+	    }, {
+	        key: "body",
+	        get: function get() {
+	            return this._body;
 	        }
 	    }]);
 
@@ -1377,14 +1371,14 @@ var C9 =
 	        var self = _this;
 	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
 	        var config = {
-	            outer_radius: R,
-	            inner_radius: R > 80 ? R - 80 : R - 40
+	            outerRadius: R,
+	            innerRadius: R > 80 ? R - 80 : R - 40
 	        };
 
-	        self._outerRadius = options.outer_radius || config.outer_radius;
-	        self._innerRadius = options.inner_radius || config.inner_radius;
+	        self._outerRadius = options.outerRadius || config.outerRadius;
+	        self._innerRadius = options.innerRadius || config.innerRadius;
 	        self.body.type = 'donut';
-	        self.initDonutChartConfig();
+	        self.updateConfig();
 	        return _this;
 	    }
 
@@ -1394,20 +1388,24 @@ var C9 =
 
 
 	    _createClass(DonutChart, [{
-	        key: 'initDonutChartConfig',
+	        key: 'updateConfig',
 
 	        /*=====  End of Setter  ======*/
 
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
+	        /**
+	         * Update Donut Chart Config
+	         */
+	        value: function updateConfig() {
+	            var self = this;
 
-	        value: function initDonutChartConfig() {
-	            var width = this.width - this.margin.left - this.margin.right;
-	            var height = this.height - this.margin.top - this.margin.bottom;
-	            var color = this.colorRange;
+	            var width = self.width - self.margin.left - self.margin.right,
+	                height = self.height - self.margin.top - self.margin.bottom,
+	                color = self.colorRange;
 
-	            var arc = d3.svg.arc().outerRadius(this.outerRadius).innerRadius(this.innerRadius);
+	            var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
 
 	            //we can sort data here
 	            var pie = d3.layout.pie().value(function (d) {
@@ -1415,24 +1413,87 @@ var C9 =
 	            });
 
 	            //draw chart
-	            var arcs = this.body.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('g.arc').data(pie(this.data)).enter().append('g').attr('class', 'arc');
+	            var arcs = self.body.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(pie(self.data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
 
-	            arcs.append('path').attr('d', arc).style('fill', function (d, i) {
+	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('d', arc).style('fill', function (d, i) {
 	                return color(i);
 	            });
 
-	            arcs.append('text').attr('transform', function (d) {
+	            arcs.append('text').attr('class', 'c9-chart-donut c9-custom-text').attr('transform', function (d) {
 	                return 'translate(' + arc.centroid(d) + ')';
 	            }).attr('dy', '.35em').attr('text-anchor', 'middle').text(function (d) {
 	                return d.data.name;
 	            });
 	        }
+
+	        /**
+	         * Main draw function of Donut Chart
+	         */
+
 	    }, {
 	        key: 'draw',
 	        value: function draw() {
 
-	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
+	            var self = this;
+
+	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
+	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.data);
+
+	            self.updateInteraction();
+	        }
+
+	        /**
+	         * Select all pie as type PATH in Donut Chart via its CLASS
+	         */
+
+	    }, {
+	        key: 'selectAllPie',
+	        value: function selectAllPie() {
+	            var self = this;
+
+	            return self.body.selectAll('g').selectAll('path.c9-chart-donut.c9-custom-path');
+	        }
+
+	        /**
+	         * Update Interaction: Hover
+	         * @return {} 
+	         */
+
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                hoverEnable = self.hover.enable,
+	                hoverOptions = self.hover.options,
+	                selector = self.selectAllPie(),
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+
+	            if (hoverEnable) {
+	                // Define the div for the tooltip
+	                // TODO: Allow user to add custom DIV, CLASS
+	                // Make sure that: 
+	                // - Rect not overflow the bar, if not, hover effect will be messed
+	                // -> So, just align the rect to right/left (x: 25) to avoid it
+	                // -> And, the text will be align also
+	                var div = self.body.append('g').style('display', 'none');
+	                // Rect Container
+	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	                // First line
+	                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
+	                // Second line
+	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+
+	                selector.on("mouseover", function (d) {
+	                    console.dir(d);
+	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(0, 0)");
+
+	                    text_1.text('Name: ' + d.data.name);
+	                    text_2.text('Value: ' + d.data.value);
+	                }).on("mouseout", function (d) {
+	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
+	                });
+	            }
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -1516,21 +1577,21 @@ var C9 =
 
 	        var self = _this;
 	        var config = {
-	            point_show: false,
-	            point_fill: "#fb8072",
-	            point_stroke: "#d26b5f",
-	            point_opacity: 1.0,
-	            point_radius: 5,
-	            point_hover_enable: false,
+	            pointShow: false,
+	            pointFill: "#fb8072",
+	            pointStroke: "#d26b5f",
+	            pointOpacity: 1.0,
+	            pointRadius: 5,
+	            pointHoverEnable: false,
 	            interpolate: "linear" // refer: https://www.dashingd3js.com/svg-paths-and-d3js
 	        };
 
-	        self._pointShow = options.point_show || config.point_show;
-	        self._pointRadius = options.point_radius || config.point_radius;
-	        self._pointFill = options.point_fill || config.point_fill;
-	        self._pointStroke = options.point_stroke || config.point_stroke;
-	        self._pointOpacity = options.point_opacity || config.point_opacity;
-	        self._pointHoverEnable = options.point_hover_enable || config.point_hover_enable;
+	        self._pointShow = options.pointShow || config.pointShow;
+	        self._pointRadius = options.pointRadius || config.pointRadius;
+	        self._pointFill = options.pointFill || config.pointFill;
+	        self._pointStroke = options.pointStroke || config.pointStroke;
+	        self._pointOpacity = options.pointOpacity || config.pointOpacity;
+	        self._pointHoverEnable = options.pointHoverEnable || config.pointHoverEnable;
 	        self._interpolate = options.interpolate || config.interpolate;
 	        self.body.type = "line";
 
@@ -1664,7 +1725,7 @@ var C9 =
 	                // - Rect not overflow the bar, if not, hover effect will be messed
 	                // -> So, just align the rect to right/left (x: 25) to avoid it
 	                // -> And, the text will be align also
-	                var div = self.body.append('g').style('z-index', '100').style('display', 'none');
+	                var div = self.body.append('g').style('display', 'none');
 	                // .style('opacity', 0);
 	                // Rect Container
 	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
@@ -1674,16 +1735,12 @@ var C9 =
 	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
 
 	                selector.on("mouseover", function (d) {
-	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn)
-	                    // .style("opacity", .9)
-	                    .style("display", 'block').attr("transform", "translate(" + self.x(d.year) + "," + self.y(d.sale) + ")");
+	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.year) + "," + self.y(d.sale) + ")");
 
 	                    text_1.text('Name: ' + d.year);
 	                    text_2.text('Value: ' + d.sale);
 	                }).on("mouseout", function (d) {
-	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut)
-	                    // .style("opacity", 0);
-	                    .style("display", 'none');
+	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style("display", 'none');
 	                });
 	            }
 	        }
@@ -2062,26 +2119,26 @@ var C9 =
 	        var self = _this;
 
 	        var config = {
-	            row_separator: null,
-	            background_color: null,
+	            rowSeparator: null,
+	            backgroundColor: null,
 	            starting: 0,
 	            ending: 0,
 	            stack: false, //test
 	            // rotateTicks: false,
-	            item_height: 20,
-	            item_margin: 5,
-	            label_margin: 20
+	            itemHeight: 20,
+	            itemMargin: 5,
+	            labelMargin: 20
 	        };
 
 	        self.body.type = "timeline";
 	        self._stack = options.stack || config.stack;
 	        self._starting = options.starting || config.starting;
 	        self._ending = options.ending || config.ending;
-	        self._rowSeparator = options.row_separator || config.row_separator;
-	        self._backgroundColor = options.background_color || config.background_color;
-	        self._itemHeight = options.item_height || config.item_height;
-	        self._itemMargin = options.item_margin || config.item_margin;
-	        self._labelMargin = options.label_margin || config.label_margin;
+	        self._rowSeparator = options.rowSeparator || config.rowSeparator;
+	        self._backgroundColor = options.backgroundColor || config.backgroundColor;
+	        self._itemHeight = options.itemHeight || config.itemHeight;
+	        self._itemMargin = options.itemMargin || config.itemMargin;
+	        self._labelMargin = options.labelMargin || config.labelMargin;
 	        self._maxStack = 1;
 
 	        self.initTimelineConfig();
@@ -2123,10 +2180,10 @@ var C9 =
 	                    }
 
 	                    datum.times.forEach(function (time, i) {
-	                        if (self.starting === 0) if (time.starting_time < minTime || minTime === 0) minTime = time.starting_time;
+	                        if (self.starting === 0) if (time.startingTime < minTime || minTime === 0) minTime = time.startingTime;
 	                        if (self.ending === 0) {
-	                            if (time.starting_time > maxTime) maxTime = time.starting_time;
-	                            if (time.ending_time > maxTime) maxTime = time.ending_time;
+	                            if (time.startingTime > maxTime) maxTime = time.startingTime;
+	                            if (time.endingTime > maxTime) maxTime = time.endingTime;
 	                        }
 	                    });
 	                });
@@ -2152,9 +2209,9 @@ var C9 =
 
 	                //draw item
 	                self.body.selectAll("g").data(data).enter().append(function (d, i) {
-	                    return document.createElementNS(d3.ns.prefix.svg, "ending_time" in d ? "rect" : "circle");
+	                    return document.createElementNS(d3.ns.prefix.svg, "endingTime" in d ? "rect" : "circle");
 	                }).attr("x", getXPos).attr("y", getStackPosition).attr("width", function (d, i) {
-	                    return (d.ending_time - d.starting_time) * scale;
+	                    return (d.endingTime - d.startingTime) * scale;
 	                }).attr("cy", function (d, i) {
 	                    return getStackPosition(d, i) + self.itemHeight / 2;
 	                }).attr("cx", getXPos).attr("r", self.itemHeight / 2).attr("height", self.itemHeight).style("fill", color(index));
@@ -2195,11 +2252,11 @@ var C9 =
 	            });
 
 	            function getXPos(d, i) {
-	                return (d.starting_time - self.starting) * scale;
+	                return (d.startingTime - self.starting) * scale;
 	            }
 
 	            function getXTextPos(d, i) {
-	                return (d.starting_time - self.starting) * scale + 5;
+	                return (d.startingTime - self.starting) * scale + 5;
 	            }
 	        }
 	    }, {

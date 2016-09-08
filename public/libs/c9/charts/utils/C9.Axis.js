@@ -3,36 +3,36 @@
 export default class Axis {
     constructor(options, body, data, width, height, xAxe, yAxe) {
         var config = {
-            x_axis_show     : true,
-            x_axis_padding  : {},   // TODO
-            x_axis_text     : 'Name',
-            y_axis_show     : true,
-            y_axis_padding  : {},   // TODO
-            y_axis_text     : 'Value',
-            num_of_tick_y   : 5,
-            tick_format     : "s",   // refer: https://github.com/d3/d3-format
-            is_logaric_variant: false, // TODO: Add logaric variant for x axis
-            y2_axis_show    : true,
-            y2_axis_padding : {},   // TODO
-            y2_axis_text    : 'Value',
-            grid_x_show: false,
-            grid_y_show: false
+            xAxisShow     : true,
+            xAxisPadding  : {},   // TODO
+            xAxisText     : 'Name',
+            yAxisShow     : true,
+            yAxisPadding  : {},   // TODO
+            yAxisText     : 'Value',
+            numOfTickY   : 5,
+            tickFormat     : "s",   // refer: https://github.com/d3/d3-format
+            isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
+            y2AxisShow    : true,
+            y2AxisPadding : {},   // TODO
+            y2AxisText    : 'Value',
+            gridXShow: false,
+            gridYShow: false
         };
 
-        this._xAxisShow     = options.x_axis_show      || config.x_axis_show;
-        this._xAxisPadding  = options.x_axis_padding   || config.x_axis_padding;
-        this._xAxisText     = options.x_axis_text      || config.x_axis_text;
-        this._yAxisShow     = options.y_axis_show      || (body.type == "timeline" ? false : config.y_axis_show);
-        this._yAxisPadding  = options.y_axis_padding   || config.y_axis_padding;
-        this._yAxisText     = options.y_axis_text      || config.y_axis_text;
-        this._isLogaricVariant     = options.is_logaric_variant      || config.is_logaric_variant;
-        this._tickFormat    = options.tick_format      || config.tick_format;
-        this._numOfTickY    = options.num_of_tick_y    || config.num_of_tick_y;
-        this._y2AxisShow    = options.y2_axis_show     || config.y2_axis_show;
-        this._y2AxisPadding = options.y2_axis_padding  || config.y2_axis_padding;
-        this._y2AxisText    = options.y2_axis_text     || config.y2_axis_text;
-        this._gridXShow     = options.grid_x_show      || config.grid_x_show;
-        this._gridYShow     = options.grid_y_show      || config.grid_y_show;
+        this._xAxisShow     = options.xAxisShow      || config.xAxisShow;
+        this._xAxisPadding  = options.xAxisPadding   || config.xAxisPadding;
+        this._xAxisText     = options.xAxisText      || config.xAxisText;
+        this._yAxisShow     = options.yAxisShow      || (body.type == "timeline" ? false : config.yAxisShow);
+        this._yAxisPadding  = options.yAxisPadding   || config.yAxisPadding;
+        this._yAxisText     = options.yAxisText      || config.yAxisText;
+        this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
+        this._tickFormat    = options.tickFormat      || config.tickFormat;
+        this._numOfTickY    = options.numOfTickY    || config.numOfTickY;
+        this._y2AxisShow    = options.y2AxisShow     || config.y2AxisShow;
+        this._y2AxisPadding = options.y2AxisPadding  || config.y2AxisPadding;
+        this._y2AxisText    = options.y2AxisText     || config.y2AxisText;
+        this._gridXShow     = options.gridXShow      || config.gridXShow;
+        this._gridYShow     = options.gridYShow      || config.gridYShow;
 
 
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);

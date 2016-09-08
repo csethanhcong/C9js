@@ -36,15 +36,15 @@ export default class Chart {
             },
 
             // legend
-            legend_show: true,
-            legend_position: "bottom",
-            legend_inset_anchor: "top-left",
-            legend_padding: 0,
+            legendShow: true,
+            legendPosition: "bottom",
+            legendInsetAnchor: "top-left",
+            legendPadding: 0,
             // tooltip - show when mouseover on each data
-            tooltip_show: true,
-            tooltip_position: undefined,
+            tooltipShow: true,
+            tooltipPosition: undefined,
             // color range
-            color_range: "category20",
+            colorRange: "category20",
             // data
             data: []
         };
@@ -53,7 +53,7 @@ export default class Chart {
         self._width     = options.width     || config.width;
         self._data      = options.data      || config.data;
         self._height    = options.height    || config.height;
-        self._colorRange= options.color_range|| config.color_range;
+        self._colorRange= options.colorRange|| config.colorRange;
         self._margin    = Helper.merge(options.margin, config.margin);
 
         // Skeleton: 
@@ -198,6 +198,7 @@ export default class Chart {
 
         this.svg = d3.select(id)
             .append("svg")
+            .style('overflow', 'visible') // to overwrite overflow: hidden by Boostrap as default
             .attr("width", width + margin.left + margin.right)
             .attr("height", height + margin.top + margin.bottom);
 
@@ -206,19 +207,6 @@ export default class Chart {
                     .attr('class', 'c9-chart c9-custom-container')
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
-    
-    /**
-     * Overwrites obj2's values with obj1's and adds obj1's if non existent in obj2
-     * @param obj1
-     * @param obj2
-     * @returns obj3 a new object based on obj1 and obj2
-     */
-    // extend(obj1,obj2){
-    //     var obj3 = {};
-    //     for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-    //     for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-    //     return obj3;
-    // }
 
     /*=====  End of Main Functions  ======*/
 

@@ -112,6 +112,7 @@
 		</div>
 		<div id="demo1"></div>
 		<div id="demo2"></div>
+		<div id="demo3"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
 					{name: "A", value:	2},
@@ -153,8 +154,8 @@
 					bottom:100
 				}, 
 				data: data1, 
-				bar_color: "pink",
-				is_logaric_variant: true
+				barColor: "pink",
+				isLogaric: true
 			};
 			var barChart = new C9.BarChart(options1);
 			barChart.draw();
@@ -190,16 +191,48 @@
 					bottom:100
 				}, 
 				data: data2, 
-				x_axis_text: ' ',
-				y_axis_text: 'Sale',
-				title_text: 'Line Chart',
+				xAxisText: ' ',
+				yAxisText: 'Sale',
+				titleText: 'Line Chart',
 				interpolate: 'monotone',
-				point_show: true,
-				point_radius: 5,
-				point_opacity: 0.8
+				pointShow: true,
+				pointRadius: 5,
+				pointOpacity: 0.8
 			};
 			var lineChart = new C9.LineChart(options2);
 			lineChart.draw();
+
+			var data3 = [
+					{name: "Male", value:	10},
+					{name: "Female",	value:  25},
+					{name: "LGBT", value:	35},
+					{name: "Others", value:	20}
+				];
+			var options3 = {  
+			   id:"#demo3",
+			   width:750,
+			   height:600,
+			   margin:{  
+			      top:100,
+			      left:100,
+			      right:50,
+			      bottom:100
+			   },
+			   data:data3,
+			   titleText:'Donut Chart',
+			   colorRange:"category20",
+			   outerRadius:200,
+			   innerRadius:100,
+			   titlePosition:'bottom',
+			   titleSize:'20px',
+			   legendShow:true,
+			   legendPosition:[  
+			      350,
+			      250
+			   ]
+			};
+			var donutChart = new C9.DonutChart(options3);
+			donutChart.draw();
 		</script>
 	</body>
 
