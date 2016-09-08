@@ -173,14 +173,7 @@ export default class Map {
             else if (l.type === 'Vector') {
                 switch (l.source) {
                     case 'Vector':
-                        source = new ol.source.Vector({
-                            url: l.url,
-                            format: new ol.format[l.format]({
-                                extractStyles: l.extractStyles === undefined ? true : false
-                            })
-                        });
-                        break;
-
+                        
                 }
             }
             layer.setSource(source);

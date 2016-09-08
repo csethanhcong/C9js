@@ -116,24 +116,17 @@
 	    	var o = {
 	    		id: "map",
 	    		view: {
-	                lat: 0,
-	                lon: 0,
-	                zoom: 2
+	                lat: 10.8142,
+	                lon: 106.6438,
+	                zoom: 15
 	            },
 	            layers: [
 	            	{
 	            		type: "Tile",
-	            		source: "OSM",
-	            		// url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/' +
-	          				// 'Specialty/ESRI_StateCityHighway_USA/MapServer',
+	            		source: "TileArcGISRest",
+	            		url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/' +
+	          				'Specialty/ESRI_StateCityHighway_USA/MapServer',
 	            	},
-	            	{
-	            		type: "Vector",
-	            		source: "Vector",
-	            		url: 'https://raw.githubusercontent.com/johan/world.geo.json/master/countries/USA.geo.json',
-	            		format: "GeoJSON",
-	            		extractStyles: true
-	            	}
 	            ],
             	
 	    	}
