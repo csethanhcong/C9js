@@ -1,2 +1,2 @@
-webpack --progress --colors
+webpack --progress --colors --watch
 pause
