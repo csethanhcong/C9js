@@ -2306,8 +2306,8 @@ var C9 =
 	            var self = this;
 	            self.layers.forEach(function (l, i) {
 	                var layer = new ol.layer[l.type]();
+	                var source = undefined;
 	                if (l.type === 'Tile') {
-	                    var source = undefined;
 	                    switch (l.source) {
 	                        case 'OSM':
 	                            source = new ol.source.OSM();
@@ -2336,8 +2336,20 @@ var C9 =
 	                            });
 	                            break;
 	                    }
-	                    layer.setSource(source);
+	                } else if (l.type === 'Vector') {
+	                    switch (l.source) {
+	                        case 'Vector':
+	                            source = new ol.source.Vector({
+	                                url: l.url,
+	                                format: new ol.format[l.format]({
+	                                    extractStyles: l.extractStyles === undefined ? true : false
+	                                })
+	                            });
+	                            break;
+
+	                    }
 	                }
+	                layer.setSource(source);
 	                self.c9Layers.push(layer);
 	            });
 	        }
