@@ -3,23 +3,24 @@
 export default class Title {
     constructor(options, body, width, height, margin) {
         var config = {
-            title_show      : true,
-            title_text      : "Sample Chart",
-            title_position  : 'top',
-            title_size      : "14px"
+            titleShow      : true,
+            titleText      : "Sample Chart",
+            titlePosition  : 'top',
+            titleSize      : "14px"
         };
 
-        this._titleShow     = options.title_show       || config.title_show;
-        this._titleText     = options.title_text       || config.title_text;
-        this._titlePosition = options.title_position   || config.title_position;
-        this._titleSize     = options.title_size       || config.title_size;
+        this._titleShow     = options.titleShow       || config.titleShow;
+        this._titleText     = options.titleText       || config.titleText;
+        this._titlePosition = options.titlePosition   || config.titlePosition;
+        this._titleSize     = options.titleSize       || config.titleSize;
 
         this._body    = body;
 
         if (this._titleShow) {
+            var self = this;
             // Select CURRENT body container, to make this axis outside
             // as a SEPARATED component, just like AXIS, of CHART
-            var text = d3.select(this._body[0][0].parentNode)
+            var text = d3.select(self._body[0][0].parentNode)
                 .append("g")
                 .append("text")
                 .attr("class", "title");

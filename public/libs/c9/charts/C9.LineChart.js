@@ -8,21 +8,21 @@ export default class LineChart extends Chart {
         super(options);
         var self    = this;
         var config  = {
-            point_show: false,
-            point_fill: "#fb8072",
-            point_stroke: "#d26b5f",
-            point_opacity: 1.0,
-            point_radius: 5,
-            point_hover_enable: false,
+            pointShow: false,
+            pointFill: "#fb8072",
+            pointStroke: "#d26b5f",
+            pointOpacity: 1.0,
+            pointRadius: 5,
+            pointHoverEnable: false,
             interpolate: "linear" // refer: https://www.dashingd3js.com/svg-paths-and-d3js
         };
 
-        self._pointShow         = options.point_show            ||  config.point_show;
-        self._pointRadius       = options.point_radius          ||  config.point_radius;
-        self._pointFill         = options.point_fill            ||  config.point_fill;
-        self._pointStroke       = options.point_stroke          ||  config.point_stroke;
-        self._pointOpacity      = options.point_opacity         ||  config.point_opacity;
-        self._pointHoverEnable  = options.point_hover_enable    ||  config.point_hover_enable;
+        self._pointShow         = options.pointShow            ||  config.pointShow;
+        self._pointRadius       = options.pointRadius          ||  config.pointRadius;
+        self._pointFill         = options.pointFill            ||  config.pointFill;
+        self._pointStroke       = options.pointStroke          ||  config.pointStroke;
+        self._pointOpacity      = options.pointOpacity         ||  config.pointOpacity;
+        self._pointHoverEnable  = options.pointHoverEnable    ||  config.pointHoverEnable;
         self._interpolate       = options.interpolate           ||  config.interpolate;
         self.body.type = "line";
 
@@ -264,7 +264,6 @@ export default class LineChart extends Chart {
             // -> And, the text will be align also
             var div = self.body
                         .append('g')
-                        .style('z-index', '100')
                         .style('display', 'none');
                         // .style('opacity', 0);
                 // Rect Container
@@ -298,7 +297,6 @@ export default class LineChart extends Chart {
                 .on("mouseover", function(d) {
                     div.transition()
                         .duration(hoverOptions.onMouseOver.fadeIn)
-                        // .style("opacity", .9)
                         .style("display", 'block')
                         .attr("transform", "translate(" + self.x(d.year) + "," + self.y(d.sale) + ")");
 
@@ -308,7 +306,6 @@ export default class LineChart extends Chart {
                 .on("mouseout", function(d) { 
                     div.transition()
                         .duration(hoverOptions.onMouseOut.fadeOut)      
-                        // .style("opacity", 0);
                         .style("display", 'none');
                 });
         }

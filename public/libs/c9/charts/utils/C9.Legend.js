@@ -3,24 +3,24 @@
 export default class Legend {
     constructor(options, body, color, data) {
         var config = {
-            legend_show      : false,
-            legend_position  : [0, 0],
-            legend_box       : false,
-            legend_size      : 18,
-            legend_text_size : "14px",
-            legend_margin   : [5, 5, 5, 5],
-            legend_space     : 5,
-            legend_style     : "rect"
+            legendShow      : false,
+            legendPosition  : [0, 0],
+            legendBox       : false,
+            legendSize      : 18,
+            legendTextSize : "14px",
+            legendMargin   : [5, 5, 5, 5],
+            legendSpace     : 5,
+            legendStyle     : "rect"
         };
 
-        this._legendShow         = options.legend_show       || config.legend_show;
-        this._legendTextSize     = options.legend_text_size  || config.legend_text_size;
-        this._legendPosition     = options.legend_position   || config.legend_position;
-        this._legendSize         = options.legend_size       || config.legend_size;
-        this._legendBox          = options.legend_box        || config.legend_box;
-        this._legendMargin       = options.legend_margin     || config.legend_margin;
-        this._legendSpace        = options.legend_space      || config.legend_space;
-        this._legendStyle        = options.legend_style      || config.legend_style;
+        this._legendShow         = options.legendShow       || config.legendShow;
+        this._legendTextSize     = options.legendTextSize  || config.legendTextSize;
+        this._legendPosition     = options.legendPosition   || config.legendPosition;
+        this._legendSize         = options.legendSize       || config.legendSize;
+        this._legendBox          = options.legendBox        || config.legendBox;
+        this._legendMargin       = options.legendMargin     || config.legendMargin;
+        this._legendSpace        = options.legendSpace      || config.legendSpace;
+        this._legendStyle        = options.legendStyle      || config.legendStyle;
 
         this._body    = body;
         this._data   = data;
@@ -118,6 +118,10 @@ export default class Legend {
 
     get legendSize() {
         return this._legendSize;
+    }
+
+    get body() {
+        return this._body;
     }
     
     /*=====  End of Getter  ======*/

@@ -10,8 +10,8 @@ export default class BarChart extends Chart {
         super(options);
         var self = this;
         var config = {
-            bar_width: undefined,
-            bar_color: "category20"
+            barWidth: undefined,
+            barColor: "category20"
         };
 
         var width   = self.width - self.margin.left - self.margin.right;
@@ -36,10 +36,10 @@ export default class BarChart extends Chart {
         y.domain([0, d3.max(self.data, function(d) {
             return d.total;
         })]);
-        // Make flexible width according to bar_width
-        config.bar_width      = x.rangeBand();
-        self._barWidth        = options.bar_width  ||  config.bar_width;
-        self._barColor        = options.bar_color  ||  config.bar_color;
+        // Make flexible width according to barWidth
+        config.barWidth      = x.rangeBand();
+        self._barWidth        = options.barWidth  ||  config.barWidth;
+        self._barColor        = options.barColor  ||  config.barColor;
         self._x               = x;
         self._y               = y;
 
@@ -197,7 +197,7 @@ export default class BarChart extends Chart {
             // -> And, the text will be align also
             var div = self.body
                         .append('g')   
-                        .style('opacity', 0);
+                        .style('display', 'none');
                 // Rect Container
                 div.append('rect')
                     .attr('class', 'c9-custom-tooltip-box')
@@ -229,7 +229,7 @@ export default class BarChart extends Chart {
                 .on("mouseover", function(d) {
                     div.transition()
                         .duration(hoverOptions.onMouseOver.fadeIn)
-                        .style("opacity", .9)
+                        .style("display", 'block')
                         .attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
 
                     text_1.text('Name: ' + d.name);
@@ -238,7 +238,7 @@ export default class BarChart extends Chart {
                 .on("mouseout", function(d) { 
                     div.transition()
                         .duration(hoverOptions.onMouseOut.fadeOut)      
-                        .style("opacity", 0);
+                        .style('display', 'none');
                 });
         }
     }

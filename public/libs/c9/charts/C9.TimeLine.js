@@ -9,26 +9,26 @@ export default class TimeLine extends Chart {
         var self = this;
 
         var config = {
-            row_separator: null,
-            background_color: null,
+            rowSeparator: null,
+            backgroundColor: null,
             starting: 0,
             ending: 0,
             stack: false, //test
             // rotateTicks: false,
-            item_height: 20,
-            item_margin: 5,
-            label_margin: 20
+            itemHeight: 20,
+            itemMargin: 5,
+            labelMargin: 20
         };
 
         self.body.type        = "timeline";
         self._stack             = options.stack || config.stack;
         self._starting          = options.starting || config.starting;
         self._ending            = options.ending || config.ending;
-        self._rowSeparator      = options.row_separator || config.row_separator;
-        self._backgroundColor   = options.background_color || config.background_color;
-        self._itemHeight        = options.item_height || config.item_height;
-        self._itemMargin        = options.item_margin || config.item_margin;
-        self._labelMargin       = options.label_margin || config.label_margin;
+        self._rowSeparator      = options.rowSeparator || config.rowSeparator;
+        self._backgroundColor   = options.backgroundColor || config.backgroundColor;
+        self._itemHeight        = options.itemHeight || config.itemHeight;
+        self._itemMargin        = options.itemMargin || config.itemMargin;
+        self._labelMargin       = options.labelMargin || config.labelMargin;
         self._maxStack          = 1;
 
         self.initTimelineConfig();
@@ -158,13 +158,13 @@ export default class TimeLine extends Chart {
 
                 datum.times.forEach(function (time, i) {
                     if(self.starting === 0)
-                        if (time.starting_time < minTime || minTime === 0)
-                            minTime = time.starting_time;
+                        if (time.startingTime < minTime || minTime === 0)
+                            minTime = time.startingTime;
                     if(self.ending === 0) {
-                        if (time.starting_time > maxTime)
-                            maxTime = time.starting_time;
-                        if (time.ending_time > maxTime)
-                            maxTime = time.ending_time;
+                        if (time.startingTime > maxTime)
+                            maxTime = time.startingTime;
+                        if (time.endingTime > maxTime)
+                            maxTime = time.endingTime;
                     }
                 });
             });
@@ -200,12 +200,12 @@ export default class TimeLine extends Chart {
             self.body.selectAll("g")
                 .data(data).enter()
                 .append(function(d, i) {
-                    return document.createElementNS(d3.ns.prefix.svg, "ending_time" in d? "rect" : "circle");
+                    return document.createElementNS(d3.ns.prefix.svg, "endingTime" in d? "rect" : "circle");
                 })
                 .attr("x", getXPos)
                 .attr("y", getStackPosition)
                 .attr("width", function (d, i) {
-                    return (d.ending_time - d.starting_time) * scale;
+                    return (d.endingTime - d.startingTime) * scale;
                 })
                 .attr("cy", function(d, i) {
                     return getStackPosition(d, i) + self.itemHeight / 2;
@@ -271,11 +271,11 @@ export default class TimeLine extends Chart {
         });
 
         function getXPos(d, i) {
-            return (d.starting_time - self.starting) * scale;
+            return (d.startingTime - self.starting) * scale;
         }
 
         function getXTextPos(d, i) {
-            return (d.starting_time - self.starting) * scale + 5;
+            return (d.startingTime - self.starting) * scale + 5;
         }
     }
 
