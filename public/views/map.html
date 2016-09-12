@@ -123,21 +123,31 @@
 	            layers: [
 	            	{
 	            		type: "Tile",
-	            		source: "OSM",
+	            		source: {
+	            			name: "OSM"
+	            		}
 	            		// url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/' +
 	          				// 'Specialty/ESRI_StateCityHighway_USA/MapServer',
 	            	},
 	            	{
 	            		type: "Vector",
-	            		source: "Vector",
-	            		url: 'https://raw.githubusercontent.com/johan/world.geo.json/master/countries/USA.geo.json',
-	            		format: "KML",
-	            		extractStyles: true
+	            		source: {
+	            			name: "Cluster",
+	            			source: {
+	            				name: "Vector",
+	            				url: 'http://openlayers.org/en/v3.18.2/examples/data/kml/2012_Earthquakes_Mag5.kml',
+	            				format: 'KML'
+	            			}
+	            		}
+	            		
 	            	}
 	            ],
-            	
+            	data: {
+
+            	}
 	    	}
 	    	var map = new C9.Map(o);
+	    	map.draw();
 		</script>
 	</body>
 
