@@ -71,6 +71,9 @@ export default class Chart {
     /*==============================
     =            Getter            =
     ==============================*/
+    get container() {
+        return this._container;
+    }
     
     get id() {
         return this._id;
@@ -121,6 +124,11 @@ export default class Chart {
     /*==============================
     =            Setter            =
     ==============================*/
+    set container(newContainer) {
+        if (newContainer) {
+            this._container = newContainer;
+        }
+    }
     
     set id(newId) {
         if (newId) {
@@ -195,6 +203,8 @@ export default class Chart {
             id      = this.id,
             width   = this.width - margin.left - margin.right,
             height  = this.height - margin.top - margin.bottom;
+
+        this.container = d3.select(id);
 
         this.svg = d3.select(id)
             .append("svg")

@@ -22,15 +22,16 @@ export default class Title {
             // as a SEPARATED component, just like AXIS, of CHART
             var text = d3.select(self._body[0][0].parentNode)
                 .append("g")
-                .append("text")
-                .attr("class", "title");
+                    .attr('class', 'c9-custom-title c9-custom-title-container')
+                    .append("text")
+                        .attr("class", "c9-custom-title c9-custom-title-text");
 
                 // Get title width: text.node().getComputedTextLength()           
                 text.attr("x", (((width - text.node().getComputedTextLength()) / 2)))           
-                .attr("y", this.setYLocation(height, margin))
-                .attr("text-anchor", "middle")  
-                .style("font-size", this._titleSize)  
-                .text(this._titleText);
+                    .attr("y", this.setYLocation(height, margin))
+                    .attr("text-anchor", "middle")  
+                    .style("font-size", this._titleSize)  
+                    .text(this._titleText);
         }
             
     }

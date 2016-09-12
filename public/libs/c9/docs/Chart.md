@@ -9,7 +9,13 @@ e.g: {name: a, value: 2} -> {name: a, y0: lowerbound(2), y1: upperbound(2)}
 
 1. `Hover Interaction for Bar Chart, Line Chart, Donut Chart`
 
-2. `Restructor SVG container`: SVG -> body (g)
+2. `Restructor SVG container`: Main Skeleton
+	SVG
+	 	body (g.c9-chart.c9-custom-container)
+	 		bar(c9-chart-bar c9-custom-bar) | arc(c9-chart-donut c9-custom-arc) | line
+	 		tooltip
+		title
+		legend
 
 3. `Make Grunt-Webpack combo`: Should auto-run webpack to pack modules every time each files changed
 	-> run: webpack --progress --colors --watch
@@ -39,3 +45,6 @@ option of that object
 
 3. `Make C9.Config`: File contains all default configs, should not put all configs in each files
 Put them all in 1 file: Classes, default configs, etc.
+
+4. `Bar Chart: Add Group bar chart to filter domain`: To create legend for bar chart, we should add new type of 
+Bar Chart (Group of bar chart)

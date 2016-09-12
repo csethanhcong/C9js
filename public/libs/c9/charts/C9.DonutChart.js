@@ -248,6 +248,7 @@ export default class DonutChart extends Chart {
         //draw chart
         var arcs = self.body
                     .append('g')
+                        .attr('class', 'c9-chart c9-custom-arc-container')
                         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
                         .selectAll('.c9-chart-donut.c9-custom-arc')
                         .data(pie(self.data)).enter()
