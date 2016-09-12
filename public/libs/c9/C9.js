@@ -2384,7 +2384,6 @@ var C9 =
 
 	        value: function initMapConfig() {
 	            var self = this;
-	            var view = self.view;
 
 	            //layers
 	            self.c9Layers = [];
@@ -2392,7 +2391,12 @@ var C9 =
 
 	            //quick markers
 	            self.initMarker();
-
+	        }
+	    }, {
+	        key: "draw",
+	        value: function draw() {
+	            var self = this;
+	            var view = self.view;
 	            self.map = new ol.Map({
 	                target: self.id,
 	                layers: self.c9Layers,
@@ -2402,8 +2406,64 @@ var C9 =
 	                })
 	            });
 	        }
-
 	        /*=====  End of Main Functions  ======*/
+
+	        //source setup
+
+	    }, {
+	        key: "setupSource",
+	        value: function setupSource(s) {
+	            var source = undefined;
+	            switch (s.name) {
+	                case 'BingMaps':
+	                    source = new ol.source.BingMaps({
+	                        key: s.key,
+	                        imagerySet: s.imagerySet === undefined ? 'Road' : s.imagerySet
+	                    });
+	                    break;
+	                case 'Stamen':
+	                    source = new ol.source.Stamen({
+	                        layer: s.layer === undefined ? 'watercolor' : s.layer
+	                    });
+	                    break;
+	                /********** TileJSON require ol >= v3.8.2 **********/
+	                // case 'TileJSON':
+	                //     source = new ol.source.TileJSON({
+	                //         url: l.url,
+	                //         crossOrigin: l.crossOrigin === undefined ? 'anonymous' : l.crossOrigin
+	                //     });
+	                //     break;
+	                case 'TileArcGISRest':
+	                    source = new ol.source.TileArcGISRest({
+	                        url: s.url
+	                    });
+	                    break;
+	                case 'Vector':
+	                    source = new ol.source.Vector({
+	                        url: s.url,
+	                        format: new ol.format[s.format]({
+	                            extractStyles: s.extractStyles === undefined ? true : false
+	                        })
+	                    });
+	                    break;
+	                case 'Cluster':
+	                    source = new ol.source.Cluster({
+	                        distance: s.distance || 20,
+	                        source: this.setupSource(s.source)
+	                    });
+	                    break;
+	                case 'ImageVector':
+	                    source = new ol.source.ImageVector({
+	                        source: this.setupSource(s.source)
+	                    });
+	                    break;
+	                default:
+	                    source = new ol.source.OSM();
+	                    break;
+
+	            }
+	            return source;
+	        }
 
 	        //tile layer setup
 
@@ -2413,43 +2473,7 @@ var C9 =
 	            var self = this;
 	            self.layers.forEach(function (l, i) {
 	                var layer = new ol.layer[l.type]();
-	                var source = undefined;
-	                if (l.type === 'Tile') {
-	                    switch (l.source) {
-	                        case 'OSM':
-	                            source = new ol.source.OSM();
-	                            break;
-	                        case 'BingMaps':
-	                            source = new ol.source.BingMaps({
-	                                key: l.key,
-	                                imagerySet: l.imagerySet === undefined ? 'Road' : l.imagerySet
-	                            });
-	                            break;
-	                        case 'Stamen':
-	                            source = new ol.source.Stamen({
-	                                layer: l.layer === undefined ? 'watercolor' : l.layer
-	                            });
-	                            break;
-	                        /********** TileJSON require ol >= v3.8.2 **********/
-	                        // case 'TileJSON':
-	                        //     source = new ol.source.TileJSON({
-	                        //         url: l.url,
-	                        //         crossOrigin: l.crossOrigin === undefined ? 'anonymous' : l.crossOrigin
-	                        //     });
-	                        //     break;
-	                        case 'TileArcGISRest':
-	                            source = new ol.source.TileArcGISRest({
-	                                url: l.url
-	                            });
-	                            break;
-	                    }
-	                } else if (l.type === 'Vector') {
-	                    switch (l.source) {
-	                        case 'Vector':
-
-	                    }
-	                }
-	                layer.setSource(source);
+	                layer.setSource(self.setupSource(l.source));
 	                self.c9Layers.push(layer);
 	            });
 	        }
