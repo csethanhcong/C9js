@@ -48,6 +48,18 @@ export default class DonutChart extends Chart {
     get tooltip() {
         return this._tooltip;
     }
+
+    get pie() {
+        return this._pie;
+    }
+
+    get arc() {
+        return this._arc;
+    }
+
+    get currentData() {
+        return this._currentData;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -86,6 +98,24 @@ export default class DonutChart extends Chart {
     set tooltip(newTooltip) {
         if (newTooltip) {
             this._tooltip = newTooltip;
+        }
+    }
+
+    set pie(newPie) {
+        if (newPie) {
+            this._pie = newPie;
+        }
+    }
+
+    set arc(newArc) {
+        if (newArc) {
+            this._arc = newArc;
+        }
+    }
+
+    set currentData(newCurrentData) {
+        if (newCurrentData) {
+            this._currentData = newCurrentData;
         }
     }
     /*=====  End of Setter  ======*/
@@ -236,12 +266,12 @@ export default class DonutChart extends Chart {
 
         };
 
-        var arc = d3.svg.arc()
+        self.arc = d3.svg.arc()
                     .outerRadius(self.outerRadius)
                     .innerRadius(self.innerRadius);
 
         //we can sort data here
-        var pie = d3.layout.pie()
+        self.pie = d3.layout.pie()
                     .sort(null)
                     .value(function(d) { return d.value; });
 
@@ -251,22 +281,26 @@ export default class DonutChart extends Chart {
                         .attr('class', 'c9-chart c9-custom-arc-container')
                         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
                         .selectAll('.c9-chart-donut.c9-custom-arc')
-                        .data(pie(self.data)).enter()
+                        .data(self.pie(self.data)).enter()
                         .append('g')
                             .attr('class', 'c9-chart-donut c9-custom-arc');
 
         // Append main path contains donut
         arcs.append('path')
                 .attr('class', 'c9-chart-donut c9-custom-path')
-                .attr('d', arc)
+                .attr('d', self.arc)
                 .style('fill', function(d, i) { return color(i); })
-                .style('stroke', '#ffffff');
+                .style('stroke', '#ffffff')
+                .each(function(d) { self._currentData = d; }); 
+                // Current data used for calculate interpolation 
+                // between current arc vs disabled arc
+
 
         // Append middle text display name
         if (self.showText) {
             arcs.append('text')
                     .attr('class', 'c9-chart-donut c9-custom-text')
-                    .attr('transform', function(d) { return 'translate(' + arc.centroid(d) + ')'; })
+                    .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
                     .attr('dy', '.35em')
                     .attr('text-anchor', 'middle')
                     .text(function(d) { return d.data.name; });
@@ -283,14 +317,19 @@ export default class DonutChart extends Chart {
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options, self.body, self.colorRange, self.data);
 
+        // Draw legend
+        legend.draw();
+        legend.updateInteraction(self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+        // Update interaction of this own chart
         self.updateInteraction();
 
     }
 
     /**
-     * Select all pie as type PATH in Donut Chart via its CLASS
+     * Select all path as type PATH in Donut Chart via its CLASS
      */
-    selectAllPie() {
+    selectAllPath() {
         var self = this;
 
         return self.body
@@ -306,7 +345,7 @@ export default class DonutChart extends Chart {
         var self = this,
             hoverEnable     = self.hover.enable,
             hoverOptions    = self.hover.options,
-            selector        = self.selectAllPie(),
+            selector        = self.selectAllPath(),
             onMouseOverCallback = hoverOptions.onMouseOver.callback,
             onMouseOutCallback  = hoverOptions.onMouseOut.callback;
 

@@ -1138,8 +1138,6 @@ var C9 =
 	        self._body = body;
 	        self._color = color;
 	        self._data = data;
-
-	        self.draw();
 	    }
 
 	    /*==============================
@@ -1192,7 +1190,7 @@ var C9 =
 	                } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
 	                    self._data.forEach(function (d) {
-	                        d.name ? legendDomain.push(d.name) : legendDomain.push("");
+	                        d ? legendDomain.push(d) : legendDomain.push("");
 	                    });
 	                }
 
@@ -1209,12 +1207,13 @@ var C9 =
 
 	                if (i == legendDomain.length) legendDomain = [];
 
+	                // Calculate domain for color to draw
 	                color.domain(legendDomain);
 
 	                // Legend will be appended in main SVG container
 	                var legendContainer = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
 
-	                var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
+	                // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
 	                self.legendItem = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-item").data(color.domain()).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr("transform", function (d, i) {
 	                    return "translate(" + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + "," + self._legendMargin[3] + ")";
@@ -1225,45 +1224,8 @@ var C9 =
 	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
-	                    return d;
+	                    return d.name;
 	                });
-
-	                self.legendItemEventFactory = {
-	                    'click': function click(item) {
-	                        var selector = d3.select(this);
-	                        var enable = true,
-	                            dataSet = self.legendDomain;
-	                        var totalEnable = d3.sum(dataSet.map(function (d) {
-	                            return d.enable ? 1 : 0;
-	                        }));
-
-	                        if (selector.style('opacity') === '0.1') {
-	                            selector.style('opacity', '1.0');
-	                        } else {
-	                            if (totalEnable < 2) return;
-	                            selector.style('opacity', '0.1');
-	                            enable = false;
-	                        }
-
-	                        pie.value(function (d) {
-	                            if (d.label === label) d.enable = enable;
-	                            return d.enable ? d.count : 0;
-	                        });
-
-	                        path = path.data(pie(dataSet));
-
-	                        path.transition().duration(750).attrTween('d', function (d) {
-	                            var interpolate = d3.interpolate(this._current, d);
-	                            this._current = interpolate(0);
-	                            return function (t) {
-	                                return arc(interpolate(t));
-	                            };
-	                        });
-	                    }
-
-	                };
-
-	                self.legendItem.on(self.legendItemEventFactory);
 
 	                // if (self._legendBox && legendDomain.length > 0) {
 	                //     var box = legendContainer[0][0].getBBox();
@@ -1276,6 +1238,57 @@ var C9 =
 	                //         .style("stroke", color);
 	                // }
 	            }
+	        }
+
+	        /**
+	         * Update interaction event dispatchers for legend
+	         */
+
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction(path, pie, currentData, arc) {
+	            var self = this;
+
+	            self.legendItemEventFactory = {
+
+	                'click': function click(label) {
+
+	                    var selector = d3.select(this);
+	                    var enable = true,
+	                        dataSet = self.legendDomain;
+	                    var totalEnable = d3.sum(dataSet.map(function (d) {
+	                        return d.enable ? 1 : 0;
+	                    }));
+
+	                    if (selector.style('opacity') === '0.1') {
+	                        selector.style('opacity', '1.0');
+	                    } else {
+	                        if (totalEnable < 2) return;
+	                        selector.style('opacity', '0.1');
+	                        enable = false;
+	                    }
+
+	                    pie.value(function (d) {
+	                        if (d.data.name == label) d.enable = enable;
+	                        return d.enable ? d.data.value : 0;
+	                    });
+
+	                    path = path.data(pie(dataSet));
+
+	                    // path.transition()
+	                    // .duration(750)
+	                    // .attrTween('d', function(d) {
+	                    //     var interpolate = d3.interpolate(currentData, d);
+	                    //     currentData = interpolate(0);
+	                    //     return function(t) {
+	                    //         return arc(interpolate(t));
+	                    //     };
+	                    // });
+	                }
+
+	            };
+
+	            self.legendItem.on(self.legendItemEventFactory);
 	        }
 	    }, {
 	        key: 'setYLocation',
@@ -1626,25 +1639,30 @@ var C9 =
 	                return tooltipEventFactory;
 	            };
 
-	            var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
+	            self.arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
 
 	            //we can sort data here
-	            var pie = d3.layout.pie().sort(null).value(function (d) {
+	            self.pie = d3.layout.pie().sort(null).value(function (d) {
 	                return d.value;
 	            });
 
 	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(pie(self.data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
+	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(self.data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
 
 	            // Append main path contains donut
-	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('d', arc).style('fill', function (d, i) {
+	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('d', self.arc).style('fill', function (d, i) {
 	                return color(i);
-	            }).style('stroke', '#ffffff');
+	            }).style('stroke', '#ffffff').each(function (d) {
+	                self._currentData = d;
+	            });
+	            // Current data used for calculate interpolation 
+	            // between current arc vs disabled arc
+
 
 	            // Append middle text display name
 	            if (self.showText) {
 	                arcs.append('text').attr('class', 'c9-chart-donut c9-custom-text').attr('transform', function (d) {
-	                    return 'translate(' + arc.centroid(d) + ')';
+	                    return 'translate(' + self.arc.centroid(d) + ')';
 	                }).attr('dy', '.35em').attr('text-anchor', 'middle').text(function (d) {
 	                    return d.data.name;
 	                });
@@ -1664,16 +1682,21 @@ var C9 =
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
 	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.data);
 
+	            // Draw legend
+	            legend.draw();
+	            legend.updateInteraction(self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+	            // Update interaction of this own chart
 	            self.updateInteraction();
 	        }
 
 	        /**
-	         * Select all pie as type PATH in Donut Chart via its CLASS
+	         * Select all path as type PATH in Donut Chart via its CLASS
 	         */
 
 	    }, {
-	        key: 'selectAllPie',
-	        value: function selectAllPie() {
+	        key: 'selectAllPath',
+	        value: function selectAllPath() {
 	            var self = this;
 
 	            return self.body.selectAll('g').selectAll('path.c9-chart-donut.c9-custom-path');
@@ -1690,7 +1713,7 @@ var C9 =
 	            var self = this,
 	                hoverEnable = self.hover.enable,
 	                hoverOptions = self.hover.options,
-	                selector = self.selectAllPie(),
+	                selector = self.selectAllPath(),
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
 
@@ -1765,6 +1788,36 @@ var C9 =
 	        set: function set(newTooltip) {
 	            if (newTooltip) {
 	                this._tooltip = newTooltip;
+	            }
+	        }
+	    }, {
+	        key: 'pie',
+	        get: function get() {
+	            return this._pie;
+	        },
+	        set: function set(newPie) {
+	            if (newPie) {
+	                this._pie = newPie;
+	            }
+	        }
+	    }, {
+	        key: 'arc',
+	        get: function get() {
+	            return this._arc;
+	        },
+	        set: function set(newArc) {
+	            if (newArc) {
+	                this._arc = newArc;
+	            }
+	        }
+	    }, {
+	        key: 'currentData',
+	        get: function get() {
+	            return this._currentData;
+	        },
+	        set: function set(newCurrentData) {
+	            if (newCurrentData) {
+	                this._currentData = newCurrentData;
 	            }
 	        }
 	    }]);

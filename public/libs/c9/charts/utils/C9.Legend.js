@@ -29,8 +29,6 @@ export default class Legend {
         self._color     = color;
         self._data      = data;
 
-        self.draw();
-        
     }
 
     /*==============================
@@ -168,7 +166,7 @@ export default class Legend {
             } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
                 self._data.forEach(function(d) {
-                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
+                    d ? legendDomain.push(d) : legendDomain.push("");
                 });
 
             }
@@ -188,6 +186,7 @@ export default class Legend {
             if (i == legendDomain.length)
                 legendDomain = [];
 
+            // Calculate domain for color to draw
             color.domain(legendDomain);
 
             // Legend will be appended in main SVG container
@@ -196,7 +195,7 @@ export default class Legend {
                 .attr("class", "c9-custom-legend c9-custom-legend-container")
                 .attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
         
-            var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
+            // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
             self.legendItem = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-item")
                 .data(color.domain())
@@ -219,46 +218,7 @@ export default class Legend {
                 .attr('x', self._legendSize * 2 + 20)
                 .attr('y', 15)
                 // .attr('text-anchor', 'middle')
-                .text(function(d) { return d; });
-
-            self.legendItemEventFactory = {
-                'click': function(item) {
-                    var selector = d3.select(this);
-                    var enable = true,
-                        dataSet = self.legendDomain;
-                    var totalEnable = d3.sum(dataSet.map(function(d) {
-                        return (d.enable) ? 1 : 0;
-                    }));
-
-                    if (selector.style('opacity') === '0.1') {
-                        selector.style('opacity', '1.0');
-                    } else {
-                        if (totalEnable < 2) return;
-                        selector.style('opacity', '0.1');
-                        enable = false;
-                    }
-
-                    pie.value(function(d) {
-                        if (d.label === label) d.enable = enable;
-                        return (d.enable) ? d.count : 0;
-                    });
-
-                    path = path.data(pie(dataSet));
-
-                    path.transition()
-                    .duration(750)
-                    .attrTween('d', function(d) {
-                        var interpolate = d3.interpolate(this._current, d);
-                        this._current = interpolate(0);
-                        return function(t) {
-                            return arc(interpolate(t));
-                        };
-                    });
-                }
-            
-            };
-
-            self.legendItem.on(self.legendItemEventFactory);
+                .text(function(d) { return d.name; });
 
             // if (self._legendBox && legendDomain.length > 0) {
             //     var box = legendContainer[0][0].getBBox();
@@ -271,6 +231,55 @@ export default class Legend {
             //         .style("stroke", color);
             // }
         }
+    }
+
+    /**
+     * Update interaction event dispatchers for legend
+     */
+    updateInteraction(path, pie, currentData, arc) {
+        var self = this;
+
+        self.legendItemEventFactory = {
+
+            'click': function(label) {
+
+                var selector = d3.select(this);
+                var enable = true,
+                    dataSet = self.legendDomain;
+                var totalEnable = d3.sum(dataSet.map(function(d) {
+                    return (d.enable) ? 1 : 0;
+                }));
+
+                if (selector.style('opacity') === '0.1') {
+                    selector.style('opacity', '1.0');
+                } else {
+                    if (totalEnable < 2) return;
+                    selector.style('opacity', '0.1');
+                    enable = false;
+                }
+
+                pie.value(function(d) {
+                    if (d.data.name == label) d.enable = enable;
+                    return (d.enable) ? d.data.value : 0;
+                });
+
+                path = path.data(pie(dataSet));
+
+                // path.transition()
+                // .duration(750)
+                // .attrTween('d', function(d) {
+                //     var interpolate = d3.interpolate(currentData, d);
+                //     currentData = interpolate(0);
+                //     return function(t) {
+                //         return arc(interpolate(t));
+                //     };
+                // });
+                
+            }
+        
+        };
+
+        self.legendItem.on(self.legendItemEventFactory);
     }
 
     setYLocation (height, margin) {
