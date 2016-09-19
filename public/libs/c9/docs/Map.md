@@ -9,7 +9,7 @@
 
 #### TODO:
 
-1. `get GeoJSON data using some APIs (finding APIs source)`
+1. `get GeoJSON data using some APIs (finding APIs source)`: options: boundary, admin_level, search by city name (max level 4)
 2. `recode markers to suit newest OpenLayer API`
 3. `consider adding style to Map`
 4. `interaction for map`

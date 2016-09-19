@@ -33,7 +33,7 @@
 
 	    <!-- D3 & OL3 & C9 -->
 	    <script src="./libs/c9/libs/d3.min.js"></script>
-	    <script src="./libs/c9/libs/ol3/ol.js"></script>
+	    <script src="http://openlayers.org/en/v3.18.2/build/ol.js"></script>
 	    <link rel="stylesheet" href="./libs/c9/libs/ol3/ol.css" />
 	    <script src="./libs/c9/C9.js"></script>
 	    <!-- <script src="/libs/c9/charts/C9.Chart.js"></script>
@@ -132,19 +132,14 @@
 	            	{
 	            		type: "Vector",
 	            		source: {
-	            			name: "Cluster",
-	            			source: {
-	            				name: "Vector",
-	            				url: 'http://openlayers.org/en/v3.18.2/examples/data/kml/2012_Earthquakes_Mag5.kml',
-	            				format: 'KML'
-	            			}
+	            			name: "Vector",
+	            				url: 'admin_level_2.geojson',
+	            				format: 'GeoJSON'
 	            		}
 	            		
 	            	}
 	            ],
-            	data: {
-
-            	}
+            	data: [{name: "Hung Yen"}],
 	    	}
 	    	var map = new C9.Map(o);
 	    	map.draw();

@@ -58,6 +58,10 @@ export default class Map {
     get layers() {
         return this._layers;
     }
+
+    get data() {
+        return this._data;
+    }
     /*=====  End of Getter  ======*/
     
     
@@ -101,6 +105,11 @@ export default class Map {
         }
     }
 
+    set data(newData) {
+        if (newData) {
+            this._data = newData;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     
@@ -115,12 +124,10 @@ export default class Map {
         self.c9Layers = [];
         self.initLayer();
         
-
+        //data
+        self.initData();
         //quick markers
         self.initMarker();
-            
-
-        
     }
 
     draw() {
@@ -137,59 +144,7 @@ export default class Map {
     }
     /*=====  End of Main Functions  ======*/
 
-    //source setup
-    setupSource(s){
-        var source = undefined;
-        switch (s.name) {
-            case 'BingMaps':
-                source = new ol.source.BingMaps({
-                    key: s.key,
-                    imagerySet: s.imagerySet === undefined ? 'Road' : s.imagerySet
-                });
-                break;
-            case 'Stamen':
-                source = new ol.source.Stamen({
-                    layer: s.layer === undefined ? 'watercolor' : s.layer
-                });
-                break;
-            /********** TileJSON require ol >= v3.8.2 **********/
-            // case 'TileJSON':
-            //     source = new ol.source.TileJSON({
-            //         url: l.url,
-            //         crossOrigin: l.crossOrigin === undefined ? 'anonymous' : l.crossOrigin
-            //     });
-            //     break;
-            case 'TileArcGISRest':
-                source = new ol.source.TileArcGISRest({
-                    url: s.url
-                });
-                break;
-            case 'Vector':
-                source = new ol.source.Vector({
-                    url: s.url,
-                    format: new ol.format[s.format]({
-                        extractStyles: s.extractStyles === undefined ? true : false
-                    })
-                });
-                break;
-            case 'Cluster':
-                source = new ol.source.Cluster({
-                    distance: s.distance || 20,
-                    source: this.setupSource(s.source)
-                });
-                break;
-            case 'ImageVector':
-                source = new ol.source.ImageVector({
-                    source: this.setupSource(s.source)
-                });
-                break;
-            default: 
-                source = new ol.source.OSM();
-                break;
-
-        }
-        return source;
-    }
+    
 
     //tile layer setup
     initLayer() {
@@ -268,5 +223,59 @@ export default class Map {
                 return styles[feature.get('type')];
             }
         }));
+    }
+
+    //source setup
+    setupSource(s){
+        var source = undefined;
+        switch (s.name) {
+            case 'BingMaps':
+                source = new ol.source.BingMaps({
+                    key: s.key,
+                    imagerySet: s.imagerySet === undefined ? 'Road' : s.imagerySet
+                });
+                break;
+            case 'Stamen':
+                source = new ol.source.Stamen({
+                    layer: s.layer === undefined ? 'watercolor' : s.layer
+                });
+                break;
+            /********** TileJSON require ol >= v3.8.2 **********/
+            case 'TileJSON':
+                source = new ol.source.TileJSON({
+                    url: s.url,
+                    crossOrigin: s.crossOrigin === undefined ? 'anonymous' : s.crossOrigin
+                });
+                break;
+            case 'TileArcGISRest':
+                source = new ol.source.TileArcGISRest({
+                    url: s.url
+                });
+                break;
+            case 'Vector':
+                source = new ol.source.Vector({
+                    url: s.url,
+                    format: s.format === undefined ? null : new ol.format[s.format]({
+                        extractStyles: s.extractStyles === undefined ? true : false
+                    })
+                });
+                break;
+            case 'Cluster':
+                source = new ol.source.Cluster({
+                    distance: s.distance || 20,
+                    source: this.setupSource(s.source)
+                });
+                break;
+            case 'ImageVector':
+                source = new ol.source.ImageVector({
+                    source: this.setupSource(s.source)
+                });
+                break;
+            default: 
+                source = new ol.source.OSM();
+                break;
+
+        }
+        return source;
     }
 }

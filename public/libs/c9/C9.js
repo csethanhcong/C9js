@@ -2432,7 +2432,6 @@ var C9 =
 	    _createClass(Map, [{
 	        key: "initMapConfig",
 
-
 	        /*=====  End of Setter  ======*/
 
 	        /*======================================
@@ -2446,6 +2445,8 @@ var C9 =
 	            self.c9Layers = [];
 	            self.initLayer();
 
+	            //data
+	            self.initData();
 	            //quick markers
 	            self.initMarker();
 	        }
@@ -2464,63 +2465,6 @@ var C9 =
 	            });
 	        }
 	        /*=====  End of Main Functions  ======*/
-
-	        //source setup
-
-	    }, {
-	        key: "setupSource",
-	        value: function setupSource(s) {
-	            var source = undefined;
-	            switch (s.name) {
-	                case 'BingMaps':
-	                    source = new ol.source.BingMaps({
-	                        key: s.key,
-	                        imagerySet: s.imagerySet === undefined ? 'Road' : s.imagerySet
-	                    });
-	                    break;
-	                case 'Stamen':
-	                    source = new ol.source.Stamen({
-	                        layer: s.layer === undefined ? 'watercolor' : s.layer
-	                    });
-	                    break;
-	                /********** TileJSON require ol >= v3.8.2 **********/
-	                // case 'TileJSON':
-	                //     source = new ol.source.TileJSON({
-	                //         url: l.url,
-	                //         crossOrigin: l.crossOrigin === undefined ? 'anonymous' : l.crossOrigin
-	                //     });
-	                //     break;
-	                case 'TileArcGISRest':
-	                    source = new ol.source.TileArcGISRest({
-	                        url: s.url
-	                    });
-	                    break;
-	                case 'Vector':
-	                    source = new ol.source.Vector({
-	                        url: s.url,
-	                        format: new ol.format[s.format]({
-	                            extractStyles: s.extractStyles === undefined ? true : false
-	                        })
-	                    });
-	                    break;
-	                case 'Cluster':
-	                    source = new ol.source.Cluster({
-	                        distance: s.distance || 20,
-	                        source: this.setupSource(s.source)
-	                    });
-	                    break;
-	                case 'ImageVector':
-	                    source = new ol.source.ImageVector({
-	                        source: this.setupSource(s.source)
-	                    });
-	                    break;
-	                default:
-	                    source = new ol.source.OSM();
-	                    break;
-
-	            }
-	            return source;
-	        }
 
 	        //tile layer setup
 
@@ -2598,6 +2542,63 @@ var C9 =
 	                }
 	            }));
 	        }
+
+	        //source setup
+
+	    }, {
+	        key: "setupSource",
+	        value: function setupSource(s) {
+	            var source = undefined;
+	            switch (s.name) {
+	                case 'BingMaps':
+	                    source = new ol.source.BingMaps({
+	                        key: s.key,
+	                        imagerySet: s.imagerySet === undefined ? 'Road' : s.imagerySet
+	                    });
+	                    break;
+	                case 'Stamen':
+	                    source = new ol.source.Stamen({
+	                        layer: s.layer === undefined ? 'watercolor' : s.layer
+	                    });
+	                    break;
+	                /********** TileJSON require ol >= v3.8.2 **********/
+	                case 'TileJSON':
+	                    source = new ol.source.TileJSON({
+	                        url: s.url,
+	                        crossOrigin: s.crossOrigin === undefined ? 'anonymous' : s.crossOrigin
+	                    });
+	                    break;
+	                case 'TileArcGISRest':
+	                    source = new ol.source.TileArcGISRest({
+	                        url: s.url
+	                    });
+	                    break;
+	                case 'Vector':
+	                    source = new ol.source.Vector({
+	                        url: s.url,
+	                        format: s.format === undefined ? null : new ol.format[s.format]({
+	                            extractStyles: s.extractStyles === undefined ? true : false
+	                        })
+	                    });
+	                    break;
+	                case 'Cluster':
+	                    source = new ol.source.Cluster({
+	                        distance: s.distance || 20,
+	                        source: this.setupSource(s.source)
+	                    });
+	                    break;
+	                case 'ImageVector':
+	                    source = new ol.source.ImageVector({
+	                        source: this.setupSource(s.source)
+	                    });
+	                    break;
+	                default:
+	                    source = new ol.source.OSM();
+	                    break;
+
+	            }
+	            return source;
+	        }
 	    }, {
 	        key: "id",
 	        get: function get() {
@@ -2663,6 +2664,16 @@ var C9 =
 	        set: function set(newLayers) {
 	            if (newLayers) {
 	                this._layers = newLayers;
+	            }
+	        }
+	    }, {
+	        key: "data",
+	        get: function get() {
+	            return this._data;
+	        },
+	        set: function set(newData) {
+	            if (newData) {
+	                this._data = newData;
 	            }
 	        }
 	    }]);
