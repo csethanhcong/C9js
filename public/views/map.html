@@ -129,17 +129,8 @@
 	            		// url: 'http://sampleserver1.arcgisonline.com/ArcGIS/rest/services/' +
 	          				// 'Specialty/ESRI_StateCityHighway_USA/MapServer',
 	            	},
-	            	{
-	            		type: "Vector",
-	            		source: {
-	            			name: "Vector",
-	            				url: 'admin_level_2.geojson',
-	            				format: 'GeoJSON'
-	            		}
-	            		
-	            	}
 	            ],
-            	data: [{name: "Hung Yen"}],
+	            markers: [{lat: 0, lon: 0}, {lat: 10, lon: 10}]
 	    	}
 	    	var map = new C9.Map(o);
 	    	map.draw();

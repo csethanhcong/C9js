@@ -2680,8 +2680,6 @@ var C9 =
 	    value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2700,16 +2698,15 @@ var C9 =
 	            // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
 	            layers: {
 	                type: "Tile",
-	                source: "OSM"
+	                source: {
+	                    name: "OSM"
+	                }
 	            },
 	            view: {
 	                lat: 0,
 	                lon: 0,
 	                zoom: 2
-	            },
-	            controls: ol.control.defaults({
-	                attribution: false
-	            })
+	            }
 	        };
 
 	        self._id = options.id || config.id;
@@ -2737,12 +2734,16 @@ var C9 =
 	        value: function initMapConfig() {
 	            var self = this;
 
-	            //layers
+	            //c9Layers contain all layers
 	            self.c9Layers = [];
+	            //c9Markers contain all markers
+	            self.c9Markers = new ol.source.Vector({});
+
+	            //init all thing relating to user's data
+
+	            //layer
 	            self.initLayer();
 
-	            //data
-	            self.initData();
 	            //quick markers
 	            self.initMarker();
 	        }
@@ -2750,96 +2751,153 @@ var C9 =
 	        key: "draw",
 	        value: function draw() {
 	            var self = this;
-	            var view = self.view;
-	            self.map = new ol.Map({
+	            self.c9View = new ol.View({
+	                center: ol.proj.fromLonLat([self.view.lon, self.view.lat]),
+	                zoom: self.view.zoom
+	            });
+	            self.c9Map = new ol.Map({
 	                target: self.id,
 	                layers: self.c9Layers,
-	                view: new ol.View({
-	                    center: ol.proj.fromLonLat([view.lon, view.lat]),
-	                    zoom: view.zoom
-	                })
+	                view: self.c9View,
+	                interactions: ol.interaction.defaults({ doubleClickZoom: false })
+	            });
+
+	            //register pointer move event to show cursor as pointer if user hover on markers
+	            self.c9Map.on('pointermove', function (evt) {
+	                self.c9Map.getTargetElement().style.cursor = self.c9Map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
+	            });
+
+	            //register click event to show effect on markers
+	            self.c9Map.on('click', function (evt) {
+	                var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+	                    return feature;
+	                });
+	                if (f && f.get('type') == 'c9GeoMarker') {
+	                    self.createMarkerEffect(f);
+	                    //test
+	                    var pan = ol.animation.pan({
+	                        duration: 2000,
+	                        source: /** @type {ol.Coordinate} */self.c9View.getCenter()
+	                    });
+	                    self.c9Map.beforeRender(pan);
+	                    self.c9View.setCenter(f.getGeometry().getCoordinates());
+	                }
 	            });
 	        }
 	        /*=====  End of Main Functions  ======*/
 
-	        //tile layer setup
+	        /**
+	         * Create layer
+	         * @param  {String} type of layer
+	         * @param  {source} source data defined by C9
+	         */
+
+	    }, {
+	        key: "createLayer",
+	        value: function createLayer(type) {
+	            var source = arguments.length <= 1 || arguments[1] === undefined ? undefined : arguments[1];
+
+	            var self = this;
+	            var layer = new ol.layer[type]();
+	            layer.setSource(self.setupSource(source));
+	            self.c9Layers.push(layer);
+	        }
+
+	        /**
+	         * Init Layer base on first user's data
+	         */
 
 	    }, {
 	        key: "initLayer",
 	        value: function initLayer() {
 	            var self = this;
-	            self.layers.forEach(function (l, i) {
-	                var layer = new ol.layer[l.type]();
-	                layer.setSource(self.setupSource(l.source));
-	                self.c9Layers.push(layer);
+	            var layers = self.layers;
+
+	            if (layers instanceof Array) {
+	                layers.forEach(function (l, i) {
+	                    self.createLayer(l.type, l.source);
+	                });
+	            } else {
+	                self.createLayer(layers.type, layers.source);
+	            }
+	        }
+
+	        /**
+	         * Create marker style
+	         * @param  {String} image source
+	         * @param  {Number} scale
+	         * @return {ol.style.Style} return marker style
+	         */
+
+	    }, {
+	        key: "createMarkerStyle",
+	        value: function createMarkerStyle(imgSrc, scale) {
+	            return new ol.style.Style({
+	                image: new ol.style.Icon({
+	                    anchor: [0.5, 1], //middle-width and bottom-height of image
+	                    src: imgSrc,
+	                    scale: scale
+	                })
 	            });
 	        }
 
-	        //marker setup
+	        /**
+	         * Create marker
+	         * @param  {Number} latitude of marker
+	         * @param  {Number} longitude of marker
+	         * @param  {String} image source (support for both local and net)
+	         * @param  {Number} scale image if its size is too large - default = 1
+	         */
+
+	    }, {
+	        key: "createMarker",
+	        value: function createMarker(lat, lon) {
+	            var imgSrc = arguments.length <= 2 || arguments[2] === undefined ? 'http://s21.postimg.org/blklb8scn/marker_icon.png' : arguments[2];
+	            var scale = arguments.length <= 3 || arguments[3] === undefined ? 1 : arguments[3];
+
+	            var self = this;
+
+	            var marker = new ol.Feature({
+	                type: 'c9GeoMarker',
+	                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
+	            });
+	            marker.setStyle(self.createMarkerStyle(imgSrc, scale));
+
+	            //add this marker to marker list (c9Markers)
+	            self.c9Markers.addFeature(marker);
+	        }
+
+	        /**
+	         * marker first set up
+	         */
 
 	    }, {
 	        key: "initMarker",
 	        value: function initMarker() {
 	            var self = this;
-	            var markers = this.markers;
+	            //data
+	            var markers = self.markers;
+	            //add marker layer to layer list (c9Layers)
+	            self.c9Layers.push(new ol.layer.Vector({
+	                source: self.c9Markers
+	            }));
 
 	            if (markers.length === 0) return;
 
-	            var vectorSource = new ol.source.Vector({});
-	            var styles = {};
-	            if (_typeof(markers[0]) === 'object') markers.forEach(function (m, i) {
-	                var marker = new ol.Feature({
-	                    type: 'c9GeoMarker' + i,
-	                    geometry: new ol.geom.Point(ol.proj.fromLonLat([m[1], m[0]]))
+	            if (markers instanceof Array) {
+	                markers.forEach(function (m, i) {
+	                    self.createMarker(m.lat, m.lon, m.img, m.scale);
 	                });
-
-	                if (m[2] === undefined) styles['c9GeoMarker' + i] = new ol.style.Style({
-	                    image: new ol.style.Icon({
-	                        anchor: [0.5, 1],
-	                        src: 'https://cdn1.iconfinder.com/data/icons/Map-Markers-Icons-Demo-PNG/48/Map-Marker-Marker-Outside-Chartreuse.png'
-	                    })
-	                });else styles['c9GeoMarker' + i] = new ol.style.Style({
-	                    image: new ol.style.Icon({
-	                        anchor: [0.5, 1],
-	                        src: m[2],
-	                        scale: m[3] === undefined ? 1 : m[3]
-	                    })
-	                });
-
-	                vectorSource.addFeature(marker);
-	            });
-	            //only 1 marker
-	            else {
-	                    var marker = new ol.Feature({
-	                        type: 'c9GeoMarker',
-	                        geometry: new ol.geom.Point(ol.proj.fromLonLat([markers[1], markers[0]]))
-	                    });
-
-	                    if (markers[2] === undefined) styles['c9GeoMarker'] = new ol.style.Style({
-	                        image: new ol.style.Icon({
-	                            anchor: [0.5, 1],
-	                            src: 'https://cdn1.iconfinder.com/data/icons/Map-Markers-Icons-Demo-PNG/48/Map-Marker-Marker-Outside-Chartreuse.png'
-	                        })
-	                    });else styles['c9GeoMarker'] = new ol.style.Style({
-	                        image: new ol.style.Icon({
-	                            anchor: [0.5, 1],
-	                            src: markers[2],
-	                            scale: markers[3] === undefined ? 1 : markers[3]
-	                        })
-	                    });
-
-	                    vectorSource.addFeature(marker);
-	                }
-
-	            self.c9Layers.push(new ol.layer.Vector({
-	                source: vectorSource,
-	                style: function style(feature) {
-	                    return styles[feature.get('type')];
-	                }
-	            }));
+	            } else {
+	                self.createMarker(markers.lat, markers.lon, markers.img, markers.scale);
+	            }
 	        }
 
-	        //source setup
+	        /**
+	         * Setup source for layer
+	         * @param  {Object} source data style defined by c9
+	         * @return {String} return source (ol.source)
+	         */
 
 	    }, {
 	        key: "setupSource",
@@ -2849,19 +2907,19 @@ var C9 =
 	                case 'BingMaps':
 	                    source = new ol.source.BingMaps({
 	                        key: s.key,
-	                        imagerySet: s.imagerySet === undefined ? 'Road' : s.imagerySet
+	                        imagerySet: s.imagerySet || 'Road'
 	                    });
 	                    break;
 	                case 'Stamen':
 	                    source = new ol.source.Stamen({
-	                        layer: s.layer === undefined ? 'watercolor' : s.layer
+	                        layer: s.layer || 'watercolor'
 	                    });
 	                    break;
 	                /********** TileJSON require ol >= v3.8.2 **********/
 	                case 'TileJSON':
 	                    source = new ol.source.TileJSON({
 	                        url: s.url,
-	                        crossOrigin: s.crossOrigin === undefined ? 'anonymous' : s.crossOrigin
+	                        crossOrigin: s.crossOrigin || 'anonymous'
 	                    });
 	                    break;
 	                case 'TileArcGISRest':
@@ -2873,7 +2931,7 @@ var C9 =
 	                    source = new ol.source.Vector({
 	                        url: s.url,
 	                        format: s.format === undefined ? null : new ol.format[s.format]({
-	                            extractStyles: s.extractStyles === undefined ? true : false
+	                            extractStyles: s.extractStyles || false
 	                        })
 	                    });
 	                    break;
@@ -2894,6 +2952,46 @@ var C9 =
 
 	            }
 	            return source;
+	        }
+	    }, {
+	        key: "createMarkerEffect",
+	        value: function createMarkerEffect(feature) {
+	            var self = this;
+	            var duration = 3000;
+	            var start = new Date().getTime();
+	            var listenerKey;
+
+	            function animate(event) {
+	                var vectorContext = event.vectorContext;
+	                var frameState = event.frameState;
+	                var flashGeom = feature.getGeometry().clone();
+	                var elapsed = frameState.time - start;
+	                var elapsedRatio = elapsed / duration;
+	                // radius will be 5 at start and 30 at end.
+	                var radius = ol.easing.easeOut(elapsedRatio) * 25 + 5;
+	                var opacity = ol.easing.easeOut(1 - elapsedRatio);
+
+	                var style = new ol.style.Style({
+	                    image: new ol.style.Circle({
+	                        radius: radius,
+	                        snapToPixel: false,
+	                        stroke: new ol.style.Stroke({
+	                            color: 'rgba(255, 0, 0, ' + opacity + ')',
+	                            width: 0.25 + opacity
+	                        })
+	                    })
+	                });
+
+	                vectorContext.setStyle(style);
+	                vectorContext.drawGeometry(flashGeom);
+	                if (elapsed > duration) {
+	                    ol.Observable.unByKey(listenerKey);
+	                    return;
+	                }
+	                // tell OL3 to continue postcompose animation
+	                self.c9Map.render();
+	            }
+	            listenerKey = self.c9Map.on('postcompose', animate);
 	        }
 	    }, {
 	        key: "id",
