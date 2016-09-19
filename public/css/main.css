@@ -42,11 +42,11 @@ pre {
     padding: 0px;
 }*/
 
-svg {
+/*svg {
     border: 1px solid #999;
     filter: drop-shadow( -5px -5px 5px #000 );
     -webkit-filter: drop-shadow( 2px -1px 5px #000 );
-}
+}*/
 
 /*-----------------Input-file-------------------*/
 btn-file {

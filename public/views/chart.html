@@ -58,7 +58,7 @@
         		IGN_key = "ohy4xq0hzfex6nv6rn6dw6s2",
 				BING_key = "Agzyehf8tjuXKKk5sIkuIAcE-S4NNlHmgOAaqRX062b4UsCNGWOXUEc1EJLrpvcL";
         </script>
-        <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+        <!-- <script src="https://maps.googleapis.com/maps/api/js?sensor=false"></script> -->
         <!-- <script src="libs/wind/lib/OpenLayers.v2.13.js"></script>
         <script src="libs/wind/yahoo.js"></script>
         <script src="libs/wind/lib/yui/build/event/event.js"></script>
@@ -155,7 +155,7 @@
 				}, 
 				data: data1, 
 				barColor: "pink",
-				isLogaric: true
+				isLogaric: true,
 			};
 			var barChart = new C9.BarChart(options1);
 			barChart.draw();
@@ -197,7 +197,8 @@
 				interpolate: 'monotone',
 				pointShow: true,
 				pointRadius: 5,
-				pointOpacity: 0.8
+				pointOpacity: 0.8,
+				legendShow:true,
 			};
 			var lineChart = new C9.LineChart(options2);
 			lineChart.draw();
@@ -226,10 +227,6 @@
 			   titlePosition:'bottom',
 			   titleSize:'20px',
 			   legendShow:true,
-			   legendPosition:[  
-			      350,
-			      250
-			   ]
 			};
 			var donutChart = new C9.DonutChart(options3);
 			donutChart.draw();

@@ -467,6 +467,7 @@ var C9 =
 	    =            Getter            =
 	    ==============================*/
 
+
 	    _createClass(Chart, [{
 	        key: 'initConfig',
 
@@ -484,6 +485,8 @@ var C9 =
 	                width = this.width - margin.left - margin.right,
 	                height = this.height - margin.top - margin.bottom;
 
+	            this.container = d3.select(id);
+
 	            this.svg = d3.select(id).append("svg").style('overflow', 'visible') // to overwrite overflow: hidden by Boostrap as default
 	            .attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom);
 
@@ -493,9 +496,9 @@ var C9 =
 	        /*=====  End of Main Functions  ======*/
 
 	    }, {
-	        key: 'id',
+	        key: 'container',
 	        get: function get() {
-	            return this._id;
+	            return this._container;
 	        },
 
 	        /*=====  End of Getter  ======*/
@@ -503,7 +506,16 @@ var C9 =
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-
+	        set: function set(newContainer) {
+	            if (newContainer) {
+	                this._container = newContainer;
+	            }
+	        }
+	    }, {
+	        key: 'id',
+	        get: function get() {
+	            return this._id;
+	        },
 	        set: function set(newId) {
 	            if (newId) {
 	                this._id = newId;
@@ -997,7 +1009,7 @@ var C9 =
 	            var self = this;
 	            // Select CURRENT body container, to make this axis outside
 	            // as a SEPARATED component, just like AXIS, of CHART
-	            var text = d3.select(self._body[0][0].parentNode).append("g").append("text").attr("class", "title");
+	            var text = d3.select(self._body[0][0].parentNode).append("g").attr('class', 'c9-custom-title c9-custom-title-container').append("text").attr("class", "c9-custom-title c9-custom-title-text");
 
 	            // Get title width: text.node().getComputedTextLength()           
 	            text.attr("x", (width - text.node().getComputedTextLength()) / 2).attr("y", this.setYLocation(height, margin)).attr("text-anchor", "middle").style("font-size", this._titleSize).text(this._titleText);
@@ -1107,70 +1119,25 @@ var C9 =
 	            legendBox: false,
 	            legendSize: 18,
 	            legendTextSize: "14px",
-	            legendMargin: [5, 5, 5, 5],
-	            legendSpace: 5,
-	            legendStyle: "rect"
+	            legendMargin: [50, 5, 5, 5],
+	            legendSpace: 150
 	        };
 
-	        this._legendShow = options.legendShow || config.legendShow;
-	        this._legendTextSize = options.legendTextSize || config.legendTextSize;
-	        this._legendPosition = options.legendPosition || config.legendPosition;
-	        this._legendSize = options.legendSize || config.legendSize;
-	        this._legendBox = options.legendBox || config.legendBox;
-	        this._legendMargin = options.legendMargin || config.legendMargin;
-	        this._legendSpace = options.legendSpace || config.legendSpace;
-	        this._legendStyle = options.legendStyle || config.legendStyle;
+	        var self = this;
 
-	        this._body = body;
-	        this._data = data;
-	        if (this._legendShow) {
-	            var self = this;
-	            var legendDomain = [];
-	            if (self._body.type == "line") {
-	                var dataGroup = d3.nest().key(function (d) {
-	                    return d.Client;
-	                }).entries(self._data);
-	                dataGroup.forEach(function (d, i) {
-	                    legendDomain.push(d.key);
-	                });
-	            } else if (self._body.type == "bar") {
-	                try {
-	                    if (typeof options.legend_domain === "string") legendDomain.push(options.legend_domain);else if (_typeof(options.legend_domain) === "object") legendDomain = options.legend_domain;
-	                } catch (err) {
-	                    throw "Legend domain is not defined";
-	                }
-	            } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
-	                self._data.forEach(function (d) {
-	                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
-	                });
-	            }
+	        self._legendShow = options.legendShow || config.legendShow;
+	        self._legendTextSize = options.legendTextSize || config.legendTextSize;
+	        self._legendPosition = options.legendPosition || config.legendPosition;
+	        self._legendSize = options.legendSize || config.legendSize;
+	        self._legendBox = options.legendBox || config.legendBox;
+	        self._legendMargin = options.legendMargin || config.legendMargin;
+	        self._legendSpace = options.legendSpace || config.legendSpace;
+	        // self._legendStyle        = options.legendStyle      || config.legendStyle;
 
-	            var i = 0;
-	            for (i; i < legendDomain.length; i++) {
-	                if (legendDomain[i] != "") break;
-	            };
-
-	            if (i == legendDomain.length) legendDomain = [];
-
-	            color.domain(legendDomain);
-
-	            var legend = d3.select(self._body[0][0].parentNode).append("g").attr("class", "legend").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
-
-	            var legendBox = legend.selectAll(".legendBox").data([true]).enter().append("rect");
-	            var legendItem = legend.selectAll(".legendItem").data(color.domain()).enter().append("g").attr("class", "legendItem").attr("transform", function (d, i) {
-	                return "translate(" + self._legendMargin[3] + "," + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + ")";
-	            });
-	            legendItem.append(self._legendStyle).attr("width", self._legendSize).attr("height", self._legendSize).attr("r", self._legendSize).style("fill", color).style("stroke", color);
-
-	            legendItem.append("text").attr("x", self._legendSize + self._legendSpace).attr("y", self._legendSize - self._legendSpace).text(function (d) {
-	                return d;
-	            });
-
-	            if (self._legendBox && legendDomain.length > 0) {
-	                var box = legend[0][0].getBBox();
-	                legendBox.attr("class", "legendBox").attr("x", 0).attr("y", 0).attr("width", box.width + self._legendMargin[1] + self._legendMargin[3]).attr("height", box.height + self._legendMargin[2] + self._legendMargin[0]).style("fill", "none").style("stroke", "black");
-	            }
-	        }
+	        self._options = options;
+	        self._body = body;
+	        self._color = color;
+	        self._data = data;
 	    }
 
 	    /*==============================
@@ -1178,7 +1145,7 @@ var C9 =
 	    ==============================*/
 
 	    _createClass(Legend, [{
-	        key: "setYLocation",
+	        key: 'draw',
 
 
 	        /*=====  End of Setter  ======*/
@@ -1186,6 +1153,145 @@ var C9 =
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
+	        value: function draw() {
+	            var self = this;
+
+	            var color = self.color;
+
+	            if (self._legendShow) {
+	                // TODO: Remove these conditional checks by getData for general purposes
+	                var legendDomain = [];
+	                var setEnableData = function setEnableData(data, flag) {
+	                    return {
+	                        'data': data,
+	                        'enable': flag
+	                    };
+	                };
+
+	                if (self._body.type == "line") {
+
+	                    var dataGroup = d3.nest().key(function (d) {
+	                        return d.Client;
+	                    }).entries(self._data);
+	                    dataGroup.forEach(function (d, i) {
+	                        legendDomain.push(d.key);
+	                    });
+
+	                    // TODO: Maybe we should remove legend domain of Bar Chart ???
+	                    // Because Bar Chart doesn't have domain
+	                    // Future works: Add Group bar chart to filter domain ???
+	                } else if (self._body.type == "bar") {
+
+	                    try {
+	                        if (typeof options.legendDomain === "string") legendDomain.push(options.legendDomain);else if (_typeof(options.legendDomain) === "object") legendDomain = options.legendDomain;
+	                    } catch (err) {
+	                        throw "Legend domain is not defined";
+	                    }
+	                } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
+
+	                    self._data.forEach(function (d) {
+	                        d ? legendDomain.push(d) : legendDomain.push("");
+	                    });
+	                }
+
+	                // Store for backup, and add enable flag to each data
+	                self.legendDomain = [];
+	                legendDomain.forEach(function (d) {
+	                    self.legendDomain.push(setEnableData(d, true));
+	                });
+
+	                var i = 0;
+	                for (i; i < legendDomain.length; i++) {
+	                    if (legendDomain[i] != "") break;
+	                };
+
+	                if (i == legendDomain.length) legendDomain = [];
+
+	                // Calculate domain for color to draw
+	                color.domain(legendDomain);
+
+	                // Legend will be appended in main SVG container
+	                var legendContainer = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
+
+	                // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
+
+	                self.legendItem = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-item").data(color.domain()).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr("transform", function (d, i) {
+	                    return "translate(" + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + "," + self._legendMargin[3] + ")";
+	                });
+
+	                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self._legendSize * 2).attr('height', self._legendSize).attr('r', self._legendSize).style('fill', color).style('stroke', color);
+
+	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
+	                // .attr('text-anchor', 'middle')
+	                .text(function (d) {
+	                    return d.name;
+	                });
+
+	                // if (self._legendBox && legendDomain.length > 0) {
+	                //     var box = legendContainer[0][0].getBBox();
+	                //     legendBox.attr("class", ".c9-custom-legend.c9-custom-legend-box")
+	                //         .attr("x", 0)
+	                //         .attr("y", 0)
+	                //         .attr("width", box.width + self._legendMargin[1] + self._legendMargin[3])
+	                //         .attr("height", box.height + self._legendMargin[2] + self._legendMargin[0])
+	                //         .style("fill", "none")
+	                //         .style("stroke", color);
+	                // }
+	            }
+	        }
+
+	        /**
+	         * Update interaction event dispatchers for legend
+	         */
+
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction(path, pie, currentData, arc) {
+	            var self = this;
+
+	            self.legendItemEventFactory = {
+
+	                'click': function click(label) {
+
+	                    var selector = d3.select(this);
+	                    var enable = true,
+	                        dataSet = self.legendDomain;
+	                    var totalEnable = d3.sum(dataSet.map(function (d) {
+	                        return d.enable ? 1 : 0;
+	                    }));
+
+	                    if (selector.style('opacity') === '0.1') {
+	                        selector.style('opacity', '1.0');
+	                    } else {
+	                        if (totalEnable < 2) return;
+	                        selector.style('opacity', '0.1');
+	                        enable = false;
+	                    }
+
+	                    pie.value(function (d) {
+	                        if (d.data.name == label) d.enable = enable;
+	                        return d.enable ? d.data.value : 0;
+	                    });
+
+	                    path = path.data(pie(dataSet));
+
+	                    // path.transition()
+	                    // .duration(750)
+	                    // .attrTween('d', function(d) {
+	                    //     var interpolate = d3.interpolate(currentData, d);
+	                    //     currentData = interpolate(0);
+	                    //     return function(t) {
+	                    //         return arc(interpolate(t));
+	                    //     };
+	                    // });
+	                }
+
+	            };
+
+	            self.legendItem.on(self.legendItemEventFactory);
+	        }
+	    }, {
+	        key: 'setYLocation',
 	        value: function setYLocation(height, margin) {
 	            if (this.legendPosition === 'top') {
 	                return margin.top / 2;
@@ -1196,7 +1302,17 @@ var C9 =
 	        /*=====  End of Main Functions  ======*/
 
 	    }, {
-	        key: "legendShow",
+	        key: 'body',
+	        get: function get() {
+	            return this._body;
+	        }
+	    }, {
+	        key: 'color',
+	        get: function get() {
+	            return this._color;
+	        }
+	    }, {
+	        key: 'legendShow',
 	        get: function get() {
 	            return this._legendShow;
 	        },
@@ -1214,7 +1330,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "legendText",
+	        key: 'legendText',
 	        get: function get() {
 	            return this._legendText;
 	        },
@@ -1224,7 +1340,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "legendPosition",
+	        key: 'legendPosition',
 	        get: function get() {
 	            return this._legendPosition;
 	        },
@@ -1234,7 +1350,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "legendSize",
+	        key: 'legendSize',
 	        get: function get() {
 	            return this._legendSize;
 	        },
@@ -1244,9 +1360,34 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "body",
+	        key: 'legendItem',
 	        get: function get() {
-	            return this._body;
+	            return this._legendItem;
+	        },
+	        set: function set(newLegendItem) {
+	            if (newLegendItem) {
+	                this._legendItem = newLegendItem;
+	            }
+	        }
+	    }, {
+	        key: 'legendDomain',
+	        get: function get() {
+	            return this._legendDomain;
+	        },
+	        set: function set(newLegendDomain) {
+	            if (newLegendDomain) {
+	                this._legendDomain = newLegendDomain;
+	            }
+	        }
+	    }, {
+	        key: 'legendItemEventFactory',
+	        get: function get() {
+	            return this._legendItemEventFactory;
+	        },
+	        set: function set(newLegendItemEventFactory) {
+	            if (newLegendItemEventFactory) {
+	                this._legendItemEventFactory = newLegendItemEventFactory;
+	            }
 	        }
 	    }]);
 
@@ -1372,12 +1513,15 @@ var C9 =
 	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
 	        var config = {
 	            outerRadius: R,
-	            innerRadius: R > 80 ? R - 80 : R - 40
+	            innerRadius: R > 80 ? R - 80 : R - 40,
+	            showText: true // show/hide text on middle or each donut
 	        };
 
 	        self._outerRadius = options.outerRadius || config.outerRadius;
 	        self._innerRadius = options.innerRadius || config.innerRadius;
+	        self._showText = options.showText || config.showText;
 	        self.body.type = 'donut';
+
 	        self.updateConfig();
 	        return _this;
 	    }
@@ -1401,29 +1545,128 @@ var C9 =
 	        value: function updateConfig() {
 	            var self = this;
 
+	            // chartInnerAfter, chartOuterAfter define easing radius of donut chart during animation
+	            // TODO: Add configs allow users to define these radius
 	            var width = self.width - self.margin.left - self.margin.right,
 	                height = self.height - self.margin.top - self.margin.bottom,
-	                color = self.colorRange;
+	                color = self.colorRange,
+	                chartInnerBefore = self.innerRadius,
+	                chartOuterBefore = self.outerRadius,
+	                chartInnerAfter = self.innerRadius,
+	                chartOuterAfter = self.outerRadius * 1.2;
 
-	            var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
+	            var hoverOptions = self.hover.options,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+
+	            // Define Animations for paths
+	            // 0: Mouse out
+	            // 1: Mouse over
+	            self.pathAnim = function (path, dir) {
+	                switch (dir) {
+	                    case 0:
+	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
+	                        break;
+
+	                    case 1:
+	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+	                        break;
+	                }
+	            };
+
+	            // Main Event Dispatch for paths in donut chart
+	            self.eventFactory = {
+
+	                'mouseover': function mouseover(d, i, j) {
+	                    self.pathAnim(d3.select(this), 1);
+	                    self.tooltip().mouseover(d);
+
+	                    // var thisDonut = self.body..select('.type' + j);
+	                    // thisDonut.select('.value').text(function(donut_d) {
+	                    //     return d.data.val.toFixed(1) + donut_d.unit;
+	                    // });
+	                    // thisDonut.select('.percentage').text(function(donut_d) {
+	                    //     return (d.data.val/donut_d.total*100).toFixed(2) + '%';
+	                    // });
+	                },
+
+	                'mouseout': function mouseout(d, i, j) {
+	                    self.pathAnim(d3.select(this), 0);
+	                    self.tooltip().mouseout(d);
+
+	                    // var thisDonut = charts.select('.type' + j);
+	                    // setCenterText(thisDonut);
+	                }
+
+	            };
+
+	            // Define the tooltip
+	            // TODO: Define it as a individual CLASS, in C9.Tooltip
+	            self.tooltip = function () {
+	                // First, remove all before hover div
+	                self.body.selectAll('g.c9-custom-tooltip-container').remove();
+
+	                // TODO: Add margin to tooltip configs
+	                // Default: (100, 100) relative to mouse coordinate and chart margin transformation
+	                var divOnHover = self.body.append('g').attr('class', 'c9-custom-tooltip-container').attr("transform", function () {
+	                    return 'translate(' + (d3.mouse(this)[0] - 100) + "," + (d3.mouse(this)[1] - 100) + ')';
+	                }).style('display', 'none');
+
+	                var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
+
+	                // Rect Container
+	                divOnHover.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	                // First line
+	                var text_1 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
+	                // Second line
+	                var text_2 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+
+	                var tooltipEventFactory = {
+
+	                    'mouseover': function mouseover(d) {
+	                        divOnHover.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block');
+
+	                        text_1.text('Name: ' + d.data.name);
+	                        text_2.text('Value: ' + d.data.value);
+	                    },
+
+	                    'mouseout': function mouseout(d) {
+	                        divOnHover.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
+	                    }
+
+	                };
+
+	                return tooltipEventFactory;
+	            };
+
+	            self.arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
 
 	            //we can sort data here
-	            var pie = d3.layout.pie().value(function (d) {
+	            self.pie = d3.layout.pie().sort(null).value(function (d) {
 	                return d.value;
 	            });
 
 	            //draw chart
-	            var arcs = self.body.append('g').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(pie(self.data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
+	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(self.data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
 
-	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('d', arc).style('fill', function (d, i) {
+	            // Append main path contains donut
+	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('d', self.arc).style('fill', function (d, i) {
 	                return color(i);
+	            }).style('stroke', '#ffffff').each(function (d) {
+	                self._currentData = d;
 	            });
+	            // Current data used for calculate interpolation 
+	            // between current arc vs disabled arc
 
-	            arcs.append('text').attr('class', 'c9-chart-donut c9-custom-text').attr('transform', function (d) {
-	                return 'translate(' + arc.centroid(d) + ')';
-	            }).attr('dy', '.35em').attr('text-anchor', 'middle').text(function (d) {
-	                return d.data.name;
-	            });
+
+	            // Append middle text display name
+	            if (self.showText) {
+	                arcs.append('text').attr('class', 'c9-chart-donut c9-custom-text').attr('transform', function (d) {
+	                    return 'translate(' + self.arc.centroid(d) + ')';
+	                }).attr('dy', '.35em').attr('text-anchor', 'middle').text(function (d) {
+	                    return d.data.name;
+	                });
+	            }
 	        }
 
 	        /**
@@ -1439,16 +1682,21 @@ var C9 =
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
 	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.data);
 
+	            // Draw legend
+	            legend.draw();
+	            legend.updateInteraction(self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+	            // Update interaction of this own chart
 	            self.updateInteraction();
 	        }
 
 	        /**
-	         * Select all pie as type PATH in Donut Chart via its CLASS
+	         * Select all path as type PATH in Donut Chart via its CLASS
 	         */
 
 	    }, {
-	        key: 'selectAllPie',
-	        value: function selectAllPie() {
+	        key: 'selectAllPath',
+	        value: function selectAllPath() {
 	            var self = this;
 
 	            return self.body.selectAll('g').selectAll('path.c9-chart-donut.c9-custom-path');
@@ -1465,34 +1713,12 @@ var C9 =
 	            var self = this,
 	                hoverEnable = self.hover.enable,
 	                hoverOptions = self.hover.options,
-	                selector = self.selectAllPie(),
+	                selector = self.selectAllPath(),
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
 
 	            if (hoverEnable) {
-	                // Define the div for the tooltip
-	                // TODO: Allow user to add custom DIV, CLASS
-	                // Make sure that: 
-	                // - Rect not overflow the bar, if not, hover effect will be messed
-	                // -> So, just align the rect to right/left (x: 25) to avoid it
-	                // -> And, the text will be align also
-	                var div = self.body.append('g').style('display', 'none');
-	                // Rect Container
-	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-	                // First line
-	                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	                // Second line
-	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
-
-	                selector.on("mouseover", function (d) {
-	                    console.dir(d);
-	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(0, 0)");
-
-	                    text_1.text('Name: ' + d.data.name);
-	                    text_2.text('Value: ' + d.data.value);
-	                }).on("mouseout", function (d) {
-	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
-	                });
+	                selector.on(self.eventFactory);
 	            }
 	        }
 
@@ -1522,6 +1748,76 @@ var C9 =
 	        set: function set(newInnerRadius) {
 	            if (newInnerRadius) {
 	                this._innerRadius = newInnerRadius;
+	            }
+	        }
+	    }, {
+	        key: 'showText',
+	        get: function get() {
+	            return this._showText;
+	        },
+	        set: function set(newShowText) {
+	            if (newShowText) {
+	                this._showText = newShowText;
+	            }
+	        }
+	    }, {
+	        key: 'eventFactory',
+	        get: function get() {
+	            return this._eventFactory;
+	        },
+	        set: function set(newEventFactory) {
+	            if (newEventFactory) {
+	                this._eventFactory = newEventFactory;
+	            }
+	        }
+	    }, {
+	        key: 'pathAnim',
+	        get: function get() {
+	            return this._pathAnim;
+	        },
+	        set: function set(newPathAnim) {
+	            if (newPathAnim) {
+	                this._pathAnim = newPathAnim;
+	            }
+	        }
+	    }, {
+	        key: 'tooltip',
+	        get: function get() {
+	            return this._tooltip;
+	        },
+	        set: function set(newTooltip) {
+	            if (newTooltip) {
+	                this._tooltip = newTooltip;
+	            }
+	        }
+	    }, {
+	        key: 'pie',
+	        get: function get() {
+	            return this._pie;
+	        },
+	        set: function set(newPie) {
+	            if (newPie) {
+	                this._pie = newPie;
+	            }
+	        }
+	    }, {
+	        key: 'arc',
+	        get: function get() {
+	            return this._arc;
+	        },
+	        set: function set(newArc) {
+	            if (newArc) {
+	                this._arc = newArc;
+	            }
+	        }
+	    }, {
+	        key: 'currentData',
+	        get: function get() {
+	            return this._currentData;
+	        },
+	        set: function set(newCurrentData) {
+	            if (newCurrentData) {
+	                this._currentData = newCurrentData;
 	            }
 	        }
 	    }]);
