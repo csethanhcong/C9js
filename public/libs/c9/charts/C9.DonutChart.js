@@ -319,7 +319,7 @@ export default class DonutChart extends Chart {
 
         // Draw legend
         legend.draw();
-        legend.updateInteraction(self.selectAllPath(), self.pie, self.currentData, self.arc);
+        legend.updateInteraction(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
         // Update interaction of this own chart
         self.updateInteraction();
@@ -333,7 +333,7 @@ export default class DonutChart extends Chart {
         var self = this;
 
         return self.body
-                .selectAll('g')
+                // .selectAll('g')
                     .selectAll('path.c9-chart-donut.c9-custom-path');
     }
 

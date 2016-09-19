@@ -132,21 +132,23 @@ export default class Legend {
         if (self._legendShow) {
             // TODO: Remove these conditional checks by getData for general purposes
             var legendDomain = [];
-            var setEnableData = function(data, flag) {
+
+            var setEnableData = function(_data, _flag) {
                 return {
-                    'data': data,
-                    'enable': flag
+                    'data': _data,
+                    'enable': _flag
                 };
-            }
+            };
 
             if (self._body.type == "line") {
 
                 var dataGroup = d3.nest()
                     .key(function(d) { return d.Client; })
                     .entries(self._data);
+
                 dataGroup.forEach(function(d, i) {
                     legendDomain.push(d.key);
-                })
+                });
 
             // TODO: Maybe we should remove legend domain of Bar Chart ???
             // Because Bar Chart doesn't have domain
@@ -166,25 +168,27 @@ export default class Legend {
             } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
                 self._data.forEach(function(d) {
-                    d ? legendDomain.push(d) : legendDomain.push("");
+                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
                 });
 
             }
 
             // Store for backup, and add enable flag to each data
             self.legendDomain = [];
-            legendDomain.forEach(function(d) {
-                self.legendDomain.push(setEnableData(d, true));
+            self._data.forEach(function(d) {
+                if (d) {
+                    self.legendDomain.push(setEnableData(d, true));
+                }
             });
 
-            var i = 0;
-            for (i; i < legendDomain.length; i++) {
-                if (legendDomain[i] != "")
-                    break;
-            };
+            // var i;
+            // for (i = 0; i < legendDomain.length; i++) {
+            //     if (legendDomain[i] != "")
+            //         break;
+            // };
 
-            if (i == legendDomain.length)
-                legendDomain = [];
+            // if (i == legendDomain.length)
+            //     legendDomain = [];
 
             // Calculate domain for color to draw
             color.domain(legendDomain);
@@ -197,7 +201,7 @@ export default class Legend {
         
             // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
-            self.legendItem = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-item")
+            self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item")
                 .data(color.domain())
                 .enter().append("g")
                 .attr("class", "c9-custom-legend c9-custom-legend-item")
@@ -218,7 +222,8 @@ export default class Legend {
                 .attr('x', self._legendSize * 2 + 20)
                 .attr('y', 15)
                 // .attr('text-anchor', 'middle')
-                .text(function(d) { return d.name; });
+                .text(function(d) { return d; });
+
 
             // if (self._legendBox && legendDomain.length > 0) {
             //     var box = legendContainer[0][0].getBBox();
@@ -231,12 +236,14 @@ export default class Legend {
             //         .style("stroke", color);
             // }
         }
+    
     }
 
     /**
      * Update interaction event dispatchers for legend
+     * For: Donut Chart
      */
-    updateInteraction(path, pie, currentData, arc) {
+    updateInteraction(chart, path, pie, currentData, arc) {
         var self = this;
 
         self.legendItemEventFactory = {
@@ -250,7 +257,9 @@ export default class Legend {
                     return (d.enable) ? 1 : 0;
                 }));
 
-                if (selector.style('opacity') === '0.1') {
+                // If current selector is disabled, then turn it on back
+                // Else, set enable to false
+                if (selector.style('opacity') == '0.1') {
                     selector.style('opacity', '1.0');
                 } else {
                     if (totalEnable < 2) return;
@@ -258,28 +267,31 @@ export default class Legend {
                     enable = false;
                 }
 
-                pie.value(function(d) {
+                chart.pie.value(function(d) {
                     if (d.data.name == label) d.enable = enable;
                     return (d.enable) ? d.data.value : 0;
                 });
 
-                path = path.data(pie(dataSet));
+                path = path.data(chart.pie(dataSet));
 
-                // path.transition()
-                // .duration(750)
-                // .attrTween('d', function(d) {
-                //     var interpolate = d3.interpolate(currentData, d);
-                //     currentData = interpolate(0);
-                //     return function(t) {
-                //         return arc(interpolate(t));
-                //     };
-                // });
+                path.transition()
+                    .duration(500)
+                    .attrTween('d', function(d) {
+                        var interpolate = d3.interpolate(chart.currentData, d);
+                        // Returns an interpolator between the two arbitrary values a and b. 
+                        // The interpolator implementation is based on the type of the end value b.
+                        chart.currentData = interpolate(0);
+                        return function(t) {
+                            return arc(interpolate(t));
+                        };
+                    });
                 
             }
         
         };
 
         self.legendItem.on(self.legendItemEventFactory);
+    
     }
 
     setYLocation (height, margin) {
@@ -288,6 +300,7 @@ export default class Legend {
         } else if (this.legendPosition === 'bottom') {
             return (height - margin.bottom / 2);
         }
+    
     }
     /*=====  End of Main Functions  ======*/
     

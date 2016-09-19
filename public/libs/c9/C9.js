@@ -1161,10 +1161,11 @@ var C9 =
 	            if (self._legendShow) {
 	                // TODO: Remove these conditional checks by getData for general purposes
 	                var legendDomain = [];
-	                var setEnableData = function setEnableData(data, flag) {
+
+	                var setEnableData = function setEnableData(_data, _flag) {
 	                    return {
-	                        'data': data,
-	                        'enable': flag
+	                        'data': _data,
+	                        'enable': _flag
 	                    };
 	                };
 
@@ -1173,6 +1174,7 @@ var C9 =
 	                    var dataGroup = d3.nest().key(function (d) {
 	                        return d.Client;
 	                    }).entries(self._data);
+
 	                    dataGroup.forEach(function (d, i) {
 	                        legendDomain.push(d.key);
 	                    });
@@ -1190,22 +1192,26 @@ var C9 =
 	                } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
 	                    self._data.forEach(function (d) {
-	                        d ? legendDomain.push(d) : legendDomain.push("");
+	                        d.name ? legendDomain.push(d.name) : legendDomain.push("");
 	                    });
 	                }
 
 	                // Store for backup, and add enable flag to each data
 	                self.legendDomain = [];
-	                legendDomain.forEach(function (d) {
-	                    self.legendDomain.push(setEnableData(d, true));
+	                self._data.forEach(function (d) {
+	                    if (d) {
+	                        self.legendDomain.push(setEnableData(d, true));
+	                    }
 	                });
 
-	                var i = 0;
-	                for (i; i < legendDomain.length; i++) {
-	                    if (legendDomain[i] != "") break;
-	                };
+	                // var i;
+	                // for (i = 0; i < legendDomain.length; i++) {
+	                //     if (legendDomain[i] != "")
+	                //         break;
+	                // };
 
-	                if (i == legendDomain.length) legendDomain = [];
+	                // if (i == legendDomain.length)
+	                //     legendDomain = [];
 
 	                // Calculate domain for color to draw
 	                color.domain(legendDomain);
@@ -1215,7 +1221,7 @@ var C9 =
 
 	                // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
-	                self.legendItem = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-item").data(color.domain()).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr("transform", function (d, i) {
+	                self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item").data(color.domain()).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr("transform", function (d, i) {
 	                    return "translate(" + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + "," + self._legendMargin[3] + ")";
 	                });
 
@@ -1224,7 +1230,7 @@ var C9 =
 	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
-	                    return d.name;
+	                    return d;
 	                });
 
 	                // if (self._legendBox && legendDomain.length > 0) {
@@ -1242,11 +1248,12 @@ var C9 =
 
 	        /**
 	         * Update interaction event dispatchers for legend
+	         * For: Donut Chart
 	         */
 
 	    }, {
 	        key: 'updateInteraction',
-	        value: function updateInteraction(path, pie, currentData, arc) {
+	        value: function updateInteraction(chart, path, pie, currentData, arc) {
 	            var self = this;
 
 	            self.legendItemEventFactory = {
@@ -1260,7 +1267,9 @@ var C9 =
 	                        return d.enable ? 1 : 0;
 	                    }));
 
-	                    if (selector.style('opacity') === '0.1') {
+	                    // If current selector is disabled, then turn it on back
+	                    // Else, set enable to false
+	                    if (selector.style('opacity') == '0.1') {
 	                        selector.style('opacity', '1.0');
 	                    } else {
 	                        if (totalEnable < 2) return;
@@ -1268,22 +1277,22 @@ var C9 =
 	                        enable = false;
 	                    }
 
-	                    pie.value(function (d) {
+	                    chart.pie.value(function (d) {
 	                        if (d.data.name == label) d.enable = enable;
 	                        return d.enable ? d.data.value : 0;
 	                    });
 
-	                    path = path.data(pie(dataSet));
+	                    path = path.data(chart.pie(dataSet));
 
-	                    // path.transition()
-	                    // .duration(750)
-	                    // .attrTween('d', function(d) {
-	                    //     var interpolate = d3.interpolate(currentData, d);
-	                    //     currentData = interpolate(0);
-	                    //     return function(t) {
-	                    //         return arc(interpolate(t));
-	                    //     };
-	                    // });
+	                    path.transition().duration(500).attrTween('d', function (d) {
+	                        var interpolate = d3.interpolate(chart.currentData, d);
+	                        // Returns an interpolator between the two arbitrary values a and b. 
+	                        // The interpolator implementation is based on the type of the end value b.
+	                        chart.currentData = interpolate(0);
+	                        return function (t) {
+	                            return arc(interpolate(t));
+	                        };
+	                    });
 	                }
 
 	            };
@@ -1684,7 +1693,7 @@ var C9 =
 
 	            // Draw legend
 	            legend.draw();
-	            legend.updateInteraction(self.selectAllPath(), self.pie, self.currentData, self.arc);
+	            legend.updateInteraction(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
 	            // Update interaction of this own chart
 	            self.updateInteraction();
@@ -1699,7 +1708,9 @@ var C9 =
 	        value: function selectAllPath() {
 	            var self = this;
 
-	            return self.body.selectAll('g').selectAll('path.c9-chart-donut.c9-custom-path');
+	            return self.body
+	            // .selectAll('g')
+	            .selectAll('path.c9-chart-donut.c9-custom-path');
 	        }
 
 	        /**
