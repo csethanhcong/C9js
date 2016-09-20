@@ -15,5 +15,5 @@ npm-debug.log
 node_modules
 
 /public/nbproject/
-/public/libs/c9/C9.js
-/public/libs/c9/C9.min.js
+C9.js
+C9.min.js
