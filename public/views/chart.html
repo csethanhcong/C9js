@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Demo d3js - Chart</title>
+		<title>Demo c9js - Chart</title>
 		<!-- ICON -->
 		<link rel="icon" href="./images/icon.ico">
 		<!-- CSS -->
@@ -90,7 +90,7 @@
 					<a class="navbar-brand" href="">
 						<img src="images/icon.ico" height="25px" />
 					</a> 
-					<a class="navbar-brand" href="">C9 API</a>
+					<a class="navbar-brand" href="">c9js</a>
 				</div>
 				<div class="collapse navbar-collapse">
 					<ul class="nav navbar-nav navbar-right">
@@ -113,6 +113,7 @@
 		<div id="demo1"></div>
 		<div id="demo2"></div>
 		<div id="demo3"></div>
+		<div id="demo4"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
 					{name: "A", value:	2},
@@ -207,9 +208,9 @@
 			var data3 = [
 					{name: "Male", value:	10},
 					{name: "LGBT", value:	35},
-					{name: "Female",	value:  25},
-					{name: "Femaleeee",	value:  25},
-					{name: "Femaleeeeeeee",	value:  25},
+					{name: "Female1",	value:  25},
+					{name: "Female2",	value:  25},
+					{name: "Female3",	value:  25},
 				];
 			var options3 = {  
 			   id:"#demo3",
@@ -232,6 +233,31 @@
 			};
 			var donutChart = new C9.DonutChart(options3);
 			donutChart.draw();
+
+			var data4 = [
+					{name: "Spring", value:	20},
+					{name: "Summer",	value:  25},
+					{name: "Autumn", value:	35},
+					{name: "Winter", value:	20},
+					{name: "Others", value:	100}
+				];
+			var options4 = {
+				id: "#demo4", 
+				width: 750, 
+				height: 600, 
+				margin: {
+					top: 100, 
+					left: 100, 
+					right: 50, 
+					bottom:100
+				}, 
+				data: data4, 
+				title_text: 'Pie Chart',
+				radius: 200,
+				color_range: 'category20c'
+			};
+			var pieChart = new C9.PieChart(options4);
+			pieChart.draw();
 		</script>
 	</body>
 

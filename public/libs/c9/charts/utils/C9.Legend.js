@@ -286,6 +286,90 @@ export default class Legend {
                         };
                     });
                 
+            },
+
+            'mouseover': function(label) {
+
+                var selector = d3.select(this);
+                var enable = true,
+                    dataSet = self.legendDomain,
+                    isCurrentEnable = true;
+
+                var totalEnable = d3.sum(dataSet.map(function(d) {
+                    if (d.data.name == label && !d.enable) isCurrentEnable = false;
+                    return (d.enable) ? 1 : 0;
+                }));
+
+                // If current selector is disabled, then remains it
+                // Else, turn enabled to disabled
+                if (!isCurrentEnable) {
+                    return false;
+                } else {
+                    if (totalEnable < 2) return;
+                    selector.style('opacity', '0.5');
+                    enable = false;
+                }
+
+                chart.pie.value(function(d) {
+                    if (d.data.name == label) d.tempEnable = enable;
+                    else d.tempEnable = d.enable;
+
+                    return (d.tempEnable) ? d.data.value : 0;
+                });
+
+                path = path.data(chart.pie(dataSet));
+
+                path.transition()
+                    .duration(200)
+                    .attrTween('d', function(d) {
+                        var interpolate = d3.interpolate(chart.currentData, d);
+                        // Returns an interpolator between the two arbitrary values a and b. 
+                        // The interpolator implementation is based on the type of the end value b.
+                        chart.currentData = interpolate(0);
+                        return function(t) {
+                            return arc(interpolate(t));
+                        };
+                    });
+
+            },
+
+            'mouseout': function(label) {
+
+                var selector = d3.select(this);
+                var dataSet = self.legendDomain,
+                    isCurrentEnable = true;
+
+                var totalEnable = d3.sum(dataSet.map(function(d) {
+                    if (d.data.name == label && !d.enable) isCurrentEnable = false;
+                    return (d.enable) ? 1 : 0;
+                }));
+
+                chart.pie.value(function(d) {
+                    if (d.data.name == label && !d.enable) d.enable = enable;
+                    return (d.enable) ? d.data.value : 0;
+                });
+
+                if (!isCurrentEnable) {
+                    return;
+                } else {
+                    if (totalEnable < 2 || selector.style('opacity') == '1') return;
+                    selector.style('opacity', '1.0');
+                }
+
+                path = path.data(chart.pie(dataSet));
+
+                path.transition()
+                    .duration(200)
+                    .attrTween('d', function(d) {
+                        var interpolate = d3.interpolate(chart.currentData, d);
+                        // Returns an interpolator between the two arbitrary values a and b. 
+                        // The interpolator implementation is based on the type of the end value b.
+                        chart.currentData = interpolate(0);
+                        return function(t) {
+                            return arc(interpolate(t));
+                        };
+                    });
+
             }
         
         };

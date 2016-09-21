@@ -297,14 +297,14 @@ export default class DonutChart extends Chart {
 
 
         // Append middle text display name
-        if (self.showText) {
-            arcs.append('text')
-                    .attr('class', 'c9-chart-donut c9-custom-text')
-                    .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
-                    .attr('dy', '.35em')
-                    .attr('text-anchor', 'middle')
-                    .text(function(d) { return d.data.name; });
-        }
+        // if (self.showText) {
+        //     arcs.append('text')
+        //             .attr('class', 'c9-chart-donut c9-custom-text')
+        //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
+        //             .attr('dy', '.35em')
+        //             .attr('text-anchor', 'middle')
+        //             .text(function(d) { return d.data.name; });
+        // }
     }
 
     /**

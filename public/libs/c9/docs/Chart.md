@@ -27,7 +27,11 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 
 #### TODO:
 
-000. `Add General Legend to all charts, Interaction when click on each legend`: 
+0000. `Add Hover on Legend, temporarily disable/enable like Click on Legend`
+	- DONE: Donut Chart
+	- NEXT: Line Chart, Pie Chart, Bar Chart
+
+000. `Add General Legend to all charts, Interaction when Click on each Legend`: 
 	- DONE: Donut Chart
 	- NEXT: Line Chart, Pie Chart, Bar Chart
 
