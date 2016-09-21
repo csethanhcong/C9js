@@ -25,19 +25,18 @@ e.g: {name: a, value: 2} -> {name: a, y0: lowerbound(2), y1: upperbound(2)}
 http://bl.ocks.org/erichoco/6694616  
 http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 
+6. `Hover Interaction for all Charts`:
+	- DONE: Bar Chart, Line Chart, Donut Chart, Pie Chart
+
 #### TODO:
 
 0000. `Add Hover on Legend, temporarily disable/enable like Click on Legend`
-	- DONE: Donut Chart
-	- NEXT: Line Chart, Pie Chart, Bar Chart
+	- DONE: Donut Chart, Pie Chart
+	- NEXT: Line Chart, Bar Chart
 
 000. `Add General Legend to all charts, Interaction when Click on each Legend`: 
-	- DONE: Donut Chart
-	- NEXT: Line Chart, Pie Chart, Bar Chart
-
-0. `Hover Interaction for all Charts`:
-	- DONE: Bar Chart, Line Chart, Donut Chart
-	- NEXT: Pie Chart
+	- DONE: Donut Chart, Pie Chart
+	- NEXT: Line Chart, Bar Chart
 
 1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
