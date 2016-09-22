@@ -11,7 +11,8 @@ export default class BarChart extends Chart {
         var self = this;
         var config = {
             barWidth: undefined,
-            barColor: "category20"
+            barColor: "category20",
+            groupType: "group"
         };
 
         var width   = self.width - self.margin.left - self.margin.right;
@@ -19,10 +20,29 @@ export default class BarChart extends Chart {
 
         self.body.type = "bar";
 
+        
+        self._groupType      = options.groupType ||  config.groupType;
+
         self.data.forEach(function(d) {
             var y0 = 0;
-            d.stack = typeof d.value === "object" ? d.value.map(function(v) { return {name: d.name, y0: y0, y1: y0 += v}; }) : [{name: d.name, y0: y0, y1: d.value}];
-            d.total = d.stack[d.stack.length - 1].y1;
+            if (typeof d.value === "object") {
+                if (self.groupType == "stack") {
+                    d.stack = d.value.map(function(v) {
+                        return {name: d.name, y0: y0, y1: y0 += v};
+                    });
+                    d.total = d.stack[d.stack.length - 1].y1;
+                }
+                else if (self.groupType == "group") {
+                    d.value.map(function(v) {
+                        d.stack = [{name: d.name, y0: y0, y1: v}];
+                        d.total = d.stack[d.stack.length - 1].y1;
+                    });
+                } 
+            }
+            else {
+                d.stack = [{name: d.name, y0: y0, y1: d.value}];
+                d.total = d.stack[d.stack.length - 1].y1;
+            }
         });
 
         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
@@ -38,8 +58,8 @@ export default class BarChart extends Chart {
         })]);
         // Make flexible width according to barWidth
         config.barWidth      = x.rangeBand();
-        self._barWidth        = options.barWidth  ||  config.barWidth;
-        self._barColor        = options.barColor  ||  config.barColor;
+        self._barWidth       = options.barWidth  ||  config.barWidth;
+        self._barColor       = options.barColor  ||  config.barColor;
         self._x               = x;
         self._y               = y;
 
@@ -70,6 +90,10 @@ export default class BarChart extends Chart {
         }
     }
 
+    get groupType() {
+        return this._groupType;
+    }
+
     get x() {
         return this._x;
     }
@@ -93,6 +117,12 @@ export default class BarChart extends Chart {
     set barColor(newBarColor) {
         if (newBarColor) {
             this._barColor = newBarColor;
+        }
+    }
+
+    set groupType(newGroupType) {
+        if (newGroupType) {
+            this._groupType = newGroupType;
         }
     }
 

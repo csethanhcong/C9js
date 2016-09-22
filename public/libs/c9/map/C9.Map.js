@@ -137,7 +137,8 @@ export default class Map {
         var self = this;
         self.c9View = new ol.View({
             center: ol.proj.fromLonLat([self.view.lon, self.view.lat]),
-            zoom: self.view.zoom,
+            zoom: self.view.zoom > 2 ? self.view.zoom : 2,
+            minZoom: 2,
         });
         self.c9Map = new ol.Map({
             target: self.id,
@@ -146,32 +147,12 @@ export default class Map {
             interactions : ol.interaction.defaults({doubleClickZoom :false})
         });
 
-        //register pointer move event to show cursor as pointer if user hover on markers
-        self.c9Map.on('pointermove', function(evt) {
-            self.c9Map.getTargetElement().style.cursor = self.c9Map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
-        });
-
-        //register click event to show effect on markers
-        self.c9Map.on('click', function(evt){
-            var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
-                return feature;
-            });
-            if (f && f.get('type') == 'c9GeoMarker') {
-                self.createMarkerEffect(f);
-                //test
-                var pan = ol.animation.pan({
-                    duration: 2000,
-                    source: /** @type {ol.Coordinate} */ (self.c9View.getCenter())
-                });
-                self.c9Map.beforeRender(pan);
-                self.c9View.setCenter(f.getGeometry().getCoordinates());
-            }
-        });
+        //TODO - Create a function to gather all these event function
+        self.updateInteraction();
 
     }
     /*=====  End of Main Functions  ======*/
 
-    
     /**
      * Create layer
      * @param  {String} type of layer
@@ -319,6 +300,10 @@ export default class Map {
         return source;
     }
 
+    /**
+     * Create marker's flash effect
+     * @param  {ol.Feature}
+     */
     createMarkerEffect(feature){
         var self = this;
         var duration = 3000;
@@ -356,5 +341,91 @@ export default class Map {
             self.c9Map.render();
         }
         listenerKey = self.c9Map.on('postcompose', animate);
+    }
+
+    updateInteraction(){
+        var self = this;
+        const LEFT_KEY = 37, RIGHT_KEY = 39, DURATION = 1000, LOAD_MAP_DELAY = 500;
+
+        var getCoordinatesLonLat = function(f) {
+            return ol.proj.transform(f.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
+        }
+        var getCoordinates = function(f) {
+            return f.getGeometry().getCoordinates();
+        }
+        var transformCoordinates = function(c) {
+            return ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
+        }
+        var panAnimation = function(f){
+            var pan = ol.animation.pan({
+                duration: DURATION,
+                source: (self.c9View.getCenter())
+            });
+            self.c9Map.beforeRender(pan);
+            self.c9View.setCenter(getCoordinates(f));
+        }
+        /**
+         * Caculate distance between marker and center view, plus direction compare with center
+         * @param  {ol.Feature}
+         * @return {[Number, Boolean]} Array of distance value and direction value (left if true, right if false)
+         */
+        var distanceAndDirection = function(f) {
+            var center = transformCoordinates(self.c9View.getCenter());
+            var fCoordinates = getCoordinatesLonLat(f);
+            return [Math.sqrt(Math.pow(fCoordinates[0] - center[0], 2) + Math.pow(fCoordinates[1] - center[1], 2)), (fCoordinates[0] - center[0]) <= 0];
+        }
+        //register pointer move event to show cursor as pointer if user hover on markers
+        self.c9Map.on('pointermove', function(evt) {
+            self.c9Map.getTargetElement().style.cursor = self.c9Map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
+        });
+
+        //register map first render's event to show marker's effect
+        self.c9Map.once('postrender', function(evt) {
+            setTimeout(function(){
+                self.c9Markers.getFeatures().forEach(function(f, i){
+                    self.createMarkerEffect(f);
+                })
+            }, LOAD_MAP_DELAY);
+        });
+
+        //register click event to show effect on markers
+        self.c9Map.on('click', function(evt){
+            var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
+                return feature;
+            });
+            if (f && f.get('type') == 'c9GeoMarker') {
+                // self.createMarkerEffect(f);
+                //test
+                panAnimation(f)
+            }
+        });
+
+        //register keydown event to change center view
+        $(document).keydown(function(e) {
+            var keydownAnimate = function(k) {
+                var selectedFeature = undefined;
+                var minDistance = Infinity;
+                self.c9Markers.getFeatures().forEach(function(f, i) {
+                    var checkAnimate = distanceAndDirection(f);
+
+                    if (((checkAnimate[1] && k == LEFT_KEY) || (!checkAnimate[1] && k == RIGHT_KEY)) && checkAnimate[0] < minDistance && checkAnimate[0] != 0) {
+                        minDistance = checkAnimate[0];
+                        selectedFeature = f;
+                    }
+                });
+                if (selectedFeature) {
+                    setTimeout(self.createMarkerEffect(selectedFeature), LOAD_MAP_DELAY);
+                    panAnimation(selectedFeature);
+                }
+            }
+            switch(e.keyCode) {
+                case LEFT_KEY:
+                    keydownAnimate(LEFT_KEY);
+                    break;
+                case RIGHT_KEY:
+                    keydownAnimate(RIGHT_KEY);
+                    break;
+            }
+        })
     }
 }
