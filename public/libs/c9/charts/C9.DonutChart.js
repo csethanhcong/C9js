@@ -60,6 +60,10 @@ export default class DonutChart extends Chart {
     get currentData() {
         return this._currentData;
     }
+
+    get chartType() {
+        return this._body.type;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -144,35 +148,41 @@ export default class DonutChart extends Chart {
             onMouseOutCallback  = hoverOptions.onMouseOut.callback;
 
         // Define Animations for paths
-        // 0: Mouse out
-        // 1: Mouse over
         self.pathAnim = function(path, dir) {
             switch(dir) {
-                case 0:
+                
+                case 'mouseover':
+                    path.transition()
+                        .attr('d', d3.svg.arc()
+                            .innerRadius(chartInnerAfter)
+                            .outerRadius(chartOuterAfter)
+                        )
+                        .style('stroke', '#FFFFF3')
+                        .style('fill-opacity', '1.0');
+                    break;
+
+                case 'mouseout':
                     path.transition()
                         .duration(500)
                         .ease('bounce')
                         .attr('d', d3.svg.arc()
                             .innerRadius(chartInnerBefore)
                             .outerRadius(chartOuterBefore)
-                        );
+                        )
+                        .style('stroke', '#ffffff')
+                        .style('fill-opacity', '0.5');
                     break;
 
-                case 1:
-                    path.transition()
-                        .attr('d', d3.svg.arc()
-                            .innerRadius(chartInnerAfter)
-                            .outerRadius(chartOuterAfter)
-                        );
-                    break;
+                
             }
+        
         };
 
         // Main Event Dispatch for paths in donut chart
         self.eventFactory = {
 
             'mouseover': function(d, i, j) {
-                self.pathAnim(d3.select(this), 1);
+                self.pathAnim(d3.select(this), 'mouseover');
                 self.tooltip().mouseover(d);
 
                 // var thisDonut = self.body..select('.type' + j);
@@ -185,7 +195,7 @@ export default class DonutChart extends Chart {
             },
             
             'mouseout': function(d, i, j) {
-                self.pathAnim(d3.select(this), 0);
+                self.pathAnim(d3.select(this), 'mouseout');
                 self.tooltip().mouseout(d);
 
                 // var thisDonut = charts.select('.type' + j);
@@ -286,11 +296,15 @@ export default class DonutChart extends Chart {
                             .attr('class', 'c9-chart-donut c9-custom-arc');
 
         // Append main path contains donut
+        // TODO: add a unique class to allow Legend could find selected donut/pie
         arcs.append('path')
-                .attr('class', 'c9-chart-donut c9-custom-path')
+                .attr('class', function(d) {
+                    return 'c9-chart-donut c9-custom-path ' + d.data.name;
+                })
                 .attr('d', self.arc)
                 .style('fill', function(d, i) { return color(i); })
                 .style('stroke', '#ffffff')
+                .style('fill-opacity', '0.5')
                 .each(function(d) { self._currentData = d; }); 
                 // Current data used for calculate interpolation 
                 // between current arc vs disabled arc
@@ -350,7 +364,7 @@ export default class DonutChart extends Chart {
             onMouseOutCallback  = hoverOptions.onMouseOut.callback;
 
         if (hoverEnable) {
-            selector.on(self.eventFactory);
+            selector.on(self._eventFactory);
         }
     }
     

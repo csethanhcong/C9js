@@ -226,12 +226,16 @@ export default class LineChart extends Chart {
      * Main draw function of Line Chart
      */
     draw() {
+        var self = this;
 
-        var axis    = new Axis(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, this.xAxis, this.yAxis);
-        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);
-        var legend  = new Legend(this.options, this.body, this.colorRange, this.data);
+        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.xAxis, self.yAxis);
+        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
+        var legend  = new Legend(self.options, self.body, self.colorRange, self.data);
 
-        this.updateInteraction();
+        // Draw legend
+        legend.draw();
+
+        self.updateInteraction();
     }
 
     /**

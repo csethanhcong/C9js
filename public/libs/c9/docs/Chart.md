@@ -32,6 +32,8 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 
 0000. `Add Hover on Legend, temporarily disable/enable like Click on Legend`
 	- DONE: Donut Chart, Pie Chart
+		- Option 1: on Hover Legend, we should make it HIGHLIGHT current pie/donut data
+		- Option 2: on Hover Legend, we should make it INVISIBLE current pie/donut data
 	- NEXT: Line Chart, Bar Chart
 
 000. `Add General Legend to all charts, Interaction when Click on each Legend`: 
