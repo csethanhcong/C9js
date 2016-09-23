@@ -18,4 +18,7 @@ module.exports = function(app) {
 		res.sendfile('./public/views/chart.html');
 	});
 
+	app.get('/test', function(req, res) {
+		res.sendfile('./public/views/index1.html');
+	});
 };

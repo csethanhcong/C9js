@@ -151,18 +151,20 @@ var C9 =
 	        var config = {
 	            barWidth: undefined,
 	            barColor: "category20",
-	            groupType: "group"
+	            groupType: "stack"
 	        };
 
 	        var width = self.width - self.margin.left - self.margin.right;
 	        var height = self.height - self.margin.top - self.margin.bottom;
+	        var groupCount = 0; //use to count how many element in group
 
 	        self.body.type = "bar";
-
+	        self._groupNames = options.groupNames ? options.groupNames : new Array(); //define group names use for showing legend
 	        self._groupType = options.groupType || config.groupType;
 
 	        self.data.forEach(function (d) {
 	            var y0 = 0;
+	            var count = 0;
 	            if (_typeof(d.value) === "object") {
 	                if (self.groupType == "stack") {
 	                    d.stack = d.value.map(function (v) {
@@ -170,15 +172,19 @@ var C9 =
 	                    });
 	                    d.total = d.stack[d.stack.length - 1].y1;
 	                } else if (self.groupType == "group") {
-	                    d.value.map(function (v) {
-	                        d.stack = [{ name: d.name, y0: y0, y1: v }];
-	                        d.total = d.stack[d.stack.length - 1].y1;
+	                    var total = -Infinity;
+	                    d.stack = d.value.map(function (v) {
+	                        count++;
+	                        total = v > total ? v : total;
+	                        return { name: d.name, y0: y0, y1: v, group: "Group " + count };
 	                    });
+	                    d.total = total;
 	                }
 	            } else {
-	                d.stack = [{ name: d.name, y0: y0, y1: d.value }];
+	                d.stack = [{ name: d.name, y0: y0, y1: d.value, group: self._groupType === "group" ? "Group " + ++count : undefined }];
 	                d.total = d.stack[d.stack.length - 1].y1;
 	            }
+	            if (count > groupCount) groupCount = count;
 	        });
 
 	        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
@@ -192,12 +198,23 @@ var C9 =
 	        y.domain([0, d3.max(self.data, function (d) {
 	            return d.total;
 	        })]);
+
+	        /******** Handle for grouped bar chart ********/
+	        var xGroup = d3.scale.ordinal();
+	        //self-define group names if user do not define
+	        if (self._groupNames.length == 0) for (var i = 1; i <= groupCount; i++) {
+	            self._groupNames.push("Group " + i);
+	        };
+	        xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
+	        /**********************************************/
+
 	        // Make flexible width according to barWidth
 	        config.barWidth = x.rangeBand();
 	        self._barWidth = options.barWidth || config.barWidth;
 	        self._barColor = options.barColor || config.barColor;
 	        self._x = x;
 	        self._y = y;
+	        self._xGroup = xGroup;
 
 	        self.updateConfig();
 	        return _this;
@@ -222,7 +239,8 @@ var C9 =
 	            var self = this,
 	                color = self.barColor,
 	                x = self._x,
-	                y = self._y;
+	                y = self._y,
+	                xGroup = self._xGroup;
 
 	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
 	                return "translate(" + x(d.name) + ",0)";
@@ -232,10 +250,13 @@ var C9 =
 	                return d.stack;
 	            }).enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d, i) {
 	                return color(i);
+	            }).attr("x", function (d) {
+	                return d.group ? xGroup(d.group) : undefined;
 	            }).attr("y", function (d) {
 	                return y(d.y1);
-	            }).attr("width", self.barWidth) //x.rangeBand()
-	            .attr("height", function (d) {
+	            }).attr("width", function (d) {
+	                return d.group ? xGroup.rangeBand() : self.barWidth;
+	            }).attr("height", function (d) {
 	                return y(d.y0) - y(d.y1);
 	            });
 	        }
@@ -251,7 +272,9 @@ var C9 =
 
 	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
 	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.body, this.barColor, this.data);
+	            var legend = new _C8.default(this.options, this.body, this.barColor, this.groupNames);
+
+	            legend.draw();
 
 	            this.updateInteraction();
 	        }
@@ -332,7 +355,6 @@ var C9 =
 	            return this._barWidth;
 	        },
 
-
 	        /*=====  End of Getter  ======*/
 
 	        /*==============================
@@ -393,6 +415,26 @@ var C9 =
 	        set: function set(newY) {
 	            if (newY) {
 	                this._y = newY;
+	            }
+	        }
+	    }, {
+	        key: 'xGroup',
+	        get: function get() {
+	            return this._xGroup;
+	        },
+	        set: function set(newXGroup) {
+	            if (newXGroup) {
+	                this._xGroup = newXGroup;
+	            }
+	        }
+	    }, {
+	        key: 'groupNames',
+	        get: function get() {
+	            return this._groupNames;
+	        },
+	        set: function set(newGroupNames) {
+	            if (newGroupNames) {
+	                this._groupNames = newGroupNames;
 	            }
 	        }
 	    }]);
@@ -1128,8 +1170,6 @@ var C9 =
 	    value: true
 	});
 
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1205,17 +1245,9 @@ var C9 =
 	                    dataGroup.forEach(function (d, i) {
 	                        legendDomain.push(d.key);
 	                    });
-
-	                    // TODO: Maybe we should remove legend domain of Bar Chart ???
-	                    // Because Bar Chart doesn't have domain
-	                    // Future works: Add Group bar chart to filter domain ???
 	                } else if (self._body.type == "bar") {
 
-	                    try {
-	                        if (typeof options.legendDomain === "string") legendDomain.push(options.legendDomain);else if (_typeof(options.legendDomain) === "object") legendDomain = options.legendDomain;
-	                    } catch (err) {
-	                        throw "Legend domain is not defined";
-	                    }
+	                    legendDomain = self._data;
 	                } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
 	                    self._data.forEach(function (d) {

@@ -152,20 +152,9 @@ export default class Legend {
                     legendDomain.push(d.key);
                 });
 
-            // TODO: Maybe we should remove legend domain of Bar Chart ???
-            // Because Bar Chart doesn't have domain
-            // Future works: Add Group bar chart to filter domain ???
             } else if (self._body.type == "bar") {
 
-                try {
-                    if (typeof options.legendDomain === "string")
-                        legendDomain.push(options.legendDomain);
-                    else if (typeof options.legendDomain === "object")
-                        legendDomain = options.legendDomain;
-                }
-                catch (err) {
-                    throw "Legend domain is not defined";
-                }
+                legendDomain = self._data;
 
             } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
@@ -182,7 +171,7 @@ export default class Legend {
                     self.legendDomain.push(setEnableData(d, true));
                 }
             });
-
+            
             // var i;
             // for (i = 0; i < legendDomain.length; i++) {
             //     if (legendDomain[i] != "")
