@@ -157,8 +157,8 @@ export default class DonutChart extends Chart {
                             .innerRadius(chartInnerAfter)
                             .outerRadius(chartOuterAfter)
                         )
-                        .style('stroke', '#FFFFF3')
-                        .style('fill-opacity', '1.0');
+                        // .style('stroke', '#000')
+                        .attr('fill-opacity', '1.0');
                     break;
 
                 case 'mouseout':
@@ -169,10 +169,9 @@ export default class DonutChart extends Chart {
                             .innerRadius(chartInnerBefore)
                             .outerRadius(chartOuterBefore)
                         )
-                        .style('stroke', '#ffffff')
-                        .style('fill-opacity', '0.5');
+                        // .style('stroke', '#000')
+                        .attr('fill-opacity', '0.5');
                     break;
-
                 
             }
         
@@ -231,9 +230,9 @@ export default class DonutChart extends Chart {
                     .style('position', 'absolute')
                     .style('width', '100px')
                     .style('height', '50px')
-                    .style('fill', '#FEE5E2')
-                    .style('stroke', '#FDCCC6')
-                    .style('stroke-width', 2);
+                    .attr('fill', '#FEE5E2')
+                    .attr('stroke', '#FDCCC6')
+                    .attr('stroke-width', 2);
             // First line
             var text_1 = divOnHover
                             .append('text')
@@ -257,7 +256,6 @@ export default class DonutChart extends Chart {
                     divOnHover.transition()
                         .duration(hoverOptions.onMouseOver.fadeIn)
                         .style("display", 'block');
-                        
 
                     text_1.text('Name: ' + d.data.name);
                     text_2.text('Value: ' + d.data.value);
@@ -302,9 +300,9 @@ export default class DonutChart extends Chart {
                     return 'c9-chart-donut c9-custom-path ' + d.data.name;
                 })
                 .attr('d', self.arc)
-                .style('fill', function(d, i) { return color(i); })
-                .style('stroke', '#ffffff')
-                .style('fill-opacity', '0.5')
+                .attr('fill', function(d, i) { return color(i); })
+                .attr('stroke', '#ffffff')
+                .attr('fill-opacity', '0.5')
                 .each(function(d) { self._currentData = d; }); 
                 // Current data used for calculate interpolation 
                 // between current arc vs disabled arc

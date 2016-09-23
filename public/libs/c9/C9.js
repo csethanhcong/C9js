@@ -1240,8 +1240,6 @@ var C9 =
 	                        return d.Client;
 	                    }).entries(self._data);
 
-	                    console.dir(dataGroup);
-
 	                    dataGroup.forEach(function (d, i) {
 	                        legendDomain.push(d.key);
 	                    });
@@ -1284,7 +1282,7 @@ var C9 =
 	                    return "translate(" + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + "," + self._legendMargin[3] + ")";
 	                });
 
-	                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self._legendSize * 2).attr('height', self._legendSize).attr('r', self._legendSize).style('fill', color).style('stroke', color);
+	                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self._legendSize * 2).attr('height', self._legendSize).attr('r', self._legendSize).attr('fill', color).attr('stroke', color);
 
 	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
 	                // .attr('text-anchor', 'middle')
@@ -1362,7 +1360,9 @@ var C9 =
 	                        return function (t) {
 	                            return arc(interpolate(t));
 	                        };
-	                    });
+	                    })
+	                    // Remove stroke when re-draw arcs to avoid duplicate strokes
+	                    .attr('stroke', 'none');;
 	                },
 
 	                'mouseover': function mouseover(label) {
@@ -1372,7 +1372,7 @@ var C9 =
 
 	                    var selector = d3.select('.c9-custom-path.' + label);
 
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).style('stroke', '#FFFFF3').style('fill-opacity', '1.0');
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).attr('fill-opacity', '1.0');
 	                    // var enable = true,
 	                    //     dataSet = self.legendDomain,
 	                    //     isCurrentEnable = true;
@@ -1425,7 +1425,7 @@ var C9 =
 
 	                    var selector = d3.select('.c9-custom-path.' + label);
 
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).style('stroke', '#ffffff').style('fill-opacity', '0.5');
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).attr('fill-opacity', '0.5');
 	                    // var dataSet = self.legendDomain,
 	                    //     isCurrentEnable = true;
 
@@ -1745,11 +1745,15 @@ var C9 =
 	                switch (dir) {
 
 	                    case 'mouseover':
-	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).style('stroke', '#FFFFF3').style('fill-opacity', '1.0');
+	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
+	                        // .style('stroke', '#000')
+	                        .attr('fill-opacity', '1.0');
 	                        break;
 
 	                    case 'mouseout':
-	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).style('stroke', '#ffffff').style('fill-opacity', '0.5');
+	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
+	                        // .style('stroke', '#000')
+	                        .attr('fill-opacity', '0.5');
 	                        break;
 
 	                }
@@ -1796,7 +1800,7 @@ var C9 =
 	                var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
 
 	                // Rect Container
-	                divOnHover.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	                divOnHover.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').attr('fill', '#FEE5E2').attr('stroke', '#FDCCC6').attr('stroke-width', 2);
 	                // First line
 	                var text_1 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
 	                // Second line
@@ -1834,9 +1838,9 @@ var C9 =
 	            // TODO: add a unique class to allow Legend could find selected donut/pie
 	            arcs.append('path').attr('class', function (d) {
 	                return 'c9-chart-donut c9-custom-path ' + d.data.name;
-	            }).attr('d', self.arc).style('fill', function (d, i) {
+	            }).attr('d', self.arc).attr('fill', function (d, i) {
 	                return color(i);
-	            }).style('stroke', '#ffffff').style('fill-opacity', '0.5').each(function (d) {
+	            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
 	                self._currentData = d;
 	            });
 	            // Current data used for calculate interpolation 
@@ -2518,11 +2522,15 @@ var C9 =
 	                switch (dir) {
 
 	                    case 'mouseover':
-	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).style('stroke', '#FFFFF3').style('fill-opacity', '1.0');
+	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
+	                        // .style('stroke', '#FFFFF3')
+	                        .attr('fill-opacity', '1.0');
 	                        break;
 
 	                    case 'mouseout':
-	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).style('stroke', '#ffffff').style('fill-opacity', '0.5');
+	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
+	                        // .style('stroke', '#ffffff')
+	                        .attr('fill-opacity', '0.5');
 	                        break;
 	                }
 	            };
@@ -2605,9 +2613,9 @@ var C9 =
 	            // Append main path contains pie
 	            arcs.append('path').attr('class', function (d) {
 	                return 'c9-chart-pie c9-custom-path ' + d.data.name;
-	            }).attr('d', self.arc).style('fill', function (d, i) {
+	            }).attr('d', self.arc).attr('fill', function (d, i) {
 	                return color(i);
-	            }).style('stroke', '#ffffff').style('fill-opacity', '0.5').each(function (d) {
+	            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
 	                self._currentData = d;
 	            });
 	            // Current data used for calculate interpolation 

@@ -146,8 +146,6 @@ export default class Legend {
                     .key(function(d) { return d.Client; })
                     .entries(self._data);
 
-                    console.dir(dataGroup);
-
                 dataGroup.forEach(function(d, i) {
                     legendDomain.push(d.key);
                 });
@@ -205,8 +203,8 @@ export default class Legend {
                 .attr('width', self._legendSize * 2)
                 .attr('height', self._legendSize)
                 .attr('r', self._legendSize)
-                .style('fill', color)
-                .style('stroke', color);
+                .attr('fill', color)
+                .attr('stroke', color);
 
             self.legendItem.append('text')
                 .attr('class', 'c9-custom-legend c9-custom-legend-text')
@@ -287,7 +285,9 @@ export default class Legend {
                         return function(t) {
                             return arc(interpolate(t));
                         };
-                    });
+                    })
+                    // Remove stroke when re-draw arcs to avoid duplicate strokes
+                    .attr('stroke', 'none');;
                 
             },
 
@@ -306,8 +306,7 @@ export default class Legend {
                             .innerRadius(chartInnerAfter)
                             .outerRadius(chartOuterAfter)
                         )
-                        .style('stroke', '#FFFFF3')
-                        .style('fill-opacity', '1.0');
+                        .attr('fill-opacity', '1.0');
                 // var enable = true,
                 //     dataSet = self.legendDomain,
                 //     isCurrentEnable = true;
@@ -369,8 +368,7 @@ export default class Legend {
                             .innerRadius(chartInnerBefore)
                             .outerRadius(chartOuterBefore)
                         )
-                        .style('stroke', '#ffffff')
-                        .style('fill-opacity', '0.5');
+                        .attr('fill-opacity', '0.5');
                 // var dataSet = self.legendDomain,
                 //     isCurrentEnable = true;
 

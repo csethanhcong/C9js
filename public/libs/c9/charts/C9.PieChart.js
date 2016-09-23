@@ -157,8 +157,8 @@ export default class PieChart extends Chart {
                             .innerRadius(chartInnerAfter)
                             .outerRadius(chartOuterAfter)
                         )
-                        .style('stroke', '#FFFFF3')
-                        .style('fill-opacity', '1.0');
+                        // .style('stroke', '#FFFFF3')
+                        .attr('fill-opacity', '1.0');
                     break;
                     
                 case 'mouseout':
@@ -169,8 +169,8 @@ export default class PieChart extends Chart {
                             .innerRadius(chartInnerBefore)
                             .outerRadius(chartOuterBefore)
                         )
-                        .style('stroke', '#ffffff')
-                        .style('fill-opacity', '0.5');
+                        // .style('stroke', '#ffffff')
+                        .attr('fill-opacity', '0.5');
                     break;
             }
         };
@@ -298,9 +298,9 @@ export default class PieChart extends Chart {
                     return 'c9-chart-pie c9-custom-path ' + d.data.name;
                 })
                 .attr('d', self.arc)
-                .style('fill', function(d, i) { return color(i); })
-                .style('stroke', '#ffffff')
-                .style('fill-opacity', '0.5')
+                .attr('fill', function(d, i) { return color(i); })
+                .attr('stroke', '#ffffff')
+                .attr('fill-opacity', '0.5')
                 .each(function(d) { self._currentData = d; }); 
                 // Current data used for calculate interpolation 
                 // between current arc vs disabled arc
