@@ -38,13 +38,13 @@ export default class BarChart extends Chart {
                     d.stack = d.value.map(function(v) {
                         count++;
                         total = v > total ? v : total;
-                        return {name: d.name, y0: y0, y1: v, group: "Group " + count};
+                        return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
                     });
                     d.total = total;
-                } 
+                }
             }
             else {
-                d.stack = [{name: d.name, y0: y0, y1: d.value, group: self._groupType === "group" ? "Group " + ++count : undefined}];
+                d.stack = [{name: d.name, y0: y0, y1: d.value, group: self._groupType === "group" ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
                 d.total = d.stack[d.stack.length - 1].y1;
             }
             if (count > groupCount)
@@ -77,10 +77,9 @@ export default class BarChart extends Chart {
         config.barWidth      = x.rangeBand();
         self._barWidth       = options.barWidth  ||  config.barWidth;
         self._barColor       = options.barColor  ||  config.barColor;
-        self._x               = x;
-        self._y               = y;
+        self._x              = x;
+        self._y              = y;
         self._xGroup         = xGroup;
-
         self.updateConfig();
     }
 
@@ -126,6 +125,10 @@ export default class BarChart extends Chart {
 
     get groupNames() {
         return this._groupNames;
+    }
+
+    get chartType() {
+        return this._body.type;
     }
     /*=====  End of Getter  ======*/
 
@@ -191,22 +194,82 @@ export default class BarChart extends Chart {
 
         var bar = self.body
                     .selectAll(".c9-chart-bar.c9-custom-bar")
-                    .data(self.data)
-                    .enter()
-                        .append("g")
-                        .attr("class", "c9-chart-bar c9-custom-bar")
-                        .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+                    .data(self.data);
 
-        bar.selectAll("rect")
-            .data(function(d) { return d.stack; })
-            .enter()
-                .append("rect")
-                .attr("class", "c9-chart-bar c9-custom-rect")
-                .style("fill", function(d, i) { return color(i); })
-                .attr("x", function(d) { return d.group ? xGroup(d.group) : undefined; })
-                .attr("y", function(d) { return y(d.y1); })
-                .attr("width", function(d) { return d.group ? xGroup.rangeBand() : self.barWidth; })
-                .attr("height", function(d) { return y(d.y0) - y(d.y1); });
+        bar.enter()
+            .append("g")
+            .attr("class", "c9-chart-bar c9-custom-bar")
+            .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+
+        var bars = bar.selectAll(".c9-custom-rect")
+            .data(function(d) { return d.stack; });
+        bars.enter()
+            .append("rect")
+            .attr("class", "c9-custom-rect")
+            .style("fill", function(d, i) { d.color = color(i); return color(i); })
+            .attr("x", function(d) { return d.group ? xGroup(d.group) : undefined; })
+            .attr("y", function(d) { return y(d.y1); })
+            .attr("width", function(d) { return d.group ? xGroup.rangeBand() : x.rangeBand(); })
+            .attr("height", function(d) { return y(d.y0) - y(d.y1); });     
+    }
+
+    /**
+     * [updateLegendInteraction description]
+     * @param  {[type]} data          [description]
+     * @param  {[type]} groupNames    [description]
+     * @param  {[type]} groupNamesOld [description]
+     * @param  {[type]} newLabel      [description]
+     * @return {[type]}               [description]
+     */
+    updateLegendInteraction(data, groupNames, groupNamesOld, newLabel){
+        var self = this;
+
+        var xGroup = d3.scale.ordinal();
+        xGroup.domain(groupNames).rangeRoundBands([0, self.x.rangeBand()]);
+
+        var xGroupOld = d3.scale.ordinal();
+        xGroupOld.domain(groupNamesOld).rangeRoundBands([0, self.x.rangeBand()]);
+
+        var midGroup = undefined;
+        //check add new label in the middle
+        if (groupNames.length > groupNamesOld.length && 0 < groupNames.indexOf(newLabel) && groupNames.indexOf(newLabel) < groupNames.length - 1 )
+            midGroup = groupNamesOld[groupNames.indexOf(newLabel)];
+        console.log(midGroup);
+        // self.body.selectAll(".c9-chart-bar.c9-custom-bar").remove();
+        self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data).exit().remove();
+        self.body.selectAll(".c9-custom-rect").data(self.data, function(d) {return d.stack}).exit().remove();
+
+        var bar = self.body
+                    .selectAll(".c9-chart-bar.c9-custom-bar")
+                    .data(data);
+// bar.exit().remove();
+        bar.enter()
+            .append("g")
+            .attr("class", "c9-chart-bar c9-custom-bar")
+            .attr("transform", function(d) { return "translate(" + self.x(d.name) + ",0)"; });
+
+        var bars = bar.selectAll(".c9-custom-rect")
+            .data(function(d) { return d.stack; });
+// bars.exit().remove();
+        bars.enter()
+            .append("rect")
+            .attr("class", "c9-custom-rect")
+            .style("fill", function(d) { return d.color; })
+            .attr("x", function(d) { 
+                if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1)
+                    return self.x.rangeBand();
+                return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
+            })
+            .attr("y", function(d) { return self.y(d.y1); })
+            .attr("width", function(d) { 
+                return d.group == newLabel ? 0 : xGroupOld.rangeBand();
+            })
+            .attr("height", function(d) { return self.y(d.y0) - self.y(d.y1); });
+
+        bars.transition().duration(750)
+            .attr("x", function(d) { return xGroup(d.group); })
+            .attr("width", function(d) { return xGroup.rangeBand(); })
+        self.updateInteraction();
     }
 
     /**
@@ -214,13 +277,13 @@ export default class BarChart extends Chart {
      * @return {[type]} [description]
      */
     draw() {
-
-        var axis    = new Axis(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
-        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);
-        var legend  = new Legend(this.options, this.body, this.barColor, this.groupNames);
+        var self = this;
+        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
+        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
+        var legend  = new Legend(self.options, self.body, self.barColor, self.groupNames);
         
         legend.draw();
-
+        legend.updateInteractionForBarChart(self);
         this.updateInteraction();
     }
 
@@ -242,9 +305,7 @@ export default class BarChart extends Chart {
     selectAllBar() {
         var self = this;
 
-        return self.body
-                .selectAll('g')
-                    .selectAll('.c9-chart-bar.c9-custom-rect');
+        return self.body.selectAll('.c9-custom-rect');
     }
 
     /**
