@@ -49,6 +49,8 @@ option of that object
 	- Add getValue(), getKey() that based on key-definition by user. DON'T use .name, .value instead
 	-> Make it customizable
 
+	- Notes: With XHR, only accept response data with format JSON, so we just call getJson for the specific request
+
 
 3. `Make C9.Config`: File contains all default configs, should not put all configs in each files
 Put them all in 1 file: Classes, default configs, etc.
@@ -57,3 +59,6 @@ Put them all in 1 file: Classes, default configs, etc.
 Bar Chart (Group of bar chart)
 
 5. `Bar Chart`: Add isLogaric Implementation for DATA-SCALE, currently only implement for y-scale
+
+6. `Create Table View`: 
+	- REF: https://developers.google.com/chart/interactive/docs/gallery/table

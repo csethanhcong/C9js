@@ -114,6 +114,7 @@
 		<div id="demo2"></div>
 		<div id="demo3"></div>
 		<div id="demo4"></div>
+		<div id="demo6"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
 					{name: "A", value:	[2, .0245]},
@@ -244,7 +245,18 @@
 			};
 			var pieChart = new C9.PieChart(options4);
 			pieChart.draw();
+
+			var options5 = {
+				file: {
+					type: 'json',
+					url: '/libs/c9/test/data1.json'
+				}
+			};
+			var test1 = new C9.DataAdapter(options5);
+			test1.getJson();
+
 		</script>
+		
 	</body>
 
 </html>

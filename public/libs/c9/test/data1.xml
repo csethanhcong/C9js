@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data><name>"A"</name><value>0.08167</value></data>
+  <data><name>"B"</name><value>0.01492</value></data>
+  <data><name>"C"</name><value>0.02782</value></data>
+  <data><name>"D"</name><value>0.04253</value></data>
+  <data><name>"E"</name><value>0.12702</value></data>
+  <data><name>"F"</name><value>0.02288</value></data>
+  <data><name>"G"</name><value>0.02015</value></data>
+  <data><name>"H"</name><value>0.06094</value></data>
+  <data><name>"I"</name><value>0.06966</value></data>
+  <data><name>"J"</name><value>0.00153</value></data>
+  <data><name>"K"</name><value>0.00772</value></data>
+  <data><name>"L"</name><value>0.04025</value></data>
+  <data><name>"M"</name><value>0.02406</value></data>
+  <data><name>"N"</name><value>0.06749</value></data>
+  <data><name>"O"</name><value>0.07507</value></data>
+  <data><name>"P"</name><value>0.01929</value></data>
+  <data><name>"Q"</name><value>0.00095</value></data>
+  <data><name>"R"</name><value>0.05987</value></data>
+  <data><name>"S"</name><value>0.06327</value></data>
+  <data><name>"T"</name><value>0.09056</value></data>
+  <data><name>"U"</name><value>0.02758</value></data>
+  <data><name>"V"</name><value>0.00978</value></data>
+  <data><name>"W"</name><value>0.02360</value></data>
+  <data><name>"X"</name><value>0.00150</value></data>
+  <data><name>"Y"</name><value>0.01974</value></data>
+  <data><name>"Z"</name><value>0.00074</value></data>
+</root>

@@ -75,9 +75,14 @@ var C9 =
 
 	var _C14 = _interopRequireDefault(_C13);
 
+	var _C15 = __webpack_require__(13);
+
+	var _C16 = _interopRequireDefault(_C15);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// Map Importer
+	// Helper Importer
+	// Chart Importer
 	module.exports = {
 		BarChart: _C2.default,
 		DonutChart: _C4.default,
@@ -87,11 +92,10 @@ var C9 =
 
 		Map: _C12.default,
 
-		Helper: _C14.default
+		DataAdapter: _C16.default
 	};
 
-	// Helper Importer
-	// Chart Importer
+	// Map Importer
 
 /***/ },
 /* 1 */
@@ -3587,6 +3591,202 @@ var C9 =
 	}();
 
 	exports.default = Map;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _C = __webpack_require__(3);
+
+	var _C2 = _interopRequireDefault(_C);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var DataAdapter = function () {
+	    function DataAdapter(options) {
+	        _classCallCheck(this, DataAdapter);
+
+	        var self = this;
+
+	        var config = {
+
+	            data: null,
+	            keyDefine: null,
+	            file: {
+	                type: null, // csv, tsv, txt, json, xml, xhr
+	                url: null
+	            }
+
+	        };
+
+	        self._data = options.data || config.data;
+	        self._keyDefine = options.keyDefine || config.keyDefine;
+	        self._file = _C2.default.merge(options.file, config.file);
+
+	        self.init();
+	    }
+
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+
+
+	    _createClass(DataAdapter, [{
+	        key: "init",
+
+	        /*=====  End of Setter  ======*/
+
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function init() {
+	            var self = this;
+
+	            if (self._file) {
+	                if (self._file.type === "csv") {
+
+	                    self._data = self.getCsv();
+	                } else if (self._file.type === "tsv") {
+
+	                    self._data = self.getTsv();
+	                } else if (self._file.type === "text") {
+
+	                    self._data = self.getText();
+	                } else if (self._file.type === "json") {
+
+	                    self._data = self.getJson();
+	                } else if (self._file.type === "xml") {
+
+	                    self._data = self.getXml();
+	                } else if (self._file.type === "xhr") {
+
+	                    self._data = self.getJson();
+	                }
+	            }
+	        }
+	    }, {
+	        key: "getCsv",
+	        value: function getCsv() {
+
+	            var self = this;
+
+	            d3.csv(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                console.dir(data);
+	                return data;
+	            });
+	        }
+	    }, {
+	        key: "getTsv",
+	        value: function getTsv() {
+
+	            var self = this;
+
+	            d3.tsv(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return data;
+	            });
+	        }
+	    }, {
+	        key: "getText",
+	        value: function getText() {
+
+	            var self = this;
+
+	            d3.text(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return JSON.parse(data);
+	            });
+	        }
+	    }, {
+	        key: "getJson",
+	        value: function getJson() {
+	            var self = this;
+
+	            d3.json(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return data;
+	            });
+	        }
+	    }, {
+	        key: "getXml",
+	        value: function getXml() {
+	            var self = this;
+
+	            d3.xml(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                // Convert the XML document to an array of objects.
+	                // Note that querySelectorAll returns a NodeList, not a proper Array,
+	                // so we must use map.call to invoke array methods.
+	                data = [].map.call(data.querySelectorAll("data"), function (d) {
+	                    return {
+	                        name: d.querySelector("name").textContent,
+	                        value: d.querySelector("value").textContent
+	                    };
+	                });
+
+	                return data;
+	            });
+	        }
+	        /*=====  End of Main Functions  ======*/
+
+	    }, {
+	        key: "data",
+	        get: function get() {
+	            return this._data;
+	        },
+
+	        /*=====  End of Getter  ======*/
+
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._data = arg;
+	            }
+	        }
+	    }, {
+	        key: "keyDefine",
+	        get: function get() {
+	            return this._keyDefine;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._keyDefine = arg;
+	            }
+	        }
+	    }, {
+	        key: "file",
+	        get: function get() {
+	            return this._file;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._file = arg;
+	            }
+	        }
+	    }]);
+
+	    return DataAdapter;
+	}();
+
+	exports.default = DataAdapter;
 
 /***/ }
 /******/ ]);

@@ -10,6 +10,7 @@ import Map from './map/C9.Map';
 
 // Helper Importer
 import Helper from './helper/C9.Helper';
+import DataAdapter from './helper/C9.DataAdapter';
 
 module.exports = {
 	BarChart,
@@ -20,5 +21,5 @@ module.exports = {
 
 	Map,
 	
-	Helper,
+	DataAdapter,
 };
