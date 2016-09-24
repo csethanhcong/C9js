@@ -154,6 +154,8 @@ export default class Legend {
 
                 legendDomain = self._data;
 
+
+
             } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
                 self._data.forEach(function(d) {
@@ -169,7 +171,7 @@ export default class Legend {
                     self.legendDomain.push(setEnableData(d, true));
                 }
             });
-            
+
             // var i;
             // for (i = 0; i < legendDomain.length; i++) {
             //     if (legendDomain[i] != "")
@@ -407,6 +409,227 @@ export default class Legend {
                 //     });
 
             }
+        
+        };
+
+        if (self.legendShow) {
+            
+            self.legendItem.on(self.legendItemEventFactory);
+
+        }
+    
+    }
+
+    /**
+     * Update interaction for barchart
+     * @param  {[type]} chart       [description]
+     * @param  {[type]} path        [description]
+     * @param  {[type]} pie         [description]
+     * @param  {[type]} currentData [description]
+     * @param  {[type]} arc         [description]
+     * @return {[type]}             [description]
+     */
+    updateInteractionForBarChart(chart) {
+
+        var self = this;
+
+        self.legendItemEventFactory = {
+
+            'click': function(label) {
+
+                var selector = d3.select(this);
+                var enable = true,
+                    dataSet = self.legendDomain;
+                var totalEnable = d3.sum(dataSet.map(function(d) {
+                    return (d.enable) ? 1 : 0;
+                }));
+                var enableSet = [];
+                var enableSetOld = [];
+                var data = [];
+                // Add pointer to cursor
+                selector.style('cursor', 'pointer');
+
+                // If current selector is disabled, then turn it on back
+                // Else, set enable to false
+                if (selector.style('opacity') == '0.1') {
+                    selector.style('opacity', '1.0');
+                } else {
+                    if (totalEnable < 2) return;
+                    selector.style('opacity', '0.1');
+                    enable = false;
+                }
+
+                self.legendDomain.forEach(function(d, i) {
+                    if (d.enable)
+                        enableSetOld.push(d.data);
+                    if (d.data == label)
+                        d.enable = enable;
+                    if (d.enable)
+                        enableSet.push(d.data);
+                });
+
+                //TODO - handle total - use for axis
+                chart.data.forEach(function(d, i) {
+                    var element = {name: d.name, stack: [], total: d.total};
+                    d.stack.forEach(function(s, j) {
+                        // if (enableSet.length == 1) {
+                        //     if (enableSet[0] == s.group)
+                        //         element.stack.push({name: s.name, y0: s.y0, y1: s.y1, color: s.color});
+                        // } 
+                        // else
+                            enableSet.forEach(function(e) {
+                                if (e == s.group) {
+                                    // if (enableSet.length == 1)
+                                    //     element.stack.push({name: s.name, y0: s.y0, y1: s.y1});
+                                    // else
+                                    element.stack.push(s);
+                                }
+                            })
+                    })
+                    data.push(element);
+                });
+
+                chart.updateLegendInteraction(data, enableSet, enableSetOld, label);
+
+                // chart.pie.value(function(d) {
+                //     if (d.data.name == label) d.enable = enable;
+                //     return (d.enable) ? d.data.value : 0;
+                // });
+
+                // path = path.data(chart.pie(dataSet));
+
+                // path.transition()
+                //     .duration(500)
+                //     .attrTween('d', function(d) {
+                //         var interpolate = d3.interpolate(chart.currentData, d);
+                //         // Returns an interpolator between the two arbitrary values a and b. 
+                //         // The interpolator implementation is based on the type of the end value b.
+                //         chart.currentData = interpolate(0);
+                //         return function(t) {
+                //             return arc(interpolate(t));
+                //         };
+                //     });
+                
+            },
+
+            // 'mouseover': function(label) {
+            //     var legendSelector = d3.select(this);
+            //     // Add pointer to cursor
+            //     legendSelector.style('cursor', 'pointer');
+
+            //     var selector = d3.select('.c9-custom-path.' + label);
+
+            //     selector
+            //         .transition()
+            //             .duration(500)
+            //             .ease('bounce')
+            //             .attr('d', d3.svg.arc()
+            //                 .innerRadius(chartInnerAfter)
+            //                 .outerRadius(chartOuterAfter)
+            //             )
+            //             .style('stroke', '#FFFFF3')
+            //             .style('fill-opacity', '1.0');
+            //     // var enable = true,
+            //     //     dataSet = self.legendDomain,
+            //     //     isCurrentEnable = true;
+
+            //     // var totalEnable = d3.sum(dataSet.map(function(d) {
+            //     //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+            //     //     return (d.enable) ? 1 : 0;
+            //     // }));
+
+            //     // // Add pointer to cursor
+            //     // selector.style('cursor', 'pointer');
+
+            //     // // If current selector is disabled, then remains it
+            //     // // Else, turn enabled to disabled
+            //     // if (!isCurrentEnable) {
+            //     //     return false;
+            //     // } else {
+            //     //     if (totalEnable < 2) return;
+            //     //     selector.style('opacity', '0.5');
+            //     //     enable = false;
+            //     // }
+
+            //     // chart.pie.value(function(d) {
+            //     //     if (d.data.name == label) d.tempEnable = enable;
+            //     //     else d.tempEnable = d.enable;
+
+            //     //     return (d.tempEnable) ? d.data.value : 0;
+            //     // });
+
+            //     // path = path.data(chart.pie(dataSet));
+
+            //     // path.transition()
+            //     //     .duration(200)
+            //     //     .attrTween('d', function(d) {
+            //     //         var interpolate = d3.interpolate(chart.currentData, d);
+            //     //         // Returns an interpolator between the two arbitrary values a and b. 
+            //     //         // The interpolator implementation is based on the type of the end value b.
+            //     //         chart.currentData = interpolate(0);
+            //     //         return function(t) {
+            //     //             return arc(interpolate(t));
+            //     //         };
+            //     //     });
+
+            // },
+
+            // 'mouseout': function(label) {
+
+            //     var legendSelector = d3.select(this);
+            //     // Add pointer to cursor
+            //     legendSelector.style('cursor', 'pointer');
+
+            //     var selector = d3.select('.c9-custom-path.' + label);
+
+            //     selector
+            //         .transition()
+            //             .duration(500)
+            //             .ease('bounce')
+            //             .attr('d', d3.svg.arc()
+            //                 .innerRadius(chartInnerBefore)
+            //                 .outerRadius(chartOuterBefore)
+            //             )
+            //             .style('stroke', '#ffffff')
+            //             .style('fill-opacity', '0.5');
+            //     // var dataSet = self.legendDomain,
+            //     //     isCurrentEnable = true;
+
+            //     // var totalEnable = d3.sum(dataSet.map(function(d) {
+            //     //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+            //     //     return (d.enable) ? 1 : 0;
+            //     // }));
+
+            //     // // Add pointer to cursor
+            //     // selector.style('cursor', 'pointer');
+
+            //     // chart.pie.value(function(d) {
+            //     //     if (d.data.name == label && !d.enable) d.enable = enable;
+            //     //     return (d.enable) ? d.data.value : 0;
+            //     // });
+
+            //     // if (!isCurrentEnable) {
+            //     //     return;
+            //     // } else {
+            //     //     if (totalEnable < 2 || selector.style('opacity') == '1') return;
+            //     //     selector.style('opacity', '1.0');
+            //     // }
+
+            //     // path = path.data(chart.pie(dataSet));
+
+            //     // path.transition()
+            //     //     .duration(200)
+            //     //     .attrTween('d', function(d) {
+            //     //         var interpolate = d3.interpolate(chart.currentData, d);
+            //     //         // Returns an interpolator between the two arbitrary values a and b. 
+            //     //         // The interpolator implementation is based on the type of the end value b.
+            //     //         chart.currentData = interpolate(0);
+            //     //         return function(t) {
+            //     //             return arc(interpolate(t));
+            //     //         };
+            //     //     });
+
+            // }
         
         };
 

@@ -180,12 +180,12 @@ var C9 =
 	                    d.stack = d.value.map(function (v) {
 	                        count++;
 	                        total = v > total ? v : total;
-	                        return { name: d.name, y0: y0, y1: v, group: "Group " + count };
+	                        return { name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count };
 	                    });
 	                    d.total = total;
 	                }
 	            } else {
-	                d.stack = [{ name: d.name, y0: y0, y1: d.value, group: self._groupType === "group" ? "Group " + ++count : undefined }];
+	                d.stack = [{ name: d.name, y0: y0, y1: d.value, group: self._groupType === "group" ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined }];
 	                d.total = d.stack[d.stack.length - 1].y1;
 	            }
 	            if (count > groupCount) groupCount = count;
@@ -219,7 +219,6 @@ var C9 =
 	        self._x = x;
 	        self._y = y;
 	        self._xGroup = xGroup;
-
 	        self.updateConfig();
 	        return _this;
 	    }
@@ -246,23 +245,87 @@ var C9 =
 	                y = self._y,
 	                xGroup = self._xGroup;
 
-	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
+	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data);
+
+	            bar.enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
 	                return "translate(" + x(d.name) + ",0)";
 	            });
 
-	            bar.selectAll("rect").data(function (d) {
+	            var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
 	                return d.stack;
-	            }).enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d, i) {
-	                return color(i);
+	            });
+	            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d, i) {
+	                d.color = color(i);return color(i);
 	            }).attr("x", function (d) {
 	                return d.group ? xGroup(d.group) : undefined;
 	            }).attr("y", function (d) {
 	                return y(d.y1);
 	            }).attr("width", function (d) {
-	                return d.group ? xGroup.rangeBand() : self.barWidth;
+	                return d.group ? xGroup.rangeBand() : x.rangeBand();
 	            }).attr("height", function (d) {
 	                return y(d.y0) - y(d.y1);
 	            });
+	        }
+
+	        /**
+	         * [updateLegendInteraction description]
+	         * @param  {[type]} data          [description]
+	         * @param  {[type]} groupNames    [description]
+	         * @param  {[type]} groupNamesOld [description]
+	         * @param  {[type]} newLabel      [description]
+	         * @return {[type]}               [description]
+	         */
+
+	    }, {
+	        key: 'updateLegendInteraction',
+	        value: function updateLegendInteraction(data, groupNames, groupNamesOld, newLabel) {
+	            var self = this;
+
+	            var xGroup = d3.scale.ordinal();
+	            xGroup.domain(groupNames).rangeRoundBands([0, self.x.rangeBand()]);
+
+	            var xGroupOld = d3.scale.ordinal();
+	            xGroupOld.domain(groupNamesOld).rangeRoundBands([0, self.x.rangeBand()]);
+
+	            var midGroup = undefined;
+	            //check add new label in the middle
+	            if (groupNames.length > groupNamesOld.length && 0 < groupNames.indexOf(newLabel) && groupNames.indexOf(newLabel) < groupNames.length - 1) midGroup = groupNamesOld[groupNames.indexOf(newLabel)];
+	            console.log(midGroup);
+	            // self.body.selectAll(".c9-chart-bar.c9-custom-bar").remove();
+	            self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data).exit().remove();
+	            self.body.selectAll(".c9-custom-rect").data(self.data, function (d) {
+	                return d.stack;
+	            }).exit().remove();
+
+	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(data);
+	            // bar.exit().remove();
+	            bar.enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
+	                return "translate(" + self.x(d.name) + ",0)";
+	            });
+
+	            var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
+	                return d.stack;
+	            });
+	            // bars.exit().remove();
+	            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d) {
+	                return d.color;
+	            }).attr("x", function (d) {
+	                if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1) return self.x.rangeBand();
+	                return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
+	            }).attr("y", function (d) {
+	                return self.y(d.y1);
+	            }).attr("width", function (d) {
+	                return d.group == newLabel ? 0 : xGroupOld.rangeBand();
+	            }).attr("height", function (d) {
+	                return self.y(d.y0) - self.y(d.y1);
+	            });
+
+	            bars.transition().duration(750).attr("x", function (d) {
+	                return xGroup(d.group);
+	            }).attr("width", function (d) {
+	                return xGroup.rangeBand();
+	            });
+	            self.updateInteraction();
 	        }
 
 	        /**
@@ -273,13 +336,13 @@ var C9 =
 	    }, {
 	        key: 'draw',
 	        value: function draw() {
-
-	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, this.height - this.margin.top - this.margin.bottom, null, null);
-	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.body, this.barColor, this.groupNames);
+	            var self = this;
+	            var axis = new _C4.default(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
+	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
+	            var legend = new _C8.default(self.options, self.body, self.barColor, self.groupNames);
 
 	            legend.draw();
-
+	            legend.updateInteractionForBarChart(self);
 	            this.updateInteraction();
 	        }
 
@@ -307,7 +370,7 @@ var C9 =
 	        value: function selectAllBar() {
 	            var self = this;
 
-	            return self.body.selectAll('g').selectAll('.c9-chart-bar.c9-custom-rect');
+	            return self.body.selectAll('.c9-custom-rect');
 	        }
 
 	        /**
@@ -440,6 +503,11 @@ var C9 =
 	            if (newGroupNames) {
 	                this._groupNames = newGroupNames;
 	            }
+	        }
+	    }, {
+	        key: 'chartType',
+	        get: function get() {
+	            return this._body.type;
 	        }
 	    }]);
 
@@ -1457,6 +1525,105 @@ var C9 =
 
 	                    // path.transition()
 	                    //     .duration(200)
+	                    //     .attrTween('d', function(d) {
+	                    //         var interpolate = d3.interpolate(chart.currentData, d);
+	                    //         // Returns an interpolator between the two arbitrary values a and b. 
+	                    //         // The interpolator implementation is based on the type of the end value b.
+	                    //         chart.currentData = interpolate(0);
+	                    //         return function(t) {
+	                    //             return arc(interpolate(t));
+	                    //         };
+	                    //     });
+	                }
+
+	            };
+
+	            if (self.legendShow) {
+
+	                self.legendItem.on(self.legendItemEventFactory);
+	            }
+	        }
+
+	        /**
+	         * Update interaction for barchart
+	         * @param  {[type]} chart       [description]
+	         * @param  {[type]} path        [description]
+	         * @param  {[type]} pie         [description]
+	         * @param  {[type]} currentData [description]
+	         * @param  {[type]} arc         [description]
+	         * @return {[type]}             [description]
+	         */
+
+	    }, {
+	        key: 'updateInteractionForBarChart',
+	        value: function updateInteractionForBarChart(chart) {
+
+	            var self = this;
+
+	            self.legendItemEventFactory = {
+
+	                'click': function click(label) {
+
+	                    var selector = d3.select(this);
+	                    var enable = true,
+	                        dataSet = self.legendDomain;
+	                    var totalEnable = d3.sum(dataSet.map(function (d) {
+	                        return d.enable ? 1 : 0;
+	                    }));
+	                    var enableSet = [];
+	                    var enableSetOld = [];
+	                    var data = [];
+	                    // Add pointer to cursor
+	                    selector.style('cursor', 'pointer');
+
+	                    // If current selector is disabled, then turn it on back
+	                    // Else, set enable to false
+	                    if (selector.style('opacity') == '0.1') {
+	                        selector.style('opacity', '1.0');
+	                    } else {
+	                        if (totalEnable < 2) return;
+	                        selector.style('opacity', '0.1');
+	                        enable = false;
+	                    }
+
+	                    self.legendDomain.forEach(function (d, i) {
+	                        if (d.enable) enableSetOld.push(d.data);
+	                        if (d.data == label) d.enable = enable;
+	                        if (d.enable) enableSet.push(d.data);
+	                    });
+
+	                    //TODO - handle total - use for axis
+	                    chart.data.forEach(function (d, i) {
+	                        var element = { name: d.name, stack: [], total: d.total };
+	                        d.stack.forEach(function (s, j) {
+	                            // if (enableSet.length == 1) {
+	                            //     if (enableSet[0] == s.group)
+	                            //         element.stack.push({name: s.name, y0: s.y0, y1: s.y1, color: s.color});
+	                            // } 
+	                            // else
+	                            enableSet.forEach(function (e) {
+	                                if (e == s.group) {
+	                                    // if (enableSet.length == 1)
+	                                    //     element.stack.push({name: s.name, y0: s.y0, y1: s.y1});
+	                                    // else
+	                                    element.stack.push(s);
+	                                }
+	                            });
+	                        });
+	                        data.push(element);
+	                    });
+
+	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, label);
+
+	                    // chart.pie.value(function(d) {
+	                    //     if (d.data.name == label) d.enable = enable;
+	                    //     return (d.enable) ? d.data.value : 0;
+	                    // });
+
+	                    // path = path.data(chart.pie(dataSet));
+
+	                    // path.transition()
+	                    //     .duration(500)
 	                    //     .attrTween('d', function(d) {
 	                    //         var interpolate = d3.interpolate(chart.currentData, d);
 	                    //         // Returns an interpolator between the two arbitrary values a and b. 

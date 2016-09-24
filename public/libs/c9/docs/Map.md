@@ -19,3 +19,5 @@
 #### TODO:
 
 1. `interaction for map`
+2. `support draw Polygon, Line(strokeWidth, strokeColor, strokeOpacity, fillColor, fillOpacity)`
+3. ``
