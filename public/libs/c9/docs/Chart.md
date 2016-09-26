@@ -3,6 +3,20 @@
 1. `stack`: auto stack based on input data
 e.g: {name: a, value: 2} -> {name: a, y0: lowerbound(2), y1: upperbound(2)}
 
+2. `data`: [{name: "VN", value: [0, 0.1, 0.2, ...], total: 1, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: "VN"}, ...]}, ...]
+
+## Line Chart:
+
+## Pie Chart:
+1. `data`: [{name: "VN", value: 10}, ...]
+
+## Donut Chart:
+1. `data`: [{name: "VN", value: 10}, ...]
+
+## Timeline Chart:
+
+
+
 ## Sep., 7th:
 
 #### DONE:
