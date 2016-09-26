@@ -580,7 +580,13 @@ var C9 =
 	            // color range
 	            colorRange: "category20",
 	            // data
-	            data: []
+	            data: {
+	                keyDefine: "value",
+	                file: {
+	                    type: null, // csv, tsv, txt, json, xml, xhr
+	                    url: null
+	                }
+	            }
 	        };
 
 	        self._id = options.id || config.id;
@@ -845,6 +851,35 @@ var C9 =
 	            obj3[attrname] = obj1[attrname];
 	        }
 	        return obj3;
+	    },
+
+	    get: function get(_key, _data) {
+	        var _keys = _key.split(".");
+	        var _current = _data;
+	        var self = this;
+
+	        for (var i = 0, len = _keys.length; i < len; i++) {
+	            var _fun = _keys[i].split("|");
+
+	            if (_fun && _fun.length == 2) {
+	                _keys[i] = _fun[0];
+	                _fun = _fun[1];
+	            } else {
+	                _fun = null;
+	            }
+
+	            if ('undefined' == typeof _current[_keys[i]]) {
+	                return '';
+	            } else {
+	                _current = _current[_keys[i]];
+	            }
+
+	            if (null !== _fun) {
+	                _current = self.filter[_fun].call(this, _current);
+	            }
+	        }
+
+	        return _current;
 	    }
 
 	};
@@ -3786,17 +3821,13 @@ var C9 =
 	        var self = this;
 
 	        var config = {
-
-	            data: null,
-	            keyDefine: null,
+	            keyDefine: "value",
 	            file: {
 	                type: null, // csv, tsv, txt, json, xml, xhr
 	                url: null
 	            }
-
 	        };
 
-	        self._data = options.data || config.data;
 	        self._keyDefine = options.keyDefine || config.keyDefine;
 	        self._file = _C2.default.merge(options.file, config.file);
 
@@ -3819,27 +3850,46 @@ var C9 =
 	        value: function init() {
 	            var self = this;
 
-	            if (self._file) {
-	                if (self._file.type === "csv") {
+	            if (self._file && self._file.type) {
 
-	                    self._data = self.getCsv();
-	                } else if (self._file.type === "tsv") {
+	                switch (self._file.type) {
 
-	                    self._data = self.getTsv();
-	                } else if (self._file.type === "text") {
+	                    case "csv":
+	                        self._data = self.getCsv();
+	                        break;
+	                    case "tsv":
+	                        self._data = self.getTsv();
+	                        break;
+	                    case "text":
+	                        self._data = self.getText();
+	                        break;
+	                    case "json":
+	                        self._data = self.getJson();
+	                        break;
+	                    case "xml":
+	                        self._data = self.getXml();
+	                        break;
+	                    case "xhr":
+	                        self._data = self.getJson();
+	                        break;
+	                    default:
+	                        self._data = self.getJson();
+	                        break;
 
-	                    self._data = self.getText();
-	                } else if (self._file.type === "json") {
-
-	                    self._data = self.getJson();
-	                } else if (self._file.type === "xml") {
-
-	                    self._data = self.getXml();
-	                } else if (self._file.type === "xhr") {
-
-	                    self._data = self.getJson();
 	                }
-	            }
+	            } else {}
+	        }
+	    }, {
+	        key: "getName",
+	        value: function getName(d) {
+	            return d.name;
+	        }
+	    }, {
+	        key: "getValue",
+	        value: function getValue(v) {
+	            var self = this;
+
+	            return _C2.default.get(self.keyDefine, v);
 	        }
 	    }, {
 	        key: "getCsv",
@@ -3850,7 +3900,6 @@ var C9 =
 	            d3.csv(self.file.url, function (err, data) {
 	                if (err) throw err;
 
-	                console.dir(data);
 	                return data;
 	            });
 	        }
@@ -3913,9 +3962,9 @@ var C9 =
 	        /*=====  End of Main Functions  ======*/
 
 	    }, {
-	        key: "data",
+	        key: "keyDefine",
 	        get: function get() {
-	            return this._data;
+	            return this._keyDefine;
 	        },
 
 	        /*=====  End of Getter  ======*/
@@ -3923,16 +3972,6 @@ var C9 =
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(arg) {
-	            if (arg) {
-	                this._data = arg;
-	            }
-	        }
-	    }, {
-	        key: "keyDefine",
-	        get: function get() {
-	            return this._keyDefine;
-	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._keyDefine = arg;

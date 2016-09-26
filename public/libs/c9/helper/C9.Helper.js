@@ -72,6 +72,37 @@ var Helper = {
         return obj3;
     },
 
+    get: function(_key, _data){
+        var _keys = _key.split(".");
+        var _current = _data;
+        var self = this;
+        
+        for(var i=0, len=_keys.length; i<len; i++){
+            var _fun = _keys[i].split("|");
+            
+            if(_fun && _fun.length == 2){
+                _keys[i] = _fun[0];
+                _fun = _fun[1];
+            }
+            else{
+                _fun = null;
+            }
+            
+            if('undefined' == typeof(_current[_keys[i]])){
+                return '';
+            }
+            else{
+                _current = _current[_keys[i]];
+            }
+            
+            if(null !== _fun){
+                _current = self.filter[_fun].call(this, _current);
+            }
+        }
+        
+        return _current;
+    },
+
 };
 
 var Util = {

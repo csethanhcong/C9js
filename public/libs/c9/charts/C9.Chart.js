@@ -46,7 +46,13 @@ export default class Chart {
             // color range
             colorRange: "category20",
             // data
-            data: []
+            data: {
+                keyDefine: "value",
+                file: {
+                    type: null, // csv, tsv, txt, json, xml, xhr
+                    url: null,
+                },
+            }
         };
 
         self._id        = options.id        || config.id;

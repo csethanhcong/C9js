@@ -7,17 +7,13 @@ export default class DataAdapter {
         var self = this;
 
         var config = {
-
-            data: null,
-            keyDefine: null,
+            keyDefine: "value",
             file: {
                 type: null, // csv, tsv, txt, json, xml, xhr
                 url: null,
             },
-
         };
 
-        self._data      = options.data      || config.data;
         self._keyDefine = options.keyDefine || config.keyDefine;
         self._file      = Helper.merge(options.file, config.file);
 
@@ -28,10 +24,6 @@ export default class DataAdapter {
     /*==============================
     =            Getter            =
     ==============================*/
-    get data() {
-        return this._data;
-    }
-
     get keyDefine() {
         return this._keyDefine;
     }
@@ -44,12 +36,6 @@ export default class DataAdapter {
     /*==============================
     =            Setter            =
     ==============================*/
-    set data(arg) {
-        if (arg) {
-            this._data = arg;
-        }
-    }
-
     set keyDefine(arg) {
         if (arg) {
             this._keyDefine = arg;
@@ -69,33 +55,46 @@ export default class DataAdapter {
     init() {
         var self = this;
 
-        if (self._file) {
-            if (self._file.type === "csv") {
+        if (self._file && self._file.type) {
 
-                self._data = self.getCsv();
+            switch(self._file.type) {
 
-            } else if (self._file.type === "tsv") {
-
-                self._data = self.getTsv();
-
-            } else if (self._file.type === "text") {
-
-                self._data = self.getText();
-
-            } else if (self._file.type === "json") {
-
-                self._data = self.getJson();
-
-            } else if (self._file.type === "xml") {
-
-                self._data = self.getXml();
-
-            } else if (self._file.type === "xhr") {
-
-                self._data = self.getJson();
+                case "csv":
+                    self._data = self.getCsv();
+                    break;
+                case "tsv":
+                    self._data = self.getTsv();
+                    break;
+                case "text":
+                    self._data = self.getText();
+                    break;
+                case "json":
+                    self._data = self.getJson();
+                    break;
+                case "xml":
+                    self._data = self.getXml();
+                    break;
+                case "xhr":
+                    self._data = self.getJson();
+                    break;
+                default:
+                    self._data = self.getJson();
+                    break;
 
             }
+        } else {
+            
         }
+    }
+
+    getName(d) {
+        return d.name; 
+    }
+
+    getValue(v) {
+        var self = this;
+
+        return Helper.get(self.keyDefine, v);
     }
 
     getCsv() {
@@ -105,7 +104,6 @@ export default class DataAdapter {
         d3.csv(self.file.url, function(err, data) {
             if (err) throw err;
             
-            console.dir(data);
             return data;
         });
 

@@ -62,3 +62,12 @@ Bar Chart (Group of bar chart)
 
 6. `Create Table View`: 
 	- REF: https://developers.google.com/chart/interactive/docs/gallery/table
+
+7. `Separate setting options into abc.xyz.blabla`, e.g. 
+	grid: {
+		show: true,
+		text: {
+			show: true,
+			position: center
+		}
+	}
