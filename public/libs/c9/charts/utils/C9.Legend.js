@@ -470,45 +470,18 @@ export default class Legend {
 
                 //TODO - handle total - use for axis
                 chart.data.forEach(function(d, i) {
-                    var element = {name: d.name, stack: [], total: d.total};
+                    var element = {name: d.name, stack: [], total: d.total, value: d.value};
                     d.stack.forEach(function(s, j) {
-                        // if (enableSet.length == 1) {
-                        //     if (enableSet[0] == s.group)
-                        //         element.stack.push({name: s.name, y0: s.y0, y1: s.y1, color: s.color});
-                        // } 
-                        // else
-                            enableSet.forEach(function(e) {
-                                if (e == s.group) {
-                                    // if (enableSet.length == 1)
-                                    //     element.stack.push({name: s.name, y0: s.y0, y1: s.y1});
-                                    // else
-                                    element.stack.push(s);
-                                }
-                            })
+                        enableSet.forEach(function(e) {
+                            if (e == s.group) {
+                                element.stack.push(s);
+                            }
+                        })
                     })
                     data.push(element);
                 });
 
                 chart.updateLegendInteraction(data, enableSet, enableSetOld, label);
-
-                // chart.pie.value(function(d) {
-                //     if (d.data.name == label) d.enable = enable;
-                //     return (d.enable) ? d.data.value : 0;
-                // });
-
-                // path = path.data(chart.pie(dataSet));
-
-                // path.transition()
-                //     .duration(500)
-                //     .attrTween('d', function(d) {
-                //         var interpolate = d3.interpolate(chart.currentData, d);
-                //         // Returns an interpolator between the two arbitrary values a and b. 
-                //         // The interpolator implementation is based on the type of the end value b.
-                //         chart.currentData = interpolate(0);
-                //         return function(t) {
-                //             return arc(interpolate(t));
-                //         };
-                //     });
                 
             },
 

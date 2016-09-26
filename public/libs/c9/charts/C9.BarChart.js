@@ -17,19 +17,23 @@ export default class BarChart extends Chart {
 
         var width        = self.width - self.margin.left - self.margin.right;
         var height       = self.height - self.margin.top - self.margin.bottom;
-        var groupCount   = 0; //use to count how many element in group
+        var groupCount   = 0; // use to count how many element in group
+        var groupStart = 0; // calculate the number of those first element that just have only 1 value
 
         self.body.type   = "bar";
         self._groupNames = options.groupNames ? options.groupNames : new Array(); //define group names use for showing legend
         self._groupType  = options.groupType ||  config.groupType;
 
-        self.data.forEach(function(d) {
-            var y0 = 0;
-            var count = 0;
+        
+        self.data.forEach(function(d, i) {
+            var y0 = 0; // calculate stacked data (top of each bar)
+            var count = 0; // count number of group
+            groupStart = i; 
             if (typeof d.value === "object") {
                 if (self.groupType == "stack") {
                     d.stack = d.value.map(function(v) {
-                        return {name: d.name, y0: y0, y1: y0 += v};
+                        count++;
+                        return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
                     });
                     d.total = d.stack[d.stack.length - 1].y1;
                 }
@@ -44,12 +48,17 @@ export default class BarChart extends Chart {
                 }
             }
             else {
-                d.stack = [{name: d.name, y0: y0, y1: d.value, group: self._groupType === "group" ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
+                d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
                 d.total = d.stack[d.stack.length - 1].y1;
             }
             if (count > groupCount)
                 groupCount = count;
         });
+
+        // assign group to those first elements in data if they don't have
+        for (var i = 0; i < groupStart - 1; i++) {
+            self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
+        };
 
         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
@@ -182,6 +191,9 @@ export default class BarChart extends Chart {
     /*======================================
     =            Main Functions            =
     ======================================*/
+
+
+
     /**
      * Init Bar Chart Config
      */
@@ -190,27 +202,29 @@ export default class BarChart extends Chart {
             color = self.barColor,
             x     = self._x,
             y     = self._y,
-            xGroup= self._xGroup;
+            xGroup= self._xGroup,
+            type  = self.groupType;
 
         var bar = self.body
-                    .selectAll(".c9-chart-bar.c9-custom-bar")
-                    .data(self.data);
-
-        bar.enter()
-            .append("g")
-            .attr("class", "c9-chart-bar c9-custom-bar")
-            .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+                    .selectAll(".bar")
+                    .data(self.data)
+                    .enter()
+                        .append("g")
+                        .attr("class", "c9-chart-bar c9-custom-bar")
+                        .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
 
         var bars = bar.selectAll(".c9-custom-rect")
             .data(function(d) { return d.stack; });
+
         bars.enter()
             .append("rect")
             .attr("class", "c9-custom-rect")
             .style("fill", function(d, i) { d.color = color(i); return color(i); })
-            .attr("x", function(d) { return d.group ? xGroup(d.group) : undefined; })
+            .attr("x", function(d) { return type == "group" ? xGroup(d.group) : undefined; })
             .attr("y", function(d) { return y(d.y1); })
-            .attr("width", function(d) { return d.group ? xGroup.rangeBand() : x.rangeBand(); })
-            .attr("height", function(d) { return y(d.y0) - y(d.y1); });     
+            .attr("width", function(d) { return type == "group" ? xGroup.rangeBand() : x.rangeBand(); })
+            .attr("height", function(d) { return y(d.y0) - y(d.y1); });
+
     }
 
     /**
@@ -223,6 +237,7 @@ export default class BarChart extends Chart {
      */
     updateLegendInteraction(data, groupNames, groupNamesOld, newLabel){
         var self = this;
+        var type = self.groupType;
 
         var xGroup = d3.scale.ordinal();
         xGroup.domain(groupNames).rangeRoundBands([0, self.x.rangeBand()]);
@@ -234,41 +249,44 @@ export default class BarChart extends Chart {
         //check add new label in the middle
         if (groupNames.length > groupNamesOld.length && 0 < groupNames.indexOf(newLabel) && groupNames.indexOf(newLabel) < groupNames.length - 1 )
             midGroup = groupNamesOld[groupNames.indexOf(newLabel)];
-        console.log(midGroup);
-        // self.body.selectAll(".c9-chart-bar.c9-custom-bar").remove();
-        self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(self.data).exit().remove();
-        self.body.selectAll(".c9-custom-rect").data(self.data, function(d) {return d.stack}).exit().remove();
+
+        // self.body.selectAll(".c9-custom-rect").transition().duration(750).attr("height", 0).remove();
+        self.body.selectAll(".c9-custom-rect").data([]).exit().remove();
 
         var bar = self.body
-                    .selectAll(".c9-chart-bar.c9-custom-bar")
-                    .data(data);
-// bar.exit().remove();
-        bar.enter()
-            .append("g")
-            .attr("class", "c9-chart-bar c9-custom-bar")
-            .attr("transform", function(d) { return "translate(" + self.x(d.name) + ",0)"; });
+                    .selectAll(".bar")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .attr("class", "c9-chart-bar c9-custom-bar")
+                    .attr("transform", function(d) { return "translate(" + self.x(d.name) + ",0)"; });
 
         var bars = bar.selectAll(".c9-custom-rect")
             .data(function(d) { return d.stack; });
-// bars.exit().remove();
+
         bars.enter()
             .append("rect")
             .attr("class", "c9-custom-rect")
             .style("fill", function(d) { return d.color; })
-            .attr("x", function(d) { 
+            .attr("x", function(d) {
+                // use for stack
+                if (type == "stack") return undefined;
+                // use for group
+                // group member positioning at the end of groups, so its x is the position of right edge of bar
                 if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1)
                     return self.x.rangeBand();
                 return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
             })
             .attr("y", function(d) { return self.y(d.y1); })
-            .attr("width", function(d) { 
-                return d.group == newLabel ? 0 : xGroupOld.rangeBand();
+            .attr("width", function(d) {
+                return type == "stack" ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             })
             .attr("height", function(d) { return self.y(d.y0) - self.y(d.y1); });
 
         bars.transition().duration(750)
-            .attr("x", function(d) { return xGroup(d.group); })
-            .attr("width", function(d) { return xGroup.rangeBand(); })
+            .attr("x", function(d) { return type == "stack" ? undefined : xGroup(d.group); })
+            .attr("width", function(d) { return type == "stack" ? self.x.rangeBand() : xGroup.rangeBand(); })
+
         self.updateInteraction();
     }
 
