@@ -63,8 +63,17 @@ option of that object
 	- Add getValue(), getKey() that based on key-definition by user. DON'T use .name, .value instead
 	-> Make it customizable
 
-	- Notes: With XHR, only accept response data with format JSON, so we just call getJson for the specific request
-
+	- Notes: 
+		+ With XHR, only accept response data with format JSON, so we just call getJson for the specific request
+		+ Input data contructor:
+			data
+				|--- plain: Array contains plain data 	| DEFAULT: null | e.g. plain: [{name: A, value: 1}, {},..]
+				|--- file: In case of non-plain data, users have to input file instead
+					|--- type: Type of file 			| DEFAULT: json | e.g. type: "json" ("xml", "csv", "tsv", "txt", "xhr")
+					|--- url: Url to execute 			| DEFAULT: null | e.g. url: "example.ord/data.xml"
+				|--- keys: Define key to retrieve name, value
+					|--- name: Key to define name 		| DEFAULT: "name" | e.g. name: "name"
+					|--- value: Key to define value 	| DEFAULT: "value" | e.g. value: "value.v1"
 
 3. `Make C9.Config`: File contains all default configs, should not put all configs in each files
 Put them all in 1 file: Classes, default configs, etc.

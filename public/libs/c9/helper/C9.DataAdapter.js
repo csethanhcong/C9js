@@ -7,44 +7,47 @@ export default class DataAdapter {
         var self = this;
 
         var config = {
-            keyDefine: "value",
-            file: {
-                type: null, // csv, tsv, txt, json, xml, xhr
-                url: null,
-            },
+            keys: {
+                name: "name",
+                value: "value"
+            }
         };
 
-        self._keyDefine = options.keyDefine || config.keyDefine;
-        self._file      = Helper.merge(options.file, config.file);
+        self._keys      = Helper.merge(options.keys, config.keys);
 
-        self.init();
+        if (self.hasPlainData(options)) {
+            self.executePlainData(options);
+        } else if (self.hasFile(options)) {
+            self.executeFile(options);
+        }
+
 
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-    get keyDefine() {
-        return this._keyDefine;
+    get keys() {
+        return this._keys;
     }
 
-    get file() {
-        return this._file;
+    get data() {
+        return this._data;
     }
     /*=====  End of Getter  ======*/
 
     /*==============================
     =            Setter            =
     ==============================*/
-    set keyDefine(arg) {
+    set keys(arg) {
         if (arg) {
-            this._keyDefine = arg;
+            this._keys = arg;
         }
     }
 
-    set file(arg) {
+    set data(arg) {
         if (arg) {
-            this._file = arg;
+            this._data = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -52,13 +55,26 @@ export default class DataAdapter {
     /*======================================
     =            Main Functions            =
     ======================================*/
-    init() {
+    hasPlainData(options) {
+        return options.plain && Helper.isArray(options.plain);
+    }
+
+    hasFile(options) {
+        return options.file && Helper.isObject(options.file);
+    }
+
+    executePlainData(options) {
+        self._data = options.plain;
+    }
+
+    executeFile(options) {
         var self = this;
+
+        self._file      = Helper.merge(options.file, config.file);
 
         if (self._file && self._file.type) {
 
             switch(self._file.type) {
-
                 case "csv":
                     self._data = self.getCsv();
                     break;
@@ -80,21 +96,18 @@ export default class DataAdapter {
                 default:
                     self._data = self.getJson();
                     break;
-
             }
-        } else {
-            
         }
     }
 
-    getName(d) {
-        return d.name; 
+    getName(v) {
+        return v.name; 
     }
 
     getValue(v) {
         var self = this;
 
-        return Helper.get(self.keyDefine, v);
+        return Helper.get(self.keys, v);
     }
 
     getCsv() {

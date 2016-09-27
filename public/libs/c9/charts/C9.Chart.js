@@ -47,7 +47,7 @@ export default class Chart {
             colorRange: "category20",
             // data
             data: {
-                keyDefine: "value",
+                defineKey: "value", // Default as data.value
                 file: {
                     type: null, // csv, tsv, txt, json, xml, xhr
                     url: null,

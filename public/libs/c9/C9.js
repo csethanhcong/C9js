@@ -591,7 +591,7 @@ var C9 =
 	            colorRange: "category20",
 	            // data
 	            data: {
-	                keyDefine: "value",
+	                defineKey: "value", // Default as data.value
 	                file: {
 	                    type: null, // csv, tsv, txt, json, xml, xhr
 	                    url: null
@@ -3804,17 +3804,19 @@ var C9 =
 	        var self = this;
 
 	        var config = {
-	            keyDefine: "value",
-	            file: {
-	                type: null, // csv, tsv, txt, json, xml, xhr
-	                url: null
+	            keys: {
+	                name: "name",
+	                value: "value"
 	            }
 	        };
 
-	        self._keyDefine = options.keyDefine || config.keyDefine;
-	        self._file = _C2.default.merge(options.file, config.file);
+	        self._keys = _C2.default.merge(options.keys, config.keys);
 
-	        self.init();
+	        if (self.hasPlainData(options)) {
+	            self.executePlainData(options);
+	        } else if (self.hasFile(options)) {
+	            self.executeFile(options);
+	        }
 	    }
 
 	    /*==============================
@@ -3823,20 +3825,36 @@ var C9 =
 
 
 	    _createClass(DataAdapter, [{
-	        key: "init",
+	        key: "hasPlainData",
 
 	        /*=====  End of Setter  ======*/
 
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
-	        value: function init() {
+	        value: function hasPlainData(options) {
+	            return options.plain && _C2.default.isArray(options.plain);
+	        }
+	    }, {
+	        key: "hasFile",
+	        value: function hasFile(options) {
+	            return options.file && _C2.default.isObject(options.file);
+	        }
+	    }, {
+	        key: "executePlainData",
+	        value: function executePlainData(options) {
+	            self._data = options.plain;
+	        }
+	    }, {
+	        key: "executeFile",
+	        value: function executeFile(options) {
 	            var self = this;
+
+	            self._file = _C2.default.merge(options.file, config.file);
 
 	            if (self._file && self._file.type) {
 
 	                switch (self._file.type) {
-
 	                    case "csv":
 	                        self._data = self.getCsv();
 	                        break;
@@ -3858,21 +3876,20 @@ var C9 =
 	                    default:
 	                        self._data = self.getJson();
 	                        break;
-
 	                }
-	            } else {}
+	            }
 	        }
 	    }, {
 	        key: "getName",
-	        value: function getName(d) {
-	            return d.name;
+	        value: function getName(v) {
+	            return v.name;
 	        }
 	    }, {
 	        key: "getValue",
 	        value: function getValue(v) {
 	            var self = this;
 
-	            return _C2.default.get(self.keyDefine, v);
+	            return _C2.default.get(self.keys, v);
 	        }
 	    }, {
 	        key: "getCsv",
@@ -3945,9 +3962,9 @@ var C9 =
 	        /*=====  End of Main Functions  ======*/
 
 	    }, {
-	        key: "keyDefine",
+	        key: "keys",
 	        get: function get() {
-	            return this._keyDefine;
+	            return this._keys;
 	        },
 
 	        /*=====  End of Getter  ======*/
@@ -3957,17 +3974,17 @@ var C9 =
 	        ==============================*/
 	        set: function set(arg) {
 	            if (arg) {
-	                this._keyDefine = arg;
+	                this._keys = arg;
 	            }
 	        }
 	    }, {
-	        key: "file",
+	        key: "data",
 	        get: function get() {
-	            return this._file;
+	            return this._data;
 	        },
 	        set: function set(arg) {
 	            if (arg) {
-	                this._file = arg;
+	                this._data = arg;
 	            }
 	        }
 	    }]);
