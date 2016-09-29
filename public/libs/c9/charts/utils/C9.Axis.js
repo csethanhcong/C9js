@@ -45,18 +45,19 @@ export default class Axis {
         }
         
         x.domain(data.map(function(d) {
-            return d.name;
+            return d.name || d.stack[0].name;
         }));
 
-        if (body.type == "bar")
+        if (body.type == "bar") {
             y.domain([
                 d3.min(data, function(d) {
-                    return d.total;
+                    return d.max;
                 }), 
                 d3.max(data, function(d) {
-                    return d.total;
+                    return d.max;
                 })
             ]);
+        }
         else
             y.domain([
                 d3.min(data, function(d) {

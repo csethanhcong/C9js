@@ -117,7 +117,7 @@
 		<div id="demo6"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: "A", value:	[2, .0245, 0.05, 0.1]},
+					{name: "A", value:	[.0245, 0.05, 0.1]},
 					{name: "B",	value:  [.01492, .02782, 0.05, 0.1]},
 					{name: "C", value:	[.02782, .02782, 0.05, 0.1]},
 					{name: "D", value:	[.04253, .02782, 0.05, 0.1]},
@@ -139,7 +139,10 @@
 					bottom:100
 				},
 				gridYShow: true,
-				data: data1, 
+				data: {
+					plain: data1,
+					groups: ["HAHA", "HEHE", "HOHO", "HIHI"]
+				}, 
 				barColor: "category20",
 				isLogaric: false,
 				// groupType: "group",
@@ -150,47 +153,47 @@
 			barChart.draw();
 			
 
-			var data2 = [{"Client": "ABC","sale": "202","year": "2000"},
-						 {"Client": "ABC","sale": "215","year": "2002"},
-						 {"Client": "ABC","sale": "179","year": "2004"},
-						 {"Client": "ABC","sale": "360","year": "2006"},
-						 {"Client": "ABC","sale": "301","year": "2008"},
-						 {"Client": "ABC","sale": "176","year": "2010"},
-						 {"Client": "XYZ","sale": "100","year": "2000"},
-						 {"Client": "XYZ","sale": "215","year": "2002"},
-						 {"Client": "XYZ","sale": "256","year": "2004"},
-						 {"Client": "XYZ","sale": "199","year": "2006"},
-						 {"Client": "XYZ","sale": "134","year": "2008"},
-						 {"Client": "XYZ","sale": "100","year": "2013"},
-						 {"Client": "AKA","sale": "200","year": "2000"},
-						 {"Client": "AKA","sale": "150","year": "2002"},
-						 {"Client": "AKA","sale": "350","year": "2004"},
-						 {"Client": "AKA","sale": "260","year": "2006"},
-						 {"Client": "AKA","sale": "400","year": "2008"},
-						 {"Client": "AKA","sale": "580","year": "2013"}
-				];
-			var options2 = {
-				id: "#demo2", 
-				width: 750, 
-				height: 500, 
-				margin: {
-					top: 100, 
-					left: 50, 
-					right: 50, 
-					bottom:100
-				}, 
-				data: data2, 
-				xAxisText: ' ',
-				yAxisText: 'Sale',
-				titleText: 'Line Chart',
-				interpolate: 'monotone',
-				pointShow: true,
-				pointRadius: 5,
-				pointOpacity: 0.8,
-				legendShow:true,
-			};
-			var lineChart = new C9.LineChart(options2);
-			lineChart.draw();
+			// var data2 = [{"Client": "ABC","sale": "202","year": "2000"},
+			// 			 {"Client": "ABC","sale": "215","year": "2002"},
+			// 			 {"Client": "ABC","sale": "179","year": "2004"},
+			// 			 {"Client": "ABC","sale": "360","year": "2006"},
+			// 			 {"Client": "ABC","sale": "301","year": "2008"},
+			// 			 {"Client": "ABC","sale": "176","year": "2010"},
+			// 			 {"Client": "XYZ","sale": "100","year": "2000"},
+			// 			 {"Client": "XYZ","sale": "215","year": "2002"},
+			// 			 {"Client": "XYZ","sale": "256","year": "2004"},
+			// 			 {"Client": "XYZ","sale": "199","year": "2006"},
+			// 			 {"Client": "XYZ","sale": "134","year": "2008"},
+			// 			 {"Client": "XYZ","sale": "100","year": "2013"},
+			// 			 {"Client": "AKA","sale": "200","year": "2000"},
+			// 			 {"Client": "AKA","sale": "150","year": "2002"},
+			// 			 {"Client": "AKA","sale": "350","year": "2004"},
+			// 			 {"Client": "AKA","sale": "260","year": "2006"},
+			// 			 {"Client": "AKA","sale": "400","year": "2008"},
+			// 			 {"Client": "AKA","sale": "580","year": "2013"}
+			// 	];
+			// var options2 = {
+			// 	id: "#demo2", 
+			// 	width: 750, 
+			// 	height: 500, 
+			// 	margin: {
+			// 		top: 100, 
+			// 		left: 50, 
+			// 		right: 50, 
+			// 		bottom:100
+			// 	}, 
+			// 	data: data2, 
+			// 	xAxisText: ' ',
+			// 	yAxisText: 'Sale',
+			// 	titleText: 'Line Chart',
+			// 	interpolate: 'monotone',
+			// 	pointShow: true,
+			// 	pointRadius: 5,
+			// 	pointOpacity: 0.8,
+			// 	legendShow:true,
+			// };
+			// var lineChart = new C9.LineChart(options2);
+			// lineChart.draw();
 
 			var data3 = [
 					{name: "Male", value:	10},
@@ -209,7 +212,9 @@
 			      right:50,
 			      bottom:100
 			   },
-			   data:data3,
+			   data: {
+			   	plain: data3
+			   },
 			   titleText:'Donut Chart',
 			   colorRange:"category20",
 			   outerRadius:200,
@@ -249,14 +254,14 @@
 			var pieChart = new C9.PieChart(options4);
 			pieChart.draw();
 
-			var options5 = {
-				file: {
-					type: 'json',
-					url: '/libs/c9/test/data1.json'
-				}
-			};
-			var test1 = new C9.DataAdapter(options5);
-			test1.getJson();
+			// var options5 = {
+			// 	file: {
+			// 		type: 'json',
+			// 		url: '/libs/c9/test/data1.json'
+			// 	}
+			// };
+			// var test1 = new C9.DataAdapter(options5);
+			// test1.getJson();
 
 		</script>
 		

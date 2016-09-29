@@ -214,6 +214,10 @@ export default class Legend {
             // Calculate domain for color to draw
             // color.domain(legendDomain);
 
+            if (self._body.type == "bar") {
+                self.data = self.data[self.data.reduce((p, c, i, a) => a[p].stack.length > c.stack.length ? p : i, 0)].stack;
+            }
+
             // Legend will be appended in main SVG container
             var legendContainer = d3.select(self._body[0][0].parentNode)
                 .append("g")
@@ -245,7 +249,7 @@ export default class Legend {
                 .attr('x', self._legendSize * 2 + 20)
                 .attr('y', 15)
                 // .attr('text-anchor', 'middle')
-                .text(function(d) { return d.name; });
+                .text(function(d) { return self._body.type == "bar" ? d.group : d.name; });
 
 
             // if (self._legendBox && legendDomain.length > 0) {
@@ -468,13 +472,14 @@ export default class Legend {
         self.legendItemEventFactory = {
 
             'click': function(item) {
-
                 var selector = d3.select(this);
                 var enable = true,
+                    dataBackup = chart.dataTarget,
                     dataSet = self.data;
                 var totalEnable = d3.sum(dataSet.map(function(d) {
                     return (d.enable) ? 1 : 0;
                 }));
+
                 var enableSet = [];
                 var enableSetOld = [];
                 var data = [];
@@ -491,18 +496,19 @@ export default class Legend {
                     enable = false;
                 }
 
-                dataSet.forEach(function(d, i) {
+                //set current data for legend
+                self.data.forEach(function(d, i) {
                     if (d.enable)
-                        enableSetOld.push(d);
-                    if (d.group == item.name)
+                        enableSetOld.push(d.group);
+                    if (d.group == item.group)
                         d.enable = enable;
                     if (d.enable)
-                        enableSet.push(d);
+                        enableSet.push(d.group);
                 });
 
                 //TODO - handle total - use for axis
-                dataSet.forEach(function(d, i) {
-                    var element = {name: d.name, stack: [], max: d.max};
+                dataBackup.forEach(function(d, i) {
+                    var element = {stack: [], max: d.max};
                     d.stack.forEach(function(s, j) {
                         enableSet.forEach(function(e) {
                             if (e == s.group) {
@@ -513,7 +519,7 @@ export default class Legend {
                     data.push(element);
                 });
 
-                chart.updateLegendInteraction(data, enableSet, enableSetOld, item);
+                chart.updateLegendInteraction(data, enableSet, enableSetOld, item.group);
                 
             },
 

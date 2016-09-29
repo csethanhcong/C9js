@@ -166,14 +166,18 @@ var C9 =
 	        // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
 
 	        self.body.type = "bar";
-	        self._groupType = options.groupType || config.groupType;
+	        // self._groupType     = options.groupType     ||  config.groupType;
 
 	        var dataOption = self.dataOption;
 	        dataOption.colorRange = self.colorRange;
 
 	        var da = new _C14.default(dataOption);
 	        self.dataTarget = da.getDataTarget("bar");
-	        self._groupNames = da.groups || da.stacks; //define group names use for showing legend
+	        var barChartType = da.getDataTypeForBarChart();
+	        if (barChartType != "single") {
+	            self._groupNames = da.groups || da.stacks; //define group names use for showing legend
+	            self._isGroup = barChartType == "group";
+	        }
 
 	        // self.data.forEach(function(d, i) {
 	        //     var y0 = 0; // calculate stacked data (top of each bar)
@@ -222,14 +226,18 @@ var C9 =
 	            return d.max;
 	        })]);
 
-	        /******** Handle for grouped bar chart ********/
-	        var xGroup = d3.scale.ordinal();
+	        /******** Handle for grouped, stacked bar chart ********/
+	        if (self._groupNames) {
+	            self._xGroup = d3.scale.ordinal();
+	            self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
+	        }
+
 	        //self-define group names if user do not define
 	        // if (self._groupNames.length == 0)
 	        //     for (var i = 1; i <= groupCount; i++) {
 	        //         self._groupNames.push("Group " + i);
 	        //     };
-	        xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
+
 	        /**********************************************/
 
 	        // Make flexible width according to barWidth
@@ -237,8 +245,7 @@ var C9 =
 	        self._barWidth = options.barWidth || config.barWidth;
 	        self._x = x;
 	        self._y = y;
-	        self._xGroup = xGroup;
-	        // self.updateConfig();
+	        self.updateConfig();
 	        return _this;
 	    }
 
@@ -264,11 +271,10 @@ var C9 =
 	                color = self.colorRange,
 	                x = self._x,
 	                y = self._y,
-	                xGroup = self._xGroup,
-	                type = self.groupType;
+	                xGroup = self._xGroup;
 
 	            var bar = self.body.selectAll(".bar").data(self.dataTarget).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
-	                return "translate(" + x(d.name) + ",0)";
+	                return "translate(" + x(d.stack[0].name) + ",0)";
 	            });
 
 	            var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
@@ -276,13 +282,13 @@ var C9 =
 	            });
 
 	            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d, i) {
-	                d.color = color(i);return color(i);
+	                return d.color || color(i);
 	            }).attr("x", function (d) {
-	                return type == "group" ? xGroup(d.group) : undefined;
+	                return self.isGroup ? xGroup(d.group) : undefined;
 	            }).attr("y", function (d) {
 	                return y(d.y1);
 	            }).attr("width", function (d) {
-	                return type == "group" ? xGroup.rangeBand() : x.rangeBand();
+	                return self.isGroup ? xGroup.rangeBand() : x.rangeBand();
 	            }).attr("height", function (d) {
 	                return y(d.y0) - y(d.y1);
 	            });
@@ -316,8 +322,8 @@ var C9 =
 	            // self.body.selectAll(".c9-custom-rect").transition().duration(750).attr("height", 0).remove();
 	            self.body.selectAll(".c9-custom-rect").data([]).exit().remove();
 
-	            var bar = self.body.selectAll(".bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
-	                return "translate(" + self.x(d.name) + ",0)";
+	            var bar = self.body.selectAll(".bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d, i) {
+	                return "translate(" + self.x(self.dataTarget[i].stack[0].name) + ",0)";
 	            });
 
 	            var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
@@ -328,7 +334,7 @@ var C9 =
 	                return d.color;
 	            }).attr("x", function (d) {
 	                // use for stack
-	                if (type == "stack") return undefined;
+	                if (!self.isGroup) return undefined;
 	                // use for group
 	                // group member positioning at the end of groups, so its x is the position of right edge of bar
 	                if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1) return self.x.rangeBand();
@@ -336,15 +342,15 @@ var C9 =
 	            }).attr("y", function (d) {
 	                return self.y(d.y1);
 	            }).attr("width", function (d) {
-	                return type == "stack" ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
+	                return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
 	            }).attr("height", function (d) {
 	                return self.y(d.y0) - self.y(d.y1);
 	            });
 
 	            bars.transition().duration(750).attr("x", function (d) {
-	                return type == "stack" ? undefined : xGroup(d.group);
+	                return !self.isGroup ? undefined : xGroup(d.group);
 	            }).attr("width", function (d) {
-	                return type == "stack" ? self.x.rangeBand() : xGroup.rangeBand();
+	                return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand();
 	            });
 
 	            self.updateInteraction();
@@ -359,7 +365,7 @@ var C9 =
 	        key: 'draw',
 	        value: function draw() {
 	            var self = this;
-	            var axis = new _C4.default(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
+	            var axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
 	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 
@@ -529,6 +535,11 @@ var C9 =
 	        key: 'chartType',
 	        get: function get() {
 	            return this._body.type;
+	        }
+	    }, {
+	        key: 'isGroup',
+	        get: function get() {
+	            return this._isGroup;
 	        }
 	    }]);
 
@@ -1022,14 +1033,16 @@ var C9 =
 	        }
 
 	        x.domain(data.map(function (d) {
-	            return d.name;
+	            return d.name || d.stack[0].name;
 	        }));
 
-	        if (body.type == "bar") y.domain([d3.min(data, function (d) {
-	            return d.total;
-	        }), d3.max(data, function (d) {
-	            return d.total;
-	        })]);else y.domain([d3.min(data, function (d) {
+	        if (body.type == "bar") {
+	            y.domain([d3.min(data, function (d) {
+	                return d.max;
+	            }), d3.max(data, function (d) {
+	                return d.max;
+	            })]);
+	        } else y.domain([d3.min(data, function (d) {
 	            return d.value;
 	        }), d3.max(data, function (d) {
 	            return d.value;
@@ -1456,6 +1469,12 @@ var C9 =
 	                // Calculate domain for color to draw
 	                // color.domain(legendDomain);
 
+	                if (self._body.type == "bar") {
+	                    self.data = self.data[self.data.reduce(function (p, c, i, a) {
+	                        return a[p].stack.length > c.stack.length ? p : i;
+	                    }, 0)].stack;
+	                }
+
 	                // Legend will be appended in main SVG container
 	                var legendContainer = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
 
@@ -1478,7 +1497,7 @@ var C9 =
 	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
-	                    return d.name;
+	                    return self._body.type == "bar" ? d.group : d.name;
 	                });
 
 	                // if (self._legendBox && legendDomain.length > 0) {
@@ -1682,13 +1701,14 @@ var C9 =
 	            self.legendItemEventFactory = {
 
 	                'click': function click(item) {
-
 	                    var selector = d3.select(this);
 	                    var enable = true,
+	                        dataBackup = chart.dataTarget,
 	                        dataSet = self.data;
 	                    var totalEnable = d3.sum(dataSet.map(function (d) {
 	                        return d.enable ? 1 : 0;
 	                    }));
+
 	                    var enableSet = [];
 	                    var enableSetOld = [];
 	                    var data = [];
@@ -1705,15 +1725,16 @@ var C9 =
 	                        enable = false;
 	                    }
 
-	                    dataSet.forEach(function (d, i) {
-	                        if (d.enable) enableSetOld.push(d);
-	                        if (d.group == item.name) d.enable = enable;
-	                        if (d.enable) enableSet.push(d);
+	                    //set current data for legend
+	                    self.data.forEach(function (d, i) {
+	                        if (d.enable) enableSetOld.push(d.group);
+	                        if (d.group == item.group) d.enable = enable;
+	                        if (d.enable) enableSet.push(d.group);
 	                    });
 
 	                    //TODO - handle total - use for axis
-	                    dataSet.forEach(function (d, i) {
-	                        var element = { name: d.name, stack: [], max: d.max };
+	                    dataBackup.forEach(function (d, i) {
+	                        var element = { stack: [], max: d.max };
 	                        d.stack.forEach(function (s, j) {
 	                            enableSet.forEach(function (e) {
 	                                if (e == s.group) {
@@ -1724,7 +1745,7 @@ var C9 =
 	                        data.push(element);
 	                    });
 
-	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, item);
+	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, item.group);
 	                }
 
 	            };
@@ -2131,11 +2152,15 @@ var C9 =
 	            switch (self.getDataTypeForBarChart()) {
 	                case "single":
 	                    self.dataSource.forEach(function (data, index) {
+	                        var _stack = [];
 	                        var _data = {
-	                            "name": _C2.default.get(self.keys.name, data),
-	                            "value": _C2.default.get(self.keys.value, data),
 	                            "max": _C2.default.get(self.keys.value, data),
-	                            "enable": true
+	                            "stack": [{
+	                                "name": _C2.default.get(self.keys.name, data),
+	                                "y0": 0,
+	                                "y1": _C2.default.get(self.keys.value, data),
+	                                "enable": true
+	                            }]
 	                        };
 	                        self.dataTarget.push(_data);
 	                    });
@@ -2180,7 +2205,7 @@ var C9 =
 	                                    "color": color(i),
 	                                    "y0": 0,
 	                                    "y1": d,
-	                                    "group": groups[index] || index,
+	                                    "group": groups[i] || i,
 	                                    "name": _C2.default.get(self.keys.name, data),
 	                                    "data-ref": _C2.default.guid(),
 	                                    "enable": true
@@ -2192,7 +2217,7 @@ var C9 =
 	                                "color": color(0),
 	                                "y0": 0,
 	                                "y1": _dsArray,
-	                                "group": groups[index] || index,
+	                                "group": groups[0] || 0,
 	                                "name": _C2.default.get(self.keys.name, data),
 	                                "data-ref": _C2.default.guid(),
 	                                "enable": true
@@ -2246,7 +2271,7 @@ var C9 =
 	                                        "color": color(i),
 	                                        "y0": _tempY0,
 	                                        "y1": _tempY0 + d,
-	                                        "group": stacks[index] || index,
+	                                        "group": stacks[i] || i,
 	                                        "name": _C2.default.get(self.keys.name, data),
 	                                        "data-ref": _C2.default.guid(),
 	                                        "enable": true
@@ -2261,7 +2286,7 @@ var C9 =
 	                                "color": color(0),
 	                                "y0": 0,
 	                                "y1": _dsArray,
-	                                "group": stacks[index] || index,
+	                                "group": stacks[0] || 0,
 	                                "name": _C2.default.get(self.keys.name, data),
 	                                "data-ref": _C2.default.guid(),
 	                                "enable": true
@@ -2329,7 +2354,7 @@ var C9 =
 	            self.dataSource.forEach(function (data, index) {
 
 	                var _data = {
-	                    "color": color(index),
+	                    // "color"     : color(index),
 	                    "icon": data.icon,
 	                    "name": _C2.default.get(self.keys.name, data),
 	                    "value": [],
@@ -3758,6 +3783,14 @@ var C9 =
 
 	var _C8 = _interopRequireDefault(_C7);
 
+	var _C9 = __webpack_require__(3);
+
+	var _C10 = _interopRequireDefault(_C9);
+
+	var _C11 = __webpack_require__(8);
+
+	var _C12 = _interopRequireDefault(_C11);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3783,8 +3816,8 @@ var C9 =
 	            ending: 0,
 	            stack: false, //test
 	            // rotateTicks: false,
-	            itemHeight: 20,
-	            itemMargin: 5,
+	            itemHeight: 25,
+	            itemMargin: 20,
 	            labelMargin: 20,
 	            striped: null
 	        };
@@ -3800,6 +3833,12 @@ var C9 =
 	        self._labelMargin = options.labelMargin || config.labelMargin;
 	        self._maxStack = 1;
 	        self._striped = options.striped || config.striped;
+
+	        var dataOption = self.dataOption;
+	        dataOption.colorRange = self.colorRange;
+
+	        var da = new _C12.default(dataOption);
+	        self.dataTarget = da.getDataTarget("timeline");
 
 	        self.initTimelineConfig();
 	        return _this;
@@ -3832,18 +3871,18 @@ var C9 =
 	            // count number of stack and calculate min time, max time from data
 	            if (self.stack || self.ending === 0 || self.starting === 0) {
 
-	                self.data.forEach(function (datum, index) {
+	                self.dataTarget.forEach(function (datum, index) {
 
 	                    if (self.stack && Object.keys(stackList).indexOf(index) == -1) {
 	                        stackList[index] = maxStack;
 	                        maxStack++;
 	                    }
 
-	                    datum.times.forEach(function (time, i) {
-	                        if (self.starting === 0) if (time.startingTime < minTime || minTime === 0) minTime = time.startingTime;
+	                    datum.value.forEach(function (time, i) {
+	                        if (self.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
 	                        if (self.ending === 0) {
-	                            if (time.startingTime > maxTime) maxTime = time.startingTime;
-	                            if (time.endingTime > maxTime) maxTime = time.endingTime;
+	                            if (time.start > maxTime) maxTime = time.start;
+	                            if (time.end > maxTime) maxTime = time.end;
 	                        }
 	                    });
 	                });
@@ -3860,14 +3899,15 @@ var C9 =
 	            var scale = width / (self.ending - self.starting);
 
 	            //draw border
-	            self.body.append("rect").attr("class", "timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.itemMargin / 2).attr("height", (self.itemHeight + self.itemMargin) * self.data.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 4);
+	            self.body.append("rect").attr("class", "timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.itemMargin / 2).attr("height", (self.itemHeight + self.itemMargin) * self.dataTarget.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
 
-	            self.data.forEach(function (datum, index) {
-	                var data = datum.times;
+	            self.dataTarget.forEach(function (datum, index) {
+	                var data = datum.value;
+
 	                //draw background
 	                if (self.backgroundColor) {
 	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis).attr("height", self.itemHeight).attr("fill", self.backgroundColor instanceof Function ? self.backgroundColor(index) : self.backgroundColor);
+	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", _C10.default.isArray(self.backgroundColor) ? self.backgroundColor[index % (self.maxStack - 1)] : self.backgroundColor);
 	                }
 
 	                if (self.striped) {
@@ -3877,31 +3917,36 @@ var C9 =
 
 	                //draw item
 	                self.body.selectAll("g").data(data).enter().append(function (d, i) {
-	                    return document.createElementNS(d3.ns.prefix.svg, "endingTime" in d ? "rect" : "circle");
+	                    return document.createElementNS(d3.ns.prefix.svg, d.end ? "rect" : "circle");
 	                }).attr("x", getXPos).attr("y", getStackPosition).attr("width", function (d, i) {
-	                    return (d.endingTime - d.startingTime) * scale;
+	                    return (d.end - d.start) * scale;
 	                }).attr("cy", function (d, i) {
 	                    return getStackPosition(d, i) + self.itemHeight / 2;
 	                }).attr("cx", getXPos).attr("r", self.itemHeight / 2).attr("height", self.itemHeight).style("fill", color(index));
 
 	                //draw label inside item
-	                self.body.selectAll("g").data(data).enter().append("text").attr("x", getXTextPos).attr("y", getStackTextPosition).text(function (d) {
-	                    return d.name;
-	                });
+	                // self.body.selectAll("g")
+	                //     .data(data).enter()
+	                //     .append("text")
+	                //     .attr("x", getXTextPos)
+	                //     .attr("y", getStackTextPosition)
+	                //     .text(function(d) {
+	                //       return d.name;
+	                //     });
 
 	                if (self.rowSeparator && index < self.maxStack - 1) {
 	                    var lineYAxis = self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 4).attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
+	                    self.body.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C10.default.isArray(self.rowSeparator) ? self.rowSeparator[index % (self.maxStack - 1)] : self.rowSeparator);
 	                }
 
 	                //draw the label left side item
-	                if (typeof datum.name !== "undefined") {
+	                if (!_C10.default.isEmpty(datum.name) && datum.name != "") {
 	                    var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 
 	                    d3.select(self.body[0][0].parentNode).append("text").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")").text(datum.name);
 	                }
 	                //draw icon
-	                else if (typeof datum.icon !== "undefined") {
+	                else if (!_C10.default.isEmpty(datum.icon) && datum.icon != "") {
 	                        d3.select(self.body[0][0].parentNode).append("image").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.itemHeight).attr("height", self.itemHeight);
 	                    }
 
@@ -3920,11 +3965,11 @@ var C9 =
 	            });
 
 	            function getXPos(d, i) {
-	                return (d.startingTime - self.starting) * scale;
+	                return (d.start - self.starting) * scale;
 	            }
 
 	            function getXTextPos(d, i) {
-	                return (d.startingTime - self.starting) * scale + 5;
+	                return (d.start - self.starting) * scale + 5;
 	            }
 	        }
 	    }, {
@@ -3932,9 +3977,9 @@ var C9 =
 	        value: function draw() {
 	            this.options.starting = this.starting;
 	            this.options.ending = this.ending;
-	            var axis = new _C4.default(this.options, this.body, this.data, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
+	            // var axis    = new Axis(this.options, this.body, this.dataTarget, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
 	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.data);
+	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.dataTarget);
 	        }
 
 	        /*=====  End of Main Functions  ======*/
@@ -3962,7 +4007,7 @@ var C9 =
 	        },
 	        set: function set(newBackgroundColor) {
 	            if (newBackgroundColor) {
-	                this.backgroundColor = newBackgroundColor;
+	                this._backgroundColor = newBackgroundColor;
 	            }
 	        }
 	    }, {

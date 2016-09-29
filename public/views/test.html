@@ -191,6 +191,7 @@ d3.interval(function() {
     <div id="demo3"></div>
     <div id="demo4"></div>
     <div id="demo6"></div>
+    <div id="demo7"></div>
       <script type="text/javascript" charset="utf-8">
       //   var data4 = [
       //       {name: "Spring", value: 20},
@@ -252,13 +253,13 @@ d3.interval(function() {
       // donutChart.draw();
 
 
-        var data6 = [
-              {times: [{"name":"First time", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"First time", "starting_time": new Date("December 18, 2012 01:10:00")}]},
-              {times: [{"name":"Second time", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
-              {times: [{"name":"Third time", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+        var data3 = [
+              {name: "test", icon: "images/icon.png", value: [{"name":"Me", "start": new Date("December 17, 2012 21:00:00"), "end": new Date("December 17, 2012 23:00:00")}, {"name":"Me", "start": new Date("December 18, 2012 01:10:00")}]},
+              {icon: "images/icon.png", value: [{"name":"Her", "start": new Date("December 17, 2012 23:00:00"), "end": new Date("December 17, 2012 23:30:00")}, ]},
+              {icon: "images/icon.png", value: [{"name":"Him", "start": new Date("December 17, 2012 23:30:00"), "end": new Date("December 18, 2012 00:05:00")}]}
             ];
-      var options6 = {
-        id: "#demo6", 
+      var options7 = {
+        id: "#demo7", 
         width: 750, 
         height: 300, 
         margin: {
@@ -268,15 +269,21 @@ d3.interval(function() {
           bottom:100
         }, 
         data: {
-          plain: data6, 
-        },
-        titleText: 'Timeline Chart', 
-        stack: false,
-        colorRange: "category20b"
+          plain: data3 
+        }, 
+        title_text: 'Timeline Chart',
+        x_axis_text: ' ',
+        stack: true,
+        // backgroundColor: ["yellow", "red"],
+        // colorRange: ["red", "green", "blue"],
+        labelMargin: 0,
+        rowSeparator: null,
+        // itemMargin: 30,
+        striped: true,
       };
-      var timelineChart = new C9.TimeLine(options6);
-      console.dir(timelineChart.dataTarget);
-
+      var timelineChart = new C9.TimeLine(options7);
+      timelineChart.draw();
+console.log(timelineChart.dataTarget)
     </script>
     
   </body>

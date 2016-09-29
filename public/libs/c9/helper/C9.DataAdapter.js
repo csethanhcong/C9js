@@ -222,11 +222,15 @@ export default class DataAdapter {
         switch(self.getDataTypeForBarChart()) {
             case "single":
                 self.dataSource.forEach(function(data, index) {
+                    let _stack = [];
                     let _data = {
-                        "name"  : Helper.get(self.keys.name, data),
-                        "value" : Helper.get(self.keys.value, data),
-                        "max"   : Helper.get(self.keys.value, data),
-                        "enable"    : true,
+                        "max": Helper.get(self.keys.value, data),
+                        "stack": [{
+                            "name" : Helper.get(self.keys.name, data),
+                            "y0" : 0,
+                            "y1" : Helper.get(self.keys.value, data),
+                            "enable" : true,
+                        }]
                     };
                     self.dataTarget.push(_data);
                 });
@@ -271,7 +275,7 @@ export default class DataAdapter {
                                 "color": color(i),
                                 "y0": 0,
                                 "y1": d,
-                                "group": groups[index] || index,
+                                "group": groups[i] || i,
                                 "name": Helper.get(self.keys.name, data),
                                 "data-ref": Helper.guid(),
                                 "enable"    : true,
@@ -283,7 +287,7 @@ export default class DataAdapter {
                             "color": color(0),
                             "y0": 0,
                             "y1": _dsArray,
-                            "group": groups[index] || index,
+                            "group": groups[0] || 0,
                             "name": Helper.get(self.keys.name, data),
                             "data-ref": Helper.guid(),
                             "enable"    : true,
@@ -336,7 +340,7 @@ export default class DataAdapter {
                                 "color": color(i),
                                 "y0": _tempY0,
                                 "y1": _tempY0 + d,
-                                "group": stacks[index] || index,
+                                "group": stacks[i] || i,
                                 "name": Helper.get(self.keys.name, data),
                                 "data-ref": Helper.guid(),
                                 "enable"    : true,
@@ -350,7 +354,7 @@ export default class DataAdapter {
                             "color": color(0),
                             "y0": 0,
                             "y1": _dsArray,
-                            "group": stacks[index] || index,
+                            "group": stacks[0] || 0,
                             "name": Helper.get(self.keys.name, data),
                             "data-ref": Helper.guid(),
                             "enable"    : true,
@@ -418,7 +422,7 @@ export default class DataAdapter {
         self.dataSource.forEach(function(data, index) {
 
             let _data = {
-                "color"     : color(index),
+                // "color"     : color(index),
                 "icon"      : data.icon,
                 "name"      : Helper.get(self.keys.name, data),
                 "value"     : [],

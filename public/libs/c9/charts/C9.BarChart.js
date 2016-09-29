@@ -21,15 +21,20 @@ export default class BarChart extends Chart {
         // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
 
         self.body.type      = "bar";
-        self._groupType     = options.groupType     ||  config.groupType;
+        // self._groupType     = options.groupType     ||  config.groupType;
 
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
         var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget("bar");
-        self._groupNames    = da.groups || da.stacks;  //define group names use for showing legend
-
+        self.dataTarget = da.getDataTarget("bar");
+        var barChartType = da.getDataTypeForBarChart()
+        if (barChartType != "single") {
+            self._groupNames    = da.groups || da.stacks;  //define group names use for showing legend
+            self._isGroup       = barChartType == "group"
+        }
+            
+        
         // self.data.forEach(function(d, i) {
         //     var y0 = 0; // calculate stacked data (top of each bar)
         //     var count = 0; // count number of group
@@ -69,6 +74,7 @@ export default class BarChart extends Chart {
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var y = d3.scale.linear().range([height, 0]);
 
+
         x.domain(self.dataTarget.map(function(d) {
             return d.stack[0].name;
         }));
@@ -77,14 +83,18 @@ export default class BarChart extends Chart {
             return d.max;
         })]);
 
-        /******** Handle for grouped bar chart ********/
-        var xGroup = d3.scale.ordinal();
+        /******** Handle for grouped, stacked bar chart ********/
+        if (self._groupNames) {
+            self._xGroup = d3.scale.ordinal();
+            self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
+        }
+        
         //self-define group names if user do not define
         // if (self._groupNames.length == 0)
         //     for (var i = 1; i <= groupCount; i++) {
         //         self._groupNames.push("Group " + i);
         //     };
-        xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
+        
         /**********************************************/
 
         // Make flexible width according to barWidth
@@ -92,8 +102,7 @@ export default class BarChart extends Chart {
         self._barWidth       = options.barWidth  ||  config.barWidth;
         self._x              = x;
         self._y              = y;
-        self._xGroup         = xGroup;
-        // self.updateConfig();
+        self.updateConfig();
     }
 
     /*==============================
@@ -141,6 +150,10 @@ export default class BarChart extends Chart {
 
     get chartType() {
         return this._body.type;
+    }
+
+    get isGroup() {
+        return this._isGroup;
     }
     /*=====  End of Getter  ======*/
 
@@ -199,13 +212,12 @@ export default class BarChart extends Chart {
     /**
      * Init Bar Chart Config
      */
-    updateConfig() {
+    updateConfig(){
         var self  = this,
             color = self.colorRange,
             x     = self._x,
             y     = self._y,
-            xGroup= self._xGroup,
-            type  = self.groupType;
+            xGroup= self._xGroup;
 
         var bar = self.body
                     .selectAll(".bar")
@@ -213,7 +225,7 @@ export default class BarChart extends Chart {
                     .enter()
                         .append("g")
                         .attr("class", "c9-chart-bar c9-custom-bar")
-                        .attr("transform", function(d) { return "translate(" + x(d.name) + ",0)"; });
+                        .attr("transform", function(d) { return "translate(" + x(d.stack[0].name) + ",0)"; });
 
         var bars = bar.selectAll(".c9-custom-rect")
             .data(function(d) { return d.stack; });
@@ -221,12 +233,11 @@ export default class BarChart extends Chart {
         bars.enter()
             .append("rect")
             .attr("class", "c9-custom-rect")
-            .style("fill", function(d, i) { d.color = color(i); return color(i); })
-            .attr("x", function(d) { return type == "group" ? xGroup(d.group) : undefined; })
+            .style("fill", function (d, i) { return d.color || color(i); })
+            .attr("x", function(d) { return self.isGroup ? xGroup(d.group) : undefined; })
             .attr("y", function(d) { return y(d.y1); })
-            .attr("width", function(d) { return type == "group" ? xGroup.rangeBand() : x.rangeBand(); })
+            .attr("width", function(d) { return self.isGroup ? xGroup.rangeBand() : x.rangeBand(); })
             .attr("height", function(d) { return y(d.y0) - y(d.y1); });
-
     }
 
     /**
@@ -261,7 +272,7 @@ export default class BarChart extends Chart {
                     .enter()
                     .append("g")
                     .attr("class", "c9-chart-bar c9-custom-bar")
-                    .attr("transform", function(d) { return "translate(" + self.x(d.name) + ",0)"; });
+                    .attr("transform", function (d, i) { return "translate(" + self.x(self.dataTarget[i].stack[0].name) + ",0)"; });
 
         var bars = bar.selectAll(".c9-custom-rect")
             .data(function(d) { return d.stack; });
@@ -272,7 +283,7 @@ export default class BarChart extends Chart {
             .style("fill", function(d) { return d.color; })
             .attr("x", function(d) {
                 // use for stack
-                if (type == "stack") return undefined;
+                if (!self.isGroup) return undefined;
                 // use for group
                 // group member positioning at the end of groups, so its x is the position of right edge of bar
                 if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1)
@@ -281,13 +292,13 @@ export default class BarChart extends Chart {
             })
             .attr("y", function(d) { return self.y(d.y1); })
             .attr("width", function(d) {
-                return type == "stack" ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
+                return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             })
             .attr("height", function(d) { return self.y(d.y0) - self.y(d.y1); });
 
         bars.transition().duration(750)
-            .attr("x", function(d) { return type == "stack" ? undefined : xGroup(d.group); })
-            .attr("width", function(d) { return type == "stack" ? self.x.rangeBand() : xGroup.rangeBand(); })
+            .attr("x", function(d) { return !self.isGroup ? undefined : xGroup(d.group); })
+            .attr("width", function(d) { return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand(); })
 
         self.updateInteraction();
     }
@@ -298,7 +309,7 @@ export default class BarChart extends Chart {
      */
     draw() {
         var self = this;
-        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
+        var axis    = new Axis(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options, self.body, self.dataTarget);
         

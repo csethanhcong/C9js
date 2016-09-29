@@ -245,6 +245,7 @@ export default class Chart {
                     .append("g")
                     .attr('class', 'c9-chart c9-custom-container')
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                  
     }
 
     /*=====  End of Main Functions  ======*/
