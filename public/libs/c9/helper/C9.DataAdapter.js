@@ -193,7 +193,7 @@ export default class DataAdapter {
                 break;
 
             case "timeline":
-
+                return self.getDataTargetForTimelineChart();
                 break;
             default:
                 return self.dataSource;
@@ -372,9 +372,6 @@ export default class DataAdapter {
     
     }
 
-    /**
-     * getDataTargetForPieChart add [enable=true] for usage in Legend
-     */
     getDataTargetForPieChart() {
         var self = this;
 
@@ -394,9 +391,6 @@ export default class DataAdapter {
 
     }
 
-    /**
-     * getDataTargetForDonutChart add [enable=true] for usage in Legend
-     */
     getDataTargetForDonutChart() {
         var self = this;
 
@@ -412,6 +406,61 @@ export default class DataAdapter {
             self.dataTarget.push(_data);
         });
 
+        return self.dataTarget;
+
+    }
+
+    getDataTargetForTimelineChart() {
+        var self = this;
+
+        let color = self.colorRange;
+
+        self.dataSource.forEach(function(data, index) {
+
+            let _data = {
+                "color"     : color(index),
+                "icon"      : data.icon,
+                "name"      : Helper.get(self.keys.name, data),
+                "value"     : [],
+                "data-ref"  : Helper.guid(),
+                "enable"    : true,
+            };
+
+            let _dsArray    = Helper.get(self.keys.value, data),
+                _valueArray = [],
+                _valueItem  = {
+                    "start": null ,
+                    "end": null ,
+                    "color": "#fff",
+                    "data-ref": null,
+                    "enable": true
+                };
+
+            if (Helper.isArray(_dsArray)) {
+                _dsArray.forEach(function(d, i) {
+                    _valueItem = {
+                        "start": d.start,
+                        "end": d.end ,
+                        "color": color(index),
+                        "data-ref": Helper.guid(),
+                        "enable": true,
+                    };
+                    _valueArray.push(_valueItem);
+                });
+            } else {
+                _valueItem = {
+                    "start": d.start,
+                    "end": d.end ,
+                    "color": color(index),
+                    "data-ref": Helper.guid(),
+                    "enable": true,
+                };
+                _valueArray.push(_valueItem);
+            }
+            _data.value = _valueArray;
+
+            self.dataTarget.push(_data);
+        });
         return self.dataTarget;
 
     }

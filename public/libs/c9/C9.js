@@ -2097,7 +2097,7 @@ var C9 =
 	                    break;
 
 	                case "timeline":
-
+	                    return self.getDataTargetForTimelineChart();
 	                    break;
 	                default:
 	                    return self.dataSource;
@@ -2281,11 +2281,6 @@ var C9 =
 	                    break;
 	            }
 	        }
-
-	        /**
-	         * getDataTargetForPieChart add [enable=true] for usage in Legend
-	         */
-
 	    }, {
 	        key: "getDataTargetForPieChart",
 	        value: function getDataTargetForPieChart() {
@@ -2305,11 +2300,6 @@ var C9 =
 
 	            return self.dataTarget;
 	        }
-
-	        /**
-	         * getDataTargetForDonutChart add [enable=true] for usage in Legend
-	         */
-
 	    }, {
 	        key: "getDataTargetForDonutChart",
 	        value: function getDataTargetForDonutChart() {
@@ -2327,6 +2317,61 @@ var C9 =
 	                self.dataTarget.push(_data);
 	            });
 
+	            return self.dataTarget;
+	        }
+	    }, {
+	        key: "getDataTargetForTimelineChart",
+	        value: function getDataTargetForTimelineChart() {
+	            var self = this;
+
+	            var color = self.colorRange;
+
+	            self.dataSource.forEach(function (data, index) {
+
+	                var _data = {
+	                    "color": color(index),
+	                    "icon": data.icon,
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": [],
+	                    "data-ref": _C2.default.guid(),
+	                    "enable": true
+	                };
+
+	                var _dsArray = _C2.default.get(self.keys.value, data),
+	                    _valueArray = [],
+	                    _valueItem = {
+	                    "start": null,
+	                    "end": null,
+	                    "color": "#fff",
+	                    "data-ref": null,
+	                    "enable": true
+	                };
+
+	                if (_C2.default.isArray(_dsArray)) {
+	                    _dsArray.forEach(function (d, i) {
+	                        _valueItem = {
+	                            "start": d.start,
+	                            "end": d.end,
+	                            "color": color(index),
+	                            "data-ref": _C2.default.guid(),
+	                            "enable": true
+	                        };
+	                        _valueArray.push(_valueItem);
+	                    });
+	                } else {
+	                    _valueItem = {
+	                        "start": d.start,
+	                        "end": d.end,
+	                        "color": color(index),
+	                        "data-ref": _C2.default.guid(),
+	                        "enable": true
+	                    };
+	                    _valueArray.push(_valueItem);
+	                }
+	                _data.value = _valueArray;
+
+	                self.dataTarget.push(_data);
+	            });
 	            return self.dataTarget;
 	        }
 

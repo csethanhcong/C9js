@@ -192,69 +192,90 @@ d3.interval(function() {
     <div id="demo4"></div>
     <div id="demo6"></div>
       <script type="text/javascript" charset="utf-8">
-        var data4 = [
-            {name: "Spring", value: 20},
-            {name: "Summer", value: 25},
-            {name: "Autumn", value: 35},
-            {name: "Winter", value: 20},
-            {name: "Others", value: 100}
-          ];
-        var options4 = {
-          id: "#demo4", 
-          width: 750, 
-          height: 600, 
-          margin: {
-            top: 100, 
-            left: 100, 
-            right: 50, 
-            bottom:100
-          }, 
-          data: {
-            plain: data4,
-          }, 
-          titleText: 'Pie Chart',
-          radius: 200,
-          legendShow:true,
-          colorRange: 'category20c'
-        };
-        var pieChart = new C9.PieChart(options4);
-        pieChart.draw();
+      //   var data4 = [
+      //       {name: "Spring", value: 20},
+      //       {name: "Summer", value: 25},
+      //       {name: "Autumn", value: 35},
+      //       {name: "Winter", value: 20},
+      //       {name: "Others", value: 100}
+      //     ];
+      //   var options4 = {
+      //     id: "#demo4", 
+      //     width: 750, 
+      //     height: 600, 
+      //     margin: {
+      //       top: 100, 
+      //       left: 100, 
+      //       right: 50, 
+      //       bottom:100
+      //     }, 
+      //     data: {
+      //       plain: data4,
+      //     }, 
+      //     titleText: 'Pie Chart',
+      //     radius: 200,
+      //     legendShow:true,
+      //     colorRange: 'category20c'
+      //   };
+      //   var pieChart = new C9.PieChart(options4);
+      //   pieChart.draw();
 
-        var data3 = [
-          {name: "Male", value: 10},
-          {name: "LGBT", value: 35},
-          {name: "Female1", value:  25},
-          {name: "Female2", value:  25},
-          {name: "Female3", value:  25},
-        ];
-      var options3 = {  
-         id:"#demo3",
-         width:750,
-         height:600,
-         margin:{  
-            top:100,
-            left:100,
-            right:50,
-            bottom:100
-         },
-         data: {
-            plain: data3,
-          }, 
-         titleText:'Donut Chart',
-         colorRange:"category20",
-         outerRadius:200,
-         innerRadius:100,
-         titlePosition:'bottom',
-         titleSize:'20px',
-         legendShow:true,
+      //   var data3 = [
+      //     {name: "Male", value: 10},
+      //     {name: "LGBT", value: 35},
+      //     {name: "Female1", value:  25},
+      //     {name: "Female2", value:  25},
+      //     {name: "Female3", value:  25},
+      //   ];
+      // var options3 = {  
+      //    id:"#demo3",
+      //    width:750,
+      //    height:600,
+      //    margin:{  
+      //       top:100,
+      //       left:100,
+      //       right:50,
+      //       bottom:100
+      //    },
+      //    data: {
+      //       plain: data3,
+      //     }, 
+      //    titleText:'Donut Chart',
+      //    colorRange:"category20",
+      //    outerRadius:200,
+      //    innerRadius:100,
+      //    titlePosition:'bottom',
+      //    titleSize:'20px',
+      //    legendShow:true,
+      // };
+      // var donutChart = new C9.DonutChart(options3);
+      // donutChart.draw();
+
+
+        var data6 = [
+              {times: [{"name":"First time", "starting_time": new Date("December 17, 2012 21:00:00"), "ending_time": new Date("December 17, 2012 23:00:00")}, {"name":"First time", "starting_time": new Date("December 18, 2012 01:10:00")}]},
+              {times: [{"name":"Second time", "starting_time": new Date("December 17, 2012 23:00:00"), "ending_time": new Date("December 17, 2012 23:30:00")}, ]},
+              {times: [{"name":"Third time", "starting_time": new Date("December 17, 2012 23:30:00"), "ending_time": new Date("December 18, 2012 00:05:00")}]}
+            ];
+      var options6 = {
+        id: "#demo6", 
+        width: 750, 
+        height: 300, 
+        margin: {
+          top: 100, 
+          left: 100, 
+          right: 50, 
+          bottom:100
+        }, 
+        data: {
+          plain: data6, 
+        },
+        titleText: 'Timeline Chart', 
+        stack: false,
+        colorRange: "category20b"
       };
-      var donutChart = new C9.DonutChart(options3);
-      donutChart.draw();
-
-
-        // var da = new C9.DataAdapter(option);
-        // var dt = da.getDataTarget("bar");
-        // console.dir(dt);
+      var timelineChart = new C9.TimeLine(options6);
+      console.dir(timelineChart.dataTarget);
 
     </script>
     

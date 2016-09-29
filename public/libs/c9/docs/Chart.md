@@ -79,14 +79,14 @@ option of that object
 
 		+ `DataAdapter`: 
 			- [`DONE`] `dataSource`: data.plain || data.file...
-			- `dataTarget`: [{name:, value:}, {}, ... ]
+			- `dataTarget`: [{name:, value:, color:, data-ref: counter ID, enable: true}, {}, ... ]
 				- [`DONE`] Bar: 
-					- [`DONE`] `Single`: [{name:, value:, max:< =Value >}, {name:, value:, max:}, ... ]
-					- [`DONE`] `Group`: [{max: <max value of group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>}, {<Single Bar in Group>}]}, {<Group>}]
-					- [`DONE`] `Stack`: [{max: <sum of value in Group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>}, {<Single Bar in Group>}]}, {<Group>}]
+					- [`DONE`] `Single`: [{name:, value:, max:< =Value >, color:, data-ref: counter ID, enable: true}, {}, ... ]
+					- [`DONE`] `Group`: [{max: <max value of group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>, data-ref: counter ID, enable: true}, {<Single Bar in Group>}]}, {<Group>}]
+					- [`DONE`] `Stack`: [{max: <sum of value in Group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>, data-ref: counter ID, enable: true}, {<Single Bar in Group>}]}, {<Group>}]
 				- Line: 
-				- [`DONE`] Pie/Donut: [{name:, value:, data-ref: counter ID}, {}, ... ]
-				- TimeLine: [{icon:, name:, value: [{start: <Date>, end: <Date>, data-ref: counter ID}, {}, ..]}, {}, ... ]
+				- [`DONE`] Pie/Donut: [{name:, value:, color:, data-ref: counter ID, enable: true}, {}, ... ]
+				- TimeLine: [{icon:, name:, value: [{start: <Date>, end: <Date>, color:, data-ref: counter ID, enable: true}, {}, ..]}, {}, ... ]
 
 			- Methods: 
 				- [`DONE`] getDataTypeForBarChart():
