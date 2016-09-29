@@ -4,6 +4,7 @@ import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
 import Tooltip from './utils/C9.Tooltip';
 import Helper from '../helper/C9.Helper';
+import DataAdapter from '../helper/C9.DataAdapter';
 
 export default class BarChart extends Chart {
     constructor(options) {
@@ -12,90 +13,94 @@ export default class BarChart extends Chart {
         var config = {
             barWidth: undefined,
             barColor: "category20",
-            groupType: "stack"
+            // groupType: "stack"
         };
 
         var width        = self.width - self.margin.left - self.margin.right;
         var height       = self.height - self.margin.top - self.margin.bottom;
-        var groupCount   = 0; // use to count how many element in group
-        var groupStart = 0; // calculate the number of those first element that just have only 1 value
+        // var groupCount   = 0; // use to count how many element in group
+        // var groupStart = 0; // calculate the number of those first element that just have only 1 value
 
         self.body.type   = "bar";
-        self._groupNames = options.groupNames ? options.groupNames : new Array(); //define group names use for showing legend
         self._groupType  = options.groupType ||  config.groupType;
+        self._barColor   = options.barColor  ||  config.barColor;
 
-        
-        self.data.forEach(function(d, i) {
-            var y0 = 0; // calculate stacked data (top of each bar)
-            var count = 0; // count number of group
-            groupStart = i; 
-            if (typeof d.value === "object") {
-                if (self.groupType == "stack") {
-                    d.stack = d.value.map(function(v) {
-                        count++;
-                        return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-                    });
-                    d.total = d.stack[d.stack.length - 1].y1;
-                }
-                else if (self.groupType == "group") {
-                    var total = -Infinity;
-                    d.stack = d.value.map(function(v) {
-                        count++;
-                        total = v > total ? v : total;
-                        return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-                    });
-                    d.total = total;
-                }
-            }
-            else {
-                d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
-                d.total = d.stack[d.stack.length - 1].y1;
-            }
-            if (count > groupCount)
-                groupCount = count;
-        });
+        var dataOption      = self.dataOption;
+        dataOption.barColor = self._barColor;
 
-        // assign group to those first elements in data if they don't have
-        for (var i = 0; i < groupStart - 1; i++) {
-            self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
-        };
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget("bar");
+        self._groupNames    = da.groups || da.stacks;  //define group names use for showing legend
+
+        // self.data.forEach(function(d, i) {
+        //     var y0 = 0; // calculate stacked data (top of each bar)
+        //     var count = 0; // count number of group
+        //     groupStart = i; 
+        //     if (typeof d.value === "object") {
+        //         if (self.groupType == "stack") {
+        //             d.stack = d.value.map(function(v) {
+        //                 count++;
+        //                 return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
+        //             });
+        //             d.total = d.stack[d.stack.length - 1].y1;
+        //         }
+        //         else if (self.groupType == "group") {
+        //             var total = -Infinity;
+        //             d.stack = d.value.map(function(v) {
+        //                 count++;
+        //                 total = v > total ? v : total;
+        //                 return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
+        //             });
+        //             d.total = total;
+        //         }
+        //     }
+        //     else {
+        //         d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
+        //         d.total = d.stack[d.stack.length - 1].y1;
+        //     }
+        //     if (count > groupCount)
+        //         groupCount = count;
+        // });
+
+        // // assign group to those first elements in data if they don't have
+        // for (var i = 0; i < groupStart - 1; i++) {
+        //     self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
+        // };
 
         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var y = d3.scale.linear().range([height, 0]);
 
-        x.domain(self.data.map(function(d) {
-            return d.name;
+        x.domain(self.dataTarget.map(function(d) {
+            return d.stack[0].name;
         }));
 
-        y.domain([0, d3.max(self.data, function(d) {
-            return d.total;
+        y.domain([0, d3.max(self.dataTarget, function(d) {
+            return d.max;
         })]);
 
         /******** Handle for grouped bar chart ********/
         var xGroup = d3.scale.ordinal();
         //self-define group names if user do not define
-        if (self._groupNames.length == 0)
-            for (var i = 1; i <= groupCount; i++) {
-                self._groupNames.push("Group " + i);
-            };
+        // if (self._groupNames.length == 0)
+        //     for (var i = 1; i <= groupCount; i++) {
+        //         self._groupNames.push("Group " + i);
+        //     };
         xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
         /**********************************************/
 
         // Make flexible width according to barWidth
         config.barWidth      = x.rangeBand();
         self._barWidth       = options.barWidth  ||  config.barWidth;
-        self._barColor       = options.barColor  ||  config.barColor;
         self._x              = x;
         self._y              = y;
         self._xGroup         = xGroup;
-        self.updateConfig();
+        // self.updateConfig();
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-    
     get barWidth() {
         return this._barWidth;
     }
@@ -144,7 +149,6 @@ export default class BarChart extends Chart {
     /*==============================
     =            Setter            =
     ==============================*/
-    
     set barWidth(newBarWidth) {
         if (newBarWidth) {
             this._barWidth = newBarWidth;
@@ -207,7 +211,7 @@ export default class BarChart extends Chart {
 
         var bar = self.body
                     .selectAll(".bar")
-                    .data(self.data)
+                    .data(self.dataTarget)
                     .enter()
                         .append("g")
                         .attr("class", "c9-chart-bar c9-custom-bar")

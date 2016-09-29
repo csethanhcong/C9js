@@ -19,6 +19,6 @@ module.exports = function(app) {
 	});
 
 	app.get('/test', function(req, res) {
-		res.sendfile('./public/views/index1.html');
+		res.sendfile('./public/views/test.html');
 	});
 };

@@ -47,19 +47,29 @@ export default class Chart {
             colorRange: "category20",
             // data
             data: {
-                defineKey: "value", // Default as data.value
+                // ALL OPTIONS AVAILABLE IN DATA CONFIG
+                plain: [],
                 file: {
-                    type: null, // csv, tsv, txt, json, xml, xhr
+                    type: null,
                     url: null,
                 },
+                keys: {
+                    name: "name",
+                    value: "value"
+                },
+                groups: [],
+                stacks: [],
             }
         };
 
         self._id        = options.id        || config.id;
         self._width     = options.width     || config.width;
-        self._data      = options.data      || config.data;
         self._height    = options.height    || config.height;
         self._colorRange= options.colorRange|| config.colorRange;
+        self._hover     = options.hover     || config.hover;
+        
+        self._dataOption= Helper.merge(options.data, config.data);
+        self._dataTarget= null;
         self._margin    = Helper.merge(options.margin, config.margin);
 
         // Skeleton: 
@@ -69,7 +79,6 @@ export default class Chart {
         self._svg       = null;
         self._body      = null;
         self._options   = options;
-        self._hover     = options.hover     || config.hover;
 
         self.initConfig();
     }
@@ -105,8 +114,8 @@ export default class Chart {
         return this._margin;
     }
 
-    get data() {
-        return this._data;
+    get dataOption() {
+        return this._dataOption;
     }
 
     get svg() {
@@ -123,6 +132,10 @@ export default class Chart {
 
     get hover() {
         return this._hover;
+    }
+
+    get dataTarget() {
+        return this._dataTarget;
     }
     /*=====  End of Getter  ======*/
     
@@ -166,9 +179,9 @@ export default class Chart {
         }
     }
 
-    set data(newData) {
-        if (newData) {
-            this._data = newData;
+    set dataOption(arg) {
+        if (arg) {
+            this._dataOption = arg;
         }
     }
 
@@ -193,6 +206,12 @@ export default class Chart {
     set hover(newHover) {
         if (newHover) {
             this._hover = newHover;
+        }
+    }
+
+    set dataTarget(arg) {
+        if (arg) {
+            this._dataTarget = arg;
         }
     }
     /*=====  End of Setter  ======*/

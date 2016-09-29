@@ -65,15 +65,36 @@ option of that object
 
 	- Notes: 
 		+ With XHR, only accept response data with format JSON, so we just call getJson for the specific request
-		+ Input data contructor:
+		+ `Input data constructor`:
 			data
-				|--- plain: Array contains plain data 	| DEFAULT: null | e.g. plain: [{name: A, value: 1}, {},..]
+				|--- plain: Array contains plain data 	| DEFAULT: null | e.g. plain: [1,2,3,4] => [{name: 1, value: 1}, {name: 2, value: 2}]
 				|--- file: In case of non-plain data, users have to input file instead
 					|--- type: Type of file 			| DEFAULT: json | e.g. type: "json" ("xml", "csv", "tsv", "txt", "xhr")
 					|--- url: Url to execute 			| DEFAULT: null | e.g. url: "example.ord/data.xml"
 				|--- keys: Define key to retrieve name, value
 					|--- name: Key to define name 		| DEFAULT: "name" | e.g. name: "name"
-					|--- value: Key to define value 	| DEFAULT: "value" | e.g. value: "value.v1"
+					|--- value: Key to define value 	| DEFAULT: "value" | e.g. value: "value.v1.v2"
+				|--- groups: If plain data is array | DEFAULT: groups | e.g. groups: [<name of Legend>]
+				|--- stacks: [<name of Legend>]
+
+		+ `DataAdapter`: 
+			- [`DONE`] `dataSource`: data.plain || data.file...
+			- `dataTarget`: [{name:, value:}, {}, ... ]
+				- [`DONE`] Bar: 
+					- [`DONE`] `Single`: [{name:, value:, max:< =Value >}, {name:, value:, max:}, ... ]
+					- [`DONE`] `Group`: [{max: <max value of group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>}, {<Single Bar in Group>}]}, {<Group>}]
+					- [`DONE`] `Stack`: [{max: <sum of value in Group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>}, {<Single Bar in Group>}]}, {<Group>}]
+				- Line: 
+				- [`DONE`] Pie/Donut: [{name:, value:, data-ref: counter ID}, {}, ... ]
+				- TimeLine: 
+
+			- Methods: 
+				- [`DONE`] getDataTypeForBarChart():
+					Return:
+					- dataSource.groups => "group"
+					- dataSource.stacks => "stack"
+					- DEFAULT => "single"
+				- [`DONE`] <Data>getDataTarget(typeOfChart)
 
 3. `Make C9.Config`: File contains all default configs, should not put all configs in each files
 Put them all in 1 file: Classes, default configs, etc.
@@ -86,7 +107,7 @@ Bar Chart (Group of bar chart)
 6. `Create Table View`: 
 	- REF: https://developers.google.com/chart/interactive/docs/gallery/table
 
-7. `Separate setting options into abc.xyz.blabla`, e.g. 
+7. `Separate setting options into abc.xyz.blabla`, e.g.
 	grid: {
 		show: true,
 		text: {

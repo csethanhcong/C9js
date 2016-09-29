@@ -2,6 +2,7 @@ import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import DataAdapter from '../helper/C9.DataAdapter';
 
 export default class DonutChart extends Chart {
     constructor(options) {
@@ -18,6 +19,9 @@ export default class DonutChart extends Chart {
         self._innerRadius    = options.innerRadius || config.innerRadius;
         self._showText    = options.showText || config.showText;
         self.body.type = 'donut';
+
+        var da          = new DataAdapter(self.dataOption);
+        self.dataTarget = da.getDataTarget("donut");
 
         self.updateConfig();
     }
@@ -256,9 +260,12 @@ export default class DonutChart extends Chart {
                     divOnHover.transition()
                         .duration(hoverOptions.onMouseOver.fadeIn)
                         .style("display", 'block');
+                        
+                   let name = d.data.name || d.data.data.name,
+                       value = d.data.value || d.data.data.value;
 
-                    text_1.text('Name: ' + d.data.name);
-                    text_2.text('Value: ' + d.data.value);
+                    text_1.text('Name: ' + name);
+                    text_2.text('Value: ' + value);
                 },
 
                 'mouseout': function(d) {
@@ -289,7 +296,7 @@ export default class DonutChart extends Chart {
                         .attr('class', 'c9-chart c9-custom-arc-container')
                         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
                         .selectAll('.c9-chart-donut.c9-custom-arc')
-                        .data(self.pie(self.data)).enter()
+                        .data(self.pie(self.dataTarget)).enter()
                         .append('g')
                             .attr('class', 'c9-chart-donut c9-custom-arc');
 
@@ -327,7 +334,7 @@ export default class DonutChart extends Chart {
         var self = this;
         
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options, self.body, self.colorRange, self.data);
+        var legend  = new Legend(self.options, self.body, self.colorRange, self.dataTarget);
 
         // Draw legend
         legend.draw();

@@ -135,6 +135,10 @@ var C9 =
 
 	var _C12 = _interopRequireDefault(_C11);
 
+	var _C13 = __webpack_require__(13);
+
+	var _C14 = _interopRequireDefault(_C13);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -154,86 +158,96 @@ var C9 =
 	        var self = _this;
 	        var config = {
 	            barWidth: undefined,
-	            barColor: "category20",
-	            groupType: "stack"
+	            barColor: "category20"
 	        };
 
 	        var width = self.width - self.margin.left - self.margin.right;
 	        var height = self.height - self.margin.top - self.margin.bottom;
-	        var groupCount = 0; // use to count how many element in group
-	        var groupStart = 0; // calculate the number of those first element that just have only 1 value
+	        // var groupCount   = 0; // use to count how many element in group
+	        // var groupStart = 0; // calculate the number of those first element that just have only 1 value
 
 	        self.body.type = "bar";
-	        self._groupNames = options.groupNames ? options.groupNames : new Array(); //define group names use for showing legend
 	        self._groupType = options.groupType || config.groupType;
+	        self._barColor = options.barColor || config.barColor;
 
-	        self.data.forEach(function (d, i) {
-	            var y0 = 0; // calculate stacked data (top of each bar)
-	            var count = 0; // count number of group
-	            groupStart = i;
-	            if (_typeof(d.value) === "object") {
-	                if (self.groupType == "stack") {
-	                    d.stack = d.value.map(function (v) {
-	                        count++;
-	                        return { name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count };
-	                    });
-	                    d.total = d.stack[d.stack.length - 1].y1;
-	                } else if (self.groupType == "group") {
-	                    var total = -Infinity;
-	                    d.stack = d.value.map(function (v) {
-	                        count++;
-	                        total = v > total ? v : total;
-	                        return { name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count };
-	                    });
-	                    d.total = total;
-	                }
-	            } else {
-	                d.stack = [{ name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined }];
-	                d.total = d.stack[d.stack.length - 1].y1;
-	            }
-	            if (count > groupCount) groupCount = count;
-	        });
+	        var dataOption = self.dataOption;
+	        dataOption.barColor = self._barColor;
 
-	        // assign group to those first elements in data if they don't have
-	        for (var i = 0; i < groupStart - 1; i++) {
-	            self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
-	        };
+	        var da = new _C14.default(dataOption);
+	        self.dataTarget = da.getDataTarget("bar");
+	        self._groupNames = da.groups || da.stacks; //define group names use for showing legend
+
+	        // self.data.forEach(function(d, i) {
+	        //     var y0 = 0; // calculate stacked data (top of each bar)
+	        //     var count = 0; // count number of group
+	        //     groupStart = i; 
+	        //     if (typeof d.value === "object") {
+	        //         if (self.groupType == "stack") {
+	        //             d.stack = d.value.map(function(v) {
+	        //                 count++;
+	        //                 return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
+	        //             });
+	        //             d.total = d.stack[d.stack.length - 1].y1;
+	        //         }
+	        //         else if (self.groupType == "group") {
+	        //             var total = -Infinity;
+	        //             d.stack = d.value.map(function(v) {
+	        //                 count++;
+	        //                 total = v > total ? v : total;
+	        //                 return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
+	        //             });
+	        //             d.total = total;
+	        //         }
+	        //     }
+	        //     else {
+	        //         d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
+	        //         d.total = d.stack[d.stack.length - 1].y1;
+	        //     }
+	        //     if (count > groupCount)
+	        //         groupCount = count;
+	        // });
+
+	        // // assign group to those first elements in data if they don't have
+	        // for (var i = 0; i < groupStart - 1; i++) {
+	        //     self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
+	        // };
 
 	        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
 	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
 	        var y = d3.scale.linear().range([height, 0]);
 
-	        x.domain(self.data.map(function (d) {
-	            return d.name;
+	        x.domain(self.dataTarget.map(function (d) {
+	            return d.stack[0].name;
 	        }));
 
-	        y.domain([0, d3.max(self.data, function (d) {
-	            return d.total;
+	        y.domain([0, d3.max(self.dataTarget, function (d) {
+	            return d.max;
 	        })]);
 
 	        /******** Handle for grouped bar chart ********/
 	        var xGroup = d3.scale.ordinal();
 	        //self-define group names if user do not define
-	        if (self._groupNames.length == 0) for (var i = 1; i <= groupCount; i++) {
-	            self._groupNames.push("Group " + i);
-	        };
+	        // if (self._groupNames.length == 0)
+	        //     for (var i = 1; i <= groupCount; i++) {
+	        //         self._groupNames.push("Group " + i);
+	        //     };
 	        xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
 	        /**********************************************/
 
 	        // Make flexible width according to barWidth
 	        config.barWidth = x.rangeBand();
 	        self._barWidth = options.barWidth || config.barWidth;
-	        self._barColor = options.barColor || config.barColor;
 	        self._x = x;
 	        self._y = y;
 	        self._xGroup = xGroup;
-	        self.updateConfig();
+	        // self.updateConfig();
 	        return _this;
 	    }
 
 	    /*==============================
 	    =            Getter            =
 	    ==============================*/
+
 
 	    _createClass(BarChart, [{
 	        key: 'updateConfig',
@@ -255,7 +269,7 @@ var C9 =
 	                xGroup = self._xGroup,
 	                type = self.groupType;
 
-	            var bar = self.body.selectAll(".bar").data(self.data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
+	            var bar = self.body.selectAll(".bar").data(self.dataTarget).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
 	                return "translate(" + x(d.name) + ",0)";
 	            });
 
@@ -437,7 +451,6 @@ var C9 =
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-
 	        set: function set(newBarWidth) {
 	            if (newBarWidth) {
 	                this._barWidth = newBarWidth;
@@ -591,19 +604,29 @@ var C9 =
 	            colorRange: "category20",
 	            // data
 	            data: {
-	                defineKey: "value", // Default as data.value
+	                // ALL OPTIONS AVAILABLE IN DATA CONFIG
+	                plain: [],
 	                file: {
-	                    type: null, // csv, tsv, txt, json, xml, xhr
+	                    type: null,
 	                    url: null
-	                }
+	                },
+	                keys: {
+	                    name: "name",
+	                    value: "value"
+	                },
+	                groups: [],
+	                stacks: []
 	            }
 	        };
 
 	        self._id = options.id || config.id;
 	        self._width = options.width || config.width;
-	        self._data = options.data || config.data;
 	        self._height = options.height || config.height;
 	        self._colorRange = options.colorRange || config.colorRange;
+	        self._hover = options.hover || config.hover;
+
+	        self._dataOption = _C2.default.merge(options.data, config.data);
+	        self._dataTarget = null;
 	        self._margin = _C2.default.merge(options.margin, config.margin);
 
 	        // Skeleton: 
@@ -613,7 +636,6 @@ var C9 =
 	        self._svg = null;
 	        self._body = null;
 	        self._options = options;
-	        self._hover = options.hover || config.hover;
 
 	        self.initConfig();
 	    }
@@ -721,13 +743,13 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'data',
+	        key: 'dataOption',
 	        get: function get() {
-	            return this._data;
+	            return this._dataOption;
 	        },
-	        set: function set(newData) {
-	            if (newData) {
-	                this._data = newData;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._dataOption = arg;
 	            }
 	        }
 	    }, {
@@ -770,6 +792,16 @@ var C9 =
 	                this._hover = newHover;
 	            }
 	        }
+	    }, {
+	        key: 'dataTarget',
+	        get: function get() {
+	            return this._dataTarget;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._dataTarget = arg;
+	            }
+	        }
 	    }]);
 
 	    return Chart;
@@ -784,6 +816,8 @@ var C9 =
 	'use strict';
 
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	var Helper = {
 
@@ -837,7 +871,7 @@ var C9 =
 	    },
 
 	    isEmpty: function isEmpty(value) {
-	        return value === null || value === undefined;
+	        return value === null || value === undefined || Util.isArray(value) && value.length === 0;
 	    },
 
 	    isObject: function isObject(object) {
@@ -890,6 +924,16 @@ var C9 =
 	        }
 
 	        return _current;
+	    },
+
+	    max: function max(arr) {
+	        return Math.max.apply(Math, _toConsumableArray(arr));
+	    },
+
+	    sum: function sum(arr) {
+	        return arr.reduce(function (a, b) {
+	            return a + b;
+	        }, 0);
 	    }
 
 	};
@@ -897,6 +941,10 @@ var C9 =
 	var Util = {
 	    isEmpty: function isEmpty(value) {
 	        return value === null || value === undefined;
+	    },
+
+	    isArray: function isArray(array) {
+	        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
 	    }
 	};
 
@@ -1863,6 +1911,10 @@ var C9 =
 
 	var _C8 = _interopRequireDefault(_C7);
 
+	var _C9 = __webpack_require__(13);
+
+	var _C10 = _interopRequireDefault(_C9);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1891,6 +1943,9 @@ var C9 =
 	        self._innerRadius = options.innerRadius || config.innerRadius;
 	        self._showText = options.showText || config.showText;
 	        self.body.type = 'donut';
+
+	        var da = new _C10.default(self.dataOption);
+	        self.dataTarget = da.getDataTarget("donut");
 
 	        self.updateConfig();
 	        return _this;
@@ -2000,8 +2055,11 @@ var C9 =
 	                    'mouseover': function mouseover(d) {
 	                        divOnHover.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block');
 
-	                        text_1.text('Name: ' + d.data.name);
-	                        text_2.text('Value: ' + d.data.value);
+	                        var name = d.data.name || d.data.data.name,
+	                            value = d.data.value || d.data.data.value;
+
+	                        text_1.text('Name: ' + name);
+	                        text_2.text('Value: ' + value);
 	                    },
 
 	                    'mouseout': function mouseout(d) {
@@ -2021,7 +2079,7 @@ var C9 =
 	            });
 
 	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(self.data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
+	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
 
 	            // Append main path contains donut
 	            // TODO: add a unique class to allow Legend could find selected donut/pie
@@ -2058,7 +2116,7 @@ var C9 =
 	            var self = this;
 
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.data);
+	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.dataTarget);
 
 	            // Draw legend
 	            legend.draw();
@@ -2640,6 +2698,10 @@ var C9 =
 
 	var _C8 = _interopRequireDefault(_C7);
 
+	var _C9 = __webpack_require__(13);
+
+	var _C10 = _interopRequireDefault(_C9);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -2668,6 +2730,9 @@ var C9 =
 	        // self._innerRadius    = options.innerRadius || config.innerRadius;
 	        self._showText = options.showText || config.showText;
 	        self.body.type = 'pie';
+
+	        var da = new _C10.default(self.dataOption);
+	        self.dataTarget = da.getDataTarget("pie");
 
 	        self.updateConfig();
 	        return _this;
@@ -2776,8 +2841,11 @@ var C9 =
 	                    'mouseover': function mouseover(d) {
 	                        divOnHover.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block');
 
-	                        text_1.text('Name: ' + d.data.name);
-	                        text_2.text('Value: ' + d.data.value);
+	                        var name = d.data.name || d.data.data.name,
+	                            value = d.data.value || d.data.data.value;
+
+	                        text_1.text('Name: ' + name);
+	                        text_2.text('Value: ' + value);
 	                    },
 
 	                    'mouseout': function mouseout(d) {
@@ -2797,7 +2865,7 @@ var C9 =
 	            });
 
 	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.data)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
+	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
 
 	            // Append main path contains pie
 	            arcs.append('path').attr('class', function (d) {
@@ -2833,7 +2901,7 @@ var C9 =
 	            var self = this;
 
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.data);
+	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.dataTarget);
 
 	            // Draw legend
 	            legend.draw();
@@ -3787,6 +3855,8 @@ var C9 =
 	    value: true
 	});
 
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _C = __webpack_require__(3);
@@ -3804,19 +3874,27 @@ var C9 =
 	        var self = this;
 
 	        var config = {
+	            // ALL OPTIONS AVAILABLE IN DATA CONFIG
 	            keys: {
 	                name: "name",
 	                value: "value"
-	            }
+	            },
+	            groups: [],
+	            stacks: [],
+
+	            // NO NEED TO ADD TO DATA OPTIONS
+	            // Just use to define default parameters
+	            barColor: "category20"
 	        };
 
 	        self._keys = _C2.default.merge(options.keys, config.keys);
+	        self._groups = options.groups || config.groups;
+	        self._stacks = options.stacks || config.stacks;
+	        self._barColor = options.barColor || config.barColor;
 
-	        if (self.hasPlainData(options)) {
-	            self.executePlainData(options);
-	        } else if (self.hasFile(options)) {
-	            self.executeFile(options);
-	        }
+	        self._dataSource = null;
+	        self._dataTarget = []; // Initialize new Array to use Array methods
+	        self.initDataSource(options);
 	    }
 
 	    /*==============================
@@ -3825,13 +3903,24 @@ var C9 =
 
 
 	    _createClass(DataAdapter, [{
-	        key: "hasPlainData",
+	        key: "initDataSource",
 
 	        /*=====  End of Setter  ======*/
 
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
+	        value: function initDataSource(options) {
+	            var self = this;
+
+	            if (self.hasPlainData(options)) {
+	                self.executePlainData(options);
+	            } else if (self.hasFile(options)) {
+	                self.executeFile(options);
+	            }
+	        }
+	    }, {
+	        key: "hasPlainData",
 	        value: function hasPlainData(options) {
 	            return options.plain && _C2.default.isArray(options.plain);
 	        }
@@ -3843,7 +3932,9 @@ var C9 =
 	    }, {
 	        key: "executePlainData",
 	        value: function executePlainData(options) {
-	            self._data = options.plain;
+	            var self = this;
+
+	            self._dataSource = options.plain;
 	        }
 	    }, {
 	        key: "executeFile",
@@ -3856,27 +3947,70 @@ var C9 =
 
 	                switch (self._file.type) {
 	                    case "csv":
-	                        self._data = self.getCsv();
+	                        self._dataSource = self.getCsv();
 	                        break;
 	                    case "tsv":
-	                        self._data = self.getTsv();
+	                        self._dataSource = self.getTsv();
 	                        break;
 	                    case "text":
-	                        self._data = self.getText();
+	                        self._dataSource = self.getText();
 	                        break;
 	                    case "json":
-	                        self._data = self.getJson();
+	                        self._dataSource = self.getJson();
 	                        break;
 	                    case "xml":
-	                        self._data = self.getXml();
+	                        self._dataSource = self.getXml();
 	                        break;
 	                    case "xhr":
-	                        self._data = self.getJson();
+	                        self._dataSource = self.getJson();
 	                        break;
 	                    default:
-	                        self._data = self.getJson();
+	                        self._dataSource = self.getJson();
 	                        break;
 	                }
+	            }
+	        }
+	    }, {
+	        key: "getDataTypeForBarChart",
+	        value: function getDataTypeForBarChart() {
+	            var self = this;
+
+	            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups)) {
+	                return "group";
+	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
+	                return "stack";
+	            }
+
+	            return "single";
+	        }
+	    }, {
+	        key: "getDataTarget",
+	        value: function getDataTarget(chartType) {
+	            var self = this;
+
+	            switch (chartType) {
+	                case "bar":
+	                    return self.getDataTargetForBarChart();
+	                    break;
+
+	                case "line":
+
+	                    break;
+
+	                case "pie":
+	                    return self.getDataTargetForPieChart();
+	                    break;
+
+	                case "donut":
+	                    return self.getDataTargetForDonutChart();
+	                    break;
+
+	                case "timeline":
+
+	                    break;
+	                default:
+	                    return self.dataSource;
+	                    break;
 	            }
 	        }
 	    }, {
@@ -3891,6 +4025,220 @@ var C9 =
 
 	            return _C2.default.get(self.keys, v);
 	        }
+
+	        /*=====  End of Main Functions  ======*/
+
+	        /*=================================================
+	        =            Normalize Data For Charts            =
+	        =================================================*/
+
+	    }, {
+	        key: "getDataTargetForBarChart",
+	        value: function getDataTargetForBarChart() {
+	            var self = this;
+
+	            switch (self.getDataTypeForBarChart()) {
+	                case "single":
+	                    self.dataSource.forEach(function (data, index) {
+	                        var _data = {
+	                            "name": _C2.default.get(self.keys.name, data),
+	                            "value": _C2.default.get(self.keys.value, data),
+	                            "max": _C2.default.get(self.keys.value, data)
+	                        };
+	                        self.dataTarget.push(_data);
+	                    });
+
+	                    return self.dataTarget;
+	                    break;
+
+	                case "group":
+	                    var groups = self.groups;
+
+	                    // Iterate over each group
+	                    self.dataSource.forEach(function (data, index) {
+	                        var _group = {
+	                            "max": null,
+	                            "stack": []
+	                        },
+	                            _dsArray = _C2.default.get(self.keys.value, data);
+
+	                        // If Group has only 1 value, so MAX = this.value
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            _group.max = _C2.default.max(_dsArray);
+	                        } else {
+	                            _group.max = _dsArray;
+	                        }
+
+	                        var _stack = [],
+	                            _stackItem = {
+	                            "color": "#ffffff",
+	                            "y0": 0,
+	                            "y1": 1,
+	                            "group": "",
+	                            "name": ""
+	                        },
+	                            color = self.getBarColorForBarChart();
+
+	                        // Iterate each single bar in a group
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            _dsArray.forEach(function (d, i) {
+	                                _stackItem = {
+	                                    "color": color(i),
+	                                    "y0": 0,
+	                                    "y1": d,
+	                                    "group": groups[index] || index,
+	                                    "name": _C2.default.get(self.keys.name, data)
+	                                };
+	                                _stack.push(_stackItem);
+	                            });
+	                        } else {
+	                            _stackItem = {
+	                                "color": color(0),
+	                                "y0": 0,
+	                                "y1": _dsArray,
+	                                "group": groups[index] || index,
+	                                "name": _C2.default.get(self.keys.name, data)
+	                            };
+	                            _stack.push(_stackItem);
+	                        }
+	                        _group.stack = _stack;
+
+	                        self.dataTarget.push(_group);
+	                    });
+
+	                    return self.dataTarget;
+	                    break;
+
+	                case "stack":
+	                    var stacks = self.stacks;
+
+	                    // Iterate over each group
+	                    self.dataSource.forEach(function (data, index) {
+	                        var _group = {
+	                            "max": null,
+	                            "stack": []
+	                        },
+	                            _dsArray = _C2.default.get(self.keys.value, data);
+
+	                        // If Group has only 1 value, so MAX = this.value
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            _group.max = _C2.default.sum(_dsArray);
+	                        } else {
+	                            _group.max = _dsArray;
+	                        }
+
+	                        var _stack = [],
+	                            _stackItem = {
+	                            "color": "#ffffff",
+	                            "y0": 0,
+	                            "y1": 1,
+	                            "group": "",
+	                            "name": ""
+	                        },
+	                            color = self.getBarColorForBarChart();
+
+	                        // Iterate each single bar in a group
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            (function () {
+	                                var _tempY0 = 0;
+	                                _dsArray.forEach(function (d, i) {
+	                                    _stackItem = {
+	                                        "color": color(i),
+	                                        "y0": _tempY0,
+	                                        "y1": _tempY0 + d,
+	                                        "group": stacks[index] || index,
+	                                        "name": _C2.default.get(self.keys.name, data)
+	                                    };
+	                                    _stack.push(_stackItem);
+	                                    // Increase tempY0 by d to restore previous y0
+	                                    _tempY0 += d;
+	                                });
+	                            })();
+	                        } else {
+	                            _stackItem = {
+	                                "color": color(0),
+	                                "y0": 0,
+	                                "y1": _dsArray,
+	                                "group": stacks[index] || index,
+	                                "name": _C2.default.get(self.keys.name, data)
+	                            };
+	                            _stack.push(_stackItem);
+	                        }
+	                        _group.stack = _stack;
+
+	                        self.dataTarget.push(_group);
+	                    });
+
+	                    return self.dataTarget;
+	                    break;
+
+	                default:
+	                    return self.dataSource;
+	                    break;
+	            }
+	        }
+	    }, {
+	        key: "getDataTargetForPieChart",
+	        value: function getDataTargetForPieChart() {
+	            var self = this;
+
+	            self.dataSource.forEach(function (data, index) {
+	                var _data = {
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": _C2.default.get(self.keys.value, data)
+	                };
+	                self.dataTarget.push(_data);
+	            });
+
+	            return self.dataTarget;
+	        }
+	    }, {
+	        key: "getDataTargetForDonutChart",
+	        value: function getDataTargetForDonutChart() {
+	            var self = this;
+
+	            self.dataSource.forEach(function (data, index) {
+	                var _data = {
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": _C2.default.get(self.keys.value, data)
+	                };
+	                self.dataTarget.push(_data);
+	            });
+
+	            return self.dataTarget;
+	        }
+
+	        /*=====  End of Normalize Data For Charts  ======*/
+
+	        /*=============================
+	        =            Utils            =
+	        =============================*/
+
+	    }, {
+	        key: "getBarColorForBarChart",
+	        value: function getBarColorForBarChart() {
+	            var self = this;
+
+	            var color = self.barColor;
+	            if (typeof color == 'string') {
+	                try {
+	                    return d3.scale[color]();
+	                } catch (err) {
+	                    return function (i) {
+	                        return color;
+	                    };
+	                }
+	            } else if ((typeof color === "undefined" ? "undefined" : _typeof(color)) == 'object') {
+	                return d3.scale.ordinal().range(color);
+	            }
+	        }
+
+	        /*=====  End of Utils  ======*/
+
+	        /*=============================================
+	        =            Data Input From Files            =
+	        =============================================*/
+
 	    }, {
 	        key: "getCsv",
 	        value: function getCsv() {
@@ -3959,7 +4307,8 @@ var C9 =
 	                return data;
 	            });
 	        }
-	        /*=====  End of Main Functions  ======*/
+
+	        /*=====  End of Data Input From Files  ======*/
 
 	    }, {
 	        key: "keys",
@@ -3978,13 +4327,53 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: "data",
+	        key: "dataSource",
 	        get: function get() {
-	            return this._data;
+	            return this._dataSource;
 	        },
 	        set: function set(arg) {
 	            if (arg) {
-	                this._data = arg;
+	                this._dataSource = arg;
+	            }
+	        }
+	    }, {
+	        key: "dataTarget",
+	        get: function get() {
+	            return this._dataTarget;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._dataTarget = arg;
+	            }
+	        }
+	    }, {
+	        key: "groups",
+	        get: function get() {
+	            return this._groups;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._groups = arg;
+	            }
+	        }
+	    }, {
+	        key: "stacks",
+	        get: function get() {
+	            return this._stacks;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._stacks = arg;
+	            }
+	        }
+	    }, {
+	        key: "barColor",
+	        get: function get() {
+	            return this._barColor;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._barColor = arg;
 	            }
 	        }
 	    }]);

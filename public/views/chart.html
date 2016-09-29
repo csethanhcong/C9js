@@ -142,7 +142,7 @@
 				data: data1, 
 				barColor: "category20",
 				isLogaric: false,
-				groupType: "group",
+				// groupType: "group",
 				legendShow:true,
 				groupNames: ["hihi", "haha", "kaka", "lol"]
 			};
@@ -238,7 +238,9 @@
 					right: 50, 
 					bottom:100
 				}, 
-				data: data4, 
+				data: {
+					plain: data4,
+				}, 
 				titleText: 'Pie Chart',
 				radius: 200,
 				legendShow:true,

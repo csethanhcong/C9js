@@ -50,7 +50,7 @@ var Helper = {
     },
 
     isEmpty: function(value) {
-        return value === null || value === undefined;
+        return value === null || value === undefined || (Util.isArray(value) && value.length === 0);
     },
 
     isObject: function(object) {
@@ -103,11 +103,23 @@ var Helper = {
         return _current;
     },
 
+    max: function(arr) {
+        return Math.max(...arr);
+    }, 
+
+    sum: function(arr) {
+        return arr.reduce(function(a, b) { return a + b; }, 0);
+    },
+
 };
 
 var Util = {
     isEmpty: function(value) {
         return value === null || value === undefined;
+    },
+
+    isArray: function(array) {
+        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
     },
 };
 
