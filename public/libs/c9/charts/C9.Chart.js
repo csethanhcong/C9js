@@ -102,6 +102,10 @@ export default class Chart {
         return this._height;
     }
 
+    /**
+     * If colorRange is Array of color then scale range according to it
+     * If colorRange is a String like "category20", "category20b", etc. then scale using d3.scale.category
+     */
     get colorRange() {
         if (typeof this._colorRange == 'string') {
             return d3.scale[this._colorRange]();

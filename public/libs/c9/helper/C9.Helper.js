@@ -111,6 +111,14 @@ var Helper = {
         return arr.reduce(function(a, b) { return a + b; }, 0);
     },
 
+    guid: function() {
+        return 'c9-xxxxxx-4xxx-yxxx'.replace(/[xy]/g, function(c) {
+            let r = Math.random()*16|0, 
+                v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+    },
+
 };
 
 var Util = {

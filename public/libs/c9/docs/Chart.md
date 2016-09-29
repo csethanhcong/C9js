@@ -86,7 +86,7 @@ option of that object
 					- [`DONE`] `Stack`: [{max: <sum of value in Group>, stack: [{color: "#ffffff", y0: 0, y1: 1, group: "Group 1", name: <Define Legend>}, {<Single Bar in Group>}]}, {<Group>}]
 				- Line: 
 				- [`DONE`] Pie/Donut: [{name:, value:, data-ref: counter ID}, {}, ... ]
-				- TimeLine: 
+				- TimeLine: [{icon:, name:, value: [{start: <Date>, end: <Date>, data-ref: counter ID}, {}, ..]}, {}, ... ]
 
 			- Methods: 
 				- [`DONE`] getDataTypeForBarChart():

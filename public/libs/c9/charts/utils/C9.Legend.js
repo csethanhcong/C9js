@@ -1,7 +1,7 @@
 'use strict';
 
 export default class Legend {
-    constructor(options, body, color, data) {
+    constructor(options, body, data) {
         var config = {
             legendShow      : false,
             legendPosition  : [0, 0],
@@ -26,7 +26,7 @@ export default class Legend {
 
         self._options   = options;
         self._body      = body;
-        self._color     = color;
+        // self._color     = color;
         self._data      = data;
 
     }
@@ -34,6 +34,9 @@ export default class Legend {
     /*==============================
     =            Getter            =
     ==============================*/
+    get data() {
+        return this._data;
+    }
 
     get body() {
         return this._body;
@@ -59,6 +62,14 @@ export default class Legend {
         return this._legendSize;
     }
 
+    get legendMargin() {
+        return this._legendMargin;
+    }
+
+    get legendSpace() {
+        return this._legendSpace;
+    }
+
     get legendItem() {
         return this._legendItem;
     }
@@ -76,7 +87,12 @@ export default class Legend {
     /*==============================
     =            Setter            =
     ==============================*/
-    
+    set data(arg) {
+        if (arg) {
+            this._data = arg;
+        }
+    }
+
     set legendShow(newlegendShow) {
         if (newlegendShow) {
             this._legendShow = newlegendShow;
@@ -98,6 +114,18 @@ export default class Legend {
     set legendSize(newlegendSize) {
         if (newlegendSize) {
             this._legendSize = newlegendSize;
+        }
+    }
+
+    set legendMargin(arg) {
+        if (arg) {
+            this._legendMargin = arg;
+        }
+    }
+
+    set legendSpace(arg) {
+        if (arg) {
+            this._legendSpace = arg;
         }
     }
 
@@ -127,50 +155,52 @@ export default class Legend {
     draw () {
         var self = this;
 
-        var color = self.color;
+        // var color = self.color;
 
         if (self._legendShow) {
             // TODO: Remove these conditional checks by getData for general purposes
             var legendDomain = [];
 
-            var setEnableData = function(_data, _flag) {
-                return {
-                    'data': _data,
-                    'enable': _flag
-                };
-            };
+            // var setEnableData = function(_data, _flag) {
+            //     return {
+            //         'data': _data,
+            //         'enable': _flag
+            //     };
+            // };
 
-            if (self._body.type == "line") {
+            // if (self._body.type == "line") {
 
-                var dataGroup = d3.nest()
-                    .key(function(d) { return d.Client; })
-                    .entries(self._data);
+            //     var dataGroup = d3.nest()
+            //         .key(function(d) { return d.Client; })
+            //         .entries(self._data);
 
-                dataGroup.forEach(function(d, i) {
-                    legendDomain.push(d.key);
-                });
+            //     dataGroup.forEach(function(d, i) {
+            //         legendDomain.push(d.key);
+            //     });
 
-            } else if (self._body.type == "bar") {
+            // } else if (self._body.type == "bar") {
 
-                legendDomain = self._data;
+            //     legendDomain = self._data;
 
 
 
-            } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
+            // } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
 
-                self._data.forEach(function(d) {
-                    d.name ? legendDomain.push(d.name) : legendDomain.push("");
-                });
+            //     self._data.forEach(function(d) {
+            //         d.name ? legendDomain.push(d.name) : legendDomain.push("");
+            //     });
 
-            }
+            // }
+
+
 
             // Store for backup, and add enable flag to each data
-            self.legendDomain = [];
-            self._data.forEach(function(d) {
-                if (d) {
-                    self.legendDomain.push(setEnableData(d, true));
-                }
-            });
+            // self.legendDomain = [];
+            // self._data.forEach(function(d) {
+            //     if (d) {
+            //         self.legendDomain.push(setEnableData(d, true));
+            //     }
+            // });
 
             // var i;
             // for (i = 0; i < legendDomain.length; i++) {
@@ -182,38 +212,40 @@ export default class Legend {
             //     legendDomain = [];
 
             // Calculate domain for color to draw
-            color.domain(legendDomain);
+            // color.domain(legendDomain);
 
             // Legend will be appended in main SVG container
             var legendContainer = d3.select(self._body[0][0].parentNode)
                 .append("g")
                 .attr("class", "c9-custom-legend c9-custom-legend-container")
                 .attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
-        
+            
             // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
             self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item")
-                .data(color.domain())
+                // .data(color.domain())
+                .data(self.data)
                 .enter().append("g")
                 .attr("class", "c9-custom-legend c9-custom-legend-item")
+                .attr('data-ref', function(d) { return d['data-ref']; })
                 .attr("transform", function(d, i) {
-                    return "translate(" + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + "," + self._legendMargin[3] + ")"
+                    return "translate(" + (i * (self.legendSize + self.legendSpace) + self.legendMargin[0]) + "," + self.legendMargin[3] + ")"
                 });
 
             self.legendItem.append('rect')
                 .attr('class', 'c9-custom-legend c9-custom-legend-rect')
-                .attr('width', self._legendSize * 2)
-                .attr('height', self._legendSize)
-                .attr('r', self._legendSize)
-                .attr('fill', color)
-                .attr('stroke', color);
+                .attr('width', self.legendSize * 2)
+                .attr('height', self.legendSize)
+                .attr('r', self.legendSize)
+                .attr('fill', function(d){ return d.color; })
+                .attr('stroke', function(d){ return d.color; });
 
             self.legendItem.append('text')
                 .attr('class', 'c9-custom-legend c9-custom-legend-text')
                 .attr('x', self._legendSize * 2 + 20)
                 .attr('y', 15)
                 // .attr('text-anchor', 'middle')
-                .text(function(d) { return d; });
+                .text(function(d) { return d.name; });
 
 
             // if (self._legendBox && legendDomain.length > 0) {
@@ -235,7 +267,7 @@ export default class Legend {
      * Update interaction event dispatchers for legend
      * For: Donut Chart, Pie Chart
      */
-    updateInteraction(chart, path, pie, currentData, arc) {
+    updateInteractionForDonutPieChart(chart, path, pie, currentData, arc) {
 
         var self = this;
 
@@ -248,11 +280,11 @@ export default class Legend {
 
         self.legendItemEventFactory = {
 
-            'click': function(label) {
+            'click': function(item) {
 
                 var selector = d3.select(this);
                 var enable = true,
-                    dataSet = self.legendDomain;
+                    dataSet = self.data;
                 var totalEnable = d3.sum(dataSet.map(function(d) {
                     return (d.enable) ? 1 : 0;
                 }));
@@ -271,8 +303,8 @@ export default class Legend {
                 }
 
                 chart.pie.value(function(d) {
-                    if (d.data.name == label) d.enable = enable;
-                    return (d.enable) ? d.data.value : 0;
+                    if (d.name == item.name) d.enable = enable;
+                    return (d.enable) ? d.value : 0;
                 });
 
                 path = path.data(chart.pie(dataSet));
@@ -293,12 +325,12 @@ export default class Legend {
                 
             },
 
-            'mouseover': function(label) {
+            'mouseover': function(item) {
                 var legendSelector = d3.select(this);
                 // Add pointer to cursor
                 legendSelector.style('cursor', 'pointer');
 
-                var selector = d3.select('.c9-custom-path.' + label);
+                var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 
                 selector
                     .transition()
@@ -314,7 +346,7 @@ export default class Legend {
                 //     isCurrentEnable = true;
 
                 // var totalEnable = d3.sum(dataSet.map(function(d) {
-                //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+                //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
                 //     return (d.enable) ? 1 : 0;
                 // }));
 
@@ -332,7 +364,7 @@ export default class Legend {
                 // }
 
                 // chart.pie.value(function(d) {
-                //     if (d.data.name == label) d.tempEnable = enable;
+                //     if (d.data.name == item) d.tempEnable = enable;
                 //     else d.tempEnable = d.enable;
 
                 //     return (d.tempEnable) ? d.data.value : 0;
@@ -354,13 +386,13 @@ export default class Legend {
 
             },
 
-            'mouseout': function(label) {
+            'mouseout': function(item) {
 
                 var legendSelector = d3.select(this);
                 // Add pointer to cursor
                 legendSelector.style('cursor', 'pointer');
 
-                var selector = d3.select('.c9-custom-path.' + label);
+                var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 
                 selector
                     .transition()
@@ -375,7 +407,7 @@ export default class Legend {
                 //     isCurrentEnable = true;
 
                 // var totalEnable = d3.sum(dataSet.map(function(d) {
-                //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+                //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
                 //     return (d.enable) ? 1 : 0;
                 // }));
 
@@ -383,7 +415,7 @@ export default class Legend {
                 // selector.style('cursor', 'pointer');
 
                 // chart.pie.value(function(d) {
-                //     if (d.data.name == label && !d.enable) d.enable = enable;
+                //     if (d.data.name == item && !d.enable) d.enable = enable;
                 //     return (d.enable) ? d.data.value : 0;
                 // });
 
@@ -435,11 +467,11 @@ export default class Legend {
 
         self.legendItemEventFactory = {
 
-            'click': function(label) {
+            'click': function(item) {
 
                 var selector = d3.select(this);
                 var enable = true,
-                    dataSet = self.legendDomain;
+                    dataSet = self.data;
                 var totalEnable = d3.sum(dataSet.map(function(d) {
                     return (d.enable) ? 1 : 0;
                 }));
@@ -459,18 +491,18 @@ export default class Legend {
                     enable = false;
                 }
 
-                self.legendDomain.forEach(function(d, i) {
+                dataSet.forEach(function(d, i) {
                     if (d.enable)
-                        enableSetOld.push(d.data);
-                    if (d.data == label)
+                        enableSetOld.push(d);
+                    if (d.group == item.name)
                         d.enable = enable;
                     if (d.enable)
-                        enableSet.push(d.data);
+                        enableSet.push(d);
                 });
 
                 //TODO - handle total - use for axis
-                chart.data.forEach(function(d, i) {
-                    var element = {name: d.name, stack: [], total: d.total, value: d.value};
+                dataSet.forEach(function(d, i) {
+                    var element = {name: d.name, stack: [], max: d.max};
                     d.stack.forEach(function(s, j) {
                         enableSet.forEach(function(e) {
                             if (e == s.group) {
@@ -481,16 +513,16 @@ export default class Legend {
                     data.push(element);
                 });
 
-                chart.updateLegendInteraction(data, enableSet, enableSetOld, label);
+                chart.updateLegendInteraction(data, enableSet, enableSetOld, item);
                 
             },
 
-            // 'mouseover': function(label) {
+            // 'mouseover': function(item) {
             //     var legendSelector = d3.select(this);
             //     // Add pointer to cursor
             //     legendSelector.style('cursor', 'pointer');
 
-            //     var selector = d3.select('.c9-custom-path.' + label);
+            //     var selector = d3.select('.c9-custom-path.' + item);
 
             //     selector
             //         .transition()
@@ -507,7 +539,7 @@ export default class Legend {
             //     //     isCurrentEnable = true;
 
             //     // var totalEnable = d3.sum(dataSet.map(function(d) {
-            //     //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+            //     //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
             //     //     return (d.enable) ? 1 : 0;
             //     // }));
 
@@ -525,7 +557,7 @@ export default class Legend {
             //     // }
 
             //     // chart.pie.value(function(d) {
-            //     //     if (d.data.name == label) d.tempEnable = enable;
+            //     //     if (d.data.name == item) d.tempEnable = enable;
             //     //     else d.tempEnable = d.enable;
 
             //     //     return (d.tempEnable) ? d.data.value : 0;
@@ -547,13 +579,13 @@ export default class Legend {
 
             // },
 
-            // 'mouseout': function(label) {
+            // 'mouseout': function(item) {
 
             //     var legendSelector = d3.select(this);
             //     // Add pointer to cursor
             //     legendSelector.style('cursor', 'pointer');
 
-            //     var selector = d3.select('.c9-custom-path.' + label);
+            //     var selector = d3.select('.c9-custom-path.' + item);
 
             //     selector
             //         .transition()
@@ -569,7 +601,7 @@ export default class Legend {
             //     //     isCurrentEnable = true;
 
             //     // var totalEnable = d3.sum(dataSet.map(function(d) {
-            //     //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+            //     //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
             //     //     return (d.enable) ? 1 : 0;
             //     // }));
 
@@ -577,7 +609,7 @@ export default class Legend {
             //     // selector.style('cursor', 'pointer');
 
             //     // chart.pie.value(function(d) {
-            //     //     if (d.data.name == label && !d.enable) d.enable = enable;
+            //     //     if (d.data.name == item && !d.enable) d.enable = enable;
             //     //     return (d.enable) ? d.data.value : 0;
             //     // });
 

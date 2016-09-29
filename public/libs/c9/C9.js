@@ -51,23 +51,23 @@ var C9 =
 
 	var _C2 = _interopRequireDefault(_C);
 
-	var _C3 = __webpack_require__(8);
+	var _C3 = __webpack_require__(9);
 
 	var _C4 = _interopRequireDefault(_C3);
 
-	var _C5 = __webpack_require__(9);
+	var _C5 = __webpack_require__(10);
 
 	var _C6 = _interopRequireDefault(_C5);
 
-	var _C7 = __webpack_require__(10);
+	var _C7 = __webpack_require__(11);
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(11);
+	var _C9 = __webpack_require__(12);
 
 	var _C10 = _interopRequireDefault(_C9);
 
-	var _C11 = __webpack_require__(12);
+	var _C11 = __webpack_require__(13);
 
 	var _C12 = _interopRequireDefault(_C11);
 
@@ -75,7 +75,7 @@ var C9 =
 
 	var _C14 = _interopRequireDefault(_C13);
 
-	var _C15 = __webpack_require__(13);
+	var _C15 = __webpack_require__(8);
 
 	var _C16 = _interopRequireDefault(_C15);
 
@@ -135,7 +135,7 @@ var C9 =
 
 	var _C12 = _interopRequireDefault(_C11);
 
-	var _C13 = __webpack_require__(13);
+	var _C13 = __webpack_require__(8);
 
 	var _C14 = _interopRequireDefault(_C13);
 
@@ -157,21 +157,19 @@ var C9 =
 
 	        var self = _this;
 	        var config = {
-	            barWidth: undefined,
-	            barColor: "category20"
+	            barWidth: undefined
 	        };
 
 	        var width = self.width - self.margin.left - self.margin.right;
 	        var height = self.height - self.margin.top - self.margin.bottom;
 	        // var groupCount   = 0; // use to count how many element in group
-	        // var groupStart = 0; // calculate the number of those first element that just have only 1 value
+	        // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
 
 	        self.body.type = "bar";
 	        self._groupType = options.groupType || config.groupType;
-	        self._barColor = options.barColor || config.barColor;
 
 	        var dataOption = self.dataOption;
-	        dataOption.barColor = self._barColor;
+	        dataOption.colorRange = self.colorRange;
 
 	        var da = new _C14.default(dataOption);
 	        self.dataTarget = da.getDataTarget("bar");
@@ -263,7 +261,7 @@ var C9 =
 	         */
 	        value: function updateConfig() {
 	            var self = this,
-	                color = self.barColor,
+	                color = self.colorRange,
 	                x = self._x,
 	                y = self._y,
 	                xGroup = self._xGroup,
@@ -363,11 +361,11 @@ var C9 =
 	            var self = this;
 	            var axis = new _C4.default(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.barColor, self.groupNames);
+	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 
 	            legend.draw();
 	            legend.updateInteractionForBarChart(self);
-	            this.updateInteraction();
+	            self.updateInteraction();
 	        }
 
 	        /**
@@ -457,9 +455,9 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'barColor',
+	        key: 'colorRange',
 	        get: function get() {
-	            var color = this._barColor;
+	            var color = this._colorRange;
 	            if (typeof color == 'string') {
 	                try {
 	                    return d3.scale[color]();
@@ -474,7 +472,7 @@ var C9 =
 	        },
 	        set: function set(newBarColor) {
 	            if (newBarColor) {
-	                this._barColor = newBarColor;
+	                this._colorRange = newBarColor;
 	            }
 	        }
 	    }, {
@@ -712,7 +710,13 @@ var C9 =
 	        key: 'height',
 	        get: function get() {
 	            return this._height;
-	        },
+	        }
+
+	        /**
+	         * If colorRange is Array of color then scale range according to it
+	         * If colorRange is a String like "category20", "category20b", etc. then scale using d3.scale.category
+	         */
+	        ,
 	        set: function set(newHeight) {
 	            if (newHeight) {
 	                this._height = newHeight;
@@ -934,6 +938,14 @@ var C9 =
 	        return arr.reduce(function (a, b) {
 	            return a + b;
 	        }, 0);
+	    },
+
+	    guid: function guid() {
+	        return 'c9-xxxxxx-4xxx-yxxx'.replace(/[xy]/g, function (c) {
+	            var r = Math.random() * 16 | 0,
+	                v = c == 'x' ? r : r & 0x3 | 0x8;
+	            return v.toString(16);
+	        });
 	    }
 
 	};
@@ -1340,7 +1352,7 @@ var C9 =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	var Legend = function () {
-	    function Legend(options, body, color, data) {
+	    function Legend(options, body, data) {
 	        _classCallCheck(this, Legend);
 
 	        var config = {
@@ -1366,7 +1378,7 @@ var C9 =
 
 	        self._options = options;
 	        self._body = body;
-	        self._color = color;
+	        // self._color     = color;
 	        self._data = data;
 	    }
 
@@ -1374,8 +1386,9 @@ var C9 =
 	    =            Getter            =
 	    ==============================*/
 
+
 	    _createClass(Legend, [{
-	        key: 'draw',
+	        key: "draw",
 
 
 	        /*=====  End of Setter  ======*/
@@ -1386,45 +1399,50 @@ var C9 =
 	        value: function draw() {
 	            var self = this;
 
-	            var color = self.color;
+	            // var color = self.color;
 
 	            if (self._legendShow) {
 	                // TODO: Remove these conditional checks by getData for general purposes
 	                var legendDomain = [];
 
-	                var setEnableData = function setEnableData(_data, _flag) {
-	                    return {
-	                        'data': _data,
-	                        'enable': _flag
-	                    };
-	                };
+	                // var setEnableData = function(_data, _flag) {
+	                //     return {
+	                //         'data': _data,
+	                //         'enable': _flag
+	                //     };
+	                // };
 
-	                if (self._body.type == "line") {
+	                // if (self._body.type == "line") {
 
-	                    var dataGroup = d3.nest().key(function (d) {
-	                        return d.Client;
-	                    }).entries(self._data);
+	                //     var dataGroup = d3.nest()
+	                //         .key(function(d) { return d.Client; })
+	                //         .entries(self._data);
 
-	                    dataGroup.forEach(function (d, i) {
-	                        legendDomain.push(d.key);
-	                    });
-	                } else if (self._body.type == "bar") {
+	                //     dataGroup.forEach(function(d, i) {
+	                //         legendDomain.push(d.key);
+	                //     });
 
-	                    legendDomain = self._data;
-	                } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
+	                // } else if (self._body.type == "bar") {
 
-	                    self._data.forEach(function (d) {
-	                        d.name ? legendDomain.push(d.name) : legendDomain.push("");
-	                    });
-	                }
+	                //     legendDomain = self._data;
+
+
+	                // } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
+
+	                //     self._data.forEach(function(d) {
+	                //         d.name ? legendDomain.push(d.name) : legendDomain.push("");
+	                //     });
+
+	                // }
+
 
 	                // Store for backup, and add enable flag to each data
-	                self.legendDomain = [];
-	                self._data.forEach(function (d) {
-	                    if (d) {
-	                        self.legendDomain.push(setEnableData(d, true));
-	                    }
-	                });
+	                // self.legendDomain = [];
+	                // self._data.forEach(function(d) {
+	                //     if (d) {
+	                //         self.legendDomain.push(setEnableData(d, true));
+	                //     }
+	                // });
 
 	                // var i;
 	                // for (i = 0; i < legendDomain.length; i++) {
@@ -1436,23 +1454,31 @@ var C9 =
 	                //     legendDomain = [];
 
 	                // Calculate domain for color to draw
-	                color.domain(legendDomain);
+	                // color.domain(legendDomain);
 
 	                // Legend will be appended in main SVG container
 	                var legendContainer = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
 
 	                // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
-	                self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item").data(color.domain()).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr("transform", function (d, i) {
-	                    return "translate(" + (i * (self._legendSize + self._legendSpace) + self._legendMargin[0]) + "," + self._legendMargin[3] + ")";
+	                self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item")
+	                // .data(color.domain())
+	                .data(self.data).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr('data-ref', function (d) {
+	                    return d['data-ref'];
+	                }).attr("transform", function (d, i) {
+	                    return "translate(" + (i * (self.legendSize + self.legendSpace) + self.legendMargin[0]) + "," + self.legendMargin[3] + ")";
 	                });
 
-	                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self._legendSize * 2).attr('height', self._legendSize).attr('r', self._legendSize).attr('fill', color).attr('stroke', color);
+	                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.legendSize * 2).attr('height', self.legendSize).attr('r', self.legendSize).attr('fill', function (d) {
+	                    return d.color;
+	                }).attr('stroke', function (d) {
+	                    return d.color;
+	                });
 
 	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
-	                    return d;
+	                    return d.name;
 	                });
 
 	                // if (self._legendBox && legendDomain.length > 0) {
@@ -1474,8 +1500,8 @@ var C9 =
 	         */
 
 	    }, {
-	        key: 'updateInteraction',
-	        value: function updateInteraction(chart, path, pie, currentData, arc) {
+	        key: "updateInteractionForDonutPieChart",
+	        value: function updateInteractionForDonutPieChart(chart, path, pie, currentData, arc) {
 
 	            var self = this;
 
@@ -1488,11 +1514,11 @@ var C9 =
 
 	            self.legendItemEventFactory = {
 
-	                'click': function click(label) {
+	                'click': function click(item) {
 
 	                    var selector = d3.select(this);
 	                    var enable = true,
-	                        dataSet = self.legendDomain;
+	                        dataSet = self.data;
 	                    var totalEnable = d3.sum(dataSet.map(function (d) {
 	                        return d.enable ? 1 : 0;
 	                    }));
@@ -1511,8 +1537,8 @@ var C9 =
 	                    }
 
 	                    chart.pie.value(function (d) {
-	                        if (d.data.name == label) d.enable = enable;
-	                        return d.enable ? d.data.value : 0;
+	                        if (d.name == item.name) d.enable = enable;
+	                        return d.enable ? d.value : 0;
 	                    });
 
 	                    path = path.data(chart.pie(dataSet));
@@ -1530,12 +1556,12 @@ var C9 =
 	                    .attr('stroke', 'none');;
 	                },
 
-	                'mouseover': function mouseover(label) {
+	                'mouseover': function mouseover(item) {
 	                    var legendSelector = d3.select(this);
 	                    // Add pointer to cursor
 	                    legendSelector.style('cursor', 'pointer');
 
-	                    var selector = d3.select('.c9-custom-path.' + label);
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 
 	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).attr('fill-opacity', '1.0');
 	                    // var enable = true,
@@ -1543,7 +1569,7 @@ var C9 =
 	                    //     isCurrentEnable = true;
 
 	                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-	                    //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+	                    //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
 	                    //     return (d.enable) ? 1 : 0;
 	                    // }));
 
@@ -1561,7 +1587,7 @@ var C9 =
 	                    // }
 
 	                    // chart.pie.value(function(d) {
-	                    //     if (d.data.name == label) d.tempEnable = enable;
+	                    //     if (d.data.name == item) d.tempEnable = enable;
 	                    //     else d.tempEnable = d.enable;
 
 	                    //     return (d.tempEnable) ? d.data.value : 0;
@@ -1582,20 +1608,20 @@ var C9 =
 	                    //     });
 	                },
 
-	                'mouseout': function mouseout(label) {
+	                'mouseout': function mouseout(item) {
 
 	                    var legendSelector = d3.select(this);
 	                    // Add pointer to cursor
 	                    legendSelector.style('cursor', 'pointer');
 
-	                    var selector = d3.select('.c9-custom-path.' + label);
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 
 	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).attr('fill-opacity', '0.5');
 	                    // var dataSet = self.legendDomain,
 	                    //     isCurrentEnable = true;
 
 	                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-	                    //     if (d.data.name == label && !d.enable) isCurrentEnable = false;
+	                    //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
 	                    //     return (d.enable) ? 1 : 0;
 	                    // }));
 
@@ -1603,7 +1629,7 @@ var C9 =
 	                    // selector.style('cursor', 'pointer');
 
 	                    // chart.pie.value(function(d) {
-	                    //     if (d.data.name == label && !d.enable) d.enable = enable;
+	                    //     if (d.data.name == item && !d.enable) d.enable = enable;
 	                    //     return (d.enable) ? d.data.value : 0;
 	                    // });
 
@@ -1648,18 +1674,18 @@ var C9 =
 	         */
 
 	    }, {
-	        key: 'updateInteractionForBarChart',
+	        key: "updateInteractionForBarChart",
 	        value: function updateInteractionForBarChart(chart) {
 
 	            var self = this;
 
 	            self.legendItemEventFactory = {
 
-	                'click': function click(label) {
+	                'click': function click(item) {
 
 	                    var selector = d3.select(this);
 	                    var enable = true,
-	                        dataSet = self.legendDomain;
+	                        dataSet = self.data;
 	                    var totalEnable = d3.sum(dataSet.map(function (d) {
 	                        return d.enable ? 1 : 0;
 	                    }));
@@ -1679,15 +1705,15 @@ var C9 =
 	                        enable = false;
 	                    }
 
-	                    self.legendDomain.forEach(function (d, i) {
-	                        if (d.enable) enableSetOld.push(d.data);
-	                        if (d.data == label) d.enable = enable;
-	                        if (d.enable) enableSet.push(d.data);
+	                    dataSet.forEach(function (d, i) {
+	                        if (d.enable) enableSetOld.push(d);
+	                        if (d.group == item.name) d.enable = enable;
+	                        if (d.enable) enableSet.push(d);
 	                    });
 
 	                    //TODO - handle total - use for axis
-	                    chart.data.forEach(function (d, i) {
-	                        var element = { name: d.name, stack: [], total: d.total, value: d.value };
+	                    dataSet.forEach(function (d, i) {
+	                        var element = { name: d.name, stack: [], max: d.max };
 	                        d.stack.forEach(function (s, j) {
 	                            enableSet.forEach(function (e) {
 	                                if (e == s.group) {
@@ -1698,7 +1724,7 @@ var C9 =
 	                        data.push(element);
 	                    });
 
-	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, label);
+	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, item);
 	                }
 
 	            };
@@ -1709,7 +1735,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'setYLocation',
+	        key: "setYLocation",
 	        value: function setYLocation(height, margin) {
 	            if (this.legendPosition === 'top') {
 	                return margin.top / 2;
@@ -1720,19 +1746,9 @@ var C9 =
 	        /*=====  End of Main Functions  ======*/
 
 	    }, {
-	        key: 'body',
+	        key: "data",
 	        get: function get() {
-	            return this._body;
-	        }
-	    }, {
-	        key: 'color',
-	        get: function get() {
-	            return this._color;
-	        }
-	    }, {
-	        key: 'legendShow',
-	        get: function get() {
-	            return this._legendShow;
+	            return this._data;
 	        },
 
 
@@ -1741,14 +1757,33 @@ var C9 =
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-
+	        set: function set(arg) {
+	            if (arg) {
+	                this._data = arg;
+	            }
+	        }
+	    }, {
+	        key: "body",
+	        get: function get() {
+	            return this._body;
+	        }
+	    }, {
+	        key: "color",
+	        get: function get() {
+	            return this._color;
+	        }
+	    }, {
+	        key: "legendShow",
+	        get: function get() {
+	            return this._legendShow;
+	        },
 	        set: function set(newlegendShow) {
 	            if (newlegendShow) {
 	                this._legendShow = newlegendShow;
 	            }
 	        }
 	    }, {
-	        key: 'legendText',
+	        key: "legendText",
 	        get: function get() {
 	            return this._legendText;
 	        },
@@ -1758,7 +1793,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'legendPosition',
+	        key: "legendPosition",
 	        get: function get() {
 	            return this._legendPosition;
 	        },
@@ -1768,7 +1803,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'legendSize',
+	        key: "legendSize",
 	        get: function get() {
 	            return this._legendSize;
 	        },
@@ -1778,7 +1813,27 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'legendItem',
+	        key: "legendMargin",
+	        get: function get() {
+	            return this._legendMargin;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._legendMargin = arg;
+	            }
+	        }
+	    }, {
+	        key: "legendSpace",
+	        get: function get() {
+	            return this._legendSpace;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._legendSpace = arg;
+	            }
+	        }
+	    }, {
+	        key: "legendItem",
 	        get: function get() {
 	            return this._legendItem;
 	        },
@@ -1788,7 +1843,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'legendDomain',
+	        key: "legendDomain",
 	        get: function get() {
 	            return this._legendDomain;
 	        },
@@ -1798,7 +1853,7 @@ var C9 =
 	            }
 	        }
 	    }, {
-	        key: 'legendItemEventFactory',
+	        key: "legendItemEventFactory",
 	        get: function get() {
 	            return this._legendItemEventFactory;
 	        },
@@ -1887,6 +1942,572 @@ var C9 =
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _C = __webpack_require__(3);
+
+	var _C2 = _interopRequireDefault(_C);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var DataAdapter = function () {
+	    function DataAdapter(options) {
+	        _classCallCheck(this, DataAdapter);
+
+	        var self = this;
+
+	        var config = {
+	            // ALL OPTIONS AVAILABLE IN DATA CONFIG
+	            keys: {
+	                name: "name",
+	                value: "value"
+	            },
+	            groups: [],
+	            stacks: [],
+
+	            // NO NEED TO ADD TO DATA OPTIONS
+	            // Just use to define default parameters
+	            colorRange: null
+	        };
+
+	        self._keys = _C2.default.merge(options.keys, config.keys);
+	        self._groups = options.groups || config.groups;
+	        self._stacks = options.stacks || config.stacks;
+	        self._colorRange = options.colorRange || config.colorRange;
+
+	        self._dataSource = null;
+	        self._dataTarget = []; // Initialize new Array to use Array methods
+	        self.initDataSource(options);
+	    }
+
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+
+
+	    _createClass(DataAdapter, [{
+	        key: "initDataSource",
+
+	        /*=====  End of Setter  ======*/
+
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function initDataSource(options) {
+	            var self = this;
+
+	            if (self.hasPlainData(options)) {
+	                self.executePlainData(options);
+	            } else if (self.hasFile(options)) {
+	                self.executeFile(options);
+	            }
+	        }
+	    }, {
+	        key: "hasPlainData",
+	        value: function hasPlainData(options) {
+	            return options.plain && _C2.default.isArray(options.plain);
+	        }
+	    }, {
+	        key: "hasFile",
+	        value: function hasFile(options) {
+	            return options.file && _C2.default.isObject(options.file);
+	        }
+	    }, {
+	        key: "executePlainData",
+	        value: function executePlainData(options) {
+	            var self = this;
+
+	            self._dataSource = options.plain;
+	        }
+	    }, {
+	        key: "executeFile",
+	        value: function executeFile(options) {
+	            var self = this;
+
+	            self._file = _C2.default.merge(options.file, config.file);
+
+	            if (self._file && self._file.type) {
+
+	                switch (self._file.type) {
+	                    case "csv":
+	                        self._dataSource = self.getCsv();
+	                        break;
+	                    case "tsv":
+	                        self._dataSource = self.getTsv();
+	                        break;
+	                    case "text":
+	                        self._dataSource = self.getText();
+	                        break;
+	                    case "json":
+	                        self._dataSource = self.getJson();
+	                        break;
+	                    case "xml":
+	                        self._dataSource = self.getXml();
+	                        break;
+	                    case "xhr":
+	                        self._dataSource = self.getJson();
+	                        break;
+	                    default:
+	                        self._dataSource = self.getJson();
+	                        break;
+	                }
+	            }
+	        }
+	    }, {
+	        key: "getDataTypeForBarChart",
+	        value: function getDataTypeForBarChart() {
+	            var self = this;
+
+	            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups)) {
+	                return "group";
+	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
+	                return "stack";
+	            }
+
+	            return "single";
+	        }
+	    }, {
+	        key: "getDataTarget",
+	        value: function getDataTarget(chartType) {
+	            var self = this;
+
+	            switch (chartType) {
+	                case "bar":
+	                    return self.getDataTargetForBarChart();
+	                    break;
+
+	                case "line":
+
+	                    break;
+
+	                case "pie":
+	                    return self.getDataTargetForPieChart();
+	                    break;
+
+	                case "donut":
+	                    return self.getDataTargetForDonutChart();
+	                    break;
+
+	                case "timeline":
+
+	                    break;
+	                default:
+	                    return self.dataSource;
+	                    break;
+	            }
+	        }
+	    }, {
+	        key: "getName",
+	        value: function getName(v) {
+	            return v.name;
+	        }
+	    }, {
+	        key: "getValue",
+	        value: function getValue(v) {
+	            var self = this;
+
+	            return _C2.default.get(self.keys, v);
+	        }
+
+	        /*=====  End of Main Functions  ======*/
+
+	        /*=================================================
+	        =            Normalize Data For Charts            =
+	        =================================================*/
+
+	    }, {
+	        key: "getDataTargetForBarChart",
+	        value: function getDataTargetForBarChart() {
+	            var self = this;
+
+	            switch (self.getDataTypeForBarChart()) {
+	                case "single":
+	                    self.dataSource.forEach(function (data, index) {
+	                        var _data = {
+	                            "name": _C2.default.get(self.keys.name, data),
+	                            "value": _C2.default.get(self.keys.value, data),
+	                            "max": _C2.default.get(self.keys.value, data),
+	                            "enable": true
+	                        };
+	                        self.dataTarget.push(_data);
+	                    });
+
+	                    return self.dataTarget;
+	                    break;
+
+	                case "group":
+	                    var groups = self.groups;
+
+	                    // Iterate over each group
+	                    self.dataSource.forEach(function (data, index) {
+	                        var _group = {
+	                            "max": null,
+	                            "stack": []
+	                        },
+	                            _dsArray = _C2.default.get(self.keys.value, data);
+
+	                        // If Group has only 1 value, so MAX = this.value
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            _group.max = _C2.default.max(_dsArray);
+	                        } else {
+	                            _group.max = _dsArray;
+	                        }
+
+	                        var _stack = [],
+	                            _stackItem = {
+	                            "color": "#ffffff",
+	                            "y0": 0,
+	                            "y1": 1,
+	                            "group": "",
+	                            "name": "",
+	                            "data-ref": "",
+	                            "enable": true
+	                        },
+	                            color = self.colorRange;
+
+	                        // Iterate each single bar in a group
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            _dsArray.forEach(function (d, i) {
+	                                _stackItem = {
+	                                    "color": color(i),
+	                                    "y0": 0,
+	                                    "y1": d,
+	                                    "group": groups[index] || index,
+	                                    "name": _C2.default.get(self.keys.name, data),
+	                                    "data-ref": _C2.default.guid(),
+	                                    "enable": true
+	                                };
+	                                _stack.push(_stackItem);
+	                            });
+	                        } else {
+	                            _stackItem = {
+	                                "color": color(0),
+	                                "y0": 0,
+	                                "y1": _dsArray,
+	                                "group": groups[index] || index,
+	                                "name": _C2.default.get(self.keys.name, data),
+	                                "data-ref": _C2.default.guid(),
+	                                "enable": true
+	                            };
+	                            _stack.push(_stackItem);
+	                        }
+	                        _group.stack = _stack;
+
+	                        self.dataTarget.push(_group);
+	                    });
+
+	                    return self.dataTarget;
+	                    break;
+
+	                case "stack":
+	                    var stacks = self.stacks;
+
+	                    // Iterate over each group
+	                    self.dataSource.forEach(function (data, index) {
+	                        var _group = {
+	                            "max": null,
+	                            "stack": []
+	                        },
+	                            _dsArray = _C2.default.get(self.keys.value, data);
+
+	                        // If Group has only 1 value, so MAX = this.value
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            _group.max = _C2.default.sum(_dsArray);
+	                        } else {
+	                            _group.max = _dsArray;
+	                        }
+
+	                        var _stack = [],
+	                            _stackItem = {
+	                            "color": "#ffffff",
+	                            "y0": 0,
+	                            "y1": 1,
+	                            "group": "",
+	                            "name": "",
+	                            "data-ref": "",
+	                            "enable": true
+	                        },
+	                            color = self.colorRange;
+
+	                        // Iterate each single bar in a group
+	                        if (_C2.default.isArray(_dsArray)) {
+	                            (function () {
+	                                var _tempY0 = 0;
+	                                _dsArray.forEach(function (d, i) {
+	                                    _stackItem = {
+	                                        "color": color(i),
+	                                        "y0": _tempY0,
+	                                        "y1": _tempY0 + d,
+	                                        "group": stacks[index] || index,
+	                                        "name": _C2.default.get(self.keys.name, data),
+	                                        "data-ref": _C2.default.guid(),
+	                                        "enable": true
+	                                    };
+	                                    _stack.push(_stackItem);
+	                                    // Increase tempY0 by d to restore previous y0
+	                                    _tempY0 += d;
+	                                });
+	                            })();
+	                        } else {
+	                            _stackItem = {
+	                                "color": color(0),
+	                                "y0": 0,
+	                                "y1": _dsArray,
+	                                "group": stacks[index] || index,
+	                                "name": _C2.default.get(self.keys.name, data),
+	                                "data-ref": _C2.default.guid(),
+	                                "enable": true
+	                            };
+	                            _stack.push(_stackItem);
+	                        }
+	                        _group.stack = _stack;
+
+	                        self.dataTarget.push(_group);
+	                    });
+
+	                    return self.dataTarget;
+	                    break;
+
+	                default:
+	                    return self.dataSource;
+	                    break;
+	            }
+	        }
+
+	        /**
+	         * getDataTargetForPieChart add [enable=true] for usage in Legend
+	         */
+
+	    }, {
+	        key: "getDataTargetForPieChart",
+	        value: function getDataTargetForPieChart() {
+	            var self = this;
+
+	            var color = self.colorRange;
+	            self.dataSource.forEach(function (data, index) {
+	                var _data = {
+	                    "color": color(index),
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": _C2.default.get(self.keys.value, data),
+	                    "data-ref": _C2.default.guid(),
+	                    "enable": true
+	                };
+	                self.dataTarget.push(_data);
+	            });
+
+	            return self.dataTarget;
+	        }
+
+	        /**
+	         * getDataTargetForDonutChart add [enable=true] for usage in Legend
+	         */
+
+	    }, {
+	        key: "getDataTargetForDonutChart",
+	        value: function getDataTargetForDonutChart() {
+	            var self = this;
+
+	            var color = self.colorRange;
+	            self.dataSource.forEach(function (data, index) {
+	                var _data = {
+	                    "color": color(index),
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": _C2.default.get(self.keys.value, data),
+	                    "data-ref": _C2.default.guid(),
+	                    "enable": true
+	                };
+	                self.dataTarget.push(_data);
+	            });
+
+	            return self.dataTarget;
+	        }
+
+	        /*=====  End of Normalize Data For Charts  ======*/
+
+	        /*=============================
+	        =            Utils            =
+	        =============================*/
+	        // getBarColorForBarChart() {
+	        //     var self = this;
+
+	        //     var color = self.colorRange;
+	        //     if (typeof color == 'string') {
+	        //         try {
+	        //             return d3.scale[color]();    
+	        //         }
+	        //         catch(err) {
+	        //             return function(i) {
+	        //                 return color;
+	        //             };
+	        //         }
+	        //     } else if (typeof color == 'object') {
+	        //         return d3.scale.ordinal().range(color);
+	        //     }
+	        // }
+
+
+	        /*=====  End of Utils  ======*/
+
+	        /*=============================================
+	        =            Data Input From Files            =
+	        =============================================*/
+
+	    }, {
+	        key: "getCsv",
+	        value: function getCsv() {
+
+	            var self = this;
+
+	            d3.csv(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return data;
+	            });
+	        }
+	    }, {
+	        key: "getTsv",
+	        value: function getTsv() {
+
+	            var self = this;
+
+	            d3.tsv(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return data;
+	            });
+	        }
+	    }, {
+	        key: "getText",
+	        value: function getText() {
+
+	            var self = this;
+
+	            d3.text(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return JSON.parse(data);
+	            });
+	        }
+	    }, {
+	        key: "getJson",
+	        value: function getJson() {
+	            var self = this;
+
+	            d3.json(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                return data;
+	            });
+	        }
+	    }, {
+	        key: "getXml",
+	        value: function getXml() {
+	            var self = this;
+
+	            d3.xml(self.file.url, function (err, data) {
+	                if (err) throw err;
+
+	                // Convert the XML document to an array of objects.
+	                // Note that querySelectorAll returns a NodeList, not a proper Array,
+	                // so we must use map.call to invoke array methods.
+	                data = [].map.call(data.querySelectorAll("data"), function (d) {
+	                    return {
+	                        name: d.querySelector("name").textContent,
+	                        value: d.querySelector("value").textContent
+	                    };
+	                });
+
+	                return data;
+	            });
+	        }
+
+	        /*=====  End of Data Input From Files  ======*/
+
+	    }, {
+	        key: "keys",
+	        get: function get() {
+	            return this._keys;
+	        },
+
+	        /*=====  End of Getter  ======*/
+
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._keys = arg;
+	            }
+	        }
+	    }, {
+	        key: "dataSource",
+	        get: function get() {
+	            return this._dataSource;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._dataSource = arg;
+	            }
+	        }
+	    }, {
+	        key: "dataTarget",
+	        get: function get() {
+	            return this._dataTarget;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._dataTarget = arg;
+	            }
+	        }
+	    }, {
+	        key: "groups",
+	        get: function get() {
+	            return this._groups;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._groups = arg;
+	            }
+	        }
+	    }, {
+	        key: "stacks",
+	        get: function get() {
+	            return this._stacks;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._stacks = arg;
+	            }
+	        }
+	    }, {
+	        key: "colorRange",
+	        get: function get() {
+	            return this._colorRange;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._colorRange = arg;
+	            }
+	        }
+	    }]);
+
+	    return DataAdapter;
+	}();
+
+	exports.default = DataAdapter;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
@@ -1911,7 +2532,7 @@ var C9 =
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(13);
+	var _C9 = __webpack_require__(8);
 
 	var _C10 = _interopRequireDefault(_C9);
 
@@ -1944,7 +2565,10 @@ var C9 =
 	        self._showText = options.showText || config.showText;
 	        self.body.type = 'donut';
 
-	        var da = new _C10.default(self.dataOption);
+	        var dataOption = self.dataOption;
+	        dataOption.colorRange = self.colorRange;
+
+	        var da = new _C10.default(dataOption);
 	        self.dataTarget = da.getDataTarget("donut");
 
 	        self.updateConfig();
@@ -2083,8 +2707,8 @@ var C9 =
 
 	            // Append main path contains donut
 	            // TODO: add a unique class to allow Legend could find selected donut/pie
-	            arcs.append('path').attr('class', function (d) {
-	                return 'c9-chart-donut c9-custom-path ' + d.data.name;
+	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('data-ref', function (d) {
+	                return d.data['data-ref'];
 	            }).attr('d', self.arc).attr('fill', function (d, i) {
 	                return color(i);
 	            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
@@ -2116,11 +2740,11 @@ var C9 =
 	            var self = this;
 
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.dataTarget);
+	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 
 	            // Draw legend
 	            legend.draw();
-	            legend.updateInteraction(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
 	            // Update interaction of this own chart
 	            self.updateInteraction();
@@ -2271,7 +2895,7 @@ var C9 =
 	exports.default = DonutChart;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2671,7 +3295,7 @@ var C9 =
 	exports.default = LineChart;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2698,7 +3322,7 @@ var C9 =
 
 	var _C8 = _interopRequireDefault(_C7);
 
-	var _C9 = __webpack_require__(13);
+	var _C9 = __webpack_require__(8);
 
 	var _C10 = _interopRequireDefault(_C9);
 
@@ -2731,7 +3355,10 @@ var C9 =
 	        self._showText = options.showText || config.showText;
 	        self.body.type = 'pie';
 
-	        var da = new _C10.default(self.dataOption);
+	        var dataOption = self.dataOption;
+	        dataOption.colorRange = self.colorRange;
+
+	        var da = new _C10.default(dataOption);
 	        self.dataTarget = da.getDataTarget("pie");
 
 	        self.updateConfig();
@@ -2868,8 +3495,8 @@ var C9 =
 	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
 
 	            // Append main path contains pie
-	            arcs.append('path').attr('class', function (d) {
-	                return 'c9-chart-pie c9-custom-path ' + d.data.name;
+	            arcs.append('path').attr('class', 'c9-chart-pie c9-custom-path').attr('data-ref', function (d) {
+	                return d.data['data-ref'];
 	            }).attr('d', self.arc).attr('fill', function (d, i) {
 	                return color(i);
 	            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
@@ -2901,11 +3528,11 @@ var C9 =
 	            var self = this;
 
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.dataTarget);
+	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 
 	            // Draw legend
 	            legend.draw();
-	            legend.updateInteraction(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
 	            // Update interaction of this own chart
 	            self.updateInteraction();
@@ -3059,7 +3686,7 @@ var C9 =
 	exports.default = PieChart;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3361,7 +3988,7 @@ var C9 =
 	exports.default = TimeLine;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -3844,544 +4471,6 @@ var C9 =
 	}();
 
 	exports.default = Map;
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-	var _C = __webpack_require__(3);
-
-	var _C2 = _interopRequireDefault(_C);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var DataAdapter = function () {
-	    function DataAdapter(options) {
-	        _classCallCheck(this, DataAdapter);
-
-	        var self = this;
-
-	        var config = {
-	            // ALL OPTIONS AVAILABLE IN DATA CONFIG
-	            keys: {
-	                name: "name",
-	                value: "value"
-	            },
-	            groups: [],
-	            stacks: [],
-
-	            // NO NEED TO ADD TO DATA OPTIONS
-	            // Just use to define default parameters
-	            barColor: "category20"
-	        };
-
-	        self._keys = _C2.default.merge(options.keys, config.keys);
-	        self._groups = options.groups || config.groups;
-	        self._stacks = options.stacks || config.stacks;
-	        self._barColor = options.barColor || config.barColor;
-
-	        self._dataSource = null;
-	        self._dataTarget = []; // Initialize new Array to use Array methods
-	        self.initDataSource(options);
-	    }
-
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-
-
-	    _createClass(DataAdapter, [{
-	        key: "initDataSource",
-
-	        /*=====  End of Setter  ======*/
-
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	        value: function initDataSource(options) {
-	            var self = this;
-
-	            if (self.hasPlainData(options)) {
-	                self.executePlainData(options);
-	            } else if (self.hasFile(options)) {
-	                self.executeFile(options);
-	            }
-	        }
-	    }, {
-	        key: "hasPlainData",
-	        value: function hasPlainData(options) {
-	            return options.plain && _C2.default.isArray(options.plain);
-	        }
-	    }, {
-	        key: "hasFile",
-	        value: function hasFile(options) {
-	            return options.file && _C2.default.isObject(options.file);
-	        }
-	    }, {
-	        key: "executePlainData",
-	        value: function executePlainData(options) {
-	            var self = this;
-
-	            self._dataSource = options.plain;
-	        }
-	    }, {
-	        key: "executeFile",
-	        value: function executeFile(options) {
-	            var self = this;
-
-	            self._file = _C2.default.merge(options.file, config.file);
-
-	            if (self._file && self._file.type) {
-
-	                switch (self._file.type) {
-	                    case "csv":
-	                        self._dataSource = self.getCsv();
-	                        break;
-	                    case "tsv":
-	                        self._dataSource = self.getTsv();
-	                        break;
-	                    case "text":
-	                        self._dataSource = self.getText();
-	                        break;
-	                    case "json":
-	                        self._dataSource = self.getJson();
-	                        break;
-	                    case "xml":
-	                        self._dataSource = self.getXml();
-	                        break;
-	                    case "xhr":
-	                        self._dataSource = self.getJson();
-	                        break;
-	                    default:
-	                        self._dataSource = self.getJson();
-	                        break;
-	                }
-	            }
-	        }
-	    }, {
-	        key: "getDataTypeForBarChart",
-	        value: function getDataTypeForBarChart() {
-	            var self = this;
-
-	            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups)) {
-	                return "group";
-	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
-	                return "stack";
-	            }
-
-	            return "single";
-	        }
-	    }, {
-	        key: "getDataTarget",
-	        value: function getDataTarget(chartType) {
-	            var self = this;
-
-	            switch (chartType) {
-	                case "bar":
-	                    return self.getDataTargetForBarChart();
-	                    break;
-
-	                case "line":
-
-	                    break;
-
-	                case "pie":
-	                    return self.getDataTargetForPieChart();
-	                    break;
-
-	                case "donut":
-	                    return self.getDataTargetForDonutChart();
-	                    break;
-
-	                case "timeline":
-
-	                    break;
-	                default:
-	                    return self.dataSource;
-	                    break;
-	            }
-	        }
-	    }, {
-	        key: "getName",
-	        value: function getName(v) {
-	            return v.name;
-	        }
-	    }, {
-	        key: "getValue",
-	        value: function getValue(v) {
-	            var self = this;
-
-	            return _C2.default.get(self.keys, v);
-	        }
-
-	        /*=====  End of Main Functions  ======*/
-
-	        /*=================================================
-	        =            Normalize Data For Charts            =
-	        =================================================*/
-
-	    }, {
-	        key: "getDataTargetForBarChart",
-	        value: function getDataTargetForBarChart() {
-	            var self = this;
-
-	            switch (self.getDataTypeForBarChart()) {
-	                case "single":
-	                    self.dataSource.forEach(function (data, index) {
-	                        var _data = {
-	                            "name": _C2.default.get(self.keys.name, data),
-	                            "value": _C2.default.get(self.keys.value, data),
-	                            "max": _C2.default.get(self.keys.value, data)
-	                        };
-	                        self.dataTarget.push(_data);
-	                    });
-
-	                    return self.dataTarget;
-	                    break;
-
-	                case "group":
-	                    var groups = self.groups;
-
-	                    // Iterate over each group
-	                    self.dataSource.forEach(function (data, index) {
-	                        var _group = {
-	                            "max": null,
-	                            "stack": []
-	                        },
-	                            _dsArray = _C2.default.get(self.keys.value, data);
-
-	                        // If Group has only 1 value, so MAX = this.value
-	                        if (_C2.default.isArray(_dsArray)) {
-	                            _group.max = _C2.default.max(_dsArray);
-	                        } else {
-	                            _group.max = _dsArray;
-	                        }
-
-	                        var _stack = [],
-	                            _stackItem = {
-	                            "color": "#ffffff",
-	                            "y0": 0,
-	                            "y1": 1,
-	                            "group": "",
-	                            "name": ""
-	                        },
-	                            color = self.getBarColorForBarChart();
-
-	                        // Iterate each single bar in a group
-	                        if (_C2.default.isArray(_dsArray)) {
-	                            _dsArray.forEach(function (d, i) {
-	                                _stackItem = {
-	                                    "color": color(i),
-	                                    "y0": 0,
-	                                    "y1": d,
-	                                    "group": groups[index] || index,
-	                                    "name": _C2.default.get(self.keys.name, data)
-	                                };
-	                                _stack.push(_stackItem);
-	                            });
-	                        } else {
-	                            _stackItem = {
-	                                "color": color(0),
-	                                "y0": 0,
-	                                "y1": _dsArray,
-	                                "group": groups[index] || index,
-	                                "name": _C2.default.get(self.keys.name, data)
-	                            };
-	                            _stack.push(_stackItem);
-	                        }
-	                        _group.stack = _stack;
-
-	                        self.dataTarget.push(_group);
-	                    });
-
-	                    return self.dataTarget;
-	                    break;
-
-	                case "stack":
-	                    var stacks = self.stacks;
-
-	                    // Iterate over each group
-	                    self.dataSource.forEach(function (data, index) {
-	                        var _group = {
-	                            "max": null,
-	                            "stack": []
-	                        },
-	                            _dsArray = _C2.default.get(self.keys.value, data);
-
-	                        // If Group has only 1 value, so MAX = this.value
-	                        if (_C2.default.isArray(_dsArray)) {
-	                            _group.max = _C2.default.sum(_dsArray);
-	                        } else {
-	                            _group.max = _dsArray;
-	                        }
-
-	                        var _stack = [],
-	                            _stackItem = {
-	                            "color": "#ffffff",
-	                            "y0": 0,
-	                            "y1": 1,
-	                            "group": "",
-	                            "name": ""
-	                        },
-	                            color = self.getBarColorForBarChart();
-
-	                        // Iterate each single bar in a group
-	                        if (_C2.default.isArray(_dsArray)) {
-	                            (function () {
-	                                var _tempY0 = 0;
-	                                _dsArray.forEach(function (d, i) {
-	                                    _stackItem = {
-	                                        "color": color(i),
-	                                        "y0": _tempY0,
-	                                        "y1": _tempY0 + d,
-	                                        "group": stacks[index] || index,
-	                                        "name": _C2.default.get(self.keys.name, data)
-	                                    };
-	                                    _stack.push(_stackItem);
-	                                    // Increase tempY0 by d to restore previous y0
-	                                    _tempY0 += d;
-	                                });
-	                            })();
-	                        } else {
-	                            _stackItem = {
-	                                "color": color(0),
-	                                "y0": 0,
-	                                "y1": _dsArray,
-	                                "group": stacks[index] || index,
-	                                "name": _C2.default.get(self.keys.name, data)
-	                            };
-	                            _stack.push(_stackItem);
-	                        }
-	                        _group.stack = _stack;
-
-	                        self.dataTarget.push(_group);
-	                    });
-
-	                    return self.dataTarget;
-	                    break;
-
-	                default:
-	                    return self.dataSource;
-	                    break;
-	            }
-	        }
-	    }, {
-	        key: "getDataTargetForPieChart",
-	        value: function getDataTargetForPieChart() {
-	            var self = this;
-
-	            self.dataSource.forEach(function (data, index) {
-	                var _data = {
-	                    "name": _C2.default.get(self.keys.name, data),
-	                    "value": _C2.default.get(self.keys.value, data)
-	                };
-	                self.dataTarget.push(_data);
-	            });
-
-	            return self.dataTarget;
-	        }
-	    }, {
-	        key: "getDataTargetForDonutChart",
-	        value: function getDataTargetForDonutChart() {
-	            var self = this;
-
-	            self.dataSource.forEach(function (data, index) {
-	                var _data = {
-	                    "name": _C2.default.get(self.keys.name, data),
-	                    "value": _C2.default.get(self.keys.value, data)
-	                };
-	                self.dataTarget.push(_data);
-	            });
-
-	            return self.dataTarget;
-	        }
-
-	        /*=====  End of Normalize Data For Charts  ======*/
-
-	        /*=============================
-	        =            Utils            =
-	        =============================*/
-
-	    }, {
-	        key: "getBarColorForBarChart",
-	        value: function getBarColorForBarChart() {
-	            var self = this;
-
-	            var color = self.barColor;
-	            if (typeof color == 'string') {
-	                try {
-	                    return d3.scale[color]();
-	                } catch (err) {
-	                    return function (i) {
-	                        return color;
-	                    };
-	                }
-	            } else if ((typeof color === "undefined" ? "undefined" : _typeof(color)) == 'object') {
-	                return d3.scale.ordinal().range(color);
-	            }
-	        }
-
-	        /*=====  End of Utils  ======*/
-
-	        /*=============================================
-	        =            Data Input From Files            =
-	        =============================================*/
-
-	    }, {
-	        key: "getCsv",
-	        value: function getCsv() {
-
-	            var self = this;
-
-	            d3.csv(self.file.url, function (err, data) {
-	                if (err) throw err;
-
-	                return data;
-	            });
-	        }
-	    }, {
-	        key: "getTsv",
-	        value: function getTsv() {
-
-	            var self = this;
-
-	            d3.tsv(self.file.url, function (err, data) {
-	                if (err) throw err;
-
-	                return data;
-	            });
-	        }
-	    }, {
-	        key: "getText",
-	        value: function getText() {
-
-	            var self = this;
-
-	            d3.text(self.file.url, function (err, data) {
-	                if (err) throw err;
-
-	                return JSON.parse(data);
-	            });
-	        }
-	    }, {
-	        key: "getJson",
-	        value: function getJson() {
-	            var self = this;
-
-	            d3.json(self.file.url, function (err, data) {
-	                if (err) throw err;
-
-	                return data;
-	            });
-	        }
-	    }, {
-	        key: "getXml",
-	        value: function getXml() {
-	            var self = this;
-
-	            d3.xml(self.file.url, function (err, data) {
-	                if (err) throw err;
-
-	                // Convert the XML document to an array of objects.
-	                // Note that querySelectorAll returns a NodeList, not a proper Array,
-	                // so we must use map.call to invoke array methods.
-	                data = [].map.call(data.querySelectorAll("data"), function (d) {
-	                    return {
-	                        name: d.querySelector("name").textContent,
-	                        value: d.querySelector("value").textContent
-	                    };
-	                });
-
-	                return data;
-	            });
-	        }
-
-	        /*=====  End of Data Input From Files  ======*/
-
-	    }, {
-	        key: "keys",
-	        get: function get() {
-	            return this._keys;
-	        },
-
-	        /*=====  End of Getter  ======*/
-
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	        set: function set(arg) {
-	            if (arg) {
-	                this._keys = arg;
-	            }
-	        }
-	    }, {
-	        key: "dataSource",
-	        get: function get() {
-	            return this._dataSource;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._dataSource = arg;
-	            }
-	        }
-	    }, {
-	        key: "dataTarget",
-	        get: function get() {
-	            return this._dataTarget;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._dataTarget = arg;
-	            }
-	        }
-	    }, {
-	        key: "groups",
-	        get: function get() {
-	            return this._groups;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._groups = arg;
-	            }
-	        }
-	    }, {
-	        key: "stacks",
-	        get: function get() {
-	            return this._stacks;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._stacks = arg;
-	            }
-	        }
-	    }, {
-	        key: "barColor",
-	        get: function get() {
-	            return this._barColor;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._barColor = arg;
-	            }
-	        }
-	    }]);
-
-	    return DataAdapter;
-	}();
-
-	exports.default = DataAdapter;
 
 /***/ }
 /******/ ]);

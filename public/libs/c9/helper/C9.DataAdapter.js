@@ -17,13 +17,13 @@ export default class DataAdapter {
 
             // NO NEED TO ADD TO DATA OPTIONS
             // Just use to define default parameters
-            barColor: "category20",
+            colorRange: null,
         };
 
         self._keys      = Helper.merge(options.keys, config.keys);
         self._groups    = options.groups    || config.groups;
         self._stacks    = options.stacks    || config.stacks;
-        self._barColor  = options.barColor  || config.barColor;
+        self._colorRange= options.colorRange|| config.colorRange;
 
         self._dataSource = null;
         self._dataTarget = []; // Initialize new Array to use Array methods
@@ -55,8 +55,8 @@ export default class DataAdapter {
         return this._stacks;
     }
 
-    get barColor() {
-        return this._barColor;
+    get colorRange() {
+        return this._colorRange;
     }
     /*=====  End of Getter  ======*/
 
@@ -93,9 +93,9 @@ export default class DataAdapter {
         }
     }
 
-    set barColor(arg) {
+    set colorRange(arg) {
         if (arg) {
-            this._barColor = arg;
+            this._colorRange = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -225,7 +225,8 @@ export default class DataAdapter {
                     let _data = {
                         "name"  : Helper.get(self.keys.name, data),
                         "value" : Helper.get(self.keys.value, data),
-                        "max"   : Helper.get(self.keys.value, data)
+                        "max"   : Helper.get(self.keys.value, data),
+                        "enable"    : true,
                     };
                     self.dataTarget.push(_data);
                 });
@@ -252,34 +253,40 @@ export default class DataAdapter {
                     }
 
                     let _stack      = [],
-                        _stackItem  = {
-                            "color" : "#ffffff",
-                            "y0"    : 0,
-                            "y1"    : 1,
-                            "group" : "",
-                            "name"  : "",
+                        _stackItem = {
+                            "color": "#ffffff",
+                            "y0": 0,
+                            "y1": 1,
+                            "group": "",
+                            "name": "",
+                            "data-ref": "",
+                            "enable"    : true,
                         },
-                        color       = self.getBarColorForBarChart();
+                        color = self.colorRange;
 
                     // Iterate each single bar in a group
                     if (Helper.isArray(_dsArray)) {
                         _dsArray.forEach(function(d, i) {
                             _stackItem = {
-                                "color" : color(i),
-                                "y0"    : 0,
-                                "y1"    : d,
-                                "group" : groups[index] || index,
-                                "name"  : Helper.get(self.keys.name, data)
+                                "color": color(i),
+                                "y0": 0,
+                                "y1": d,
+                                "group": groups[index] || index,
+                                "name": Helper.get(self.keys.name, data),
+                                "data-ref": Helper.guid(),
+                                "enable"    : true,
                             };
                             _stack.push(_stackItem);
                         });
                     } else {
                         _stackItem = {
-                            "color" : color(0),
-                            "y0"    : 0,
-                            "y1"    : _dsArray,
-                            "group" : groups[index] || index,
-                            "name"  : Helper.get(self.keys.name, data)
+                            "color": color(0),
+                            "y0": 0,
+                            "y1": _dsArray,
+                            "group": groups[index] || index,
+                            "name": Helper.get(self.keys.name, data),
+                            "data-ref": Helper.guid(),
+                            "enable"    : true,
                         };
                         _stack.push(_stackItem);
                     }
@@ -310,37 +317,43 @@ export default class DataAdapter {
                     }
 
                     let _stack      = [],
-                        _stackItem  = {
-                            "color" : "#ffffff",
-                            "y0"    : 0,
-                            "y1"    : 1,
-                            "group" : "",
-                            "name"  : "",
+                        _stackItem = {
+                            "color": "#ffffff",
+                            "y0": 0,
+                            "y1": 1,
+                            "group": "",
+                            "name": "",
+                            "data-ref": "",
+                            "enable"    : true,
                         },
-                        color       = self.getBarColorForBarChart();
+                        color = self.colorRange;
 
                     // Iterate each single bar in a group
                     if (Helper.isArray(_dsArray)) {
                         let _tempY0     = 0;
                         _dsArray.forEach(function(d, i) {
                             _stackItem = {
-                                "color" : color(i),
-                                "y0"    : _tempY0,
-                                "y1"    : _tempY0 + d,
-                                "group" : stacks[index] || index,
-                                "name"  : Helper.get(self.keys.name, data)
+                                "color": color(i),
+                                "y0": _tempY0,
+                                "y1": _tempY0 + d,
+                                "group": stacks[index] || index,
+                                "name": Helper.get(self.keys.name, data),
+                                "data-ref": Helper.guid(),
+                                "enable"    : true,
                             };
                             _stack.push(_stackItem);
                             // Increase tempY0 by d to restore previous y0
-                            _tempY0     += d;
+                            _tempY0 += d;
                         });
                     } else {
                         _stackItem = {
-                            "color" : color(0),
-                            "y0"    : 0,
-                            "y1"    : _dsArray,
-                            "group" : stacks[index] || index,
-                            "name"  : Helper.get(self.keys.name, data)
+                            "color": color(0),
+                            "y0": 0,
+                            "y1": _dsArray,
+                            "group": stacks[index] || index,
+                            "name": Helper.get(self.keys.name, data),
+                            "data-ref": Helper.guid(),
+                            "enable"    : true,
                         };
                         _stack.push(_stackItem);
                     }
@@ -359,13 +372,20 @@ export default class DataAdapter {
     
     }
 
+    /**
+     * getDataTargetForPieChart add [enable=true] for usage in Legend
+     */
     getDataTargetForPieChart() {
         var self = this;
 
+        let color = self.colorRange;
         self.dataSource.forEach(function(data, index) {
             let _data = {
-                "name"  : Helper.get(self.keys.name, data),
-                "value" : Helper.get(self.keys.value, data),
+                "color"     : color(index),
+                "name"      : Helper.get(self.keys.name, data),
+                "value"     : Helper.get(self.keys.value, data),
+                "data-ref"  : Helper.guid(),
+                "enable"    : true,
             };
             self.dataTarget.push(_data);
         });
@@ -374,13 +394,20 @@ export default class DataAdapter {
 
     }
 
+    /**
+     * getDataTargetForDonutChart add [enable=true] for usage in Legend
+     */
     getDataTargetForDonutChart() {
         var self = this;
 
+        let color = self.colorRange;
         self.dataSource.forEach(function(data, index) {
             let _data = {
-                "name"  : Helper.get(self.keys.name, data),
-                "value" : Helper.get(self.keys.value, data),
+                "color"     : color(index),
+                "name"      : Helper.get(self.keys.name, data),
+                "value"     : Helper.get(self.keys.value, data),
+                "data-ref"  : Helper.guid(),
+                "enable"    : true,
             };
             self.dataTarget.push(_data);
         });
@@ -395,23 +422,23 @@ export default class DataAdapter {
     /*=============================
     =            Utils            =
     =============================*/
-    getBarColorForBarChart() {
-        var self = this;
+    // getBarColorForBarChart() {
+    //     var self = this;
 
-        var color = self.barColor;
-        if (typeof color == 'string') {
-            try {
-                return d3.scale[color]();    
-            }
-            catch(err) {
-                return function(i) {
-                    return color;
-                };
-            }
-        } else if (typeof color == 'object') {
-            return d3.scale.ordinal().range(color);
-        }
-    }
+    //     var color = self.colorRange;
+    //     if (typeof color == 'string') {
+    //         try {
+    //             return d3.scale[color]();    
+    //         }
+    //         catch(err) {
+    //             return function(i) {
+    //                 return color;
+    //             };
+    //         }
+    //     } else if (typeof color == 'object') {
+    //         return d3.scale.ordinal().range(color);
+    //     }
+    // }
     
     
     /*=====  End of Utils  ======*/

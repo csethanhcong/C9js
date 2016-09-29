@@ -12,21 +12,19 @@ export default class BarChart extends Chart {
         var self = this;
         var config = {
             barWidth: undefined,
-            barColor: "category20",
             // groupType: "stack"
         };
 
         var width        = self.width - self.margin.left - self.margin.right;
         var height       = self.height - self.margin.top - self.margin.bottom;
         // var groupCount   = 0; // use to count how many element in group
-        // var groupStart = 0; // calculate the number of those first element that just have only 1 value
+        // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
 
-        self.body.type   = "bar";
-        self._groupType  = options.groupType ||  config.groupType;
-        self._barColor   = options.barColor  ||  config.barColor;
+        self.body.type      = "bar";
+        self._groupType     = options.groupType     ||  config.groupType;
 
-        var dataOption      = self.dataOption;
-        dataOption.barColor = self._barColor;
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
 
         var da = new DataAdapter(dataOption);
         self.dataTarget     = da.getDataTarget("bar");
@@ -105,8 +103,8 @@ export default class BarChart extends Chart {
         return this._barWidth;
     }
 
-    get barColor() {
-        var color = this._barColor;
+    get colorRange() {
+        var color = this._colorRange;
         if (typeof color == 'string') {
             try {
                 return d3.scale[color]();    
@@ -155,9 +153,9 @@ export default class BarChart extends Chart {
         }
     }
     
-    set barColor(newBarColor) {
+    set colorRange(newBarColor) {
         if (newBarColor) {
-            this._barColor = newBarColor;
+            this._colorRange = newBarColor;
         }
     }
 
@@ -203,7 +201,7 @@ export default class BarChart extends Chart {
      */
     updateConfig() {
         var self  = this,
-            color = self.barColor,
+            color = self.colorRange,
             x     = self._x,
             y     = self._y,
             xGroup= self._xGroup,
@@ -302,11 +300,11 @@ export default class BarChart extends Chart {
         var self = this;
         var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options, self.body, self.barColor, self.groupNames);
+        var legend  = new Legend(self.options, self.body, self.dataTarget);
         
         legend.draw();
         legend.updateInteractionForBarChart(self);
-        this.updateInteraction();
+        self.updateInteraction();
     }
 
     /**

@@ -20,8 +20,11 @@ export default class PieChart extends Chart {
         self._showText  = options.showText || config.showText;
         self.body.type  = 'pie';
 
-        var da          = new DataAdapter(self.dataOption);
-        self.dataTarget = da.getDataTarget("pie");
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget("pie");
 
         self.updateConfig();
     }
@@ -300,9 +303,8 @@ export default class PieChart extends Chart {
 
         // Append main path contains pie
         arcs.append('path')
-                .attr('class', function(d) {
-                    return 'c9-chart-pie c9-custom-path ' + d.data.name;
-                })
+                .attr('class', 'c9-chart-pie c9-custom-path')
+                .attr('data-ref', function(d) { return d.data['data-ref']; })
                 .attr('d', self.arc)
                 .attr('fill', function(d, i) { return color(i); })
                 .attr('stroke', '#ffffff')
@@ -331,11 +333,11 @@ export default class PieChart extends Chart {
         var self = this;
         
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options, self.body, self.colorRange, self.dataTarget);
+        var legend  = new Legend(self.options, self.body, self.dataTarget);
 
         // Draw legend
         legend.draw();
-        legend.updateInteraction(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+        legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
         // Update interaction of this own chart
         self.updateInteraction();
