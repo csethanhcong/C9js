@@ -9,7 +9,7 @@ export default class TimeLine extends Chart {
         var self = this;
 
         var config = {
-            rowSeparator: null,
+            rowSeparator: "rgb(154, 154, 154)",
             backgroundColor: null,
             starting: 0,
             ending: 0,
@@ -17,7 +17,8 @@ export default class TimeLine extends Chart {
             // rotateTicks: false,
             itemHeight: 20,
             itemMargin: 5,
-            labelMargin: 20
+            labelMargin: 20,
+            striped: null
         };
 
         self.body.type        = "timeline";
@@ -30,6 +31,7 @@ export default class TimeLine extends Chart {
         self._itemMargin        = options.itemMargin || config.itemMargin;
         self._labelMargin       = options.labelMargin || config.labelMargin;
         self._maxStack          = 1;
+        self._striped           = options.striped || config.striped;
 
         self.initTimelineConfig();
     }
@@ -71,6 +73,10 @@ export default class TimeLine extends Chart {
 
     get maxStack() {
         return this._maxStack;
+    }
+
+    get striped() {
+        return this._striped;
     }
     /*=====  End of Getter  ======*/
 
@@ -130,6 +136,12 @@ export default class TimeLine extends Chart {
             this._maxStack = newMaxStack;
         }
     }
+
+    set striped(newStriped) {
+        if (newStriped) {
+            this._striped = newStriped;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -180,6 +192,17 @@ export default class TimeLine extends Chart {
         self.maxStack = maxStack;
         var scale = width / (self.ending - self.starting);
 
+        //draw border
+        self.body.append("rect")
+            .attr("class", "timeline-border-bar")
+            .attr("x", 0)
+            .attr("width", width)
+            .attr("y", 0 - self.itemMargin / 2)
+            .attr("height", (self.itemHeight + self.itemMargin) * self.data.length)
+            .attr("stroke", "rgb(154, 154, 154)")
+            .attr("stroke-width", 4);
+
+
         self.data.forEach( function(datum, index){
             var data = datum.times;
             //draw background
@@ -196,10 +219,23 @@ export default class TimeLine extends Chart {
                     .attr("fill", self.backgroundColor instanceof Function ? self.backgroundColor(index) : self.backgroundColor);
             }
 
+            if (self.striped) { 
+                var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
+                self.body.selectAll("g")
+                    .data(data).enter()
+                    .insert("rect")
+                    .attr("class", "timeline-background-bar")
+                    .attr("x", 0)
+                    .attr("width", width)
+                    .attr("y", barYAxis - self.itemMargin / 2)
+                    .attr("height", self.itemHeight + self.itemMargin)
+                    .attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
+            }
+
             //draw item
             self.body.selectAll("g")
                 .data(data).enter()
-                .append(function(d, i) {
+                .append(function (d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, "endingTime" in d? "rect" : "circle");
                 })
                 .attr("x", getXPos)
@@ -207,7 +243,7 @@ export default class TimeLine extends Chart {
                 .attr("width", function (d, i) {
                     return (d.endingTime - d.startingTime) * scale;
                 })
-                .attr("cy", function(d, i) {
+                .attr("cy", function (d, i) {
                     return getStackPosition(d, i) + self.itemHeight / 2;
                 })
                 .attr("cx", getXPos)
@@ -233,7 +269,7 @@ export default class TimeLine extends Chart {
                   .attr("x2", width)
                   .attr("y1", lineYAxis)
                   .attr("y2", lineYAxis)
-                  .attr("stroke-width", 1)
+                  .attr("stroke-width", 4)
                   .attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
             }
 

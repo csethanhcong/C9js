@@ -3777,7 +3777,7 @@ var C9 =
 	        var self = _this;
 
 	        var config = {
-	            rowSeparator: null,
+	            rowSeparator: "rgb(154, 154, 154)",
 	            backgroundColor: null,
 	            starting: 0,
 	            ending: 0,
@@ -3785,7 +3785,8 @@ var C9 =
 	            // rotateTicks: false,
 	            itemHeight: 20,
 	            itemMargin: 5,
-	            labelMargin: 20
+	            labelMargin: 20,
+	            striped: null
 	        };
 
 	        self.body.type = "timeline";
@@ -3798,6 +3799,7 @@ var C9 =
 	        self._itemMargin = options.itemMargin || config.itemMargin;
 	        self._labelMargin = options.labelMargin || config.labelMargin;
 	        self._maxStack = 1;
+	        self._striped = options.striped || config.striped;
 
 	        self.initTimelineConfig();
 	        return _this;
@@ -3857,12 +3859,20 @@ var C9 =
 	            self.maxStack = maxStack;
 	            var scale = width / (self.ending - self.starting);
 
+	            //draw border
+	            self.body.append("rect").attr("class", "timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.itemMargin / 2).attr("height", (self.itemHeight + self.itemMargin) * self.data.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 4);
+
 	            self.data.forEach(function (datum, index) {
 	                var data = datum.times;
 	                //draw background
 	                if (self.backgroundColor) {
 	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
 	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis).attr("height", self.itemHeight).attr("fill", self.backgroundColor instanceof Function ? self.backgroundColor(index) : self.backgroundColor);
+	                }
+
+	                if (self.striped) {
+	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
+	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
 	                }
 
 	                //draw item
@@ -3881,7 +3891,7 @@ var C9 =
 
 	                if (self.rowSeparator && index < self.maxStack - 1) {
 	                    var lineYAxis = self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 1).attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
+	                    self.body.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 4).attr("stroke", self.rowSeparator instanceof Function ? self.rowSeparator(index) : self.rowSeparator);
 	                }
 
 	                //draw the label left side item
@@ -4023,6 +4033,16 @@ var C9 =
 	        set: function set(newMaxStack) {
 	            if (newMaxStack) {
 	                this._maxStack = newMaxStack;
+	            }
+	        }
+	    }, {
+	        key: 'striped',
+	        get: function get() {
+	            return this._striped;
+	        },
+	        set: function set(newStriped) {
+	            if (newStriped) {
+	                this._striped = newStriped;
 	            }
 	        }
 	    }]);
