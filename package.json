@@ -1,10 +1,38 @@
 {
-  "name": "starter-node-angular",
-  "main": "server.js",
+  "name": "c9",
+  "main": "src/index.js",
   "dependencies": {
     "body-parser": "~1.4.2",
     "express": "~4.5.1",
     "method-override": "~2.0.2",
     "mongoose": "~3.8.0"
-  }
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "api",
+    "js",
+    "library",
+    "map",
+    "chart",
+    "d3",
+    "openlayer",
+    "leaflet",
+    "interactive",
+    "data"
+  ],
+  "description": "A JavaScript library, used for interactive map-chart generator based on various types of data.",
+  "version": "1.0.0",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csethanhcong/C9js.git"
+  },
+  "author": "Cong Pham<cse.thanhcong@gmail.com> (http://c9js.me/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/csethanhcong/C9js/issues"
+  },
+  "homepage": "https://github.com/csethanhcong/C9js#readme"
 }
