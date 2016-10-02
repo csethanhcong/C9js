@@ -1,1 +1,0 @@
-In this example, the timeline's position and size can be modified using the mouse.

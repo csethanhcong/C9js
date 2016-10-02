@@ -1,1 +1,0 @@
-In this example we display a pie graph.

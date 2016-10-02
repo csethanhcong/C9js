@@ -1,1 +1,0 @@
-﻿SELECT bdnyme_communes.nom_com, bdnyme_departements.nom_chf_l, astext(transform(bdnyme_communes.the_geom,4326)) FROM bdnyme_communes, bdnyme_departements WHERE bdnyme_communes.nom_com ILIKE 'Bayonne' AND bdnyme_departements.code_dept = bdnyme_communes.depart;

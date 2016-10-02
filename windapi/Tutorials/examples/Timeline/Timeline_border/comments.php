@@ -1,7 +1,0 @@
-Within this example, we display a Timeline composed by two bands. The years band and the months band.<br><br>
-var t = new <a href="<?php echo $documentation_path;?>/WIND.html" target="_blank">WIND</a>.<a href="<?php echo $documentation_path;?>/WIND.Timeline.html" target="_blank">Timeline</a>('<span id="param">timeline</span>', <span id="param">{'<span id="options">header</span>':true,'<span id="options">color</span>':'red','<span id="options">border</span>':'yellow 8px inset','<span id="options">width</span>':800,'<span id="options">height</span>':600,'<span id="options">left</span>':100,'<span id="options">top</span>':100}</span>)<br><br>
-'<span id="param">timeline</span>' is the identifier of the timeline.<br>
-The options can be in any order.<br><br>
-'<span id="options">header</span>': true, '<span id="options">color</span>': 'red' : Here we indicate that we add a header to the timeline with a red color.<br>
-We specify the <span id="options">height</span> ( 600px ), the <span id="options">width</span> ( 800px ), the <span id="options">top</span> ( 100px ) and the <span id="options">left</span> ( 100px ).<br>
-'<span id="options">border</span>': 'yellow 8px inset': Here we customize the border's properties ( the color, the width and the style ).

@@ -1,1 +1,0 @@
-console.log("You can remove the script dependence.js");

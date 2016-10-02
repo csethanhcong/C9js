@@ -1,1 +1,0 @@
-The purpose of this example is to change the size and the position of the timeline.

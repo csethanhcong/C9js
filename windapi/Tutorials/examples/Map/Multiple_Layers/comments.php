@@ -1,3 +1,0 @@
-In this example, we display the world's map (<span id="options">longitude</span>: 0 and <span id="options">latitude</span>: 0) with a null <span id="options">zoom</span> level(0).<br><br>
-var m = new <a href="<?php echo $documentation_path;?>/WIND.html" target="_blank">WIND</a>.<a href="<?php echo $documentation_path;?>/WIND.Map.html" target="_blank">Map</a>('<span id="param">map</span>', {'<span id="options">longitude</span>':0, '<span id="options">latitude</span>': 0, '<span id="options">zoom</span>': 0,'<span id="options">top</span>': 50})<br><br>
-Then we add different layers using the <a href="<?php echo $documentation_path;?>/WIND.Map.html#addLayers" target="_blank">addLayers()</a> method who takes an array of layers names.

@@ -1,1 +1,0 @@
-The purpose of this example is to show how make an interaction using WIND API.

@@ -1,1 +1,0 @@
-In this example we add an "interval" annotation of "World Cup" to the timeline. An interval is a time event where the starting and ending date are different.

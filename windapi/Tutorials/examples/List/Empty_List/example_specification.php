@@ -1,1 +1,0 @@
-In this example we diplay an empty list without items.

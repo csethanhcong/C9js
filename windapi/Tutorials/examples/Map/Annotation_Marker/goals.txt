@@ -1,1 +1,0 @@
-This example demonstrate how we can annotate a point on the map with a marker.

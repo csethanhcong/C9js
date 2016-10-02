@@ -1,1 +1,0 @@
-This example demonstrate how we can create an interval annotation in the timeline.

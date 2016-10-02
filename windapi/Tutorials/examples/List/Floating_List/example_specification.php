@@ -1,1 +1,0 @@
-In this example we diplay a list component. We can change tis size and position using the mouse.

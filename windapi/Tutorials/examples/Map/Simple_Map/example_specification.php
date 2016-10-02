@@ -1,1 +1,0 @@
-This example consiste of a simple map with a "Google Street" layer (default). The (+) and (-) buttons are for zooming in and out.

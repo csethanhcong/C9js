@@ -1,1 +1,0 @@
-In this example we diplay 2 images.

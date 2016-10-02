@@ -1,1 +1,0 @@
-var carte = new WIND.Map('mymap', {'top': 1200, 'left': 100, 'width': 600, 'height': 400, 'name': "carte", 'type': 'Google Street', 'longitude': -0.9331, 'latitude': 45.9236, 'zoom': 5, 'draggable': false, 'resizable' : false,'color': '#FF9900', 'border': '#FF9900 2px solid', 'header': false, 'removable': false, 'configurable': false,'zoomable':true});

@@ -1,1 +1,0 @@
-In this example we diplay the effect of blur on an image.

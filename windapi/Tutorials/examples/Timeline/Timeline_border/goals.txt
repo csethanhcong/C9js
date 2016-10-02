@@ -1,1 +1,0 @@
-The purpose of this example is to change the style of the header and the border.

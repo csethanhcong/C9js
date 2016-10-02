@@ -1,1 +1,0 @@
-The purpose of this example is to demonstrate how to draw a Pie Graph using WIND API.

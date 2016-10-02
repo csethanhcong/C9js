@@ -1,1 +1,0 @@
-The purpose of this example is to demonstrate how to display a text component using WIND API and add contents.

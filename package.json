@@ -1,14 +1,12 @@
 {
-  "name": "c9",
+  "name": "C9js",
+  "version": "0.0.0-semantically-released",
   "main": "src/index.js",
-  "dependencies": {
-    "body-parser": "~1.4.2",
-    "express": "~4.5.1",
-    "method-override": "~2.0.2",
-    "mongoose": "~3.8.0"
-  },
+  "dependencies": {},
   "scripts": {
-    "start": "node server.js"
+    "commit": "git-cz",
+    "test": "mocha test/index.test.js -w",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "keywords": [
     "api",
@@ -23,11 +21,19 @@
     "data"
   ],
   "description": "A JavaScript library, used for interactive map-chart generator based on various types of data.",
-  "version": "1.0.0",
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "3.5.0",
+    "commitizen": "2.8.6",
+    "cz-conventional-changelog": "1.2.0",
+    "mocha": "3.1.0",
+    "semantic-release": "^4.3.5"
+  },
+  "czConfig": {
+    "path": "/node_modules/cz-conventional-changelog"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/csethanhcong/C9js.git"
+    "url": "https://github.com/csethanhcong/C9js.git"
   },
   "author": "Cong Pham<cse.thanhcong@gmail.com> (http://c9js.me/)",
   "license": "MIT",

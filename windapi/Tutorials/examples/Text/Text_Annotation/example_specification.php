@@ -1,1 +1,0 @@
-In this example we display a text component with contents then w create a blue annotation for the word "l'Adour".

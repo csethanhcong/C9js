@@ -1,1 +1,0 @@
-This example shows an interaction composed of a multiple events on various annotations and a hide reaction.

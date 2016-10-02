@@ -1,1 +1,0 @@
-In this example we diplay a list with items in different groupes and change its border's style.

@@ -1,1 +1,0 @@
-This example shows how we can select multiple vector layers from all vector layers where each have a different interaction.

@@ -1,1 +1,0 @@
-This example shows an interaction between two components, a timeline and a text.

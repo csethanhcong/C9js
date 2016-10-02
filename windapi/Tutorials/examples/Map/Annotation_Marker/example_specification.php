@@ -1,1 +1,0 @@
-In this example we add a marker annotation of "Anglet's Mairie" to the map.

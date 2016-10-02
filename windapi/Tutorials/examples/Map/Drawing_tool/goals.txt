@@ -1,1 +1,0 @@
-This example demonstrate how we can draw multiple forms on the same map.

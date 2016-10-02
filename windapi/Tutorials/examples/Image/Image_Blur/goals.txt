@@ -1,1 +1,0 @@
-The purpose of this example is to change the blur of an Image using WIND API.

@@ -1,1 +1,0 @@
-In this example we diplay a list component. We add multiple items and we create one annotation on the items "Anglet".
