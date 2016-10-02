@@ -28,8 +28,10 @@
     "mocha": "3.1.0",
     "semantic-release": "^4.3.5"
   },
-  "czConfig": {
-    "path": "/node_modules/cz-conventional-changelog"
+  "config": {
+      "commitizen": {
+          "path": "/node_modules/cz-conventional-changelog"
+      }
   },
   "repository": {
     "type": "git",
