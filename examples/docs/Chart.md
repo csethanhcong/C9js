@@ -115,3 +115,5 @@ Bar Chart (Group of bar chart)
 			position: center
 		}
 	}
+
+8. Add callback to all interactions

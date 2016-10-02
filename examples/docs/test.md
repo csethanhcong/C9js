@@ -11,3 +11,12 @@
 - Or:
 	* Install: 	npm install -g node-gyp
 				npm install --global --production windows-build-tools
+
+
+
+- "test:single": "istanbul cover -x *.test.js node_modules/mocha/bin/_mocha -- -R spec test/index.test.js",
+
+- ,
+    "ghooks": {
+      "pre-commit": "npm run test:single && npm run check-coverage"
+    }

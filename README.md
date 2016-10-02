@@ -1,12 +1,10 @@
-# MEAN Stack Single Page Application Starter
+# C9js
 
-This is a repo for a starter appliation for a Single Page MEAN Stack application. Just download and install and you have a good foundation for building application. 
-
-## Installation
-1. Download the repository
-2. Install npm modules: `npm install`
-3. Install bower dependencies `bower install`
-4. Start up the server: `node server.js`
-5. View in browser at http://localhost:[your_port]
-
-Use this starter kit to build any MEAN stack application you like.
+[![C9js](https://img.shields.io/badge/just-awesome-brightgreen.svg)]()
+[![travis build](https://img.shields.io/travis/csethanhcong/C9js.svg?style=flate-quare)](https://travis-ci.org/csethanhcong/C9js)
+[![codecov](https://img.shields.io/codecov/c/github/csethanhcong/C9js.svg?style=flate-quare)](https://codecov.io/gh/csethanhcong/C9js)
+[![npm](https://img.shields.io/npm/v/C9js.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/C9js)
+[![license](https://img.shields.io/github/license/mashape/apistatus.svg?maxAge=2592000?style=flat-square)]()
+[![Bower](https://img.shields.io/bower/v/bootstrap.svg?maxAge=2592000?style=flat-square)]()
+[![GitHub forks](https://img.shields.io/github/forks/badges/shields.svg?style=social&label=Fork&maxAge=2592000?style=flat-square)]()
+[![GitHub stars](https://img.shields.io/github/stars/badges/shields.svg?style=social&label=Star&maxAge=2592000?style=flat-square)]()

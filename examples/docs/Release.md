@@ -26,6 +26,8 @@
 
 ### ghooks: Auto-run tests before commit
 
+### istanbul: Code coverage (statements, functions, branches, lines)
+
 - Run: 
 	npm run commit
 	git push
