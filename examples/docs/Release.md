@@ -20,10 +20,14 @@
 	- *y*: minor changes, e.g. update some functionalities
 	- *z*: fix bugs
 
-### Travis: Manage versions and auto-run script before & after publish
+### Travis: Manage versions and auto-run script before & after publish, auto-test
 
 ### Commitizen: Show changelog over commits, control issues, format messages, everything about commit/release phases
 
-- Run: npm run commit
+### ghooks: Auto-run tests before commit
+
+- Run: 
+	npm run commit
+	git push
 
 
