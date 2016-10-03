@@ -14,9 +14,11 @@
 
 
 
-- "test:single": "istanbul cover -x *.test.js node_modules/mocha/bin/_mocha -- -R spec test/index.test.js",
+- "test:single": "nyc cover -x *.test.js node_modules/mocha/bin/_mocha -- -R spec test/index.test.js --compilers js:babel-register",
 
 - ,
     "ghooks": {
-      "pre-commit": "npm run test:single && npm run check-coverage"
+      "pre-commit": "npm run cover && npm run check-coverage"
     }
+
+- Unit Test supports ES6 with NYC code coverage	

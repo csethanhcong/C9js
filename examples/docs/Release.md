@@ -32,4 +32,6 @@
 	npm run commit
 	git push
 
+- When commit to Git, don't push dist/ folder, only push when release
+
 
