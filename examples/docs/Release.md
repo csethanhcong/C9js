@@ -34,4 +34,12 @@
 
 - When commit to Git, don't push dist/ folder, only push when release
 
+# Development Process
+
+* build:es6 : Compile ES6 to ES5
+* build:umd : Convert to UMD (Universal Module Definition) that supports all current version of browsers
+* build:umd.min : Minify/Uglify source code
+
+> Run: `npm run build` to run all above commands parallel
+
 
