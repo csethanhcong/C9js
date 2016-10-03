@@ -1,23 +1,27 @@
 import Chart from './C9.Chart';
+
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import Table from './utils/C9.Table';
+
 import DataAdapter from '../helper/C9.DataAdapter';
 
 export default class PieChart extends Chart {
     constructor(options) {
         super(options);
+
         var self = this;
+
         var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
         var config = {
             radius: R,
-            // innerRadius: R > 80 ? R - 80 : R - 40,
-            showText: true // show/hide text on middle or each pie
+            showText: true
         };
 
         self._radius    = options.radius || config.radius;
-        // self._innerRadius    = options.innerRadius || config.innerRadius;
         self._showText  = options.showText || config.showText;
+
         self.body.type  = 'pie';
 
         var dataOption          = self.dataOption;
@@ -35,10 +39,6 @@ export default class PieChart extends Chart {
     get radius() {
         return this._radius;
     }
-
-    // get innerRadius() {
-    //     return this._innerRadius;
-    // }
 
     get showText() {
         return this._showText;
@@ -81,12 +81,6 @@ export default class PieChart extends Chart {
             this._radius = newradius;
         }
     }
-
-    // set innerRadius(newInnerRadius) {
-    //     if (newInnerRadius) {
-    //         this._innerRadius = newInnerRadius;
-    //     }
-    // }
 
     set showText(newShowText) {
         if (newShowText) {
@@ -334,10 +328,14 @@ export default class PieChart extends Chart {
         
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options, self.body, self.dataTarget);
+        var table   = new Table(self.options.table, self.body, self.dataTarget);
 
         // Draw legend
         legend.draw();
         legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+        // Draw table
+        table.draw();
 
         // Update interaction of this own chart
         self.updateInteraction();

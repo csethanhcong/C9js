@@ -43,6 +43,24 @@ export default class Chart {
             // tooltip - show when mouseover on each data
             tooltipShow: true,
             tooltipPosition: undefined,
+
+            // table 
+            table: {
+                container: "body",
+                show: true,
+                headings: ["Name", "Value"],
+                style: "default", // "strip", "border"
+                serial: true,
+                hover: {
+                    enable: true,
+                    callback: null
+                },
+                click: {
+                    enable: true,
+                    callback: null
+                }
+            },
+
             // color range
             colorRange: "category20",
             // data
