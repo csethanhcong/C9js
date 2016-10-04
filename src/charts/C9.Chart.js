@@ -73,7 +73,8 @@ export default class Chart {
                 },
                 keys: {
                     name: "name",
-                    value: "value"
+                    value: "value",
+                    time: "time"
                 },
                 groups: [],
                 stacks: [],

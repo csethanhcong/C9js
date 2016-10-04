@@ -72,11 +72,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(12);
+	var _C9 = __webpack_require__(13);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(13);
+	var _C11 = __webpack_require__(14);
 	
 	var _C12 = _interopRequireDefault(_C11);
 	
@@ -648,7 +648,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                },
 	                keys: {
 	                    name: "name",
-	                    value: "value"
+	                    value: "value",
+	                    time: "time"
 	                },
 	                groups: [],
 	                stacks: []
@@ -1500,6 +1501,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    self.data = self.data[self.data.reduce(function (p, c, i, a) {
 	                        return a[p].stack.length > c.stack.length ? p : i;
 	                    }, 0)].stack;
+	                } else if (self._body.type == "line") {
+	                    self.data = d3.nest().key(function (d) {
+	                        return d.name;
+	                    }).entries(self.data);
+	                    self.data.forEach(function (d) {
+	                        d.color = d.values[0].color;
+	                    });
 	                }
 	
 	                // Legend will be appended in main SVG container
@@ -1524,7 +1532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
-	                    return self._body.type == "bar" ? d.group : d.name;
+	                    return self._body.type == "bar" ? d.group : d.name || d.key;
 	                });
 	
 	                // if (self._legendBox && legendDomain.length > 0) {
@@ -2016,7 +2024,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // ALL OPTIONS AVAILABLE IN DATA CONFIG
 	            keys: {
 	                name: "name",
-	                value: "value"
+	                value: "value",
+	                time: "time"
 	            },
 	            groups: [],
 	            stacks: [],
@@ -2133,7 +2142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	
 	                case "line":
-	
+	                    return self.getDataTargetForLineChart();
 	                    break;
 	
 	                case "pie":
@@ -2361,11 +2370,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self.dataSource.forEach(function (data, index) {
 	                var _data = {
 	                    "color": color(index),
-	                    "name": _C2.default.get(self.keys.name, data),
-	                    "value": _C2.default.get(self.keys.value, data),
 	                    "data-ref": _C2.default.guid(),
-	                    "enable": true
+	                    "enable": true,
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": _C2.default.get(self.keys.value, data)
 	                };
+	
 	                self.dataTarget.push(_data);
 	            });
 	
@@ -2426,7 +2436,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	            return self.dataTarget;
 	        }
+	    }, {
+	        key: "getDataTargetForLineChart",
+	        value: function getDataTargetForLineChart() {
+	            var self = this;
 	
+	            var color = self.colorRange;
+	            self.dataSource.forEach(function (data, index) {
+	                var _data = {
+	                    "color": color(index),
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "value": _C2.default.get(self.keys.value, data),
+	                    "time": _C2.default.get(self.keys.time, data),
+	                    "data-ref": _C2.default.guid(),
+	                    "enable": true
+	                };
+	                self.dataTarget.push(_data);
+	            });
+	
+	            return self.dataTarget;
+	        }
 	        /*=====  End of Normalize Data For Charts  ======*/
 	
 	        /*=============================
@@ -3019,6 +3048,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
+	var _C9 = __webpack_require__(8);
+	
+	var _C10 = _interopRequireDefault(_C9);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3064,6 +3097,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._x = x;
 	        self._y = y;
 	
+	        var dataOption = self.dataOption;
+	        dataOption.colorRange = self.colorRange;
+	
+	        var da = new _C10.default(dataOption);
+	        self.dataTarget = da.getDataTarget("line");
+	
 	        self.updateConfig();
 	
 	        return _this;
@@ -3091,33 +3130,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	                y = self._y;
 	
 	            self._dataGroup = d3.nest().key(function (d) {
-	                return d.Client;
-	            }).entries(self.data);
+	                return d.name;
+	            }).entries(self.dataTarget);
 	
 	            var dataGroup = self._dataGroup;
 	
-	            x.domain([d3.min(self.data, function (d) {
-	                return d.year;
-	            }), d3.max(self.data, function (d) {
-	                return d.year;
+	            x.domain([d3.min(self.dataTarget, function (d) {
+	                return d.time;
+	            }), d3.max(self.dataTarget, function (d) {
+	                return d.time;
 	            })]);
-	            y.domain([d3.min(self.data, function (d) {
-	                return d.sale;
-	            }), d3.max(self.data, function (d) {
-	                return d.sale;
+	            y.domain([d3.min(self.dataTarget, function (d) {
+	                return d.value;
+	            }), d3.max(self.dataTarget, function (d) {
+	                return d.value;
 	            })]);
 	
 	            self.xAxis = d3.svg.axis().scale(x);
 	            self.yAxis = d3.svg.axis().scale(y).orient("left");
 	
 	            var lineGen = d3.svg.line().x(function (d) {
-	                return x(d.year);
+	                return x(d.time);
 	            }).y(function (d) {
-	                return y(d.sale);
+	                return y(d.value);
 	            }).interpolate(self.interpolate);
 	
 	            var _body = self.body,
-	                _colorRange = self.colorRange,
 	                _pointShow = self.pointShow,
 	                _pointRadius = self.pointRadius,
 	                _pointFill = self.pointFill,
@@ -3125,13 +3163,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _pointOpacity = self.pointOpacity;
 	
 	            dataGroup.forEach(function (d, i) {
-	                _body.append('path').attr('d', lineGen(d.values)).attr('stroke', _colorRange(i)).attr('stroke-width', 2).attr('id', 'line_' + d.key).attr('fill', 'none');
+	                _body.append('path').attr('d', lineGen(d.values)).attr('stroke', d.values[0].color).attr('stroke-width', 2).attr('data-ref', 'c9-' + d.key).attr('fill', 'none');
 	
 	                if (_pointShow) {
 	                    _body.selectAll("dot").data(d.values).enter().append("circle").attr('class', 'c9-chart-line c9-circle-custom').attr("r", _pointRadius).attr("cx", function (_d) {
-	                        return x(_d.year);
+	                        return x(_d.time);
 	                    }).attr("cy", function (_d) {
-	                        return y(_d.sale);
+	                        return y(_d.value);
+	                    }).attr("data-ref", function (d) {
+	                        return d["data-ref"];
 	                    }).style("fill", _pointFill).style("stroke", _pointStroke).style("opacity", _pointOpacity);
 	                }
 	            });
@@ -3146,9 +3186,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function draw() {
 	            var self = this;
 	
-	            var axis = new _C4.default(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.xAxis, self.yAxis);
+	            // var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.xAxis, self.yAxis);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.data);
+	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 	
 	            // Draw legend
 	            legend.draw();
@@ -3199,10 +3239,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
 	
 	                selector.on("mouseover", function (d) {
-	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.year) + "," + self.y(d.sale) + ")");
+	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
 	
-	                    text_1.text('Name: ' + d.year);
-	                    text_2.text('Value: ' + d.sale);
+	                    text_1.text('Name: ' + d.time);
+	                    text_2.text('Value: ' + d.value);
 	                }).on("mouseout", function (d) {
 	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style("display", 'none');
 	                });
@@ -3419,7 +3459,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(14);
+	var _C9 = __webpack_require__(12);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
@@ -3789,6 +3829,213 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	var _C = __webpack_require__(3);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Table = function () {
+	    function Table(options, body, data) {
+	        _classCallCheck(this, Table);
+	
+	        var config = {
+	            container: "body",
+	            show: true,
+	            headings: ["Name", "Value"],
+	            style: "default", // "strip", "border"
+	            serial: true,
+	            hover: {
+	                enable: true,
+	                callback: null
+	            },
+	            click: {
+	                enable: true,
+	                callback: null
+	            }
+	        };
+	
+	        var self = this;
+	
+	        self._container = options.container || config.container;
+	        self._show = options.show ? options.show : config.show;
+	        self._headings = options.headings || config.headings;
+	        self._style = options.style || config.style;
+	        self._serial = options.serial || config.serial;
+	        self._hover = _C2.default.merge(options.hover, config.hover);
+	        self._click = _C2.default.merge(options.click, config.click);
+	
+	        self._data = data;
+	        self._body = body;
+	    }
+	
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+	
+	
+	    _createClass(Table, [{
+	        key: 'draw',
+	
+	
+	        /*=====  End of Setter  ======*/
+	
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function draw() {
+	            var self = this;
+	
+	            if (self.show) {
+	
+	                var table = d3.select(self.container).append("table");
+	                var thead = table.append("thead");
+	                var tbody = table.append("tbody");
+	
+	                // Append the headers
+	                thead.append("tr").selectAll("th").append("th").text("No").data(self.headings).enter().append("th").text(function (d) {
+	                    return d;
+	                });
+	
+	                // Bind each statistic to a line of the table
+	                // Show serial no.
+	                var rows = tbody.selectAll("tr").data(self.data).enter().append("tr");
+	
+	                rows.append("td").text(function (d, i) {
+	                    return i + 1;
+	                });
+	
+	                // Add statistic names to each row
+	                rows.append("td").text(function (d) {
+	                    return d.name;
+	                });
+	
+	                // Add values to each row
+	                rows.append("td").text(function (d) {
+	                    return d.value;
+	                });
+	            }
+	        }
+	        /*=====  End of Main Functions  ======*/
+	
+	    }, {
+	        key: 'data',
+	        get: function get() {
+	            return this._data;
+	        },
+	
+	
+	        /*=====  End of Getter  ======*/
+	
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._data = arg;
+	            }
+	        }
+	    }, {
+	        key: 'body',
+	        get: function get() {
+	            return this._body;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._body = arg;
+	            }
+	        }
+	    }, {
+	        key: 'container',
+	        get: function get() {
+	            return this._container;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._container = arg;
+	            }
+	        }
+	    }, {
+	        key: 'show',
+	        get: function get() {
+	            return this._show;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._show = arg;
+	            }
+	        }
+	    }, {
+	        key: 'headings',
+	        get: function get() {
+	            return this._headings;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._headings = arg;
+	            }
+	        }
+	    }, {
+	        key: 'style',
+	        get: function get() {
+	            return this._style;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._style = arg;
+	            }
+	        }
+	    }, {
+	        key: 'serial',
+	        get: function get() {
+	            return this._serial;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._serial = arg;
+	            }
+	        }
+	    }, {
+	        key: 'hover',
+	        get: function get() {
+	            return this._hover;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._hover = arg;
+	            }
+	        }
+	    }, {
+	        key: 'click',
+	        get: function get() {
+	            return this._click;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._click = arg;
+	            }
+	        }
+	    }]);
+	
+	    return Table;
+	}();
+	
+	exports.default = Table;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
 	var _C = __webpack_require__(2);
 	
 	var _C2 = _interopRequireDefault(_C);
@@ -4120,7 +4367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = TimeLine;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -4187,7 +4434,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self.c9Layers = [];
 	            //c9Markers contain all markers
 	            self.c9Markers = new ol.source.Vector({});
-	
+	            //c9Objects contain all polygons, lines
+	            self.c9Objs = new ol.source.Vector({});
 	            //init all thing relating to user's data
 	
 	            //layer
@@ -4195,6 +4443,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            //quick markers
 	            self.initMarker();
+	
+	            //object
+	            self.initObj();
 	        }
 	    }, {
 	        key: "draw",
@@ -4254,25 +4505,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	
 	        /**
-	         * Create marker style
-	         * @param  {String} image source
-	         * @param  {Number} scale
-	         * @return {ol.style.Style} return marker style
-	         */
-	
-	    }, {
-	        key: "createMarkerStyle",
-	        value: function createMarkerStyle(imgSrc, scale) {
-	            return new ol.style.Style({
-	                image: new ol.style.Icon({
-	                    anchor: [0.5, 1], //middle-width and bottom-height of image
-	                    src: imgSrc,
-	                    scale: scale
-	                })
-	            });
-	        }
-	
-	        /**
 	         * Create marker
 	         * @param  {Number} latitude of marker
 	         * @param  {Number} longitude of marker
@@ -4292,7 +4524,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	                type: 'c9GeoMarker',
 	                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
 	            });
-	            marker.setStyle(self.createMarkerStyle(imgSrc, scale));
+	
+	            /**
+	             * Create marker style
+	             * @param  {String} image source
+	             * @param  {Number} scale
+	             * @return {ol.style.Style} return marker style
+	             */
+	            var createMarkerStyle = function createMarkerStyle(imgSrc, scale) {
+	                return new ol.style.Style({
+	                    image: new ol.style.Icon({
+	                        anchor: [0.5, 1], //middle-width and bottom-height of image
+	                        src: imgSrc,
+	                        scale: scale
+	                    })
+	                });
+	            };
+	
+	            marker.setStyle(createMarkerStyle(imgSrc, scale));
 	
 	            //add this marker to marker list (c9Markers)
 	            self.c9Markers.addFeature(marker);
@@ -4520,6 +4769,76 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            });
 	        }
+	
+	        /**
+	         * obj first set up
+	         */
+	
+	    }, {
+	        key: "initObj",
+	        value: function initObj() {
+	            var self = this;
+	
+	            //add layer Vector to layer list (c9Layers)
+	            self.c9Layers.push(new ol.layer.Vector({
+	                source: self.c9Objs
+	            }));
+	        }
+	
+	        /**
+	         * [createObj description]
+	         * @param  {[type]} type        [description]
+	         * @param  {[type]} data        [description]
+	         * @param  {[type]} strokeWidth [description]
+	         * @param  {[type]} strokeColor [description]
+	         * @param  {[type]} fillColor   [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: "createObj",
+	        value: function createObj(type, data, strokeWidth, strokeColor, fillColor) {
+	            var self = this;
+	
+	            if (type != "polygon" && type != "line") throw "No support";
+	
+	            if (data == self.c9Markers) {
+	                data = [];
+	                self.c9Markers.getFeatures().forEach(function (d) {
+	                    data.push(ol.proj.transform(d.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
+	                });
+	            }
+	
+	            var obj = new ol.Feature({
+	                geometry: type == "polygon" ? new ol.geom.Polygon([data]) : new ol.geom.LineString(data, 'XY')
+	            });
+	
+	            obj.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+	
+	            /**
+	             * Create obj style
+	             * @param  {Number} stroke width
+	             * @param  {String} stroke color
+	             * @param  {String} fill color
+	             * @return {ol.style.Style} return obj style
+	             */
+	            var createObjStyle = function createObjStyle(strokeWidth, strokeColor, fillColor) {
+	                return new ol.style.Style({
+	                    stroke: new ol.style.Stroke({
+	                        width: strokeWidth || 2,
+	                        color: strokeColor || "steelblue"
+	                    }),
+	                    fill: new ol.style.Fill({
+	                        color: fillColor || "rgba(0, 0, 255, 0.2)"
+	                    })
+	                });
+	            };
+	
+	            obj.setStyle(createObjStyle(strokeWidth, strokeColor, fillColor));
+	
+	            //add this marker to marker list (c9Markers)
+	            self.c9Objs.addFeature(obj);
+	        }
 	    }, {
 	        key: "id",
 	        get: function get() {
@@ -4603,213 +4922,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	}();
 	
 	exports.default = Map;
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _C = __webpack_require__(3);
-	
-	var _C2 = _interopRequireDefault(_C);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Table = function () {
-	    function Table(options, body, data) {
-	        _classCallCheck(this, Table);
-	
-	        var config = {
-	            container: "body",
-	            show: true,
-	            headings: ["Name", "Value"],
-	            style: "default", // "strip", "border"
-	            serial: true,
-	            hover: {
-	                enable: true,
-	                callback: null
-	            },
-	            click: {
-	                enable: true,
-	                callback: null
-	            }
-	        };
-	
-	        var self = this;
-	
-	        self._container = options.container || config.container;
-	        self._show = options.show ? options.show : config.show;
-	        self._headings = options.headings || config.headings;
-	        self._style = options.style || config.style;
-	        self._serial = options.serial || config.serial;
-	        self._hover = _C2.default.merge(options.hover, config.hover);
-	        self._click = _C2.default.merge(options.click, config.click);
-	
-	        self._data = data;
-	        self._body = body;
-	    }
-	
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-	
-	
-	    _createClass(Table, [{
-	        key: 'draw',
-	
-	
-	        /*=====  End of Setter  ======*/
-	
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	        value: function draw() {
-	            var self = this;
-	
-	            if (self.show) {
-	
-	                var table = d3.select(self.container).append("table");
-	                var thead = table.append("thead");
-	                var tbody = table.append("tbody");
-	
-	                // Append the headers
-	                thead.append("tr").selectAll("th").append("th").text("No").data(self.headings).enter().append("th").text(function (d) {
-	                    return d;
-	                });
-	
-	                // Bind each statistic to a line of the table
-	                // Show serial no.
-	                var rows = tbody.selectAll("tr").data(self.data).enter().append("tr");
-	
-	                rows.append("td").text(function (d, i) {
-	                    return i + 1;
-	                });
-	
-	                // Add statistic names to each row
-	                rows.append("td").text(function (d) {
-	                    return d.name;
-	                });
-	
-	                // Add values to each row
-	                rows.append("td").text(function (d) {
-	                    return d.value;
-	                });
-	            }
-	        }
-	        /*=====  End of Main Functions  ======*/
-	
-	    }, {
-	        key: 'data',
-	        get: function get() {
-	            return this._data;
-	        },
-	
-	
-	        /*=====  End of Getter  ======*/
-	
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	        set: function set(arg) {
-	            if (arg) {
-	                this._data = arg;
-	            }
-	        }
-	    }, {
-	        key: 'body',
-	        get: function get() {
-	            return this._body;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._body = arg;
-	            }
-	        }
-	    }, {
-	        key: 'container',
-	        get: function get() {
-	            return this._container;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._container = arg;
-	            }
-	        }
-	    }, {
-	        key: 'show',
-	        get: function get() {
-	            return this._show;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._show = arg;
-	            }
-	        }
-	    }, {
-	        key: 'headings',
-	        get: function get() {
-	            return this._headings;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._headings = arg;
-	            }
-	        }
-	    }, {
-	        key: 'style',
-	        get: function get() {
-	            return this._style;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._style = arg;
-	            }
-	        }
-	    }, {
-	        key: 'serial',
-	        get: function get() {
-	            return this._serial;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._serial = arg;
-	            }
-	        }
-	    }, {
-	        key: 'hover',
-	        get: function get() {
-	            return this._hover;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._hover = arg;
-	            }
-	        }
-	    }, {
-	        key: 'click',
-	        get: function get() {
-	            return this._click;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._click = arg;
-	            }
-	        }
-	    }]);
-	
-	    return Table;
-	}();
-	
-	exports.default = Table;
 
 /***/ }
 /******/ ])

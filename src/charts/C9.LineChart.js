@@ -2,6 +2,7 @@ import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import DataAdapter from '../helper/C9.DataAdapter';
 
 export default class LineChart extends Chart {
     constructor(options) {
@@ -34,6 +35,12 @@ export default class LineChart extends Chart {
 
         self._x = x;
         self._y = y;
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget("line");
 
         self.updateConfig();
 
@@ -162,20 +169,20 @@ export default class LineChart extends Chart {
             y = self._y;
 
         self._dataGroup = d3.nest()
-                        .key(function(d) { return d.Client; })
-                        .entries(self.data);
+                        .key(function(d) { return d.name; })
+                        .entries(self.dataTarget);
 
         var dataGroup = self._dataGroup;
 
-        x.domain([d3.min(self.data, function(d) {
-                    return d.year;
-                }), d3.max(self.data, function(d) {
-                    return d.year;
+        x.domain([d3.min(self.dataTarget, function(d) {
+                    return d.time;
+                }), d3.max(self.dataTarget, function(d) {
+                    return d.time;
                 })]);
-        y.domain([d3.min(self.data, function(d) {
-                    return d.sale;
-                }), d3.max(self.data, function(d) {
-                    return d.sale;
+        y.domain([d3.min(self.dataTarget, function(d) {
+                    return d.value;
+                }), d3.max(self.dataTarget, function(d) {
+                    return d.value;
                 })]);
 
         self.xAxis = d3.svg.axis()
@@ -185,12 +192,11 @@ export default class LineChart extends Chart {
                         .orient("left");
 
         var lineGen = d3.svg.line()
-                        .x(function(d) { return x(d.year); })
-                        .y(function(d) { return y(d.sale); })
+                        .x(function(d) { return x(d.time); })
+                        .y(function(d) { return y(d.value); })
                         .interpolate(self.interpolate);
 
         var _body        = self.body,
-            _colorRange = self.colorRange,
             _pointShow  = self.pointShow,
             _pointRadius= self.pointRadius,
             _pointFill  = self.pointFill,
@@ -200,9 +206,9 @@ export default class LineChart extends Chart {
         dataGroup.forEach(function(d,i) {
             _body.append('path')
                 .attr('d', lineGen(d.values))
-                .attr('stroke', _colorRange(i))
+                .attr('stroke', d.values[0].color)
                 .attr('stroke-width', 2)
-                .attr('id', 'line_'+d.key)
+                .attr('data-ref', 'c9-'+d.key)
                 .attr('fill', 'none');
 
             if (_pointShow) {
@@ -212,8 +218,9 @@ export default class LineChart extends Chart {
                     .append("circle")
                     .attr('class', 'c9-chart-line c9-circle-custom')
                     .attr("r", _pointRadius)
-                    .attr("cx", function(_d) { return x(_d.year); })
-                    .attr("cy", function(_d) { return y(_d.sale); })
+                    .attr("cx", function(_d) { return x(_d.time); })
+                    .attr("cy", function(_d) { return y(_d.value); })
+                    .attr("data-ref", function (d) { return d["data-ref"]; })
                     .style("fill", _pointFill) 
                     .style("stroke", _pointStroke)
                     .style("opacity", _pointOpacity);
@@ -228,9 +235,9 @@ export default class LineChart extends Chart {
     draw() {
         var self = this;
 
-        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.xAxis, self.yAxis);
+        // var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.xAxis, self.yAxis);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options, self.body, self.colorRange, self.data);
+        var legend  = new Legend(self.options, self.body, self.dataTarget);
 
         // Draw legend
         legend.draw();
@@ -302,10 +309,10 @@ export default class LineChart extends Chart {
                     div.transition()
                         .duration(hoverOptions.onMouseOver.fadeIn)
                         .style("display", 'block')
-                        .attr("transform", "translate(" + self.x(d.year) + "," + self.y(d.sale) + ")");
+                        .attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
 
-                    text_1.text('Name: ' + d.year);
-                    text_2.text('Value: ' + d.sale);
+                    text_1.text('Name: ' + d.time);
+                    text_2.text('Value: ' + d.value);
                 })
                 .on("mouseout", function(d) { 
                     div.transition()

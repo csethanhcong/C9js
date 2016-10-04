@@ -10,7 +10,8 @@ export default class DataAdapter {
             // ALL OPTIONS AVAILABLE IN DATA CONFIG
             keys: {
                 name: "name",
-                value: "value"
+                value: "value",
+                time: "time"
             },
             groups: [],
             stacks: [],
@@ -181,7 +182,7 @@ export default class DataAdapter {
                 break;
 
             case "line":
-                
+                return self.getDataTargetForLineChart();
                 break;
 
             case "pie":
@@ -402,11 +403,12 @@ export default class DataAdapter {
         self.dataSource.forEach(function(data, index) {
             let _data = {
                 "color"     : color(index),
-                "name"      : Helper.get(self.keys.name, data),
-                "value"     : Helper.get(self.keys.value, data),
                 "data-ref"  : Helper.guid(),
                 "enable"    : true,
+                "name"      : Helper.get(self.keys.name, data),
+                "value"     : Helper.get(self.keys.value, data),
             };
+
             self.dataTarget.push(_data);
         });
 
@@ -469,7 +471,25 @@ export default class DataAdapter {
 
     }
     
-    
+    getDataTargetForLineChart() {
+        var self = this;
+
+        let color = self.colorRange;
+        self.dataSource.forEach(function(data, index) {
+            let _data = {
+                "color"     : color(index),
+                "name"      : Helper.get(self.keys.name, data),
+                "value"     : Helper.get(self.keys.value, data),
+                "time"      : Helper.get(self.keys.time, data),
+                "data-ref"  : Helper.guid(),
+                "enable"    : true,
+            };
+            self.dataTarget.push(_data);
+        });
+
+        return self.dataTarget;
+
+    }
     /*=====  End of Normalize Data For Charts  ======*/
     
     /*=============================
