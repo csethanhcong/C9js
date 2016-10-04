@@ -1,0 +1,20 @@
+/*----------  AXIS  ----------*/
+.axis {
+    font: 10px sans-serif;
+  }
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axis text {
+  font-family: Lato;
+  font-size: 13px;
+}
+
+.tick line {
+  opacity: 0.2;
+}
