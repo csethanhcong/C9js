@@ -7,7 +7,7 @@ default class Table {
     constructor(options, body, data) {
         var config = {
             container: "body",
-            show: true,
+            show: false,
             headings: ["Name", "Value"],
             style: "default", // "strip", "border"
             serial: true,

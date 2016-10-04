@@ -12,6 +12,9 @@ import Map from './map/C9.Map';
 import Helper from './helper/C9.Helper';
 import DataAdapter from './helper/C9.DataAdapter';
 
+// CSS Importer
+import styles from './C9.css';
+
 module.exports = {
 	BarChart,
 	DonutChart,

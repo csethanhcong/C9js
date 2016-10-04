@@ -42,4 +42,6 @@
 
 > Run: `npm run build` to run all above commands parallel
 
+### Support CSS Loader
+
 

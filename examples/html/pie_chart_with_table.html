@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Pie Chart</title>
+		<title>Examples - Pie Chart With Table</title>
 		<!-- ICON -->
 		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
@@ -52,10 +52,12 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart With Table</h3>
 		</div>
-		<div id="chart"></div>
-		<div id="table"></div>
+		<div class="row">
+			<div class="col-md-8" id="chart"></div>
+			<div class="col-md-3 col-md-offset-1" id="table"></div>
+		</div>
 	    <script type="text/javascript" charset="utf-8">
 			var data = [
 					{name: "Male", value:	10},
@@ -85,7 +87,8 @@
 			   titleSize:'20px',
 			   legendShow:true,
 			   table: {
-			   	container: "#table"
+			   	container: "#table",
+			   	show: true
 			   }
 			};
 			var pieChart = new C9.PieChart(options);
