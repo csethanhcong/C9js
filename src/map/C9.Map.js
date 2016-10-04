@@ -123,7 +123,8 @@ export default class Map {
         self.c9Layers = [];
         //c9Markers contain all markers
         self.c9Markers = new ol.source.Vector({});
-
+        //c9Objects contain all polygons, lines
+        self.c9Objs = new ol.source.Vector({});
         //init all thing relating to user's data
 
         //layer
@@ -131,6 +132,9 @@ export default class Map {
         
         //quick markers
         self.initMarker();
+
+        //object
+        self.initObj();
     }
 
     draw() {
@@ -182,21 +186,7 @@ export default class Map {
         }
     }
 
-    /**
-     * Create marker style
-     * @param  {String} image source
-     * @param  {Number} scale
-     * @return {ol.style.Style} return marker style
-     */
-    createMarkerStyle(imgSrc, scale){
-        return new ol.style.Style({
-            image: new ol.style.Icon({
-                anchor: [0.5, 1], //middle-width and bottom-height of image
-                src: imgSrc,
-                scale: scale
-            })
-        });
-    }
+    
 
     /**
      * Create marker
@@ -212,7 +202,24 @@ export default class Map {
             type: 'c9GeoMarker',
             geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
         });
-        marker.setStyle(self.createMarkerStyle(imgSrc, scale));
+
+        /**
+         * Create marker style
+         * @param  {String} image source
+         * @param  {Number} scale
+         * @return {ol.style.Style} return marker style
+         */
+        var createMarkerStyle = function(imgSrc, scale){
+            return new ol.style.Style({
+                image: new ol.style.Icon({
+                    anchor: [0.5, 1], //middle-width and bottom-height of image
+                    src: imgSrc,
+                    scale: scale
+                })
+            });
+        }
+
+        marker.setStyle(createMarkerStyle(imgSrc, scale));
 
         //add this marker to marker list (c9Markers)
         self.c9Markers.addFeature(marker);
@@ -427,5 +434,70 @@ export default class Map {
                     break;
             }
         })
+    }
+
+    /**
+     * obj first set up
+     */
+    initObj() {
+        var self = this;
+
+        //add layer Vector to layer list (c9Layers)
+        self.c9Layers.push(new ol.layer.Vector({
+            source: self.c9Objs
+        }));
+    }
+
+    /**
+     * [createObj description]
+     * @param  {[type]} type        [description]
+     * @param  {[type]} data        [description]
+     * @param  {[type]} strokeWidth [description]
+     * @param  {[type]} strokeColor [description]
+     * @param  {[type]} fillColor   [description]
+     * @return {[type]}             [description]
+     */
+    createObj(type, data, strokeWidth, strokeColor, fillColor){
+        var self = this;
+
+        if (type != "polygon" && type != "line")
+            throw "No support";
+
+        if (data == self.c9Markers) {
+            data = [];
+            self.c9Markers.getFeatures().forEach(function (d) {
+                data.push(ol.proj.transform(d.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
+            })
+        }
+
+        var obj = new ol.Feature({
+            geometry: type == "polygon" ? new ol.geom.Polygon([data]) : new ol.geom.LineString(data, 'XY')
+        });
+
+        obj.getGeometry().transform('EPSG:4326', 'EPSG:3857');
+
+        /**
+         * Create obj style
+         * @param  {Number} stroke width
+         * @param  {String} stroke color
+         * @param  {String} fill color
+         * @return {ol.style.Style} return obj style
+         */
+        var createObjStyle = function(strokeWidth, strokeColor, fillColor){
+            return new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    width: strokeWidth || 2,
+                    color: strokeColor || "steelblue"
+                }),
+                fill: new ol.style.Fill({
+                    color: fillColor || "rgba(0, 0, 255, 0.2)"
+                })
+            });
+        }
+
+        obj.setStyle(createObjStyle(strokeWidth, strokeColor, fillColor));
+
+        //add this marker to marker list (c9Markers)
+        self.c9Objs.addFeature(obj);
     }
 }
