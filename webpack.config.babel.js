@@ -20,9 +20,6 @@ export default {
         ]
     },
     plugins: [
-        new ExtractTextPlugin("C9.min.css"),
-        new webpack.optimize.UglifyJsPlugin({
-            compressor: { warnings: false }
-        })
+        new ExtractTextPlugin("C9.min.css")
     ]
 }

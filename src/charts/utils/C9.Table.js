@@ -9,7 +9,7 @@ default class Table {
             container: "body",
             show: false,
             headings: ["Name", "Value"],
-            style: "default", // "strip", "border"
+            style: "stripe", // || "stripe"
             serial: true,
             hover: {
                 enable: true,
@@ -144,46 +144,63 @@ default class Table {
 
         if (self.show) {
 
-            var table = d3.select(self.container).append("table");
-            var thead = table.append("thead");
-            var tbody = table.append("tbody");
+            var headTbl = d3.select(self.container).append("table").attr('class', 'c9-table c9-table-header'),
+                thead = headTbl.append("thead"),
 
-            // Append the headers
-            thead.append("tr")
-                .selectAll("th")
-                .append("th")
-                    .text("No")
+                bodyTbl = d3.select(self.container)
+                                .append("div").attr('class', 'c9-table-container')
+                                    .append("table").attr('class', function() {
+                                        if (self.style === 'default') return 'c9-table c9-table-body';
+                                        else if (self.style === 'stripe') return 'c9-table c9-table-body c9-stripe';
+                                    }),
+                tbody = bodyTbl.append("tbody");
+
+            // Append serial no heading
+            // Bind each statistic to a line of the table
+            // Show serial no.
+            var hRows = thead.append("tr");
+
+            if (self.serial) {
+                hRows.append("th")
+                    .text("#");
+            }
+
+            hRows.selectAll("thead")
                 .data(self.headings)
                 .enter()
-                    .append("th")
-                        .text(function(d) {
-                            return d;
-                        });
+                .append("th")
+                    .text(function(d) {
+                        return d;
+                    });
+
+            
 
 
             // Bind each statistic to a line of the table
             // Show serial no.
-            var rows = tbody
+            var bRows = tbody
                 .selectAll("tr")
                 .data(self.data)
                     .enter()
                         .append("tr");
 
-            rows.append("td")
+            if (self.serial) {
+                bRows.append("td")
                     .text(function(d, i) {
                         return i + 1;
                     });
+            }
 
 
             // Add statistic names to each row
-            rows.append("td")
+            bRows.append("td")
                     .text(function(d) {
                         return d.name;
                     });
 
 
             // Add values to each row
-            rows.append("td")
+            bRows.append("td")
                     .text(function(d) {
                         return d.value;
                     });
