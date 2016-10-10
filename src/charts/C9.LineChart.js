@@ -1,7 +1,10 @@
 import Chart from './C9.Chart';
+
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+
+import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
 
 export default class LineChart extends Chart {
@@ -241,6 +244,7 @@ export default class LineChart extends Chart {
 
         // Draw legend
         legend.draw();
+        legend.updateInteractionForLineChart(self);
 
         self.updateInteraction();
     }
@@ -264,62 +268,82 @@ export default class LineChart extends Chart {
             hoverOptions    = self.hover.options,
             selector        = self.selectAllCircle(),
             onMouseOverCallback = hoverOptions.onMouseOver.callback,
-            onMouseOutCallback  = hoverOptions.onMouseOut.callback;
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback,
+            onClickCallback  = self.click.callback;
 
-        if (hoverEnable) {
-            // Define the div for the tooltip
-            // TODO: Allow user to add custom DIV, CLASS
-            // Make sure that: 
-            // - Rect not overflow the bar, if not, hover effect will be messed
-            // -> So, just align the rect to right/left (x: 25) to avoid it
-            // -> And, the text will be align also
-            var div = self.body
-                        .append('g')
-                        .style('display', 'none');
-                        // .style('opacity', 0);
-                // Rect Container
-                div.append('rect')
-                    .attr('class', 'c9-custom-tooltip-box')
-                    .attr('x', 25)
-                    .attr('rx', 5)
-                    .attr('ry', 5)
-                    .style('position', 'absolute')
-                    .style('width', '100px')
-                    .style('height', '50px')
-                    .style('fill', '#FEE5E2')
-                    .style('stroke', '#FDCCC6')
-                    .style('stroke-width', 2);
-                // First line
-                var text_1 = div.append('text')
-                    .attr('class', 'c9-custom-tooltip-label')
-                    .attr('x', 30)
-                    .attr('y', 10)
-                    .style('font-family', 'sans-serif')
-                    .style('font-size', '10px');
-                // Second line
-                var text_2 = div.append('text')
-                    .attr('class', 'c9-custom-tooltip-label')
-                    .attr('x', 30)
-                    .attr('y', 20)
-                    .style('font-family', 'sans-serif')
-                    .style('font-size', '10px');
+        // Define the div for the tooltip
+        // TODO: Allow user to add custom DIV, CLASS
+        // Make sure that: 
+        // - Rect not overflow the bar, if not, hover effect will be messed
+        // -> So, just align the rect to right/left (x: 25) to avoid it
+        // -> And, the text will be align also
+        var div = self.body
+                    .append('g')
+                    .style('display', 'none');
+                    // .style('opacity', 0);
+        // Rect Container
+        div.append('rect')
+            .attr('class', 'c9-custom-tooltip-box')
+            .attr('x', 25)
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .style('position', 'absolute')
+            .style('width', '100px')
+            .style('height', '50px')
+            .style('fill', '#FEE5E2')
+            .style('stroke', '#FDCCC6')
+            .style('stroke-width', 2);
+        // First line
+        var text_1 = div.append('text')
+            .attr('class', 'c9-custom-tooltip-label')
+            .attr('x', 30)
+            .attr('y', 10)
+            .style('font-family', 'sans-serif')
+            .style('font-size', '10px');
+        // Second line
+        var text_2 = div.append('text')
+            .attr('class', 'c9-custom-tooltip-label')
+            .attr('x', 30)
+            .attr('y', 20)
+            .style('font-family', 'sans-serif')
+            .style('font-size', '10px');
 
-            selector
-                .on("mouseover", function(d) {
-                    div.transition()
-                        .duration(hoverOptions.onMouseOver.fadeIn)
-                        .style("display", 'block')
-                        .attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
+        // Update Event Factory
+        self.eventFactory = {
+            'click': function(d) {
+                if (Helper.isFunction(onClickCallback)) {
+                    onClickCallback.call(this, d);
+                }
+            },
+            'mouseover': function(d) {
+                if (!hoverEnable) return;
+                
+                if (Helper.isFunction(onMouseOverCallback)) {
+                    onMouseOverCallback.call(this, d);
+                }
 
-                    text_1.text('Name: ' + d.time);
-                    text_2.text('Value: ' + d.value);
-                })
-                .on("mouseout", function(d) { 
-                    div.transition()
-                        .duration(hoverOptions.onMouseOut.fadeOut)      
-                        .style("display", 'none');
-                });
+                div.transition()
+                    .duration(hoverOptions.onMouseOver.fadeIn)
+                    .style("display", 'block')
+                    .attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
+
+                text_1.text('Name: ' + d.time);
+                text_2.text('Value: ' + d.value);
+            },
+            'mouseout': function(d) {
+                if (!hoverEnable) return;
+
+                if (Helper.isFunction(onMouseOutCallback)) {
+                    onMouseOutCallback.call(this, d);
+                }
+
+                div.transition()
+                    .duration(hoverOptions.onMouseOut.fadeOut)      
+                    .style("display", 'none');
+            }
         }
+
+        selector.on(self.eventFactory);
     }
     
     /*=====  End of Main Functions  ======*/

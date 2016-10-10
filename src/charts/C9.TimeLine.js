@@ -1,7 +1,9 @@
 import Chart from './C9.Chart';
+
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+
 import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
 
@@ -325,11 +327,13 @@ export default class TimeLine extends Chart {
     }
 
     draw() {
-        this.options.starting = this.starting;
-        this.options.ending = this.ending;
-        // var axis    = new Axis(this.options, this.body, this.dataTarget, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
-        var title   = new Title(this.options, this.body, this.width, this.height, this.margin);    
-        var legend  = new Legend(this.options, this.body, this.colorRange, this.dataTarget);
+        var self = this;
+        
+        self.options.starting = self.starting;
+        self.options.ending = self.ending;
+        // var axis    = new Axis(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
+        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);    
+        var legend  = new Legend(self.options, self.body, self.colorRange, self.dataTarget);
     }
     
     /*=====  End of Main Functions  ======*/

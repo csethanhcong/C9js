@@ -22,17 +22,23 @@ export default class Chart {
                     template: '',
                     onMouseOver: {
                         fadeIn: 200,
-                        // callback: function(data) {
-                        //     console.dir(data);
-                        // },
+                        callback: function(data) {
+                            console.dir(data);
+                        },
                     },
                     onMouseOut: {
                         fadeOut: 500,
-                        // callback: function(data) {
-                        //     console.dir(data);
-                        // },
+                        callback: function(data) {
+                            console.dir(data);
+                        },
                     }
                 }
+            },
+
+            click: {
+                callback: function(data) {
+                    console.dir(data);
+                },
             },
 
             // legend
@@ -40,9 +46,22 @@ export default class Chart {
             legendPosition: "bottom",
             legendInsetAnchor: "top-left",
             legendPadding: 0,
-            // tooltip - show when mouseover on each data
-            tooltipShow: true,
-            tooltipPosition: undefined,
+
+            // tooltip
+            tooltip: {
+                show: true,
+                position: 'top', // [top, right, bottom, left]
+                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                fontColor: '#fff',
+                format: {
+                    name: function(d) {
+                        return 'Name ' + d;
+                    },
+                    value: function(d) {
+                        return 'Value ' + d;
+                    }
+                }
+            },
 
             // table 
             table: {
@@ -63,6 +82,7 @@ export default class Chart {
 
             // color range
             colorRange: "category20",
+
             // data
             data: {
                 // ALL OPTIONS AVAILABLE IN DATA CONFIG
@@ -85,11 +105,17 @@ export default class Chart {
         self._width     = options.width     || config.width;
         self._height    = options.height    || config.height;
         self._colorRange= options.colorRange|| config.colorRange;
-        self._hover     = options.hover     || config.hover;
+
+        
+        self._margin    = Helper.merge(options.margin, config.margin);
+        self._hover     = Helper.merge(options.hover, config.hover);
+        self._click     = Helper.merge(options.click, config.click);
+
+        // Main factory contains all interactions
+        self._eventFactory = null;
         
         self._dataOption= Helper.merge(options.data, config.data);
         self._dataTarget= null;
-        self._margin    = Helper.merge(options.margin, config.margin);
 
         // Skeleton: 
         // SVG
@@ -98,6 +124,9 @@ export default class Chart {
         self._svg       = null;
         self._body      = null;
         self._options   = options;
+
+        self._options.table     = Helper.merge(options.table, config.table);
+        self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
 
         self.initConfig();
     }
@@ -157,8 +186,16 @@ export default class Chart {
         return this._hover;
     }
 
+    get click() {
+        return this._click;
+    }
+
     get dataTarget() {
         return this._dataTarget;
+    }
+
+    get eventFactory() {
+        return this._eventFactory;
     }
     /*=====  End of Getter  ======*/
     
@@ -232,9 +269,21 @@ export default class Chart {
         }
     }
 
+    set click(arg) {
+        if (arg) {
+            this._click = arg;
+        }
+    }
+
     set dataTarget(arg) {
         if (arg) {
             this._dataTarget = arg;
+        }
+    }
+
+    set eventFactory(arg) {
+        if (arg) {
+            this._eventFactory = arg;
         }
     }
     /*=====  End of Setter  ======*/

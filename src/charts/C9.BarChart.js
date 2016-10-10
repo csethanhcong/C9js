@@ -1,8 +1,10 @@
 import Chart from './C9.Chart';
+
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
 import Tooltip from './utils/C9.Tooltip';
+
 import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
 
@@ -33,42 +35,6 @@ export default class BarChart extends Chart {
             self._groupNames    = da.groups || da.stacks;  //define group names use for showing legend
             self._isGroup       = barChartType == "group"
         }
-            
-        
-        // self.data.forEach(function(d, i) {
-        //     var y0 = 0; // calculate stacked data (top of each bar)
-        //     var count = 0; // count number of group
-        //     groupStart = i; 
-        //     if (typeof d.value === "object") {
-        //         if (self.groupType == "stack") {
-        //             d.stack = d.value.map(function(v) {
-        //                 count++;
-        //                 return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-        //             });
-        //             d.total = d.stack[d.stack.length - 1].y1;
-        //         }
-        //         else if (self.groupType == "group") {
-        //             var total = -Infinity;
-        //             d.stack = d.value.map(function(v) {
-        //                 count++;
-        //                 total = v > total ? v : total;
-        //                 return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-        //             });
-        //             d.total = total;
-        //         }
-        //     }
-        //     else {
-        //         d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
-        //         d.total = d.stack[d.stack.length - 1].y1;
-        //     }
-        //     if (count > groupCount)
-        //         groupCount = count;
-        // });
-
-        // // assign group to those first elements in data if they don't have
-        // for (var i = 0; i < groupStart - 1; i++) {
-        //     self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
-        // };
 
         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
@@ -88,12 +54,6 @@ export default class BarChart extends Chart {
             self._xGroup = d3.scale.ordinal();
             self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
         }
-        
-        //self-define group names if user do not define
-        // if (self._groupNames.length == 0)
-        //     for (var i = 1; i <= groupCount; i++) {
-        //         self._groupNames.push("Group " + i);
-        //     };
         
         /**********************************************/
 
@@ -315,6 +275,7 @@ export default class BarChart extends Chart {
         
         legend.draw();
         legend.updateInteractionForBarChart(self);
+
         self.updateInteraction();
     }
 
@@ -349,61 +310,82 @@ export default class BarChart extends Chart {
             hoverOptions    = self.hover.options,
             selector        = self.selectAllBar(),
             onMouseOverCallback = hoverOptions.onMouseOver.callback,
-            onMouseOutCallback  = hoverOptions.onMouseOut.callback;
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback,
+            onClickCallback  = self.click.callback;
 
-        if (hoverEnable) {
-            // Define the div for the tooltip
-            // TODO: Allow user to add custom DIV, CLASS
-            // Make sure that: 
-            // - Rect not overflow the bar, if not, hover effect will be messed
-            // -> So, just align the rect to right/left (x: 25) to avoid it
-            // -> And, the text will be align also
-            var div = self.body
-                        .append('g')   
-                        .style('display', 'none');
-                // Rect Container
-                div.append('rect')
-                    .attr('class', 'c9-custom-tooltip-box')
-                    .attr('x', 25)
-                    .attr('rx', 5)
-                    .attr('ry', 5)
-                    .style('position', 'absolute')
-                    .style('width', '100px')
-                    .style('height', '50px')
-                    .style('fill', '#FEE5E2')
-                    .style('stroke', '#FDCCC6')
-                    .style('stroke-width', 2);
-                // First line
-                var text_1 = div.append('text')
-                    .attr('class', 'c9-custom-tooltip-label')
-                    .attr('x', 30)
-                    .attr('y', 10)
-                    .style('font-family', 'sans-serif')
-                    .style('font-size', '10px');
-                // Second line
-                var text_2 = div.append('text')
-                    .attr('class', 'c9-custom-tooltip-label')
-                    .attr('x', 30)
-                    .attr('y', 20)
-                    .style('font-family', 'sans-serif')
-                    .style('font-size', '10px');
+        // Define tooltip
+        // TODO: Allow user to add custom DIV, CLASS
+        // Make sure that: 
+        // - Rect not overflow the bar, if not, hover effect will be messed
+        // -> So, just align the rect to right/left (x: 25) to avoid it
+        // -> And, the text will be align also
+        var div = self.body
+                    .append('g')   
+                    .style('display', 'none');
+            // Rect Container
+            div.append('rect')
+                .attr('class', 'c9-custom-tooltip-box')
+                .attr('x', 25)
+                .attr('rx', 5)
+                .attr('ry', 5)
+                .style('position', 'absolute')
+                .style('width', '100px')
+                .style('height', '50px')
+                .style('fill', '#FEE5E2')
+                .style('stroke', '#FDCCC6')
+                .style('stroke-width', 2);
+            // First line
+            var text_1 = div.append('text')
+                .attr('class', 'c9-custom-tooltip-label')
+                .attr('x', 30)
+                .attr('y', 10)
+                .style('font-family', 'sans-serif')
+                .style('font-size', '10px');
+            // Second line
+            var text_2 = div.append('text')
+                .attr('class', 'c9-custom-tooltip-label')
+                .attr('x', 30)
+                .attr('y', 20)
+                .style('font-family', 'sans-serif')
+                .style('font-size', '10px');
 
-            selector
-                .on("mouseover", function(d) {
-                    div.transition()
-                        .duration(hoverOptions.onMouseOver.fadeIn)
-                        .style("display", 'block')
-                        .attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
 
-                    text_1.text('Name: ' + d.name);
-                    text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
-                })
-                .on("mouseout", function(d) { 
-                    div.transition()
-                        .duration(hoverOptions.onMouseOut.fadeOut)      
-                        .style('display', 'none');
-                });
+        // Update Event Factory
+        self.eventFactory = {
+            'click': function(d) {
+                if (Helper.isFunction(onClickCallback)) {
+                    onClickCallback.call(this, d);
+                }
+            },
+            'mouseover': function(d) {
+                if (!hoverEnable) return;
+                
+                if (Helper.isFunction(onMouseOverCallback)) {
+                    onMouseOverCallback.call(this, d);
+                }
+
+                div.transition()
+                    .duration(hoverOptions.onMouseOver.fadeIn)
+                    .style("display", 'block')
+                    .attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
+
+                text_1.text('Name: ' + d.name);
+                text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
+            },
+            'mouseout': function(d) {
+                if (!hoverEnable) return;
+
+                if (Helper.isFunction(onMouseOutCallback)) {
+                    onMouseOutCallback.call(this, d);
+                }
+
+                div.transition()
+                    .duration(hoverOptions.onMouseOut.fadeOut)      
+                    .style('display', 'none');
+            }
         }
+
+        selector.on(self.eventFactory);
     }
     
     /*=====  End of Main Functions  ======*/
