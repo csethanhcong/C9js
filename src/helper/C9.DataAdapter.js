@@ -244,18 +244,7 @@ export default class DataAdapter {
 
                 // Iterate over each group
                 self.dataSource.forEach(function(data, index) {
-                    let _group      = {
-                            "max"   : null,
-                            "stack" : []
-                        },
-                        _dsArray    = Helper.get(self.keys.value, data);
-
-                    // If Group has only 1 value, so MAX = this.value
-                    if (Helper.isArray(_dsArray)) {
-                        _group.max = Helper.max(_dsArray);
-                    } else {
-                        _group.max = _dsArray;
-                    }
+                    let _dsArray    = Helper.get(self.keys.value, data);
 
                     let _stack      = [],
                         _stackItem = {
@@ -274,8 +263,8 @@ export default class DataAdapter {
                         _dsArray.forEach(function(d, i) {
                             _stackItem = {
                                 "color": color(i),
-                                "y0": 0,
-                                "y1": d,
+                                "y0": d,
+                                "y1": d > 0 ? d : 0,
                                 "group": groups[i] || i,
                                 "name": Helper.get(self.keys.name, data),
                                 "data-ref": Helper.guid(),
@@ -286,8 +275,8 @@ export default class DataAdapter {
                     } else {
                         _stackItem = {
                             "color": color(0),
-                            "y0": 0,
-                            "y1": _dsArray,
+                            "y0": _dsArray,
+                            "y1": _dsArray > 0 ? _dsArray : 0,
                             "group": groups[0] || 0,
                             "name": Helper.get(self.keys.name, data),
                             "data-ref": Helper.guid(),
@@ -295,9 +284,8 @@ export default class DataAdapter {
                         };
                         _stack.push(_stackItem);
                     }
-                    _group.stack = _stack;
 
-                    self.dataTarget.push(_group);
+                    self.dataTarget.push(_stack);
                 });
 
                 return self.dataTarget;
@@ -308,18 +296,7 @@ export default class DataAdapter {
 
                 // Iterate over each group
                 self.dataSource.forEach(function(data, index) {
-                    let _group      = {
-                            "max"   : null,
-                            "stack" : []
-                        },
-                        _dsArray    = Helper.get(self.keys.value, data);
-
-                    // If Group has only 1 value, so MAX = this.value
-                    if (Helper.isArray(_dsArray)) {
-                        _group.max = Helper.sum(_dsArray);
-                    } else {
-                        _group.max = _dsArray;
-                    }
+                    let _dsArray    = Helper.get(self.keys.value, data);
 
                     let _stack      = [],
                         _stackItem = {
@@ -335,26 +312,27 @@ export default class DataAdapter {
 
                     // Iterate each single bar in a group
                     if (Helper.isArray(_dsArray)) {
-                        let _tempY0     = 0;
+                        let _negBase = 0;
+                        let _posBase = 0;
                         _dsArray.forEach(function(d, i) {
                             _stackItem = {
                                 "color": color(i),
-                                "y0": _tempY0,
-                                "y1": _tempY0 + d,
+                                "y0": d,
+                                "y1": d > 0 ? d + _posBase : _negBase,
                                 "group": stacks[i] || i,
                                 "name": Helper.get(self.keys.name, data),
                                 "data-ref": Helper.guid(),
                                 "enable"    : true,
                             };
                             _stack.push(_stackItem);
-                            // Increase tempY0 by d to restore previous y0
-                            _tempY0 += d;
+                            if (d > 0) _posBase += d;
+                            else _negBase += d;
                         });
                     } else {
                         _stackItem = {
                             "color": color(0),
-                            "y0": 0,
-                            "y1": _dsArray,
+                            "y0": _dsArray,
+                            "y1": _dsArray > 0 ? _dsArray : 0,
                             "group": stacks[0] || 0,
                             "name": Helper.get(self.keys.name, data),
                             "data-ref": Helper.guid(),
@@ -362,9 +340,8 @@ export default class DataAdapter {
                         };
                         _stack.push(_stackItem);
                     }
-                    _group.stack = _stack;
 
-                    self.dataTarget.push(_group);
+                    self.dataTarget.push(_stack);
                 });
 
                 return self.dataTarget;

@@ -74,14 +74,13 @@ export default class BarChart extends Chart {
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var y = d3.scale.linear().range([height, 0]);
 
+        var minMax = Helper.getMinMax(self.dataTarget, "stack");
 
         x.domain(self.dataTarget.map(function(d) {
-            return d.stack[0].name;
+            return d[0].name;
         }));
 
-        y.domain([0, d3.max(self.dataTarget, function(d) {
-            return d.max;
-        })]);
+        y.domain([minMax.min, minMax.max]);
 
         /******** Handle for grouped, stacked bar chart ********/
         if (self._groupNames) {
@@ -225,10 +224,10 @@ export default class BarChart extends Chart {
                     .enter()
                         .append("g")
                         .attr("class", "c9-chart-bar c9-custom-bar")
-                        .attr("transform", function(d) { return "translate(" + x(d.stack[0].name) + ",0)"; });
+                        .attr("transform", function(d) { return "translate(" + x(d[0].name) + ",0)"; });
 
         var bars = bar.selectAll(".c9-custom-rect")
-            .data(function(d) { return d.stack; });
+            .data(function(d) { return d; });
 
         bars.enter()
             .append("rect")
@@ -237,7 +236,7 @@ export default class BarChart extends Chart {
             .attr("x", function(d) { return self.isGroup ? xGroup(d.group) : undefined; })
             .attr("y", function(d) { return y(d.y1); })
             .attr("width", function(d) { return self.isGroup ? xGroup.rangeBand() : x.rangeBand(); })
-            .attr("height", function(d) { return y(d.y0) - y(d.y1); });
+            .attr("height", function(d) { return y(0) - y(Math.abs(d.y0)); });
     }
 
     /**
@@ -272,10 +271,10 @@ export default class BarChart extends Chart {
                     .enter()
                     .append("g")
                     .attr("class", "c9-chart-bar c9-custom-bar")
-                    .attr("transform", function (d, i) { return "translate(" + self.x(self.dataTarget[i].stack[0].name) + ",0)"; });
+                    .attr("transform", function (d, i) { return "translate(" + self.x(self.dataTarget[i][0].name) + ",0)"; });
 
         var bars = bar.selectAll(".c9-custom-rect")
-            .data(function(d) { return d.stack; });
+            .data(function(d) { return d; });
 
         bars.enter()
             .append("rect")
@@ -294,7 +293,7 @@ export default class BarChart extends Chart {
             .attr("width", function(d) {
                 return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             })
-            .attr("height", function(d) { return self.y(d.y0) - self.y(d.y1); });
+            .attr("height", function(d) { return self.y(0) - self.y(Math.abs(d.y0)); });
 
         bars.transition().duration(750)
             .attr("x", function(d) { return !self.isGroup ? undefined : xGroup(d.group); })

@@ -1,4 +1,5 @@
 'use strict';
+import Helper from '../../helper/C9.Helper';
 
 export default class Axis {
     constructor(options, body, data, width, height, xAxe, yAxe) {
@@ -45,18 +46,21 @@ export default class Axis {
         }
         
         x.domain(data.map(function(d) {
-            return d.name || d.stack[0].name;
+            return d.name || d[0].name;
         }));
 
         if (body.type == "bar") {
-            y.domain([
-                d3.min(data, function(d) {
-                    return d.max;
-                }), 
-                d3.max(data, function(d) {
-                    return d.max;
-                })
-            ]);
+            var minMax = Helper.getMinMax(data, "stack");
+            console.log(minMax)
+            // y.domain([
+            //     d3.min(data, function(d) {
+            //         return d.max;
+            //     }), 
+            //     d3.max(data, function(d) {
+            //         return d.max;
+            //     })
+            // ]);
+            y.domain([minMax.min, minMax.max]);
         }
         else
             y.domain([

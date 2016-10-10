@@ -107,6 +107,10 @@ var Helper = {
         return Math.max(...arr);
     }, 
 
+    min: function(arr) {
+        return Math.min(...arr);
+    }, 
+
     sum: function(arr) {
         return arr.reduce(function(a, b) { return a + b; }, 0);
     },
@@ -119,6 +123,38 @@ var Helper = {
         });
     },
 
+    getMinMax: function(data, type) {
+        var self  = this;
+        var _temp = new Array();
+        var _min  = 0;
+        var _max  = 0;
+        if (type == "stack")
+            data.forEach(function (d) {
+                var _neg = 0;
+                var _pos = 0;
+                d.forEach(function (s){
+                    if (s.y0 < 0) _neg += s.y0;
+                    else _pos += s.y0;
+                });
+                _temp.push(_neg);
+                _temp.push(_pos);
+            })
+        else
+            data.forEach(function (d){
+                d.forEach(function (s){
+                    _temp.push(s.y0);
+                })
+            });
+
+        var _newMin = self.min(_temp);
+        var _newMax = self.max(_temp);
+        if (_newMin < _min)
+            _min = _newMin;
+        if (_newMax > _max)
+            _max = _newMax;
+
+        return {min: _min, max: _max};
+    }
 };
 
 var Util = {
