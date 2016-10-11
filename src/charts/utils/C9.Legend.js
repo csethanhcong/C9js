@@ -482,15 +482,38 @@ export default class Legend {
                         enableSet.push(d.group);
                 });
 
-                dataBackup.forEach(function(d, i) {
-                    var element = [];
-                    d.forEach(function(s, j) {
-                        enableSet.forEach(function(e) {
+                dataBackup.forEach(function (d){
+                    var negElement = [];
+                    var posElement = [];
+                    d.forEach(function (s){
+                        enableSet.forEach(function (e, i) {
                             if (e == s.group) {
-                                element.push(s);
+                                if (s.y0 < 0) negElement.push({e: s, s: i});
+                                else posElement.push({e: s, s: i})
                             }
                         });
-                    })
+                    });
+                    if (!chart.isGroup) {
+                        if (negElement.length > 0) {
+                            if (negElement[0].e.y1 < 0) negElement[0].e.y1 = 0;
+                            for (var i = 1; i < negElement.length; i++) {
+                                negElement[i].e.y1 = negElement[i-1].e.y1 + negElement[i-1].e.y0;
+                            };
+                        }
+                        if (posElement.length > 0) {
+                            if (posElement[0].e.y1 - posElement[0].e.y0 != 0) posElement[0].e.y1 = posElement[0].e.y0;
+                            for (var i = 1; i < posElement.length; i++) {
+                                posElement[i].e.y1 = posElement[i-1].e.y1 + posElement[i].e.y0;
+                            };
+                        }
+                    }
+                    var element = new Array(negElement.length + posElement.length);
+                    for (var i = 0; i < negElement.length; i++) {
+                        element[negElement[i].s] = negElement[i].e;
+                    };
+                    for (var i = 0; i < posElement.length; i++) {
+                        element[posElement[i].s] = posElement[i].e;
+                    };
                     data.push(element);
                 });
 

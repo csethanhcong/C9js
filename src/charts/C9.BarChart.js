@@ -30,6 +30,7 @@ export default class BarChart extends Chart {
 
         var da = new DataAdapter(dataOption);
         self.dataTarget = da.getDataTarget("bar");
+        self.dataSource = da.dataSource;
         var barChartType = da.getDataTypeForBarChart()
         if (barChartType != "single") {
             self._groupNames    = da.groups || da.stacks;  //define group names use for showing legend
