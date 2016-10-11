@@ -3,6 +3,8 @@ import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import Table from './utils/C9.Table';
+import Tooltip from './utils/C9.Tooltip';
 
 import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
@@ -17,7 +19,6 @@ export default class LineChart extends Chart {
             pointStroke: "#d26b5f",
             pointOpacity: 1.0,
             pointRadius: 5,
-            pointHoverEnable: false,
             interpolate: "linear" // refer: https://www.dashingd3js.com/svg-paths-and-d3js
         };
 
@@ -26,7 +27,6 @@ export default class LineChart extends Chart {
         self._pointFill         = options.pointFill            ||  config.pointFill;
         self._pointStroke       = options.pointStroke          ||  config.pointStroke;
         self._pointOpacity      = options.pointOpacity         ||  config.pointOpacity;
-        self._pointHoverEnable  = options.pointHoverEnable    ||  config.pointHoverEnable;
         self._interpolate       = options.interpolate           ||  config.interpolate;
         self.body.type = "line";
 
@@ -71,10 +71,6 @@ export default class LineChart extends Chart {
 
     get pointRadius() {
         return this._pointRadius;
-    }
-
-    get pointHoverEnable() {
-        return this._pointHoverEnable;
     }
 
     get interpolate() {
@@ -125,12 +121,6 @@ export default class LineChart extends Chart {
     set pointRadius(newPointRadius) {
         if (newPointRadius) {
             this._pointRadius = newPointRadius;
-        }
-    }
-
-    set pointHoverEnable(newPointHoverEnable) {
-        if (newPointHoverEnable) {
-            this._pointHoverEnable = newPointHoverEnable;
         }
     }
 
@@ -265,42 +255,24 @@ export default class LineChart extends Chart {
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
             onClickCallback  = self.click.callback;
 
-        // Define the div for the tooltip
-        // TODO: Allow user to add custom DIV, CLASS
-        // Make sure that: 
-        // - Rect not overflow the bar, if not, hover effect will be messed
-        // -> So, just align the rect to right/left (x: 25) to avoid it
-        // -> And, the text will be align also
-        var div = self.body
-                    .append('g')
-                    .style('display', 'none');
-                    // .style('opacity', 0);
-        // Rect Container
-        div.append('rect')
-            .attr('class', 'c9-custom-tooltip-box')
-            .attr('x', 25)
-            .attr('rx', 5)
-            .attr('ry', 5)
-            .style('position', 'absolute')
-            .style('width', '100px')
-            .style('height', '50px')
-            .style('fill', '#FEE5E2')
-            .style('stroke', '#FDCCC6')
-            .style('stroke-width', 2);
-        // First line
-        var text_1 = div.append('text')
-            .attr('class', 'c9-custom-tooltip-label')
-            .attr('x', 30)
-            .attr('y', 10)
-            .style('font-family', 'sans-serif')
-            .style('font-size', '10px');
-        // Second line
-        var text_2 = div.append('text')
-            .attr('class', 'c9-custom-tooltip-label')
-            .attr('x', 30)
-            .attr('y', 20)
-            .style('font-family', 'sans-serif')
-            .style('font-size', '10px');
+        // Update Tooltip options for Timeline Chart
+        self.options.tooltip = {
+            show: true,
+            position: 'left', // [top, right, bottom, left]
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            fontColor: '#fff',
+            fontSize: '11px',
+            format: {
+                title: function(name) {
+                    return 'Title ' + name;
+                },
+                detail: function(value, time) {
+                    return 'Value: ' + value + ' <br>Time: ' + time;
+                }
+            }
+        };
+
+        var tooltip = new Tooltip(self.options.tooltip);
 
         // Update Event Factory
         self.eventFactory = {
@@ -316,13 +288,7 @@ export default class LineChart extends Chart {
                     onMouseOverCallback.call(this, d);
                 }
 
-                div.transition()
-                    .duration(hoverOptions.onMouseOver.fadeIn)
-                    .style("display", 'block')
-                    .attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
-
-                text_1.text('Name: ' + d.time);
-                text_2.text('Value: ' + d.value);
+                tooltip.draw(d, self, 'mouseover');
             },
             'mouseout': function(d) {
                 if (!hoverEnable) return;
@@ -331,9 +297,7 @@ export default class LineChart extends Chart {
                     onMouseOutCallback.call(this, d);
                 }
 
-                div.transition()
-                    .duration(hoverOptions.onMouseOut.fadeOut)      
-                    .style("display", 'none');
+                tooltip.draw(d, self, 'mouseout');
             }
         }
 

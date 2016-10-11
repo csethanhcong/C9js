@@ -53,14 +53,12 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 	
 	- Hover: 
 		- Display tooltip
-		- Highlight current data-ref components but others
+		`NEXT` - Highlight current data-ref components but others
 	- Click:
 		- Default: non-action
 
 - Notes:
  	- Add callback to all interactions
-
-DONE: PieChart, DonutChart, Timeline
 
 #### TODO:
 
