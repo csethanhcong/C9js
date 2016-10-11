@@ -318,42 +318,7 @@ export default class BarChart extends Chart {
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
             onClickCallback  = self.click.callback;
 
-        // Define tooltip
-        // TODO: Allow user to add custom DIV, CLASS
-        // Make sure that: 
-        // - Rect not overflow the bar, if not, hover effect will be messed
-        // -> So, just align the rect to right/left (x: 25) to avoid it
-        // -> And, the text will be align also
-        var div = self.body
-                    .append('g')   
-                    .style('display', 'none');
-            // Rect Container
-            div.append('rect')
-                .attr('class', 'c9-custom-tooltip-box')
-                .attr('x', 25)
-                .attr('rx', 5)
-                .attr('ry', 5)
-                .style('position', 'absolute')
-                .style('width', '100px')
-                .style('height', '50px')
-                .style('fill', '#FEE5E2')
-                .style('stroke', '#FDCCC6')
-                .style('stroke-width', 2);
-            // First line
-            var text_1 = div.append('text')
-                .attr('class', 'c9-custom-tooltip-label')
-                .attr('x', 30)
-                .attr('y', 10)
-                .style('font-family', 'sans-serif')
-                .style('font-size', '10px');
-            // Second line
-            var text_2 = div.append('text')
-                .attr('class', 'c9-custom-tooltip-label')
-                .attr('x', 30)
-                .attr('y', 20)
-                .style('font-family', 'sans-serif')
-                .style('font-size', '10px');
-
+        var tooltip = new Tooltip(self.options.tooltip);
 
         // Update Event Factory
         self.eventFactory = {
@@ -369,13 +334,7 @@ export default class BarChart extends Chart {
                     onMouseOverCallback.call(this, d);
                 }
 
-                div.transition()
-                    .duration(hoverOptions.onMouseOver.fadeIn)
-                    .style("display", 'block')
-                    .attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
-
-                text_1.text('Name: ' + d.name);
-                text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
+                tooltip.draw(d, self, 'mouseover');
             },
             'mouseout': function(d) {
                 if (!hoverEnable) return;
@@ -384,9 +343,7 @@ export default class BarChart extends Chart {
                     onMouseOutCallback.call(this, d);
                 }
 
-                div.transition()
-                    .duration(hoverOptions.onMouseOut.fadeOut)      
-                    .style('display', 'none');
+                tooltip.draw(d, self, 'mouseout');
             }
         }
 

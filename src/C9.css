@@ -156,13 +156,16 @@
 
 .c9-custom-tooltip-container.c9-tooltip-left::before {
     font-size: 10px;
-    width: 100%;
     line-height: 1;
     color: rgba(0, 0, 0, 0.8);
     content: "\25c4";
     position: absolute;
-    top: 40%;
-    left: -8%;
+    top: 50%;
+    right:100%;
+    margin-right:-2px;
+    transform: translate(0,-50%);
+    -webkit-transform: translate(0,-50%);
+    -moz-transform: translate(0,-50%);
 
 	/*margin: -1px 0 0 0;
     top: 100%;
@@ -171,28 +174,16 @@
 
 .c9-custom-tooltip-container.c9-tooltip-right::after {
     font-size: 10px;
-    width: 100%;
     line-height: 1;
     color: rgba(0, 0, 0, 0.8);
     content: "\25ba";
     position: absolute;
-    top: 40%;
-    left: 98%%;
-
-	/*margin: -1px 0 0 0;
-    top: 100%;
-    left: 0;*/
-}
-
-.c9-custom-tooltip-container.c9-tooltip-bottom::after {
-    font-size: 10px;
-    width: 100%;
-    line-height: 1;
-    color: rgba(0, 0, 0, 0.8);
-    content: "\25bc";
-    position: absolute;
-    top: 98%;
-    left: 45%;
+    top: 50%;
+    left: 100%;
+    margin-left: -2px;
+    transform: translate(0,-50%);
+    -webkit-transform: translate(0,-50%);
+    -moz-transform: translate(0,-50%);
 
 	/*margin: -1px 0 0 0;
     top: 100%;
@@ -201,13 +192,34 @@
 
 .c9-custom-tooltip-container.c9-tooltip-top::after {
     font-size: 10px;
-    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25bc";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-top:-2px;
+    transform: translate(-50%,0);
+    -webkit-transform: translate(-50%,0);
+    -moz-transform: translate(-50%,0);
+
+	/*margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;*/
+}
+
+.c9-custom-tooltip-container.c9-tooltip-bottom::after {
+    font-size: 10px;
     line-height: 1;
     color: rgba(0, 0, 0, 0.8);
     content: "\25b2";
     position: absolute;
-    top: -16%;
-    left: 45%;
+    bottom:100%;
+    left: 50%;
+    margin-bottom: -2px;
+    transform: translate(-50%,0);
+    -webkit-transform: translate(-50%,0);
+    -moz-transform: translate(-50%,0);
 
 	/*margin: -1px 0 0 0;
     top: 100%;

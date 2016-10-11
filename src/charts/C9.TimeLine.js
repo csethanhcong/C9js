@@ -3,6 +3,8 @@ import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import Table from './utils/C9.Table';
+import Tooltip from './utils/C9.Tooltip';
 
 import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
@@ -43,7 +45,7 @@ export default class TimeLine extends Chart {
         var da = new DataAdapter(dataOption);
         self.dataTarget = da.getDataTarget("timeline");
 
-        self.initTimelineConfig();
+        self.updateConfig();
     }
 
     /*==============================
@@ -158,15 +160,92 @@ export default class TimeLine extends Chart {
     =            Main Functions            =
     ======================================*/
 
-    initTimelineConfig() {
+    updateConfig() {
         var self = this;
+
         var color = self.colorRange;
+
         var stackList = {},
             maxStack = 0,
             minTime = 0,
             maxTime = 0,
             width = self.width - self.margin.left - self.margin.right,
             height = self.height - self.margin.top - self.margin.bottom;
+
+        var hoverOptions        = self.hover.options,
+            hoverEnable         = self.hover.enable,
+            onMouseOverCallback = hoverOptions.onMouseOver.callback,
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback,
+            onClickCallback     = self.click.callback;
+
+        // Update Tooltip options for Timeline Chart
+        self.options.tooltip = {
+            show: true,
+            position: 'left', // [top, right, bottom, left]
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            fontColor: '#fff',
+            fontSize: '11px',
+            format: {
+                title: function(name) {
+                    return 'Title ' + name;
+                },
+                detail: function(start, end) {
+                    return 'Start: ' + start + ' <br>End: ' + end;
+                }
+            }
+        };
+
+        var tooltip = new Tooltip(self.options.tooltip);
+
+        // Main Event Dispatch for paths in pie chart
+        self._eventFactory = {
+            'click': function(d, i) {
+                if (Helper.isFunction(onClickCallback)) {
+                    onClickCallback.call(this, d);
+                }
+            },
+
+            'mouseover': function(d, i) {
+                if (!hoverEnable) return;
+
+                if (Helper.isFunction(onMouseOverCallback)) {
+                    onMouseOverCallback.call(this, d);
+                }
+
+                // var selector = d3.select(this);
+                // selector.transition()
+                //         .attr('d', d3.svg.arc()
+                //             .innerRadius(chartInnerAfter)
+                //             .outerRadius(chartOuterAfter)
+                //         )
+                //         // .style('stroke', '#FFFFF3')
+                //         .attr('fill-opacity', '1.0');
+
+                tooltip.draw(d, self, 'mouseover');
+            },
+            
+            'mouseout': function(d, i) {
+                if (!hoverEnable) return;
+
+                if (Helper.isFunction(onMouseOutCallback)) {
+                    onMouseOutCallback.call(this, d);
+                }
+
+                // var selector = d3.select(this);
+                // selector.transition()
+                //         .duration(500)
+                //         .ease('bounce')
+                //         .attr('d', d3.svg.arc()
+                //             .innerRadius(chartInnerBefore)
+                //             .outerRadius(chartOuterBefore)
+                //         )
+                //         // .style('stroke', '#ffffff')
+                //         .attr('fill-opacity', '0.5');
+
+                tooltip.draw(d, self, 'mouseout');
+            }
+
+        };
 
         // count number of stack and calculate min time, max time from data
         if (self.stack || self.ending === 0 || self.starting === 0) {
@@ -204,7 +283,7 @@ export default class TimeLine extends Chart {
 
         //draw border
         self.body.append("rect")
-            .attr("class", "timeline-border-bar")
+            .attr("class", "c9-timeline-border-bar")
             .attr("x", 0)
             .attr("width", width)
             .attr("y", 0 - self.itemMargin / 2)
@@ -222,7 +301,7 @@ export default class TimeLine extends Chart {
                 self.body.selectAll("g")
                     .data(data).enter()
                     .insert("rect")
-                    .attr("class", "timeline-background-bar")
+                    .attr("class", "c9-timeline-background-bar")
                     .attr("x", 0)
                     .attr("width", width)
                     .attr("y", barYAxis - self.itemMargin / 2)
@@ -235,7 +314,7 @@ export default class TimeLine extends Chart {
                 self.body.selectAll("g")
                     .data(data).enter()
                     .insert("rect")
-                    .attr("class", "timeline-background-bar")
+                    .attr("class", "c9-timeline-background-bar")
                     .attr("x", 0)
                     .attr("width", width)
                     .attr("y", barYAxis - self.itemMargin / 2)
@@ -249,6 +328,7 @@ export default class TimeLine extends Chart {
                 .append(function (d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, d.end ? "rect" : "circle");
                 })
+                .attr('class', 'c9-timeline-custom-rect')
                 .attr("x", getXPos)
                 .attr("y", getStackPosition)
                 .attr("width", function (d, i) {
@@ -262,20 +342,10 @@ export default class TimeLine extends Chart {
                 .attr("height", self.itemHeight)
                 .style("fill", color(index));
 
-            //draw label inside item
-            // self.body.selectAll("g")
-            //     .data(data).enter()
-            //     .append("text")
-            //     .attr("x", getXTextPos)
-            //     .attr("y", getStackTextPosition)
-            //     .text(function(d) {
-            //       return d.name;
-            //     });
-
             if (self.rowSeparator && index < self.maxStack - 1) {
                 var lineYAxis = ( self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index]);
                 self.body.append("svg:line")
-                  .attr("class", "timeline-row-separator")
+                  .attr("class", "c9-timeline-row-separator")
                   .attr("x1", 0)
                   .attr("x2", width)
                   .attr("y1", lineYAxis)
@@ -289,14 +359,14 @@ export default class TimeLine extends Chart {
                 var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 
                 d3.select(self.body[0][0].parentNode).append("text")
-                    .attr("class", "timeline-label")
+                    .attr("class", "c9-timeline-label")
                     .attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")")
                     .text(datum.name);
             }
             //draw icon
             else if (!Helper.isEmpty(datum.icon) && datum.icon != "") {
                 d3.select(self.body[0][0].parentNode).append("image")
-                    .attr("class", "timeline-label")
+                    .attr("class", "c9-timeline-label")
                     .attr("transform", "translate("+ self.labelMargin +","+ (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index])+")")
                     .attr("xlink:href", datum.icon)
                     .attr("width", self.itemHeight)
@@ -334,6 +404,29 @@ export default class TimeLine extends Chart {
         var axis    = new Axis(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);    
         var legend  = new Legend(self.options, self.body, self.colorRange, self.dataTarget);
+
+        self.updateInteraction();
+    }
+
+    /**
+     * Select all path as type RECT in Timeline Chart via its CLASS
+     */
+    selectAllRect() {
+        var self = this;
+
+        return self.body
+                    .selectAll('.c9-timeline-custom-rect');
+    }
+
+    /**
+     * Update Interaction: Hover
+     * @return {} 
+     */
+    updateInteraction() {
+        var self    = this,
+            selector= self.selectAllRect();
+
+        selector.on(self.eventFactory);
     }
     
     /*=====  End of Main Functions  ======*/

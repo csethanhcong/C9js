@@ -6,11 +6,10 @@ export default class Tooltip {
 
         var config = {
             show: true,
-            position: 'top', // [top, right, bottom, left]
+            position: 'left', // [top, right, bottom, left]
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             fontColor: '#fff',
             fontSize: '11px',
-            trianglePosition: 'left', // [top, right, bottom, left]
             format: {
                 title: function(d) {
                     return 'Title ' + d;
@@ -25,8 +24,7 @@ export default class Tooltip {
         self._position          = options.position || config.position;
         self._backgroundColor   = options.backgroundColor || config.backgroundColor;
         self._fontColor         = options.fontColor || config.fontColor;
-        self._fontSize         = options.fontSize || config.fontSize;
-        self._trianglePosition         = options.trianglePosition || config.trianglePosition;
+        self._fontSize          = options.fontSize || config.fontSize;
 
         self._format            = Helper.merge(options.format, config.format);
 
@@ -53,10 +51,6 @@ export default class Tooltip {
 
     get fontSize() {
         return this._fontSize;
-    }
-
-    get trianglePosition() {
-        return this._trianglePosition;
     }
 
     get format() {
@@ -103,12 +97,6 @@ export default class Tooltip {
         }
     }
 
-    set trianglePosition(arg) {
-        if (arg) {
-            this._trianglePosition = arg;
-        }
-    }
-
     set format(arg) {
         if (arg) {
             this._format = arg;
@@ -145,7 +133,9 @@ export default class Tooltip {
         // TODO: Add margin to tooltip configs
         // Default: (100, 100) relative to mouse coordinate and chart margin transformation
         var divOnHover = selector.append('div')
-                            .attr('class', function() { return 'c9-custom-tooltip-container ' + self.getTriangleClass(); })
+                            .attr('class', function() { 
+                                return 'c9-custom-tooltip-container ' + self.getTriangleClass(); 
+                            })
                             // .attr("transform", function() { return 'translate(' + (d3.mouse(this)[0] - 100) +","+ (d3.mouse(this)[1] - 100) + ')'; })
                             .style('display', 'none')
                             .style('position', 'absolute')
@@ -156,7 +146,7 @@ export default class Tooltip {
                             // .style('width', '100px')
                             // .style('height', '50px')
                             .html(function() {
-                                return '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
+                                return self.getFormatByChartType(chart, data);
                             });
 
         self.eventFactory = {
@@ -164,9 +154,13 @@ export default class Tooltip {
             'mouseover': function(data) {
                 divOnHover.transition()
                     // .style('left', function() {return d3.mouse(this)[0] + 'px';})
-                    .style('left', function() {return d3.event.pageX + 'px';})
+                    .style('left', function() {
+                        return self.getCoordinate()['left'];
+                    })
                     // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
-                    .style('top', function() {return d3.event.pageY  + 'px';})
+                    .style('top', function() {
+                        return self.getCoordinate()['top'];
+                    })
                     .duration(200)
                     .style("display", 'block')
                     .style('pointer-events', 'none');
@@ -200,7 +194,7 @@ export default class Tooltip {
         var self = this;
         let r ;
 
-        switch(self.trianglePosition) {
+        switch(self.position) {
             case 'top':
                 r = 'c9-tooltip-top';
                 break;
@@ -214,6 +208,66 @@ export default class Tooltip {
                 r = 'c9-tooltip-left';
                 break;
         }
+        return r;
+    }
+
+    getCoordinate() {
+        var self = this;
+        let r ;
+
+        switch(self.position) {
+            case 'top':
+                r = {
+                    'left': (d3.event.pageX - 50) + 'px',
+                    'top': (d3.event.pageY - 50) + 'px'
+                };
+                break;
+            case 'right':
+                r = {
+                    'left': (d3.event.pageX - 50) + 'px',
+                    'top': (d3.event.pageY - 50) + 'px'
+                };
+                break;
+            case 'bottom':
+                r = {
+                    'left': (d3.event.pageX - 50) + 'px',
+                    'top': (d3.event.pageY + 50) + 'px'
+                };
+                break;
+            case 'left':
+                r = {
+                    'left': (d3.event.pageX + 50) + 'px',
+                    'top': (d3.event.pageY - 50) + 'px'
+                };
+                break;
+        }
+        return r;
+    }
+
+    getFormatByChartType(chart, data) {
+        console.dir(data);
+        var self = this;
+
+        let chartType = chart.body.type, r;
+
+        switch(chartType) {
+            case 'bar':
+                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(chart.retrieveValue(data.y0, data.y1)) + '</span>';
+                break;
+            case 'pie':
+                r = '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
+                break;
+            case 'donut':
+                r = '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
+                break;
+            case 'line':
+                
+                break;
+            case 'timeline':
+                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(data.start, data.end) + '</span>';
+                break;
+        }
+
         return r;
     }
 

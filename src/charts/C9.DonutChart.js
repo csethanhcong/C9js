@@ -3,6 +3,8 @@ import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import Table from './utils/C9.Table';
+import Tooltip from './utils/C9.Tooltip';
 
 import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
@@ -139,6 +141,8 @@ export default class DonutChart extends Chart {
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
             onClickCallback  = self.click.callback;
 
+        var tooltip = new Tooltip(self.options.tooltip);
+
         // Main Event Dispatch for paths in donut chart
         self._eventFactory = {
             'click': function(d, i) {
@@ -163,7 +167,7 @@ export default class DonutChart extends Chart {
                         // .style('stroke', '#000')
                         .attr('fill-opacity', '1.0');
 
-                self.tooltip().mouseover(d);
+                tooltip.draw(d, self, 'mouseover');
             },
             
             'mouseout': function(d, i) {
@@ -184,82 +188,8 @@ export default class DonutChart extends Chart {
                         // .style('stroke', '#000')
                         .attr('fill-opacity', '0.5');
 
-                self.tooltip().mouseout(d);
+                tooltip.draw(d, self, 'mouseout');
             }
-
-        };
-
-        // Define the tooltip
-        // TODO: Define it as a individual CLASS, in C9.Tooltip
-        self.tooltip = function() {
-            // First, remove all before hover div
-            self.body.selectAll('g.c9-custom-tooltip-container').remove();
-
-            // TODO: Add margin to tooltip configs
-            // Default: (100, 100) relative to mouse coordinate and chart margin transformation
-            var divOnHover = self.body.append('g')
-                                .attr('class', 'c9-custom-tooltip-container')
-                                .attr("transform", function() { return 'translate(' + (d3.mouse(this)[0] - 100) +","+ (d3.mouse(this)[1]- 100) + ')'; })
-                                .style('display', 'none')
-
-            var arc = d3.svg.arc()
-                    .outerRadius(self.outerRadius)
-                    .innerRadius(self.innerRadius);
-
-            // Rect Container
-            divOnHover
-                .append('rect')
-                    .attr('class', 'c9-custom-tooltip-box')
-                    .attr('x', 25)
-                    .attr('rx', 5)
-                    .attr('ry', 5)
-                    .style('position', 'absolute')
-                    .style('width', '100px')
-                    .style('height', '50px')
-                    .attr('fill', '#FEE5E2')
-                    .attr('stroke', '#FDCCC6')
-                    .attr('stroke-width', 2);
-            // First line
-            var text_1 = divOnHover
-                            .append('text')
-                                .attr('class', 'c9-custom-tooltip-label')
-                                .attr('x', 30)
-                                .attr('y', 10)
-                                .style('font-family', 'sans-serif')
-                                .style('font-size', '10px');
-            // Second line
-            var text_2 = divOnHover
-                            .append('text')
-                                .attr('class', 'c9-custom-tooltip-label')
-                                .attr('x', 30)
-                                .attr('y', 20)
-                                .style('font-family', 'sans-serif')
-                                .style('font-size', '10px');
-
-            var tooltipEventFactory = {
-
-                'mouseover': function(d) {
-                    divOnHover.transition()
-                        .duration(hoverOptions.onMouseOver.fadeIn)
-                        .style("display", 'block');
-                        
-                   let name = d.data.name || d.data.data.name,
-                       value = d.data.value || d.data.data.value;
-
-                    text_1.text('Name: ' + name);
-                    text_2.text('Value: ' + value);
-                },
-
-                'mouseout': function(d) {
-                    divOnHover.transition()
-                        .duration(hoverOptions.onMouseOut.fadeOut)      
-                        .style('display', 'none');
-
-                }
-
-            };
-
-            return tooltipEventFactory;
 
         };
 

@@ -60,7 +60,7 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 - Notes:
  	- Add callback to all interactions
 
-DONE: PieChart
+DONE: PieChart, DonutChart, Timeline
 
 #### TODO:
 

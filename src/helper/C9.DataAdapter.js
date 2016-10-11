@@ -413,6 +413,7 @@ export default class DataAdapter {
             let _dsArray    = Helper.get(self.keys.value, data),
                 _valueArray = [],
                 _valueItem  = {
+                    "name": Helper.get(self.keys.name, data),
                     "start": null ,
                     "end": null ,
                     "color": "#fff",
@@ -423,6 +424,7 @@ export default class DataAdapter {
             if (Helper.isArray(_dsArray)) {
                 _dsArray.forEach(function(d, i) {
                     _valueItem = {
+                        "name": Helper.get(self.keys.name, data),
                         "start": d.start,
                         "end": d.end ,
                         "color": color(index),
@@ -433,6 +435,7 @@ export default class DataAdapter {
                 });
             } else {
                 _valueItem = {
+                    "name": Helper.get(self.keys.name, data),
                     "start": d.start,
                     "end": d.end ,
                     "color": color(index),
