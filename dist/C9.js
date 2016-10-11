@@ -286,10 +286,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var minMax = _C12.default.getMinMax(data, self.isGroup == false ? "stack" : null);
 	            var y = self.y;
-	            if (!self.isGroup) {
-	                if (self.axis._y.domain()[0] < minMax.min) minMax.max = self.axis._y.domain()[1];
-	                if (self.axis._y.domain()[1] > minMax.max) minMax.min = self.axis._y.domain()[0];
-	            }
+	            // console.log(minMax);
 	            y.domain([minMax.min, minMax.max]);
 	            self.axis.update(null, y, 750);
 	
@@ -1043,19 +1040,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    },
 	
-	    getMinMax: function getMinMax(data, type) {
+	    getMinMax: function getMinMax(data, type, dataOld) {
 	        var self = this;
 	        var _temp = new Array();
-	        var _min = 0;
-	        var _max = 0;
+	        var _min = 0,
+	            _max = 0;
 	        if (type == "stack") data.forEach(function (d) {
-	            var _neg = 0;
-	            var _pos = 0;
 	            d.forEach(function (s) {
-	                if (s.y0 < 0) _neg += s.y0;else _pos += s.y0;
+	                if (s.y0 > 0) _temp.push(s.y1);else _temp.push(s.y1 + s.y0);
 	            });
-	            _temp.push(_neg);
-	            _temp.push(_pos);
 	        });else data.forEach(function (d) {
 	            d.forEach(function (s) {
 	                _temp.push(s.y0);
@@ -1834,7 +1827,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    dataBackup.forEach(function (d, i) {
 	                        var element = [];
-	                        var elementOld = [];
 	                        d.forEach(function (s, j) {
 	                            enableSet.forEach(function (e) {
 	                                if (e == s.group) {

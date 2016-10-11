@@ -213,12 +213,7 @@ export default class BarChart extends Chart {
 
         var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null);
         var y = self.y;
-        if (!self.isGroup) {
-            if (self.axis._y.domain()[0] < minMax.min)
-                minMax.max = self.axis._y.domain()[1];
-            if (self.axis._y.domain()[1] > minMax.max)
-                minMax.min = self.axis._y.domain()[0];
-        }
+        // console.log(minMax);
         y.domain([minMax.min, minMax.max]);
         self.axis.update(null, y, 750);
 

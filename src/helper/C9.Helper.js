@@ -123,21 +123,19 @@ var Helper = {
         });
     },
 
-    getMinMax: function(data, type) {
+    getMinMax: function(data, type, dataOld) {
         var self  = this;
         var _temp = new Array();
-        var _min  = 0;
-        var _max  = 0;
+        var _min  = 0,
+            _max  = 0;
         if (type == "stack")
-            data.forEach(function (d) {
-                var _neg = 0;
-                var _pos = 0;
+            data.forEach(function (d){
                 d.forEach(function (s){
-                    if (s.y0 < 0) _neg += s.y0;
-                    else _pos += s.y0;
-                });
-                _temp.push(_neg);
-                _temp.push(_pos);
+                    if (s.y0 > 0)
+                        _temp.push(s.y1);
+                    else
+                        _temp.push(s.y1 + s.y0);
+                })
             })
         else
             data.forEach(function (d){

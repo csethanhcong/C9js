@@ -484,7 +484,6 @@ export default class Legend {
 
                 dataBackup.forEach(function(d, i) {
                     var element = [];
-                    var elementOld = [];
                     d.forEach(function(s, j) {
                         enableSet.forEach(function(e) {
                             if (e == s.group) {
