@@ -28,6 +28,7 @@ export default class DataAdapter {
 
         self._dataSource = null;
         self._dataTarget = []; // Initialize new Array to use Array methods
+        self._dataRefs = [];
         self.initDataSource(options);
 
 

@@ -42,6 +42,26 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 6. `Hover Interaction for all Charts`:
 	- DONE: Bar Chart, Line Chart, Donut Chart, Pie Chart
 
+7. Interactions:
+
+- Legend: 
+
+	- Hover: Highlight current data-ref components but others
+	- Click: Remove current data-ref components but others
+
+- Chart:
+	
+	- Hover: 
+		- Display tooltip
+		- Highlight current data-ref components but others
+	- Click:
+		- Default: non-action
+
+- Notes:
+ 	- Add callback to all interactions
+
+DONE: PieChart
+
 #### TODO:
 
 0000. `Add Hover on Legend, temporarily disable/enable like Click on Legend`
@@ -104,7 +124,7 @@ Bar Chart (Group of bar chart)
 
 5. `Bar Chart`: Add isLogaric Implementation for DATA-SCALE, currently only implement for y-scale
 
-6. `Create Table View`: 
+6. `Create Table View`:
 	- REF: https://developers.google.com/chart/interactive/docs/gallery/table
 
 7. `Separate setting options into abc.xyz.blabla`, e.g.
@@ -115,5 +135,3 @@ Bar Chart (Group of bar chart)
 			position: center
 		}
 	}
-
-8. Add callback to all interactions

@@ -2,7 +2,7 @@
 import Helper from '../../helper/C9.Helper';
 
 export default class Axis {
-    constructor(options, body, data, width, height, xAxe, yAxe) {
+    constructor(options, body, data, width, height, x, y) {
         var config = {
             xAxisShow     : true,
             xAxisPadding  : {},   // TODO
@@ -34,43 +34,21 @@ export default class Axis {
         this._y2AxisText    = options.y2AxisText     || config.y2AxisText;
         this._gridXShow     = options.gridXShow      || config.gridXShow;
         this._gridYShow     = options.gridYShow      || config.gridYShow;
+        this._x             = x;
+        this._y             = y;
 
+        // x.domain(data.map(function(d) {
+        //     return d.name || d[0].name;
+        // }));
 
-        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-        var y;
-
-        if (this._isLogaricVariant) {
-            y = d3.scale.log().range([height, 0]);
-        } else {
-            y = d3.scale.linear().range([height, 0]);
-        }
-        
-        x.domain(data.map(function(d) {
-            return d.name || d[0].name;
-        }));
-
-        if (body.type == "bar") {
-            var minMax = Helper.getMinMax(data, "stack");
-            console.log(minMax)
-            // y.domain([
-            //     d3.min(data, function(d) {
-            //         return d.max;
-            //     }), 
-            //     d3.max(data, function(d) {
-            //         return d.max;
-            //     })
-            // ]);
-            y.domain([minMax.min, minMax.max]);
-        }
-        else
-            y.domain([
-                d3.min(data, function(d) {
-                    return d.value;
-                }), 
-                d3.max(data, function(d) {
-                    return d.value;
-                })
-            ]);
+        // y.domain([
+        //     d3.min(data, function(d) {
+        //         return d.value;
+        //     }), 
+        //     d3.max(data, function(d) {
+        //         return d.value;
+        //     })
+        // ]);
 
         if (body.type == "timeline") {
 
@@ -88,8 +66,11 @@ export default class Axis {
 
         } else if (body.type == "line") {
 
-            this._xAxis = xAxe;
-            this._yAxis = yAxe;
+            this._xAxis = d3.svg.axis()
+                            .scale(this._x);
+            this._yAxis = d3.svg.axis()
+                            .scale(this._y)
+                            .orient("left");
 
         } else {
             // Currently, support logaric axis only for y-axis on bar-chart
@@ -98,7 +79,7 @@ export default class Axis {
             var _numOfTickY = this._numOfTickY;
 
             this._xAxis = d3.svg.axis()
-                .scale(x)
+                .scale(this._x)
                 .orient("bottom")
                 .ticks(10);
 
@@ -107,13 +88,13 @@ export default class Axis {
             // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
             if (this._isLogaricVariant) {
                 this._yAxis = d3.svg.axis()
-                    .scale(y)
+                    .scale(this._y)
                     .orient("left")
                     .ticks(_numOfTickY, _tickFormat)
                     .tickSize(10, 0);
             } else {
                 this._yAxis = d3.svg.axis()
-                    .scale(y)
+                    .scale(this._y)
                     .orient("left")
                     .ticks(_numOfTickY)
                     .tickSize(10, 0)
@@ -178,6 +159,17 @@ export default class Axis {
             - Add y2-axis
         **/
             
+    }
+
+    update(x, y, duration) {
+        if (x) {
+            this._x = x;
+            this._body.select('.x.axis').transition().duration(duration).call(this._xAxis);
+        }
+        if (y) {
+            this._y = y;
+            this._body.select(".y.axis").transition().duration(duration).call(this._yAxis);
+        }
     }
 
     /*==============================

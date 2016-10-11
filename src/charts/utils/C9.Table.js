@@ -1,9 +1,6 @@
-'use strict';
-
 import Helper from '../../helper/C9.Helper';
 
-export
-default class Table {
+export default class Table {
     constructor(options, body, data) {
         var config = {
             container: "body",

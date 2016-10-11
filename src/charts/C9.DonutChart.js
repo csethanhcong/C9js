@@ -1,7 +1,10 @@
 import Chart from './C9.Chart';
+
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+
+import Helper from '../helper/C9.Helper';
 import DataAdapter from '../helper/C9.DataAdapter';
 
 export default class DonutChart extends Chart {
@@ -44,14 +47,6 @@ export default class DonutChart extends Chart {
         return this._showText;
     }
 
-    get eventFactory() {
-        return this._eventFactory;
-    }
-
-    get pathAnim() {
-        return this._pathAnim;
-    }
-
     get tooltip() {
         return this._tooltip;
     }
@@ -91,18 +86,6 @@ export default class DonutChart extends Chart {
     set showText(newShowText) {
         if (newShowText) {
             this._showText = newShowText;
-        }
-    }
-
-    set eventFactory(newEventFactory) {
-        if (newEventFactory) {
-            this._eventFactory = newEventFactory;
-        }
-    }
-
-    set pathAnim(newPathAnim) {
-        if (newPathAnim) {
-            this._pathAnim = newPathAnim;
         }
     }
 
@@ -151,25 +134,47 @@ export default class DonutChart extends Chart {
             chartOuterAfter = self.outerRadius * 1.2;
 
         var hoverOptions        = self.hover.options,
+            hoverEnable         = self.hover.enable,
             onMouseOverCallback = hoverOptions.onMouseOver.callback,
-            onMouseOutCallback  = hoverOptions.onMouseOut.callback;
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback,
+            onClickCallback  = self.click.callback;
 
-        // Define Animations for paths
-        self.pathAnim = function(path, dir) {
-            switch(dir) {
-                
-                case 'mouseover':
-                    path.transition()
+        // Main Event Dispatch for paths in donut chart
+        self._eventFactory = {
+            'click': function(d, i) {
+                if (Helper.isFunction(onClickCallback)) {
+                    onClickCallback.call(this, d);
+                }
+            },
+
+            'mouseover': function(d, i) {
+                if (!hoverEnable) return;
+
+                if (Helper.isFunction(onMouseOverCallback)) {
+                    onMouseOverCallback.call(this, d);
+                }
+
+                var selector = d3.select(this);
+                selector.transition()
                         .attr('d', d3.svg.arc()
                             .innerRadius(chartInnerAfter)
                             .outerRadius(chartOuterAfter)
                         )
                         // .style('stroke', '#000')
                         .attr('fill-opacity', '1.0');
-                    break;
 
-                case 'mouseout':
-                    path.transition()
+                self.tooltip().mouseover(d);
+            },
+            
+            'mouseout': function(d, i) {
+                if (!hoverEnable) return;
+
+                if (Helper.isFunction(onMouseOutCallback)) {
+                    onMouseOutCallback.call(this, d);
+                }
+
+                var selector = d3.select(this);
+                selector.transition()
                         .duration(500)
                         .ease('bounce')
                         .attr('d', d3.svg.arc()
@@ -178,34 +183,8 @@ export default class DonutChart extends Chart {
                         )
                         // .style('stroke', '#000')
                         .attr('fill-opacity', '0.5');
-                    break;
-                
-            }
-        
-        };
 
-        // Main Event Dispatch for paths in donut chart
-        self.eventFactory = {
-
-            'mouseover': function(d, i, j) {
-                self.pathAnim(d3.select(this), 'mouseover');
-                self.tooltip().mouseover(d);
-
-                // var thisDonut = self.body..select('.type' + j);
-                // thisDonut.select('.value').text(function(donut_d) {
-                //     return d.data.val.toFixed(1) + donut_d.unit;
-                // });
-                // thisDonut.select('.percentage').text(function(donut_d) {
-                //     return (d.data.val/donut_d.total*100).toFixed(2) + '%';
-                // });
-            },
-            
-            'mouseout': function(d, i, j) {
-                self.pathAnim(d3.select(this), 'mouseout');
                 self.tooltip().mouseout(d);
-
-                // var thisDonut = charts.select('.type' + j);
-                // setCenterText(thisDonut);
             }
 
         };
@@ -363,16 +342,10 @@ export default class DonutChart extends Chart {
      * @return {} 
      */
     updateInteraction() {
-        var self = this,
-            hoverEnable     = self.hover.enable,
-            hoverOptions    = self.hover.options,
-            selector        = self.selectAllPath(),
-            onMouseOverCallback = hoverOptions.onMouseOver.callback,
-            onMouseOutCallback  = hoverOptions.onMouseOut.callback;
+        var self    = this,
+            selector= self.selectAllPath();
 
-        if (hoverEnable) {
-            selector.on(self._eventFactory);
-        }
+        selector.on(self._eventFactory);
     }
     
     /*=====  End of Main Functions  ======*/

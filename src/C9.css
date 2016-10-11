@@ -139,3 +139,77 @@
 .c9-table-container::-webkit-scrollbar-thumb {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
 }
+
+/*----------  TOOLTIP  ----------*/
+.c9-custom-tooltip-container {
+	line-height: 1.2;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 2px;
+    font-size: 10px;
+    box-shadow: 1px 1px 5px 0px rgba(50, 50, 50, 0.6);
+}
+
+.c9-custom-tooltip-container strong {
+	color: red;
+}
+
+.c9-custom-tooltip-container.c9-tooltip-left::before {
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25c4";
+    position: absolute;
+    top: 40%;
+    left: -8%;
+
+	/*margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;*/
+}
+
+.c9-custom-tooltip-container.c9-tooltip-right::after {
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25ba";
+    position: absolute;
+    top: 40%;
+    left: 98%%;
+
+	/*margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;*/
+}
+
+.c9-custom-tooltip-container.c9-tooltip-bottom::after {
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25bc";
+    position: absolute;
+    top: 98%;
+    left: 45%;
+
+	/*margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;*/
+}
+
+.c9-custom-tooltip-container.c9-tooltip-top::after {
+    font-size: 10px;
+    width: 100%;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.8);
+    content: "\25b2";
+    position: absolute;
+    top: -16%;
+    left: 45%;
+
+	/*margin: -1px 0 0 0;
+    top: 100%;
+    left: 0;*/
+}

@@ -195,46 +195,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self._isGroup = barChartType == "group";
 	        }
 	
-	        // self.data.forEach(function(d, i) {
-	        //     var y0 = 0; // calculate stacked data (top of each bar)
-	        //     var count = 0; // count number of group
-	        //     groupStart = i; 
-	        //     if (typeof d.value === "object") {
-	        //         if (self.groupType == "stack") {
-	        //             d.stack = d.value.map(function(v) {
-	        //                 count++;
-	        //                 return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-	        //             });
-	        //             d.total = d.stack[d.stack.length - 1].y1;
-	        //         }
-	        //         else if (self.groupType == "group") {
-	        //             var total = -Infinity;
-	        //             d.stack = d.value.map(function(v) {
-	        //                 count++;
-	        //                 total = v > total ? v : total;
-	        //                 return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-	        //             });
-	        //             d.total = total;
-	        //         }
-	        //     }
-	        //     else {
-	        //         d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
-	        //         d.total = d.stack[d.stack.length - 1].y1;
-	        //     }
-	        //     if (count > groupCount)
-	        //         groupCount = count;
-	        // });
-	
-	        // // assign group to those first elements in data if they don't have
-	        // for (var i = 0; i < groupStart - 1; i++) {
-	        //     self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
-	        // };
-	
 	        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
 	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-	        var y = d3.scale.linear().range([height, 0]);
+	        var y = options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
 	
-	        var minMax = _C12.default.getMinMax(self.dataTarget, "stack");
+	        var minMax = _C12.default.getMinMax(self.dataTarget, barChartType);
 	
 	        x.domain(self.dataTarget.map(function (d) {
 	            return d[0].name;
@@ -247,12 +212,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self._xGroup = d3.scale.ordinal();
 	            self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
 	        }
-	
-	        //self-define group names if user do not define
-	        // if (self._groupNames.length == 0)
-	        //     for (var i = 1; i <= groupCount; i++) {
-	        //         self._groupNames.push("Group " + i);
-	        //     };
 	
 	        /**********************************************/
 	
@@ -325,6 +284,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var self = this;
 	            var type = self.groupType;
 	
+	            var minMax = _C12.default.getMinMax(data, self.isGroup == false ? "stack" : null);
+	            var y = self.y;
+	            if (!self.isGroup) {
+	                if (self.axis._y.domain()[0] < minMax.min) minMax.max = self.axis._y.domain()[1];
+	                if (self.axis._y.domain()[1] > minMax.max) minMax.min = self.axis._y.domain()[0];
+	            }
+	            y.domain([minMax.min, minMax.max]);
+	            self.axis.update(null, y, 750);
+	
 	            var xGroup = d3.scale.ordinal();
 	            xGroup.domain(groupNames).rangeRoundBands([0, self.x.rangeBand()]);
 	
@@ -337,8 +305,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            // self.body.selectAll(".c9-custom-rect").transition().duration(750).attr("height", 0).remove();
 	            self.body.selectAll(".c9-custom-rect").data([]).exit().remove();
-	
-	            var bar = self.body.selectAll(".bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d, i) {
+	            self.body.selectAll(".c9-custom-bar").data([]).exit().remove();
+	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d, i) {
 	                return "translate(" + self.x(self.dataTarget[i][0].name) + ",0)";
 	            });
 	
@@ -356,11 +324,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1) return self.x.rangeBand();
 	                return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
 	            }).attr("y", function (d) {
-	                return self.y(d.y1);
+	                return y(d.y1);
 	            }).attr("width", function (d) {
 	                return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
 	            }).attr("height", function (d) {
-	                return self.y(0) - self.y(Math.abs(d.y0));
+	                return y(0) - y(Math.abs(d.y0));
 	            });
 	
 	            bars.transition().duration(750).attr("x", function (d) {
@@ -381,12 +349,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'draw',
 	        value: function draw() {
 	            var self = this;
-	            var axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
+	            self.axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
 	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 	
 	            legend.draw();
 	            legend.updateInteractionForBarChart(self);
+	
 	            self.updateInteraction();
 	        }
 	
@@ -430,32 +399,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	                hoverOptions = self.hover.options,
 	                selector = self.selectAllBar(),
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
 	
-	            if (hoverEnable) {
-	                // Define the div for the tooltip
-	                // TODO: Allow user to add custom DIV, CLASS
-	                // Make sure that: 
-	                // - Rect not overflow the bar, if not, hover effect will be messed
-	                // -> So, just align the rect to right/left (x: 25) to avoid it
-	                // -> And, the text will be align also
-	                var div = self.body.append('g').style('display', 'none');
-	                // Rect Container
-	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-	                // First line
-	                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	                // Second line
-	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+	            // Define tooltip
+	            // TODO: Allow user to add custom DIV, CLASS
+	            // Make sure that: 
+	            // - Rect not overflow the bar, if not, hover effect will be messed
+	            // -> So, just align the rect to right/left (x: 25) to avoid it
+	            // -> And, the text will be align also
+	            var div = self.body.append('g').style('display', 'none');
+	            // Rect Container
+	            div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	            // First line
+	            var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
+	            // Second line
+	            var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
 	
-	                selector.on("mouseover", function (d) {
+	            // Update Event Factory
+	            self.eventFactory = {
+	                'click': function click(d) {
+	                    if (_C12.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
+	                },
+	                'mouseover': function mouseover(d) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C12.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
+	                    }
+	
 	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
 	
 	                    text_1.text('Name: ' + d.name);
 	                    text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
-	                }).on("mouseout", function (d) {
+	                },
+	                'mouseout': function mouseout(d) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C12.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
 	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
-	                });
-	            }
+	                }
+	            };
+	
+	            selector.on(self.eventFactory);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/
@@ -609,11 +600,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	                options: {
 	                    template: '',
 	                    onMouseOver: {
-	                        fadeIn: 200
+	                        fadeIn: 200,
+	                        callback: function callback(data) {
+	                            console.dir(data);
+	                        }
 	                    },
 	                    onMouseOut: {
-	                        fadeOut: 500
+	                        fadeOut: 500,
+	                        callback: function callback(data) {
+	                            console.dir(data);
+	                        }
 	                    }
+	                }
+	            },
+	
+	            click: {
+	                callback: function callback(data) {
+	                    console.dir(data);
 	                }
 	            },
 	
@@ -622,9 +625,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            legendPosition: "bottom",
 	            legendInsetAnchor: "top-left",
 	            legendPadding: 0,
-	            // tooltip - show when mouseover on each data
-	            tooltipShow: true,
-	            tooltipPosition: undefined,
+	
+	            // tooltip
+	            tooltip: {
+	                show: true,
+	                position: 'top', // [top, right, bottom, left]
+	                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+	                fontColor: '#fff',
+	                format: {
+	                    name: function name(d) {
+	                        return 'Name ' + d;
+	                    },
+	                    value: function value(d) {
+	                        return 'Value ' + d;
+	                    }
+	                }
+	            },
 	
 	            // table 
 	            table: {
@@ -645,6 +661,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            // color range
 	            colorRange: "category20",
+	
 	            // data
 	            data: {
 	                // ALL OPTIONS AVAILABLE IN DATA CONFIG
@@ -667,11 +684,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._width = options.width || config.width;
 	        self._height = options.height || config.height;
 	        self._colorRange = options.colorRange || config.colorRange;
-	        self._hover = options.hover || config.hover;
+	
+	        self._margin = _C2.default.merge(options.margin, config.margin);
+	        self._hover = _C2.default.merge(options.hover, config.hover);
+	        self._click = _C2.default.merge(options.click, config.click);
+	
+	        // Main factory contains all interactions
+	        self._eventFactory = null;
 	
 	        self._dataOption = _C2.default.merge(options.data, config.data);
 	        self._dataTarget = null;
-	        self._margin = _C2.default.merge(options.margin, config.margin);
 	
 	        // Skeleton: 
 	        // SVG
@@ -680,6 +702,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._svg = null;
 	        self._body = null;
 	        self._options = options;
+	
+	        self._options.table = _C2.default.merge(options.table, config.table);
+	        self._options.tooltip = _C2.default.merge(options.tooltip, config.tooltip);
 	
 	        self.initConfig();
 	    }
@@ -843,6 +868,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: 'click',
+	        get: function get() {
+	            return this._click;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._click = arg;
+	            }
+	        }
+	    }, {
 	        key: 'dataTarget',
 	        get: function get() {
 	            return this._dataTarget;
@@ -850,6 +885,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(arg) {
 	            if (arg) {
 	                this._dataTarget = arg;
+	            }
+	        }
+	    }, {
+	        key: 'eventFactory',
+	        get: function get() {
+	            return this._eventFactory;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._eventFactory = arg;
 	            }
 	        }
 	    }]);
@@ -1059,7 +1104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Axis = function () {
-	    function Axis(options, body, data, width, height, xAxe, yAxe) {
+	    function Axis(options, body, data, width, height, x, y) {
 	        _classCallCheck(this, Axis);
 	
 	        var config = {
@@ -1093,37 +1138,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._y2AxisText = options.y2AxisText || config.y2AxisText;
 	        this._gridXShow = options.gridXShow || config.gridXShow;
 	        this._gridYShow = options.gridYShow || config.gridYShow;
+	        this._x = x;
+	        this._y = y;
 	
-	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-	        var y;
+	        // x.domain(data.map(function(d) {
+	        //     return d.name || d[0].name;
+	        // }));
 	
-	        if (this._isLogaricVariant) {
-	            y = d3.scale.log().range([height, 0]);
-	        } else {
-	            y = d3.scale.linear().range([height, 0]);
-	        }
-	
-	        x.domain(data.map(function (d) {
-	            return d.name || d[0].name;
-	        }));
-	
-	        if (body.type == "bar") {
-	            var minMax = _C2.default.getMinMax(data, "stack");
-	            console.log(minMax);
-	            // y.domain([
-	            //     d3.min(data, function(d) {
-	            //         return d.max;
-	            //     }), 
-	            //     d3.max(data, function(d) {
-	            //         return d.max;
-	            //     })
-	            // ]);
-	            y.domain([minMax.min, minMax.max]);
-	        } else y.domain([d3.min(data, function (d) {
-	            return d.value;
-	        }), d3.max(data, function (d) {
-	            return d.value;
-	        })]);
+	        // y.domain([
+	        //     d3.min(data, function(d) {
+	        //         return d.value;
+	        //     }), 
+	        //     d3.max(data, function(d) {
+	        //         return d.value;
+	        //     })
+	        // ]);
 	
 	        if (body.type == "timeline") {
 	
@@ -1133,23 +1162,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	            delete options.ending;
 	        } else if (body.type == "line") {
 	
-	            this._xAxis = xAxe;
-	            this._yAxis = yAxe;
+	            this._xAxis = d3.svg.axis().scale(this._x);
+	            this._yAxis = d3.svg.axis().scale(this._y).orient("left");
 	        } else {
 	            // Currently, support logaric axis only for y-axis on bar-chart
 	            // TODO: add for line-chart too
 	            var _tickFormat = d3.format(this._tickFormat);
 	            var _numOfTickY = this._numOfTickY;
 	
-	            this._xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
+	            this._xAxis = d3.svg.axis().scale(this._x).orient("bottom").ticks(10);
 	
 	            // In LOG scale, can't specify default number of ticks
 	            // must be filter with tickFormat instead
 	            // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
 	            if (this._isLogaricVariant) {
-	                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY, _tickFormat).tickSize(10, 0);
+	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(_numOfTickY, _tickFormat).tickSize(10, 0);
 	            } else {
-	                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
+	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
 	            }
 	        }
 	
@@ -1190,11 +1219,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	        **/
 	    }
 	
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-	
 	    _createClass(Axis, [{
+	        key: 'update',
+	        value: function update(x, y, duration) {
+	            if (x) {
+	                this._x = x;
+	                this._body.select('.x.axis').transition().duration(duration).call(this._xAxis);
+	            }
+	            if (y) {
+	                this._y = y;
+	                this._body.select(".y.axis").transition().duration(duration).call(this._yAxis);
+	            }
+	        }
+	
+	        /*==============================
+	        =            Getter            =
+	        ==============================*/
+	
+	    }, {
 	        key: 'xAxis',
 	        get: function get() {
 	            return this._xAxis;
@@ -1429,15 +1471,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _C = __webpack_require__(3);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -1494,57 +1542,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (self._legendShow) {
 	                // TODO: Remove these conditional checks by getData for general purposes
 	                var legendDomain = [];
-	
-	                // var setEnableData = function(_data, _flag) {
-	                //     return {
-	                //         'data': _data,
-	                //         'enable': _flag
-	                //     };
-	                // };
-	
-	                // if (self._body.type == "line") {
-	
-	                //     var dataGroup = d3.nest()
-	                //         .key(function(d) { return d.Client; })
-	                //         .entries(self._data);
-	
-	                //     dataGroup.forEach(function(d, i) {
-	                //         legendDomain.push(d.key);
-	                //     });
-	
-	                // } else if (self._body.type == "bar") {
-	
-	                //     legendDomain = self._data;
-	
-	
-	                // } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
-	
-	                //     self._data.forEach(function(d) {
-	                //         d.name ? legendDomain.push(d.name) : legendDomain.push("");
-	                //     });
-	
-	                // }
-	
-	
-	                // Store for backup, and add enable flag to each data
-	                // self.legendDomain = [];
-	                // self._data.forEach(function(d) {
-	                //     if (d) {
-	                //         self.legendDomain.push(setEnableData(d, true));
-	                //     }
-	                // });
-	
-	                // var i;
-	                // for (i = 0; i < legendDomain.length; i++) {
-	                //     if (legendDomain[i] != "")
-	                //         break;
-	                // };
-	
-	                // if (i == legendDomain.length)
-	                //     legendDomain = [];
-	
-	                // Calculate domain for color to draw
-	                // color.domain(legendDomain);
 	
 	                if (self._body.type == "bar") {
 	                    self.data = self.data[self.data.reduce(function (p, c, i, a) {
@@ -1608,10 +1605,101 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var self = this;
 	
+	            var hoverOptions = chart.hover.options,
+	                hoverEnable = chart.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = chart.click.callback;
+	
 	            self.legendItemEventFactory = {
 	
 	                'click': function click(item) {
-	                    console.log(item);
+	                    if (_C2.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, item);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    var enable = true,
+	                        dataSet = self.data;
+	                    var totalEnable = d3.sum(dataSet.map(function (d) {
+	                        return d.enable ? 1 : 0;
+	                    }));
+	
+	                    // Add pointer to cursor
+	                    selector.style('cursor', 'pointer');
+	
+	                    // If current selector is disabled, then turn it on back
+	                    // Else, set enable to false
+	                    if (selector.style('opacity') == '0.1') {
+	                        selector.style('opacity', '1.0');
+	                    } else {
+	                        if (totalEnable < 2) return;
+	                        selector.style('opacity', '0.1');
+	                        enable = false;
+	                    }
+	                },
+	
+	                'mouseover': function mouseover(item) {
+	                    if (_C2.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	                },
+	
+	                'mouseout': function mouseout(item) {
+	                    if (_C2.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	                }
+	
+	            };
+	
+	            if (self.legendShow) {
+	
+	                self.legendItem.on(self.legendItemEventFactory);
+	            }
+	        }
+	
+	        /**
+	         * Update interaction event dispatchers for legend
+	         * For: Donut Chart, Pie Chart
+	         */
+	
+	    }, {
+	        key: "updateInteractionForDonutPieChart",
+	        value: function updateInteractionForDonutPieChart(chart, path, pie, currentData, arc) {
+	
+	            var self = this;
+	
+	            var hoverOptions = chart.hover.options,
+	                hoverEnable = chart.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = chart.click.callback;
+	
+	            var chartType = chart.chartType;
+	
+	            var chartInnerBefore = chartType == 'pie' ? 0 : chart.innerRadius,
+	                chartOuterBefore = chartType == 'pie' ? chart.radius : chart.outerRadius,
+	                chartInnerAfter = chartType == 'pie' ? 0 : chart.innerRadius,
+	                chartOuterAfter = chartType == 'pie' ? chart.radius * 1.2 : chart.outerRadius * 1.2;
+	
+	            self.legendItemEventFactory = {
+	
+	                'click': function click(item) {
+	                    if (_C2.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, item);
+	                    }
+	
 	                    var selector = d3.select(this);
 	                    var enable = true,
 	                        dataSet = self.data;
@@ -1653,6 +1741,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                },
 	
 	                'mouseover': function mouseover(item) {
+	                    if (_C2.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, item);
+	                    }
+	
 	                    var legendSelector = d3.select(this);
 	                    // Add pointer to cursor
 	                    legendSelector.style('cursor', 'pointer');
@@ -1660,6 +1752,107 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 	
 	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).attr('fill-opacity', '1.0');
+	                },
+	
+	                'mouseout': function mouseout(item) {
+	                    if (_C2.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).attr('fill-opacity', '0.5');
+	                }
+	
+	            };
+	
+	            if (self.legendShow) {
+	
+	                self.legendItem.on(self.legendItemEventFactory);
+	            }
+	        }
+	
+	        /**
+	         * Update interaction for barchart
+	         * @param  {[type]} chart       [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: "updateInteractionForBarChart",
+	        value: function updateInteractionForBarChart(chart) {
+	
+	            var self = this;
+	
+	            var hoverOptions = chart.hover.options,
+	                hoverEnable = chart.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = chart.click.callback;
+	
+	            self.legendItemEventFactory = {
+	
+	                'click': function click(item) {
+	                    if (_C2.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, item);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    var enable = true,
+	                        dataBackup = chart.dataTarget,
+	                        dataSet = self.data;
+	                    var totalEnable = d3.sum(dataSet.map(function (d) {
+	                        return d.enable ? 1 : 0;
+	                    }));
+	
+	                    var enableSet = [];
+	                    var enableSetOld = [];
+	                    var data = [];
+	                    // Add pointer to cursor
+	                    selector.style('cursor', 'pointer');
+	
+	                    // If current selector is disabled, then turn it on back
+	                    // Else, set enable to false
+	                    if (selector.style('opacity') == '0.1') {
+	                        selector.style('opacity', '1.0');
+	                    } else {
+	                        if (totalEnable < 2) return;
+	                        selector.style('opacity', '0.1');
+	                        enable = false;
+	                    }
+	
+	                    //set current data for legend
+	                    self.data.forEach(function (d, i) {
+	                        if (d.enable) enableSetOld.push(d.group);
+	                        if (d.group == item.group) d.enable = enable;
+	                        if (d.enable) enableSet.push(d.group);
+	                    });
+	
+	                    dataBackup.forEach(function (d, i) {
+	                        var element = [];
+	                        var elementOld = [];
+	                        d.forEach(function (s, j) {
+	                            enableSet.forEach(function (e) {
+	                                if (e == s.group) {
+	                                    element.push(s);
+	                                }
+	                            });
+	                        });
+	                        data.push(element);
+	                    });
+	
+	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, item.group);
+	                },
+	
+	                'mouseover': function mouseover(item) {
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	
 	                    // var enable = true,
 	                    //     dataSet = self.legendDomain,
 	                    //     isCurrentEnable = true;
@@ -1710,9 +1903,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // Add pointer to cursor
 	                    legendSelector.style('cursor', 'pointer');
 	
-	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
-	
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).attr('fill-opacity', '0.5');
 	                    // var dataSet = self.legendDomain,
 	                    //     isCurrentEnable = true;
 	
@@ -1749,76 +1939,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    //             return arc(interpolate(t));
 	                    //         };
 	                    //     });
-	                }
-	
-	            };
-	
-	            if (self.legendShow) {
-	
-	                self.legendItem.on(self.legendItemEventFactory);
-	            }
-	        }
-	
-	        /**
-	         * Update interaction for barchart
-	         * @param  {[type]} chart       [description]
-	         * @return {[type]}             [description]
-	         */
-	
-	    }, {
-	        key: "updateInteractionForBarChart",
-	        value: function updateInteractionForBarChart(chart) {
-	
-	            var self = this;
-	
-	            self.legendItemEventFactory = {
-	
-	                'click': function click(item) {
-	                    var selector = d3.select(this);
-	                    var enable = true,
-	                        dataBackup = chart.dataTarget,
-	                        dataSet = self.data;
-	                    var totalEnable = d3.sum(dataSet.map(function (d) {
-	                        return d.enable ? 1 : 0;
-	                    }));
-	
-	                    var enableSet = [];
-	                    var enableSetOld = [];
-	                    var data = [];
-	                    // Add pointer to cursor
-	                    selector.style('cursor', 'pointer');
-	
-	                    // If current selector is disabled, then turn it on back
-	                    // Else, set enable to false
-	                    if (selector.style('opacity') == '0.1') {
-	                        selector.style('opacity', '1.0');
-	                    } else {
-	                        if (totalEnable < 2) return;
-	                        selector.style('opacity', '0.1');
-	                        enable = false;
-	                    }
-	
-	                    //set current data for legend
-	                    self.data.forEach(function (d, i) {
-	                        if (d.enable) enableSetOld.push(d.group);
-	                        if (d.group == item.group) d.enable = enable;
-	                        if (d.enable) enableSet.push(d.group);
-	                    });
-	
-	                    //TODO - handle total - use for axis
-	                    dataBackup.forEach(function (d, i) {
-	                        var element = [];
-	                        d.forEach(function (s, j) {
-	                            enableSet.forEach(function (e) {
-	                                if (e == s.group) {
-	                                    element.push(s);
-	                                }
-	                            });
-	                        });
-	                        data.push(element);
-	                    });
-	
-	                    chart.updateLegendInteraction(data, enableSet, enableSetOld, item.group);
 	                }
 	
 	            };
@@ -1965,7 +2085,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1975,23 +2095,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	var _C = __webpack_require__(3);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Tooltip = function () {
-	    function Tooltip(options, body, data) {
+	    function Tooltip(options) {
 	        _classCallCheck(this, Tooltip);
+	
+	        var self = this;
 	
 	        var config = {
 	            show: true,
-	            position: top,
-	            offset: [-10, 0],
-	            class: 'd3-tip'
+	            position: 'top', // [top, right, bottom, left]
+	            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+	            fontColor: '#fff',
+	            fontSize: '11px',
+	            trianglePosition: 'left', // [top, right, bottom, left]
+	            format: {
+	                title: function title(d) {
+	                    return 'Title ' + d;
+	                },
+	                detail: function detail(d) {
+	                    return 'Detail ' + d;
+	                }
+	            }
 	        };
 	
-	        this._show = options.show || config.show;
-	        this._position = options.position || config.position;
-	        this._offset = options.offset || config.offset;
-	        this._class = options.class || config.class;
+	        self._show = options.show || config.show;
+	        self._position = options.position || config.position;
+	        self._backgroundColor = options.backgroundColor || config.backgroundColor;
+	        self._fontColor = options.fontColor || config.fontColor;
+	        self._fontSize = options.fontSize || config.fontSize;
+	        self._trianglePosition = options.trianglePosition || config.trianglePosition;
+	
+	        self._format = _C2.default.merge(options.format, config.format);
 	    }
 	
 	    /*==============================
@@ -2000,22 +2142,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(Tooltip, [{
-	        key: 'show',
-	        get: function get() {
-	            return this._show;
-	        }
+	        key: 'draw',
 	
-	        /*=====  End of Getter  ======*/
-	
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	        ,
-	        set: function set(newShow) {
-	            if (newShow) {
-	                this._show = newShow;
-	            }
-	        }
 	
 	        /*=====  End of Setter  ======*/
 	
@@ -2023,8 +2151,177 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Main Functions            =
 	        ======================================*/
 	
+	        /**
+	         * [draw description]
+	         * @return {[type]} [description]
+	         */
+	        value: function draw(data, chart, eventType) {
+	            var self = this;
+	
+	            var format = self.format;
+	
+	            // First of all, remove all exisiting tooltips
+	            d3.select(chart.id).selectAll('.c9-custom-tooltip-container').remove();
+	
+	            var selector = d3.select(chart.id);
+	
+	            // TODO: Add margin to tooltip configs
+	            // Default: (100, 100) relative to mouse coordinate and chart margin transformation
+	            var divOnHover = selector.append('div').attr('class', function () {
+	                return 'c9-custom-tooltip-container ' + self.getTriangleClass();
+	            })
+	            // .attr("transform", function() { return 'translate(' + (d3.mouse(this)[0] - 100) +","+ (d3.mouse(this)[1] - 100) + ')'; })
+	            .style('display', 'none').style('position', 'absolute').style('pointer-events', 'all').style('background-color', self.backgroundColor).style('color', self.fontColor).style('font-size', self.fontSize)
+	            // .style('width', '100px')
+	            // .style('height', '50px')
+	            .html(function () {
+	                return '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
+	            });
+	
+	            self.eventFactory = {
+	
+	                'mouseover': function mouseover(data) {
+	                    divOnHover.transition()
+	                    // .style('left', function() {return d3.mouse(this)[0] + 'px';})
+	                    .style('left', function () {
+	                        return d3.event.pageX + 'px';
+	                    })
+	                    // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
+	                    .style('top', function () {
+	                        return d3.event.pageY + 'px';
+	                    }).duration(200).style("display", 'block').style('pointer-events', 'none');
+	                },
+	
+	                'mouseout': function mouseout(data) {
+	                    divOnHover.transition().duration(200).style('display', 'none');
+	                }
+	
+	            };
+	
+	            if (self.show) {
+	
+	                switch (eventType) {
+	                    case 'mouseover':
+	                        self.eventFactory.mouseover(data);
+	                        break;
+	                    case 'mouseout':
+	                        self.eventFactory.mouseout(data);
+	                        break;
+	                }
+	            }
+	        }
+	    }, {
+	        key: 'getTriangleClass',
+	        value: function getTriangleClass() {
+	            var self = this;
+	            var r = void 0;
+	
+	            switch (self.trianglePosition) {
+	                case 'top':
+	                    r = 'c9-tooltip-top';
+	                    break;
+	                case 'right':
+	                    r = 'c9-tooltip-right';
+	                    break;
+	                case 'bottom':
+	                    r = 'c9-tooltip-bottom';
+	                    break;
+	                case 'left':
+	                    r = 'c9-tooltip-left';
+	                    break;
+	            }
+	            return r;
+	        }
+	
 	        /*=====  End of Main Functions  ======*/
 	
+	    }, {
+	        key: 'show',
+	        get: function get() {
+	            return this._show;
+	        },
+	
+	
+	        /*=====  End of Getter  ======*/
+	
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._show = arg;
+	            }
+	        }
+	    }, {
+	        key: 'position',
+	        get: function get() {
+	            return this._position;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._position = arg;
+	            }
+	        }
+	    }, {
+	        key: 'backgroundColor',
+	        get: function get() {
+	            return this._backgroundColor;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._backgroundColor = arg;
+	            }
+	        }
+	    }, {
+	        key: 'fontColor',
+	        get: function get() {
+	            return this._fontColor;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._fontColor = arg;
+	            }
+	        }
+	    }, {
+	        key: 'fontSize',
+	        get: function get() {
+	            return this._fontSize;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._fontSize = arg;
+	            }
+	        }
+	    }, {
+	        key: 'trianglePosition',
+	        get: function get() {
+	            return this._trianglePosition;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._trianglePosition = arg;
+	            }
+	        }
+	    }, {
+	        key: 'format',
+	        get: function get() {
+	            return this._format;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._format = arg;
+	            }
+	        }
+	    }, {
+	        key: 'eventFactory',
+	        get: function get() {
+	            return this._eventFactory;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._eventFactory = arg;
+	            }
+	        }
 	    }]);
 	
 	    return Tooltip;
@@ -2080,6 +2377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        self._dataSource = null;
 	        self._dataTarget = []; // Initialize new Array to use Array methods
+	        self._dataRefs = [];
 	        self.initDataSource(options);
 	    }
 	
@@ -2672,9 +2970,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(8);
+	var _C9 = __webpack_require__(3);
 	
 	var _C10 = _interopRequireDefault(_C9);
+	
+	var _C11 = __webpack_require__(8);
+	
+	var _C12 = _interopRequireDefault(_C11);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -2708,7 +3010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dataOption = self.dataOption;
 	        dataOption.colorRange = self.colorRange;
 	
-	        var da = new _C10.default(dataOption);
+	        var da = new _C12.default(dataOption);
 	        self.dataTarget = da.getDataTarget("donut");
 	
 	        self.updateConfig();
@@ -2745,50 +3047,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	                chartOuterAfter = self.outerRadius * 1.2;
 	
 	            var hoverOptions = self.hover.options,
+	                hoverEnable = self.hover.enable,
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
-	
-	            // Define Animations for paths
-	            self.pathAnim = function (path, dir) {
-	                switch (dir) {
-	
-	                    case 'mouseover':
-	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
-	                        // .style('stroke', '#000')
-	                        .attr('fill-opacity', '1.0');
-	                        break;
-	
-	                    case 'mouseout':
-	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
-	                        // .style('stroke', '#000')
-	                        .attr('fill-opacity', '0.5');
-	                        break;
-	
-	                }
-	            };
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
 	
 	            // Main Event Dispatch for paths in donut chart
-	            self.eventFactory = {
-	
-	                'mouseover': function mouseover(d, i, j) {
-	                    self.pathAnim(d3.select(this), 'mouseover');
-	                    self.tooltip().mouseover(d);
-	
-	                    // var thisDonut = self.body..select('.type' + j);
-	                    // thisDonut.select('.value').text(function(donut_d) {
-	                    //     return d.data.val.toFixed(1) + donut_d.unit;
-	                    // });
-	                    // thisDonut.select('.percentage').text(function(donut_d) {
-	                    //     return (d.data.val/donut_d.total*100).toFixed(2) + '%';
-	                    // });
+	            self._eventFactory = {
+	                'click': function click(d, i) {
+	                    if (_C10.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
 	                },
 	
-	                'mouseout': function mouseout(d, i, j) {
-	                    self.pathAnim(d3.select(this), 'mouseout');
-	                    self.tooltip().mouseout(d);
+	                'mouseover': function mouseover(d, i) {
+	                    if (!hoverEnable) return;
 	
-	                    // var thisDonut = charts.select('.type' + j);
-	                    // setCenterText(thisDonut);
+	                    if (_C10.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
+	                    // .style('stroke', '#000')
+	                    .attr('fill-opacity', '1.0');
+	
+	                    self.tooltip().mouseover(d);
+	                },
+	
+	                'mouseout': function mouseout(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C10.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
+	                    // .style('stroke', '#000')
+	                    .attr('fill-opacity', '0.5');
+	
+	                    self.tooltip().mouseout(d);
 	                }
 	
 	            };
@@ -2913,15 +3212,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'updateInteraction',
 	        value: function updateInteraction() {
 	            var self = this,
-	                hoverEnable = self.hover.enable,
-	                hoverOptions = self.hover.options,
-	                selector = self.selectAllPath(),
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+	                selector = self.selectAllPath();
 	
-	            if (hoverEnable) {
-	                selector.on(self._eventFactory);
-	            }
+	            selector.on(self._eventFactory);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/
@@ -2960,26 +3253,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(newShowText) {
 	            if (newShowText) {
 	                this._showText = newShowText;
-	            }
-	        }
-	    }, {
-	        key: 'eventFactory',
-	        get: function get() {
-	            return this._eventFactory;
-	        },
-	        set: function set(newEventFactory) {
-	            if (newEventFactory) {
-	                this._eventFactory = newEventFactory;
-	            }
-	        }
-	    }, {
-	        key: 'pathAnim',
-	        get: function get() {
-	            return this._pathAnim;
-	        },
-	        set: function set(newPathAnim) {
-	            if (newPathAnim) {
-	                this._pathAnim = newPathAnim;
 	            }
 	        }
 	    }, {
@@ -3062,9 +3335,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(8);
+	var _C9 = __webpack_require__(3);
 	
 	var _C10 = _interopRequireDefault(_C9);
+	
+	var _C11 = __webpack_require__(8);
+	
+	var _C12 = _interopRequireDefault(_C11);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3114,7 +3391,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dataOption = self.dataOption;
 	        dataOption.colorRange = self.colorRange;
 	
-	        var da = new _C10.default(dataOption);
+	        var da = new _C12.default(dataOption);
 	        self.dataTarget = da.getDataTarget("line");
 	
 	        self.updateConfig();
@@ -3160,9 +3437,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return d.value;
 	            })]);
 	
-	            self.xAxis = d3.svg.axis().scale(x);
-	            self.yAxis = d3.svg.axis().scale(y).orient("left");
-	
 	            var lineGen = d3.svg.line().x(function (d) {
 	                return x(d.time);
 	            }).y(function (d) {
@@ -3200,12 +3474,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function draw() {
 	            var self = this;
 	
-	            // var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.xAxis, self.yAxis);
+	            var axis = new _C4.default(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
 	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
 	
 	            // Draw legend
 	            legend.draw();
+	            legend.updateInteractionForLineChart(self);
 	
 	            self.updateInteraction();
 	        }
@@ -3234,33 +3509,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	                hoverOptions = self.hover.options,
 	                selector = self.selectAllCircle(),
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
 	
-	            if (hoverEnable) {
-	                // Define the div for the tooltip
-	                // TODO: Allow user to add custom DIV, CLASS
-	                // Make sure that: 
-	                // - Rect not overflow the bar, if not, hover effect will be messed
-	                // -> So, just align the rect to right/left (x: 25) to avoid it
-	                // -> And, the text will be align also
-	                var div = self.body.append('g').style('display', 'none');
-	                // .style('opacity', 0);
-	                // Rect Container
-	                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-	                // First line
-	                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	                // Second line
-	                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+	            // Define the div for the tooltip
+	            // TODO: Allow user to add custom DIV, CLASS
+	            // Make sure that: 
+	            // - Rect not overflow the bar, if not, hover effect will be messed
+	            // -> So, just align the rect to right/left (x: 25) to avoid it
+	            // -> And, the text will be align also
+	            var div = self.body.append('g').style('display', 'none');
+	            // .style('opacity', 0);
+	            // Rect Container
+	            div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
+	            // First line
+	            var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
+	            // Second line
+	            var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
 	
-	                selector.on("mouseover", function (d) {
+	            // Update Event Factory
+	            self.eventFactory = {
+	                'click': function click(d) {
+	                    if (_C10.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
+	                },
+	                'mouseover': function mouseover(d) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C10.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
+	                    }
+	
 	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
 	
 	                    text_1.text('Name: ' + d.time);
 	                    text_2.text('Value: ' + d.value);
-	                }).on("mouseout", function (d) {
+	                },
+	                'mouseout': function mouseout(d) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C10.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
 	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style("display", 'none');
-	                });
-	            }
+	                }
+	            };
+	
+	            selector.on(self.eventFactory);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/
@@ -3477,9 +3774,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(8);
+	var _C11 = __webpack_require__(7);
 	
 	var _C12 = _interopRequireDefault(_C11);
+	
+	var _C13 = __webpack_require__(3);
+	
+	var _C14 = _interopRequireDefault(_C13);
+	
+	var _C15 = __webpack_require__(8);
+	
+	var _C16 = _interopRequireDefault(_C15);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3513,7 +3818,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dataOption = self.dataOption;
 	        dataOption.colorRange = self.colorRange;
 	
-	        var da = new _C12.default(dataOption);
+	        var da = new _C16.default(dataOption);
 	        self.dataTarget = da.getDataTarget("pie");
 	
 	        self.updateConfig();
@@ -3550,93 +3855,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	                chartOuterAfter = self.radius * 1.2;
 	
 	            var hoverOptions = self.hover.options,
+	                hoverEnable = self.hover.enable,
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
 	
-	            // Define Animations for paths
-	            self.pathAnim = function (path, dir) {
-	                switch (dir) {
-	
-	                    case 'mouseover':
-	                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
-	                        // .style('stroke', '#FFFFF3')
-	                        .attr('fill-opacity', '1.0');
-	                        break;
-	
-	                    case 'mouseout':
-	                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
-	                        // .style('stroke', '#ffffff')
-	                        .attr('fill-opacity', '0.5');
-	                        break;
-	                }
-	            };
+	            var tooltip = new _C12.default(self.options.tooltip);
 	
 	            // Main Event Dispatch for paths in pie chart
-	            self.eventFactory = {
-	
-	                'mouseover': function mouseover(d, i, j) {
-	                    self.pathAnim(d3.select(this), 'mouseover');
-	                    self.tooltip().mouseover(d);
-	
-	                    // var thisDonut = self.body..select('.type' + j);
-	                    // thisDonut.select('.value').text(function(pie_d) {
-	                    //     return d.data.val.toFixed(1) + pie_d.unit;
-	                    // });
-	                    // thisDonut.select('.percentage').text(function(pie_d) {
-	                    //     return (d.data.val/pie_d.total*100).toFixed(2) + '%';
-	                    // });
+	            self._eventFactory = {
+	                'click': function click(d, i) {
+	                    if (_C14.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
 	                },
 	
-	                'mouseout': function mouseout(d, i, j) {
-	                    self.pathAnim(d3.select(this), 'mouseout');
-	                    self.tooltip().mouseout(d);
+	                'mouseover': function mouseover(d, i) {
+	                    if (!hoverEnable) return;
 	
-	                    // var thisDonut = charts.select('.type' + j);
-	                    // setCenterText(thisDonut);
-	                }
-	
-	            };
-	
-	            // Define the tooltip
-	            // TODO: Define it as a individual CLASS, in C9.Tooltip
-	            self.tooltip = function () {
-	                // First, remove all before hover div
-	                self.body.selectAll('g.c9-custom-tooltip-container').remove();
-	
-	                // TODO: Add margin to tooltip configs
-	                // Default: (100, 100) relative to mouse coordinate and chart margin transformation
-	                var divOnHover = self.body.append('g').attr('class', 'c9-custom-tooltip-container').attr("transform", function () {
-	                    return 'translate(' + (d3.mouse(this)[0] - 100) + "," + (d3.mouse(this)[1] - 100) + ')';
-	                }).style('display', 'none');
-	
-	                var arc = d3.svg.arc().innerRadius(0).outerRadius(self.radius);
-	
-	                // Rect Container
-	                divOnHover.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-	                // First line
-	                var text_1 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	                // Second line
-	                var text_2 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
-	
-	                var tooltipEventFactory = {
-	
-	                    'mouseover': function mouseover(d) {
-	                        divOnHover.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block');
-	
-	                        var name = d.data.name || d.data.data.name,
-	                            value = d.data.value || d.data.data.value;
-	
-	                        text_1.text('Name: ' + name);
-	                        text_2.text('Value: ' + value);
-	                    },
-	
-	                    'mouseout': function mouseout(d) {
-	                        divOnHover.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
+	                    if (_C14.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
 	                    }
 	
-	                };
+	                    var selector = d3.select(this);
+	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
+	                    // .style('stroke', '#FFFFF3')
+	                    .attr('fill-opacity', '1.0');
 	
-	                return tooltipEventFactory;
+	                    tooltip.draw(d, self, 'mouseover');
+	                },
+	
+	                'mouseout': function mouseout(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
+	                    // .style('stroke', '#ffffff')
+	                    .attr('fill-opacity', '0.5');
+	
+	                    tooltip.draw(d, self, 'mouseout');
+	                }
+	
 	            };
 	
 	            self.arc = d3.svg.arc().innerRadius(0).outerRadius(self.radius);
@@ -3720,15 +3983,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'updateInteraction',
 	        value: function updateInteraction() {
 	            var self = this,
-	                hoverEnable = self.hover.enable,
-	                hoverOptions = self.hover.options,
-	                selector = self.selectAllPath(),
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+	                selector = self.selectAllPath();
 	
-	            if (hoverEnable) {
-	                selector.on(self.eventFactory);
-	            }
+	            selector.on(self.eventFactory);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/
@@ -3757,36 +4014,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(newShowText) {
 	            if (newShowText) {
 	                this._showText = newShowText;
-	            }
-	        }
-	    }, {
-	        key: 'eventFactory',
-	        get: function get() {
-	            return this._eventFactory;
-	        },
-	        set: function set(newEventFactory) {
-	            if (newEventFactory) {
-	                this._eventFactory = newEventFactory;
-	            }
-	        }
-	    }, {
-	        key: 'pathAnim',
-	        get: function get() {
-	            return this._pathAnim;
-	        },
-	        set: function set(newPathAnim) {
-	            if (newPathAnim) {
-	                this._pathAnim = newPathAnim;
-	            }
-	        }
-	    }, {
-	        key: 'tooltip',
-	        get: function get() {
-	            return this._tooltip;
-	        },
-	        set: function set(newTooltip) {
-	            if (newTooltip) {
-	                this._tooltip = newTooltip;
 	            }
 	        }
 	    }, {
@@ -3835,7 +4062,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -3891,7 +4118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(Table, [{
-	        key: 'draw',
+	        key: "draw",
 	
 	
 	        /*=====  End of Setter  ======*/
@@ -3948,7 +4175,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*=====  End of Main Functions  ======*/
 	
 	    }, {
-	        key: 'data',
+	        key: "data",
 	        get: function get() {
 	            return this._data;
 	        },
@@ -3965,7 +4192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'body',
+	        key: "body",
 	        get: function get() {
 	            return this._body;
 	        },
@@ -3975,7 +4202,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'container',
+	        key: "container",
 	        get: function get() {
 	            return this._container;
 	        },
@@ -3985,7 +4212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'show',
+	        key: "show",
 	        get: function get() {
 	            return this._show;
 	        },
@@ -3995,7 +4222,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'headings',
+	        key: "headings",
 	        get: function get() {
 	            return this._headings;
 	        },
@@ -4005,7 +4232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'style',
+	        key: "style",
 	        get: function get() {
 	            return this._style;
 	        },
@@ -4015,7 +4242,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'serial',
+	        key: "serial",
 	        get: function get() {
 	            return this._serial;
 	        },
@@ -4025,7 +4252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'hover',
+	        key: "hover",
 	        get: function get() {
 	            return this._hover;
 	        },
@@ -4035,7 +4262,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'click',
+	        key: "click",
 	        get: function get() {
 	            return this._click;
 	        },
@@ -4271,11 +4498,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'draw',
 	        value: function draw() {
-	            this.options.starting = this.starting;
-	            this.options.ending = this.ending;
-	            // var axis    = new Axis(this.options, this.body, this.dataTarget, this.width - this.margin.left - this.margin.right, (this.itemHeight + this.itemMargin) * this.maxStack, null, null);
-	            var title = new _C6.default(this.options, this.body, this.width, this.height, this.margin);
-	            var legend = new _C8.default(this.options, this.body, this.colorRange, this.dataTarget);
+	            var self = this;
+	
+	            self.options.starting = self.starting;
+	            self.options.ending = self.ending;
+	            var axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
+	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
+	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.dataTarget);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/
