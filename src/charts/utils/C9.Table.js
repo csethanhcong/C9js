@@ -179,7 +179,8 @@ export default class Table {
                 .selectAll("tr")
                 .data(self.data)
                     .enter()
-                        .append("tr");
+                        .append("tr")
+                        .attr("data-ref", function (d){ return d["data-ref"] });
 
             if (self.serial) {
                 bRows.append("td")
