@@ -119,6 +119,10 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 12. `Bar Chart: Add Group bar chart to filter domain`: To create legend for bar chart, we should add new type of 
 Bar Chart (Group of bar chart)
 
+13. `Bar Chart`: Add isLogaric Implementation for DATA-SCALE, currently only implement for y-scale
+	- Notes:
+		+ Use ONLY with single, grouped bar chart
+		+ Value is positive
 
 #### TODO:
 
@@ -131,7 +135,7 @@ option of that object
 Put them all in 1 file: Classes, default configs, etc.
 
 
-5. `Bar Chart`: Add isLogaric Implementation for DATA-SCALE, currently only implement for y-scale
+
 
 
 
