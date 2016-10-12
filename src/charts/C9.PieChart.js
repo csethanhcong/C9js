@@ -144,9 +144,15 @@ export default class PieChart extends Chart {
                         .attr('d', d3.svg.arc()
                             .innerRadius(chartInnerAfter)
                             .outerRadius(chartOuterAfter)
-                        )
+                        );
                         // .style('stroke', '#FFFFF3')
-                        .attr('fill-opacity', '1.0');
+                        // .attr('fill-opacity', '1.0');
+
+                self.selectAllPath().each(function(){
+                    if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+                        d3.select(this).attr('fill-opacity', '0.3');
+                    }
+                });
 
                 tooltip.draw(d, self, 'mouseover');
             },
@@ -165,9 +171,15 @@ export default class PieChart extends Chart {
                         .attr('d', d3.svg.arc()
                             .innerRadius(chartInnerBefore)
                             .outerRadius(chartOuterBefore)
-                        )
+                        );
                         // .style('stroke', '#ffffff')
-                        .attr('fill-opacity', '0.5');
+                        // .attr('fill-opacity', '0.5');
+
+                self.selectAllPath().each(function(){
+                    if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+                        d3.select(this).attr('fill-opacity', '1.0');
+                    }
+                });
 
                 tooltip.draw(d, self, 'mouseout');
             }
@@ -200,7 +212,7 @@ export default class PieChart extends Chart {
                 .attr('d', self.arc)
                 .attr('fill', function(d, i) { return color(i); })
                 .attr('stroke', '#ffffff')
-                .attr('fill-opacity', '0.5')
+                // .attr('fill-opacity', '0.5')
                 .each(function(d) { self._currentData = d; }); 
                 // Current data used for calculate interpolation 
                 // between current arc vs disabled arc

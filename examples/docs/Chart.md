@@ -46,36 +46,24 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 
 - Legend: 
 
-	- Hover: Highlight current data-ref components but others
+	- Hover: Highlight current data-ref components but others 
 	- Click: Remove current data-ref components but others
 
 - Chart:
 	
 	- Hover: 
-		- Display tooltip
-		`NEXT` - Highlight current data-ref components but others
-	- Click:
+		- Display tooltip `DONE`
+		`NEXT` - Highlight current data-ref component
+	- Click: `DONE`
 		- Default: non-action
 
 - Notes:
  	- Add callback to all interactions
 
-#### TODO:
+8. `Create Table View`:
+	- REF: https://developers.google.com/chart/interactive/docs/gallery/table
 
-0000. `Add Hover on Legend, temporarily disable/enable like Click on Legend`
-	- DONE: Donut Chart, Pie Chart
-		- Option 1: on Hover Legend, we should make it HIGHLIGHT current pie/donut data
-		- Option 2: on Hover Legend, we should make it INVISIBLE current pie/donut data
-	- NEXT: Line Chart, Bar Chart
-
-000. `Add General Legend to all charts, Interaction when Click on each Legend`: 
-	- DONE: Donut Chart, Pie Chart
-	- NEXT: Line Chart, Bar Chart
-
-1. `setOption`: After construct a new instance from defined class, we could change individual
-option of that object
-
-2. `Data Adapter`: 
+9. `Data Adapter`: 
 	- Support data reader with various formats (json, csv, tsv, txt,..), of course with data format 
 	that match our definition
 	- Add getValue(), getKey() that based on key-definition by user. DON'T use .name, .value instead
@@ -114,16 +102,35 @@ option of that object
 					- DEFAULT => "single"
 				- [`DONE`] <Data>getDataTarget(typeOfChart)
 
+10. `Add Hover on Legend, temporarily disable/enable like Click on Legend`
+	- DONE: Donut Chart, Pie Chart
+		- Option 1: on Hover Legend, we should make it HIGHLIGHT current pie/donut data
+		- Option 2: on Hover Legend, we should make it INVISIBLE current pie/donut data
+	- NEXT: Line Chart, Bar Chart
+
+11. `Add General Legend to all charts, Interaction when Click on each Legend`: 
+	- DONE: Donut Chart, Pie Chart
+	- NEXT: Line Chart, Bar Chart
+
+
+12. `Bar Chart: Add Group bar chart to filter domain`: To create legend for bar chart, we should add new type of 
+Bar Chart (Group of bar chart)
+
+
+#### TODO:
+
+1. `setOption`: After construct a new instance from defined class, we could change individual
+option of that object
+
+
+
 3. `Make C9.Config`: File contains all default configs, should not put all configs in each files
 Put them all in 1 file: Classes, default configs, etc.
 
-4. `Bar Chart: Add Group bar chart to filter domain`: To create legend for bar chart, we should add new type of 
-Bar Chart (Group of bar chart)
 
 5. `Bar Chart`: Add isLogaric Implementation for DATA-SCALE, currently only implement for y-scale
 
-6. `Create Table View`:
-	- REF: https://developers.google.com/chart/interactive/docs/gallery/table
+
 
 7. `Separate setting options into abc.xyz.blabla`, e.g.
 	grid: {
