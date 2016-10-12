@@ -62,6 +62,7 @@ export default class BarChart extends Chart {
         self._barWidth       = options.barWidth  ||  config.barWidth;
         self._x              = x;
         self._y              = y;
+        self.isLogaric       = options.isLogaric;
         self.updateConfig();
     }
 
@@ -212,9 +213,8 @@ export default class BarChart extends Chart {
         var self = this;
         var type = self.groupType;
 
-        var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null);
         var y = self.y;
-        // console.log(minMax);
+        var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null);
         y.domain([minMax.min, minMax.max]);
         self.axis.update(null, y, 750);
 
@@ -256,16 +256,18 @@ export default class BarChart extends Chart {
                     return self.x.rangeBand();
                 return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
             })
-            .attr("y", function(d) { return y(d.y1); })
+            .attr("y", function(d) { return self.isGroup ? y(d.y1) : y(0); })
             .attr("width", function(d) {
                 return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             })
-            .attr("height", function(d) { return y(0) - y(Math.abs(d.y0)); });
+            .attr("height", function(d) { return self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0; });
 
         bars.transition().duration(750)
             .attr("x", function(d) { return !self.isGroup ? undefined : xGroup(d.group); })
             .attr("width", function(d) { return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand(); })
-
+            .attr("y", function(d) { return y(d.y1); })
+            .attr("height", function(d) { return y(0) - y(Math.abs(d.y0)); });
+            
         self.updateInteraction();
     }
 
