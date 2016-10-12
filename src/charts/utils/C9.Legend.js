@@ -187,6 +187,7 @@ export default class Legend {
                 .enter().append("g")
                 .attr("class", "c9-custom-legend c9-custom-legend-item")
                 .attr('data-ref', function(d) { return d['data-ref']; })
+                .attr('data-enable', function(d) { return d['enable']; })
                 .attr("transform", function(d, i) {
                     return "translate(" + (i * (self.legendSize + self.legendSpace) + self.legendMargin[0]) + "," + self.legendMargin[3] + ")"
                 });
@@ -339,13 +340,31 @@ export default class Legend {
 
                 // If current selector is disabled, then turn it on back
                 // Else, set enable to false
-                if (selector.style('opacity') == '0.1') {
-                    selector.style('opacity', '1.0');
+                if (selector.attr('data-enable') == 'false') {
+                    selector.attr('data-enable', true);
+                    selector.attr('opacity', '1.0');
                 } else {
                     if (totalEnable < 2) return;
-                    selector.style('opacity', '0.1');
+                    selector.attr('data-enable', false);
+                    selector.attr('opacity', '0.1');
                     enable = false;
                 }
+
+                /*----------  Reset opacity after click  ----------*/
+                
+                self.legendItem.each(function() {
+                    if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                        d3.select(this).attr('opacity', '1.0');
+                    }
+                });
+
+                chart.selectAllPath().each(function(){
+                    if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                        d3.select(this).attr('opacity', '1.0');
+                    }
+                });
+                /*----------  End Reset opacity after click  ----------*/
+                
 
                 chart.pie.value(function(d) {
                     if (d.name == item.name) d.enable = enable;
@@ -379,17 +398,34 @@ export default class Legend {
                 // Add pointer to cursor
                 legendSelector.style('cursor', 'pointer');
 
-                var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+                if (legendSelector.attr('data-enable') == 'true') {
+                    // For Legend
+                    self.legendItem.each(function() {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                            d3.select(this).attr('opacity', '0.3');
+                        }
+                    });
 
-                selector
-                    .transition()
-                        .duration(500)
-                        .ease('bounce')
-                        .attr('d', d3.svg.arc()
-                            .innerRadius(chartInnerAfter)
-                            .outerRadius(chartOuterAfter)
-                        )
-                        .attr('fill-opacity', '1.0');
+                    // For Chart
+                    chart.selectAllPath().each(function(){
+                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                            d3.select(this).attr('opacity', '0.3');
+                        }
+                    });
+
+                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+
+                    selector
+                        .transition()
+                            .duration(500)
+                            .ease('bounce')
+                            .attr('d', d3.svg.arc()
+                                .innerRadius(chartInnerAfter)
+                                .outerRadius(chartOuterAfter)
+                            );
+                }
+
+                
 
             },
 
@@ -402,17 +438,34 @@ export default class Legend {
                 // Add pointer to cursor
                 legendSelector.style('cursor', 'pointer');
 
-                var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+                // if (legendSelector.attr('data-enable') == 'true') {
+                    // For Legend
+                    self.legendItem.each(function() {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
 
-                selector
-                    .transition()
-                        .duration(500)
-                        .ease('bounce')
-                        .attr('d', d3.svg.arc()
-                            .innerRadius(chartInnerBefore)
-                            .outerRadius(chartOuterBefore)
-                        )
-                        .attr('fill-opacity', '0.5');
+                    // For Chart
+                    chart.selectAllPath().each(function(){
+                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
+
+                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+
+                    selector
+                        .transition()
+                            .duration(500)
+                            .ease('bounce')
+                            .attr('d', d3.svg.arc()
+                                .innerRadius(chartInnerBefore)
+                                .outerRadius(chartOuterBefore)
+                            );
+                // }
+
+                
 
             }
         
