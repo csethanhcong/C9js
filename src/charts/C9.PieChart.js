@@ -61,6 +61,10 @@ export default class PieChart extends Chart {
     get chartType() {
         return this._body.type;
     }
+
+    get legend() {
+        return this._legend;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -78,21 +82,27 @@ export default class PieChart extends Chart {
         }
     }
 
-    set pie(newPie) {
-        if (newPie) {
-            this._pie = newPie;
+    set pie(arg) {
+        if (arg) {
+            this._pie = arg;
         }
     }
 
-    set arc(newArc) {
-        if (newArc) {
-            this._arc = newArc;
+    set arc(arg) {
+        if (arg) {
+            this._arc = arg;
         }
     }
 
-    set currentData(newCurrentData) {
-        if (newCurrentData) {
-            this._currentData = newCurrentData;
+    set currentData(arg) {
+        if (arg) {
+            this._currentData = arg;
+        }
+    }
+
+    set legend(arg) {
+        if (arg) {
+            this._legend = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -125,7 +135,7 @@ export default class PieChart extends Chart {
         var tooltip = new Tooltip(self.options.tooltip);
 
         // Main Event Dispatch for paths in pie chart
-        self._eventFactory = {
+        self.eventFactory = {
             'click': function(d, i) {
                 if (Helper.isFunction(onClickCallback)) {
                     onClickCallback.call(this, d);
@@ -145,15 +155,22 @@ export default class PieChart extends Chart {
                             .innerRadius(chartInnerAfter)
                             .outerRadius(chartOuterAfter)
                         );
-                        // .style('stroke', '#FFFFF3')
-                        // .attr('fill-opacity', '1.0');
 
-                self.selectAllPath().each(function(){
-                    if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
-                        d3.select(this).attr('fill-opacity', '0.3');
+                // For legend
+                self.legend.legendItem.each(function() {
+                    if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                        d3.select(this).attr('opacity', '0.3');
                     }
                 });
 
+                // For Chart
+                self.selectAllPath().each(function(){
+                    if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+                        d3.select(this).attr('opacity', '0.3');
+                    }
+                });
+
+                // For Tooltip
                 tooltip.draw(d, self, 'mouseover');
             },
             
@@ -172,15 +189,22 @@ export default class PieChart extends Chart {
                             .innerRadius(chartInnerBefore)
                             .outerRadius(chartOuterBefore)
                         );
-                        // .style('stroke', '#ffffff')
-                        // .attr('fill-opacity', '0.5');
 
-                self.selectAllPath().each(function(){
-                    if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
-                        d3.select(this).attr('fill-opacity', '1.0');
+                // For legend
+                self.legend.legendItem.each(function() {
+                    if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                        d3.select(this).attr('opacity', '1.0');
                     }
                 });
 
+                // For Chart
+                self.selectAllPath().each(function(){
+                    if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+                        d3.select(this).attr('opacity', '1.0');
+                    }
+                });
+
+                // For Tooltip
                 tooltip.draw(d, self, 'mouseout');
             }
 
@@ -212,7 +236,6 @@ export default class PieChart extends Chart {
                 .attr('d', self.arc)
                 .attr('fill', function(d, i) { return color(i); })
                 .attr('stroke', '#ffffff')
-                // .attr('fill-opacity', '0.5')
                 .each(function(d) { self._currentData = d; }); 
                 // Current data used for calculate interpolation 
                 // between current arc vs disabled arc
@@ -240,6 +263,8 @@ export default class PieChart extends Chart {
         var legend  = new Legend(self.options, self.body, self.dataTarget);
         var table   = new Table(self.options.table, self.body, self.dataTarget);
 
+        self.legend = legend;
+
         // Draw legend
         legend.draw();
         legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
@@ -259,7 +284,6 @@ export default class PieChart extends Chart {
         var self = this;
 
         return self.body
-                // .selectAll('g')
                     .selectAll('path.c9-chart-pie.c9-custom-path');
     }
 

@@ -94,57 +94,57 @@ export default class LineChart extends Chart {
     =            Setter            =
     ==============================*/
 
-    set pointShow(newPointShow) {
-        if (newPointShow) {
-            this._pointShow = newPointShow;
+    set pointShow(arg) {
+        if (arg) {
+            this._pointShow = arg;
         }
     }
 
-    set pointFill(newPointFill) {
-        if (newPointFill) {
-            this._pointFill = newPointFill;
+    set pointFill(arg) {
+        if (arg) {
+            this._pointFill = arg;
         }
     }
 
-    set pointStroke(newPointStroke) {
-        if (newPointStroke) {
-            this._pointStroke = newPointStroke;
+    set pointStroke(arg) {
+        if (arg) {
+            this._pointStroke = arg;
         }
     }
 
-    set pointOpacity(newPointOpacity) {
-        if (newPointOpacity) {
-            this._pointOpacity = newPointOpacity;
+    set pointOpacity(arg) {
+        if (arg) {
+            this._pointOpacity = arg;
         }
     }
 
-    set pointRadius(newPointRadius) {
-        if (newPointRadius) {
-            this._pointRadius = newPointRadius;
+    set pointRadius(arg) {
+        if (arg) {
+            this._pointRadius = arg;
         }
     }
 
-    set interpolate(newInterpolate) {
-        if (newInterpolate) {
-            this._interpolate = newInterpolate;
+    set interpolate(arg) {
+        if (arg) {
+            this._interpolate = arg;
         }
     }
 
-    set x(newX) {
-        if (newX) {
-            this._x = newX;
+    set x(arg) {
+        if (arg) {
+            this._x = arg;
         }
     }
 
-    set y(newY) {
-        if (newY) {
-            this._y = newY;
+    set y(arg) {
+        if (arg) {
+            this._y = arg;
         }
     }
 
-    set dataGroup(newDataGroup) {
-        if (newDataGroup) {
-            this._dataGroup = newDataGroup;
+    set dataGroup(arg) {
+        if (arg) {
+            this._dataGroup = arg;
         }
     }
     /*=====  End of Setter  ======*/

@@ -52,13 +52,16 @@ http://zeroviscosity.com/d3-js-step-by-step/step-6-animating-interactivity
 - Chart:
 	
 	- Hover: 
-		- Display tooltip `DONE`
-		`NEXT` - Highlight current data-ref component
-	- Click: `DONE`
+		- Display tooltip
+		- Highlight current data-ref component
+	- Click:
 		- Default: non-action
 
 - Notes:
  	- Add callback to all interactions
+
+- DONE: Pie/Donut
+- NEXT: Line Chart
 
 8. `Create Table View`:
 	- REF: https://developers.google.com/chart/interactive/docs/gallery/table
@@ -140,3 +143,7 @@ Put them all in 1 file: Classes, default configs, etc.
 			position: center
 		}
 	}
+
+8. Load real-time data, re-draw chart (setTimeOut)
+
+9. `Line Chart`: Add Bisector when hover
