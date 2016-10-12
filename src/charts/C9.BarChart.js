@@ -41,7 +41,7 @@ export default class BarChart extends Chart {
         var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
         var y = options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
 
-        var minMax = Helper.getMinMax(self.dataTarget, barChartType);
+        var minMax = Helper.getMinMax(self.dataTarget, barChartType, options.isLogaric);
 
         x.domain(self.dataTarget.map(function(d) {
             return d[0].name;
@@ -198,7 +198,7 @@ export default class BarChart extends Chart {
             .attr("x", function(d) { return self.isGroup ? xGroup(d.group) : undefined; })
             .attr("y", function(d) { return y(d.y1); })
             .attr("width", function(d) { return self.isGroup ? xGroup.rangeBand() : x.rangeBand(); })
-            .attr("height", function(d) { return y(0) - y(Math.abs(d.y0)); });
+            .attr("height", function(d) { return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0)); });
     }
 
     /**
@@ -214,7 +214,7 @@ export default class BarChart extends Chart {
         var type = self.groupType;
 
         var y = self.y;
-        var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null);
+        var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null, self.isLogaric);
         y.domain([minMax.min, minMax.max]);
         self.axis.update(null, y, 750);
 
@@ -256,17 +256,17 @@ export default class BarChart extends Chart {
                     return self.x.rangeBand();
                 return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
             })
-            .attr("y", function(d) { return self.isGroup ? y(d.y1) : y(0); })
+            .attr("y", function(d) { return self.isGroup ? y(d.y1) : self.isLogaric ? y(y.domain()[1]) : y(0); })
             .attr("width", function(d) {
                 return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             })
-            .attr("height", function(d) { return self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0; });
+            .attr("height", function(d) { return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0; });
 
         bars.transition().duration(750)
             .attr("x", function(d) { return !self.isGroup ? undefined : xGroup(d.group); })
             .attr("width", function(d) { return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand(); })
             .attr("y", function(d) { return y(d.y1); })
-            .attr("height", function(d) { return y(0) - y(Math.abs(d.y0)); });
+            .attr("height", function(d) { return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0)); });
             
         self.updateInteraction();
     }

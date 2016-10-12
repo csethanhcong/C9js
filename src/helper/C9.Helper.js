@@ -123,7 +123,7 @@ var Helper = {
         });
     },
 
-    getMinMax: function(data, type, dataOld) {
+    getMinMax: function(data, type, isLogaric) {
         var self  = this;
         var _temp = new Array();
         var _min  = 0,
@@ -146,7 +146,7 @@ var Helper = {
 
         var _newMin = self.min(_temp);
         var _newMax = self.max(_temp);
-        if (_newMin < _min)
+        if (_newMin < _min || isLogaric)
             _min = _newMin;
         if (_newMax > _max)
             _max = _newMax;
