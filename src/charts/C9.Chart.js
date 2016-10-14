@@ -42,10 +42,10 @@ export default class Chart {
             },
 
             // legend
-            legendShow: true,
-            legendPosition: "bottom",
-            legendInsetAnchor: "top-left",
-            legendPadding: 0,
+            legend: {
+                show: true,
+                position: "top"
+            },
 
             // tooltip
             tooltip: {
@@ -127,6 +127,7 @@ export default class Chart {
 
         self._options.table     = Helper.merge(options.table, config.table);
         self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
+        self._options.legend   = Helper.merge(options.legend, config.legend);
 
         self.initConfig();
     }

@@ -176,11 +176,12 @@ export default class DonutChart extends Chart {
                         );
 
                 // For legend
-                self.legend.legendItem.each(function() {
-                    if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
-                        d3.select(this).attr('opacity', '0.3');
-                    }
-                });
+                if (self.legend.item)
+                    self.legend.item.each(function() {
+                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                            d3.select(this).attr('opacity', '0.3');
+                        }
+                    });
 
                 // For Chart
                 self.selectAllPath().each(function(){
@@ -210,7 +211,8 @@ export default class DonutChart extends Chart {
                         );
 
                 // For legend
-                self.legend.legendItem.each(function() {
+                if (self.legend.item)
+                self.legend.item.each(function() {
                     if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
                         d3.select(this).attr('opacity', '1.0');
                     }
@@ -280,7 +282,7 @@ export default class DonutChart extends Chart {
         var self = this;
         
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options, self.body, self.dataTarget);
+        var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
 
         self.legend = legend;
         
