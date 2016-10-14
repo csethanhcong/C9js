@@ -160,6 +160,13 @@ export default class LineChart extends Chart {
 
         y.domain(d3.extent(valueYArray));
 
+        // Update domain if all values positive / negative
+        if (y.domain()[0] > 0 && y.domain()[1] > 0) {
+            y.domain([0, y.domain()[1]]);
+        } else if (y.domain()[0] < 0 && y.domain()[1] < 0) {
+            y.domain([y.domain()[0], 0]);
+        }
+
         var lineGen = d3.svg.line()
                         .x(function(d) { return x(d.valueX); })
                         .y(function(d) { return y(d.valueY); })

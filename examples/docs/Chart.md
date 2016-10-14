@@ -152,24 +152,19 @@ Bar Chart (Group of bar chart)
 1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
 
-
-
-3. `Make C9.Config`: File contains all default configs, should not put all configs in each files
-Put them all in 1 file: Classes, default configs, etc.
-
-
 4. `Line Chart`: 
 - Add line to compare data in same x-value
 - Add bisector
+- Add color area
+- Dot / Dash / Line Options
 
 5. `Axis`: 
 - x, y: Tick format, Tick count, Label Rotate, Label Position, Axis Timezone
+- Option to show/hide Tick/Axis
 
 6. `Table`:
 - Highlight
 - Scroll to
-
-
 
 7. `Separate setting options into abc.xyz.blabla`, e.g.
 	grid: {
