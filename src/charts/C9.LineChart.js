@@ -12,38 +12,32 @@ import DataAdapter from '../helper/C9.DataAdapter';
 export default class LineChart extends Chart {
     constructor(options) {
         super(options);
+
         var self    = this;
+
         var config  = {
-            pointShow: false,
-            pointFill: "#fb8072",
-            pointStroke: "#d26b5f",
-            pointOpacity: 1.0,
-            pointRadius: 5,
+            point: {
+                show: true,
+                fill: "#fb8072",
+                stroke: "#d26b5f",
+                opacity: 1.0,
+                radius: 5,
+            },
             interpolate: "linear" // refer: https://www.dashingd3js.com/svg-paths-and-d3js
         };
 
-        self._pointShow         = options.pointShow            ||  config.pointShow;
-        self._pointRadius       = options.pointRadius          ||  config.pointRadius;
-        self._pointFill         = options.pointFill            ||  config.pointFill;
-        self._pointStroke       = options.pointStroke          ||  config.pointStroke;
-        self._pointOpacity      = options.pointOpacity         ||  config.pointOpacity;
+        self._point         = Helper.merge(options.point, config.point);
         self._interpolate       = options.interpolate           ||  config.interpolate;
+
         self.body.type = "line";
-
-        var width   = self.width - self.margin.left - self.margin.right;
-        var height  = self.height - self.margin.top - self.margin.bottom;
-
-        var x = d3.scale.linear().range([0, width]);
-        var y = d3.scale.linear().range([height, 0]);
-
-        self._x = x;
-        self._y = y;
 
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget("line");
+        self._da = new DataAdapter(dataOption);
+        self.dataTarget     = self._da.getDataTarget("line");
+
+        self._isTimeDomain = self._da.timeFormat;
 
         self.updateConfig();
 
@@ -53,24 +47,8 @@ export default class LineChart extends Chart {
     =            Getter            =
     ==============================*/
 
-    get pointShow() {
-        return this._pointShow;
-    }
-
-    get pointFill() {
-        return this._pointFill;
-    }
-
-    get pointStroke() {
-        return this._pointStroke;
-    }
-
-    get pointOpacity() {
-        return this._pointOpacity;
-    }
-
-    get pointRadius() {
-        return this._pointRadius;
+    get point() {
+        return this._point;
     }
 
     get interpolate() {
@@ -85,42 +63,26 @@ export default class LineChart extends Chart {
         return this._y;
     }
 
-    get dataGroup() {
-        return this._dataGroup;
+    get isTimeDomain() {
+        return this._isTimeDomain;
     }
+
+    get da() {
+        return this._da;
+    }
+
+    // get dataGroup() {
+    //     return this._dataGroup;
+    // }
     /*=====  End of Getter  ======*/
 
     /*==============================
     =            Setter            =
     ==============================*/
 
-    set pointShow(arg) {
+    set point(arg) {
         if (arg) {
-            this._pointShow = arg;
-        }
-    }
-
-    set pointFill(arg) {
-        if (arg) {
-            this._pointFill = arg;
-        }
-    }
-
-    set pointStroke(arg) {
-        if (arg) {
-            this._pointStroke = arg;
-        }
-    }
-
-    set pointOpacity(arg) {
-        if (arg) {
-            this._pointOpacity = arg;
-        }
-    }
-
-    set pointRadius(arg) {
-        if (arg) {
-            this._pointRadius = arg;
+            this._point = arg;
         }
     }
 
@@ -142,11 +104,23 @@ export default class LineChart extends Chart {
         }
     }
 
-    set dataGroup(arg) {
+    set isTimeDomain(arg) {
         if (arg) {
-            this._dataGroup = arg;
+            this._isTimeDomain = arg;
         }
     }
+
+    set da(arg) {
+        if (arg) {
+            this._da = arg;
+        }
+    }
+
+    // set dataGroup(arg) {
+    //     if (arg) {
+    //         this._dataGroup = arg;
+    //     }
+    // }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -157,60 +131,61 @@ export default class LineChart extends Chart {
      * First init Line Chart
      */
     updateConfig() {
-        var self = this,
-            x = self._x,
-            y = self._y;
+        var self = this;
 
-        self._dataGroup = d3.nest()
-                        .key(function(d) { return d.name; })
-                        .entries(self.dataTarget);
+        var da = self._da;
 
-        var dataGroup = self._dataGroup;
+        var width   = self.width - self.margin.left - self.margin.right,
+            height  = self.height - self.margin.top - self.margin.bottom;
 
-        x.domain([d3.min(self.dataTarget, function(d) {
-                    return d.time;
-                }), d3.max(self.dataTarget, function(d) {
-                    return d.time;
-                })]);
-        y.domain([d3.min(self.dataTarget, function(d) {
-                    return d.value;
-                }), d3.max(self.dataTarget, function(d) {
-                    return d.value;
-                })]);
+        var x = (!Helper.isEmpty(self._isTimeDomain)) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+            y = d3.scale.linear().range([height, 0]);
+
+        self._x = x;
+        self._y = y;
+
+        var valueXArray = d3.merge(self.dataTarget.map(function(data) {
+            return data.value.map(function(d) {
+                return d.valueX;
+            })
+        }));
+
+        var valueYArray = d3.merge(self.dataTarget.map(function(data) {
+            return data.value.map(function(d) {
+                return d.valueY;
+            })
+        }));
+
+        x.domain(d3.extent(valueXArray));
+
+        y.domain(d3.extent(valueYArray));
 
         var lineGen = d3.svg.line()
-                        .x(function(d) { return x(d.time); })
-                        .y(function(d) { return y(d.value); })
+                        .x(function(d) { return x(d.valueX); })
+                        .y(function(d) { return y(d.valueY); })
                         .interpolate(self.interpolate);
 
-        var _body        = self.body,
-            _pointShow  = self.pointShow,
-            _pointRadius= self.pointRadius,
-            _pointFill  = self.pointFill,
-            _pointStroke= self.pointStroke,
-            _pointOpacity= self.pointOpacity;
-
-        dataGroup.forEach(function(d,i) {
-            _body.append('path')
-                .attr('d', lineGen(d.values))
-                .attr('stroke', d.values[0].color)
+        self.dataTarget.forEach(function(d,i) {
+            self.body.append('path')
+                .attr('d', lineGen(d.value))
+                .attr('stroke', d.color)
                 .attr('stroke-width', 2)
-                .attr('data-ref', 'c9-'+d.key)
+                .attr('data-ref', 'c9-'+d['data-ref'])
                 .attr('fill', 'none');
 
-            if (_pointShow) {
-                _body.selectAll("dot")
-                    .data(d.values)
+            if (self.point.show) {
+                self.body.selectAll("dot")
+                    .data(d.value)
                     .enter()
                     .append("circle")
                     .attr('class', 'c9-chart-line c9-circle-custom')
-                    .attr("r", _pointRadius)
-                    .attr("cx", function(_d) { return x(_d.time); })
-                    .attr("cy", function(_d) { return y(_d.value); })
+                    .attr("r", self.point.radius)
+                    .attr("cx", function(_d) { return x(_d.valueX); })
+                    .attr("cy", function(_d) { return y(_d.valueY); })
                     .attr("data-ref", function (d) { return d["data-ref"]; })
-                    .style("fill", _pointFill) 
-                    .style("stroke", _pointStroke)
-                    .style("opacity", _pointOpacity);
+                    .style("fill", self.point.fill) 
+                    .style("stroke", self.point.stroke)
+                    .style("opacity", self.point.opacity);
             }
 
         });
@@ -266,8 +241,8 @@ export default class LineChart extends Chart {
                 title: function(name) {
                     return 'Title ' + name;
                 },
-                detail: function(value, time) {
-                    return 'Value: ' + value + ' <br>Time: ' + time;
+                detail: function(valueX, valueY) {
+                    return 'ValueX: ' + valueX + ' <br>valueY: ' + valueY;
                 }
             }
         };
@@ -308,68 +283,3 @@ export default class LineChart extends Chart {
     
     
 }
-
-// Backup - LOL
-// var _currentDataY = this.data;
-//         _currentDataY.forEach(function(_currentValue,_index,_arr) {
-//                                     _currentDataY[_index].coordinate.sort(function(a,b) {
-//                                         return (a.y > b.y) ? 1 : ((b.y > a.y) ? -1 : 0);
-//                                     });
-//                                 });
-//         this.sortedDataY         = _currentDataY;
-
-//         // Get maximum value of coordinate {x, y}
-//         var tempMaxY = [];
-
-//         for (var i=0; i<this.sortedDataY.length; i++) {
-//             tempMaxY[i] = this.sortedDataY[i].coordinate[this.sortedDataY[i].coordinate.length - 1].y;
-//         }
-
-//         var _maxY = Math.max(...tempMaxY);
-
-
-//         var _currentDataX = this.data;
-//         _currentDataX.forEach(function(currentValue,index,arr) {
-//                                     _currentDataX[index].coordinate.sort(function(a,b) {
-//                                         return (a.x > b.x) ? 1 : ((b.x > a.x) ? -1 : 0);
-//                                     });
-//                                 });
-//         this.sortedDataX         = _currentDataX;
-//         var tempMaxX = [];
-//         for (var i=0; i<this.sortedDataX.length; i++) {
-//             tempMaxX[i] = this.sortedDataX[i].coordinate[this.sortedDataX[i].coordinate.length - 1].x;
-//         }
-//         var _maxX = Math.max(...tempMaxX);
-
-//         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-//         var width   = this.width - this.margin.left - this.margin.right;
-//         var height  = this.height - this.margin.top - this.margin.bottom;
-
-//         var x = d3.scale.linear().range([0, width]);
-//         var y = d3.scale.linear().range([height, 0]);
-
-//         x.domain([_maxX, 0]);
-//         y.domain([_maxY, 0]);
-
-//         var lineFunc = d3.svg.line()
-//             .x(function(d, i) { return x(d.x); })
-//             .y(function(d, i) { return y(d.y); })
-//             .interpolate("linear");
-
-//         // this.body.selectAll('g')
-//         //         .data(this.sortedDataX)
-//         //         .enter()
-//         //         .append('path')
-//         //         .attr('class', 'line')
-//         //         .attr('d', function(d){
-//         //             return lineFunc(d.coordinate);
-//         //         });
-//         this.body.selectAll('dot')
-//                 .data(this.sortedDataX)
-//                 .selectAll('dot')
-//                 .data(function(d,i) {return d;})
-//                 .enter()
-//                 .append("circle")
-//                 .attr("r", 3.5)
-//                 .attr("cx", function(d, i) { console.log(d, i); return x(d.coordinate[i].x); })
-//                 .attr("cy", function(d, i) { console.log(d, i); return y(d.coordinate[i].y); });

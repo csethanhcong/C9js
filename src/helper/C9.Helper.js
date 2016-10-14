@@ -58,7 +58,7 @@ var Helper = {
     },
 
     isArray: function(array) {
-        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
+        return !Util.isEmpty(array) && (Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]');
     },
 
     isFunction: function(func) {
@@ -152,6 +152,12 @@ var Helper = {
             _max = _newMax;
 
         return {min: _min, max: _max};
+    },
+    dateParser: function(format) {
+        return d3.time.format(format).parse;
+    },
+    dateFormatter: function(format) {
+        return d3.time.format(format);
     }
 };
 

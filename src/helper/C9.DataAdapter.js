@@ -11,10 +11,12 @@ export default class DataAdapter {
             keys: {
                 name: "name",
                 value: "value",
-                time: "time"
+                x: "value.x",
+                y: "value"
             },
             groups: [],
             stacks: [],
+            timeFormat: false,
 
             // NO NEED TO ADD TO DATA OPTIONS
             // Just use to define default parameters
@@ -24,6 +26,7 @@ export default class DataAdapter {
         self._keys      = Helper.merge(options.keys, config.keys);
         self._groups    = options.groups    || config.groups;
         self._stacks    = options.stacks    || config.stacks;
+        self._timeFormat    = options.timeFormat    || config.timeFormat;
         self._colorRange= options.colorRange|| config.colorRange;
 
         self._dataSource = null;
@@ -59,6 +62,10 @@ export default class DataAdapter {
 
     get colorRange() {
         return this._colorRange;
+    }
+
+    get timeFormat() {
+        return this._timeFormat;
     }
     /*=====  End of Getter  ======*/
 
@@ -98,6 +105,12 @@ export default class DataAdapter {
     set colorRange(arg) {
         if (arg) {
             this._colorRange = arg;
+        }
+    }
+
+    set timeFormat(arg) {
+        if (arg) {
+            this._timeFormat = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -425,8 +438,8 @@ export default class DataAdapter {
                 _dsArray.forEach(function(d, i) {
                     _valueItem = {
                         "name": Helper.get(self.keys.name, data),
-                        "start": d.start,
-                        "end": d.end ,
+                        "start": new Date(d.start),
+                        "end": new Date(d.end) ,
                         "color": color(index),
                         "data-ref": Helper.guid(),
                         "enable": true,
@@ -436,8 +449,8 @@ export default class DataAdapter {
             } else {
                 _valueItem = {
                     "name": Helper.get(self.keys.name, data),
-                    "start": d.start,
-                    "end": d.end ,
+                    "start": new Date(d.start),
+                    "end": new Date(d.end) ,
                     "color": color(index),
                     "data-ref": Helper.guid(),
                     "enable": true,
@@ -460,11 +473,85 @@ export default class DataAdapter {
             let _data = {
                 "color"     : color(index),
                 "name"      : Helper.get(self.keys.name, data),
-                "value"     : Helper.get(self.keys.value, data),
-                "time"      : Helper.get(self.keys.time, data),
+                "value"    : [],
                 "data-ref"  : Helper.guid(),
                 "enable"    : true,
             };
+
+            let _valueXArray = Helper.get(self.keys.x, data),
+                _valueYArray = Helper.get(self.keys.y, data),
+                _valueArray = [],
+                _valueItem  = {
+                    "name"  : Helper.get(self.keys.name, data),
+                    "valueX": null,
+                    "valueY": null,
+                    "data-ref": Helper.guid(),
+                    "enable": true
+                };
+
+            if (Helper.isArray(_valueYArray)) {
+                /**
+                 *
+                 * CASE 1: [{name:, value: []}, {}, ..]
+                 *
+                 */
+                
+                if (!Helper.isArray(_valueXArray)) {
+                    _valueYArray.forEach(function(d, i) {
+                        _valueItem = {
+                            "name"  : Helper.get(self.keys.name, data),
+                            "valueX": i,
+                            "valueY": d,
+                            "data-ref": Helper.guid(),
+                            "enable": true
+                        };
+                        _valueArray.push(_valueItem);
+                    });
+                } else 
+
+                /**
+                 *
+                 * CASE 2: [{name:, value: {x: [], y:[]}, {}, ..]
+                 *
+                 */
+                
+                if (Helper.isArray(_valueXArray) && !self.timeFormat) {
+                    _valueYArray.forEach(function(d, i) {
+                        _valueItem = {
+                            "name"  : Helper.get(self.keys.name, data),
+                            "valueX": !Helper.isEmpty(_valueXArray[i]) ? _valueXArray[i] : i,
+                            "valueY": d,
+                            "data-ref": Helper.guid(),
+                            "enable": true
+                        };
+                        _valueArray.push(_valueItem);
+                    });
+                } else 
+
+                /**
+                 *
+                 * CASE 3: [{name:, value: {x: [], y:[]}, {}, ..] with config `timeFormat`
+                 *
+                 */
+                
+                if (Helper.isArray(_valueXArray) && self.timeFormat) {
+                    let _parser = Helper.dateParser(self.timeFormat);
+
+                    _valueYArray.forEach(function(d, i) {
+                        _valueItem = {
+                            "name"  : Helper.get(self.keys.name, data),
+                            "valueX": !Helper.isEmpty(_valueXArray[i]) ? _parser(_valueXArray[i]) : i,
+                            "valueY": d,
+                            "data-ref": Helper.guid(),
+                            "enable": true
+                        };
+                        _valueArray.push(_valueItem);
+                    });
+                }
+            }
+
+            _data.value = _valueArray;
+
             self.dataTarget.push(_data);
         });
 

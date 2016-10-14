@@ -261,7 +261,7 @@ export default class Tooltip {
                 r = '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
                 break;
             case 'line':
-                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(data.value, data.time) + '</span>';
+                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(data.valueX, data.valueY) + '</span>';
                 break;
             case 'timeline':
                 r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(data.start, data.end) + '</span>';
