@@ -166,6 +166,8 @@ option of that object
 - Highlight
 - Scroll to
 
+7. `Add sub-chart` to re-draw Bar/Line Chart followed the sub-chart
+
 7. `Separate setting options into abc.xyz.blabla`, e.g.
 	grid: {
 		show: true,
