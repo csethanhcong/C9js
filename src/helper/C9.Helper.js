@@ -50,7 +50,7 @@ var Helper = {
     },
 
     isEmpty: function(value) {
-        return value === null || value === undefined || (Util.isArray(value) && value.length === 0);
+        return value === null || value === undefined || (Util.isArray(value) && value.length === 0) || (Util.isArray(value) && Util.isEmpty(value[0]));
     },
 
     isObject: function(object) {
@@ -67,8 +67,8 @@ var Helper = {
 
     merge: function(obj1,obj2){
         var obj3 = {};
-        for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
-        for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
+        for (var attrname in obj2) { if (!Util.isEmpty(obj2[attrname])) obj3[attrname] = obj2[attrname]; }
+        for (var attrname in obj1) { if (!Util.isEmpty(obj1[attrname])) obj3[attrname] = obj1[attrname]; }
         return obj3;
     },
 

@@ -5,18 +5,13 @@
 
 .axis path,
 .axis line {
-  fill: none;
-  stroke: black;
-  shape-rendering: crispEdges;
-}
-
-.axis text {
-  font-family: Lato;
-  font-size: 13px;
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
 }
 
 .tick line {
-  opacity: 0.2;
+	opacity: 0.2;
 }
 
 /*----------  TABLE  ----------*/

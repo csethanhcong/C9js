@@ -31,6 +31,11 @@ export default class Chart {
                         callback: function(data) {
                             console.dir(data);
                         },
+                    },
+                    onMouseMove: {
+                        callback: function(data) {
+                            // console.dir(data);
+                        },
                     }
                 }
             },
@@ -53,14 +58,7 @@ export default class Chart {
                 position: 'left', // [top, right, bottom, left]
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 fontColor: '#fff',
-                format: {
-                    name: function(d) {
-                        return 'Name ' + d;
-                    },
-                    value: function(d) {
-                        return 'Value ' + d;
-                    }
-                }
+                format: null
             },
 
             // table 
@@ -151,6 +149,14 @@ export default class Chart {
         return this._height;
     }
 
+    get actualWidth() {
+        return this._actualWidth;
+    }
+
+    get actualHeight() {
+        return this._actualHeight;
+    }
+
     /**
      * If colorRange is Array of color then scale range according to it
      * If colorRange is a String like "category20", "category20b", etc. then scale using d3.scale.category
@@ -225,6 +231,18 @@ export default class Chart {
     set height(newHeight) {
         if (newHeight) {
             this._height = newHeight;
+        }
+    }
+
+    set actualWidth(arg) {
+        if (arg) {
+            this._actualWidth = arg;
+        }
+    }
+
+    set actualHeight(arg) {
+        if (arg) {
+            this._actualHeight = arg;
         }
     }
 
@@ -314,6 +332,7 @@ export default class Chart {
                     .append("g")
                     .attr('class', 'c9-chart c9-custom-container')
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
                   
     }
 

@@ -10,14 +10,15 @@ export default class Tooltip {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             fontColor: '#fff',
             fontSize: '11px',
-            format: {
-                title: function(d) {
-                    return 'Title ' + d;
-                },
-                detail: function(d) {
-                    return 'Detail ' + d;
-                }
-            }
+            // format: {
+            //     title: function(d) {
+            //         return 'Title ' + d;
+            //     },
+            //     detail: function(d) {
+            //         return 'Detail ' + d;
+            //     }
+            // }
+            // format: null
         };
 
         self._show              = options.show || config.show;
@@ -26,7 +27,7 @@ export default class Tooltip {
         self._fontColor         = options.fontColor || config.fontColor;
         self._fontSize          = options.fontSize || config.fontSize;
 
-        self._format            = Helper.merge(options.format, config.format);
+        self._options            = options;
 
     }
 
@@ -59,6 +60,10 @@ export default class Tooltip {
 
     get eventFactory() {
         return this._eventFactory;
+    }
+
+    get options() {
+        return this._options;
     }
 
 
@@ -109,6 +114,12 @@ export default class Tooltip {
         }
     }
 
+    set options(arg) {
+        if (arg) {
+            this._options = arg;
+        }
+    }
+
 
     /*=====  End of Setter  ======*/
 
@@ -142,17 +153,21 @@ export default class Tooltip {
                             .style('pointer-events', 'all')
                             .style('background-color', self.backgroundColor)
                             .style('color', self.fontColor)
-                            .style('font-size', self.fontSize)
+                            .style('font-size', self.fontSize);
                             // .style('width', '100px')
                             // .style('height', '50px')
-                            .html(function() {
-                                return self.getFormatByChartType(chart, data);
-                            });
+                            // .html(function() {
+                            //     return self.getFormatByChartType(chart, data);
+                            // });
 
         self.eventFactory = {
 
-            'mouseover': function(data) {
-                divOnHover.transition()
+            'mouseover': function(_data) {
+                divOnHover
+                    .html(function() {
+                        return self.getFormatByChartType(chart, _data);
+                    })
+                    .transition()
                     // .style('left', function() {return d3.mouse(this)[0] + 'px';})
                     .style('left', function() {
                         return self.getCoordinate()['left'];
@@ -166,8 +181,28 @@ export default class Tooltip {
                     .style('pointer-events', 'none');
             },
 
-            'mouseout': function(data) {
-                divOnHover.transition()
+            'mousemove': function(_data) {
+                divOnHover
+                    .html(function() {
+                        return self.getFormatByChartType(chart, _data);
+                    })
+                    .transition()
+                    // .style('left', function() {return d3.mouse(this)[0] + 'px';})
+                    .style('left', function() {
+                        return self.getCoordinate()['left'];
+                    })
+                    // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
+                    .style('top', function() {
+                        return self.getCoordinate()['top'];
+                    })
+                    .duration(200)
+                    .style("display", 'block')
+                    .style('pointer-events', 'none');
+            },
+
+            'mouseout': function(_data) {
+                divOnHover
+                    .transition()
                     .duration(200)      
                     .style('display', 'none');
 
@@ -183,6 +218,9 @@ export default class Tooltip {
                     break;
                 case 'mouseout':
                     self.eventFactory.mouseout(data);
+                    break;
+                case 'mousemove':
+                    self.eventFactory.mousemove(data);
                     break;
             }
 
@@ -209,6 +247,49 @@ export default class Tooltip {
                 break;
         }
         return r;
+    }
+
+    setDefaultFormatByChartType(chart, data) {
+        // if (Helper.isEmpty(data)) { console.log(data);return false;}
+        var self = this;
+
+        let chartType = chart.body.type, format;
+
+        switch(chartType) {
+            case 'bar':
+                format = function(data) {
+                    return '<strong>' + data.name + '</strong>' + '<br><span>' + chart.retrieveValue(data.y0, data.y1) + '</span>'
+                };
+                break;
+            case 'pie':
+                format = function(data) {
+                    return '<strong>' + data.data.name + '</strong>' + '<br><span>' + data.data.value + '</span>' 
+                };
+                break;
+            case 'donut':
+                format = function(data) {
+                    return '<strong>' + data.data.name + '</strong>' + '<br><span>' + data.data.value + '</span>' 
+                };
+                break;
+            case 'line':
+                format = function(data) {
+                    let _format = '';
+                    data.forEach(function(d, i){
+                        _format += '<strong>' + d.name + '</strong>' + '<br><span> Value X: ' + d.valueX + '</span>' + '<br><span> Value Y: ' + d.valueY + '</span><br>';    
+                    });
+                    return _format;
+                };
+                break;
+            case 'timeline':
+                format = function(data) {
+                    return '<strong>' + data.name + '</strong>' + '<br><span>' + data.start, data.end + '</span>' 
+                };
+                break;
+        }
+
+        // Update format for tooltip based on chart type
+        self.format     = self.options.format || format;
+
     }
 
     getCoordinate() {
@@ -245,28 +326,11 @@ export default class Tooltip {
     }
 
     getFormatByChartType(chart, data) {
-        console.dir(data);
         var self = this;
 
-        let chartType = chart.body.type, r;
+        self.setDefaultFormatByChartType(chart, data);
 
-        switch(chartType) {
-            case 'bar':
-                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(chart.retrieveValue(data.y0, data.y1)) + '</span>';
-                break;
-            case 'pie':
-                r = '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
-                break;
-            case 'donut':
-                r = '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
-                break;
-            case 'line':
-                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(data.valueX, data.valueY) + '</span>';
-                break;
-            case 'timeline':
-                r = '<strong>' + self.format.title(data.name) + '</strong>' + '<br><span>' + self.format.detail(data.start, data.end) + '</span>';
-                break;
-        }
+        let r = self.format(data);
 
         return r;
     }

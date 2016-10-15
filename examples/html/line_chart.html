@@ -56,9 +56,13 @@
 		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
+			// var data1 = [
+			// 			 {"name": "ABC", "valueY": [100, 200, 300, 120, 320], "valueX": ["2012-12-03", "2013-12-03", "2014-12-03", "2015-12-03", "2016-12-03"]},
+			// 			 {"name": "DEF", "valueY": [150, 210, 269, -696, 969], "valueX": ["2012-12-03", "2013-12-03", "2014-12-03", "2015-12-03", "2016-12-03"]},
+			// 			];
 			var data1 = [
-						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320], "valueX": ["2012-12-03", "2013-12-03", "2014-12-03", "2015-12-03", "2016-12-03"]},
-						 {"name": "DEF", "valueY": [150, 210, 269, -696, 969], "valueX": ["2012-12-03", "2013-12-03", "2014-12-03", "2015-12-03", "2016-12-03"]},
+						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
+						 {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
 						];
 			var options1 = {
 				id: "#demo1", 
@@ -78,16 +82,19 @@
 					},
 					timeFormat: '%Y-%m-%d',
 				}, 
-				xAxisText: ' ',
+				xAxisText: 'Time',
 				yAxisText: 'Sale',
 				titleText: 'Line Chart',
-				interpolate: 'linear',
+				interpolate: 'monotone',
 				point: {
 					show: true,
-					radius: 5,
-					opacity: 0.8,
+					radius: 4,
+					opacity: 0.5,
+					stroke: 'white'
 				},
+				colorRange: ['red', 'steelblue'],
 				gridYShow: true,
+				gridXShow: true,
 				legendShow:true,
 			};
 			var lineChart = new C9.LineChart(options1);

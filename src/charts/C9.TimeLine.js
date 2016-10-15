@@ -185,14 +185,7 @@ export default class TimeLine extends Chart {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             fontColor: '#fff',
             fontSize: '11px',
-            format: {
-                title: function(name) {
-                    return 'Title ' + name;
-                },
-                detail: function(start, end) {
-                    return 'Start: ' + start + ' <br>End: ' + end;
-                }
-            }
+            format: null
         };
 
         var tooltip = new Tooltip(self.options.tooltip);
