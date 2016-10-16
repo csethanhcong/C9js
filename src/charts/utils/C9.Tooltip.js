@@ -163,6 +163,7 @@ export default class Tooltip {
         self.eventFactory = {
 
             'mouseover': function(_data) {
+                console.log(_data);
                 divOnHover
                     .html(function() {
                         return self.getFormatByChartType(chart, _data);
@@ -182,6 +183,7 @@ export default class Tooltip {
             },
 
             'mousemove': function(_data) {
+                console.log(_data);
                 divOnHover
                     .html(function() {
                         return self.getFormatByChartType(chart, _data);
@@ -288,7 +290,9 @@ export default class Tooltip {
         }
 
         // Update format for tooltip based on chart type
+        console.log(self.options);
         self.format     = self.options.format || format;
+        // console.log(self.format);
 
     }
 

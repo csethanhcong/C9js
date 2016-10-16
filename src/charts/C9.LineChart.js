@@ -20,6 +20,7 @@ export default class LineChart extends Chart {
                 show: true,
                 fill: "#fb8072",
                 stroke: "#d26b5f",
+                'stroke-width': 2,
                 opacity: 1.0,
                 radius: 5,
             },
@@ -149,7 +150,7 @@ export default class LineChart extends Chart {
         var width   = self.width - self.margin.left - self.margin.right,
             height  = self.height - self.margin.top - self.margin.bottom;
 
-        var x = (!Helper.isEmpty(self._isTimeDomain)) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+        var x = (self._isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
             y = d3.scale.linear().range([height, 0]);
 
         var valueXArray = d3.merge(self.dataTarget.map(function(data) {
@@ -168,9 +169,6 @@ export default class LineChart extends Chart {
 
         y.domain(d3.extent(valueYArray));
 
-        self._x = x;
-        self._y = y;
-
         // Update domain if all values positive / negative
         if (y.domain()[0] > 0 && y.domain()[1] > 0) {
             y.domain([0, y.domain()[1]]);
@@ -178,19 +176,38 @@ export default class LineChart extends Chart {
             y.domain([y.domain()[0], 0]);
         }
 
+
+
+        self._x = x;
+        self._y = y;
+
         var lineGen = d3.svg.line()
                         .x(function(d) { return x(d.valueX); })
                         .y(function(d) { return y(d.valueY); })
                         .interpolate(self.interpolate);
 
+        var areaGen = d3.svg.area()
+                .x(function(d) { return x(d.valueX); })
+                .y0(function(d) { return y(d.valueY); })
+                .y1(height);
+
         self.dataTarget.forEach(function(d,i) {
+            self.body.append('path')
+                .attr('class', 'c9-chart-line c9-path-area-custom')
+                .attr('d', areaGen(d.value))
+                .attr('data-ref', 'c9-'+d['data-ref'])
+                .style('fill', 'steelblue')
+                .style('stroke', 'none')
+                .style('opacity', '0.1');
+
             self.body
                 .append('path')
+                .attr('class', 'c9-chart-line c9-path-line-custom')
                 .attr('d', lineGen(d.value))
-                .attr('stroke', d.color)
-                .attr('stroke-width', 2)
                 .attr('data-ref', 'c9-'+d['data-ref'])
-                .attr('fill', 'none');
+                .style('stroke', d.color)
+                .style('stroke-width', 2)
+                .style('fill', 'none');
 
             if (self.point.show) {
                 self.body.selectAll("dot")
@@ -204,10 +221,14 @@ export default class LineChart extends Chart {
                     .attr("data-ref", function (d) { return d["data-ref"]; })
                     .style("fill", self.point.fill) 
                     .style("stroke", self.point.stroke)
+                    .style("stroke-width", self.point['stroke-width'])
                     .style("opacity", self.point.opacity);
             }
 
         });
+
+        // Draw axis before rect-overlay
+        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
 
         // Set actual size for chart after initialization
         var chartBox = self.body.node().getBBox();
@@ -218,9 +239,11 @@ export default class LineChart extends Chart {
         //** Create a invisible rect for mouse tracking
         self.body.append('rect')
             .attr('class', 'c9-chart-line c9-rect-overlay')
-            .attr('width', self.actualWidth)
-            .attr('height', self.actualHeight)
-            .attr('fill', 'none')
+            // .attr('width', self.actualWidth)
+            // .attr('height', self.actualHeight)
+            .attr('width', width)
+            .attr('height', height)
+            .style('fill', 'none')
             .style('pointer-events', 'all');
 
 
@@ -231,11 +254,11 @@ export default class LineChart extends Chart {
         self.hoverLine = self.body.append('g')
             .attr('class', 'hover-line')
             .append('line')
-                .attr('id', 'hover-line')
-                .attr('x1', 0).attr('x2', 0)
-                .attr('y1', 0).attr('y2', self.actualHeight)
-                .attr('stroke', 'grey')
-                .attr('stroke-opacity', 0);
+                // .attr('id', 'hover-line')
+                // .attr('x1', 0).attr('x2', 0)
+                // .attr('y1', 0).attr('y2', self.actualHeight)
+                .style('stroke', 'grey')
+                .style('stroke-opacity', 0);
     }
 
     /**
@@ -244,7 +267,7 @@ export default class LineChart extends Chart {
     draw() {
         var self = this;
 
-        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
+        
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
 
@@ -288,14 +311,14 @@ export default class LineChart extends Chart {
             onClickCallback  = self.click.callback;
 
         // Update Tooltip options for Timeline Chart
-        self.options.tooltip = {
-            show: true,
-            position: 'left', // [top, right, bottom, left]
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            fontColor: '#fff',
-            fontSize: '11px',
-            // format: null
-        };
+        // self.options.tooltip = {
+        //     show: true,
+        //     position: 'left', // [top, right, bottom, left]
+        //     backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        //     fontColor: '#fff',
+        //     fontSize: '11px',
+        //     // format: null
+        // };
 
         var tooltip = new Tooltip(self.options.tooltip);
 
@@ -324,7 +347,7 @@ export default class LineChart extends Chart {
                 //     onMouseOutCallback.call(this, d);
                 // }
 
-                self.hoverLine.attr('stroke-opacity', 0);
+                self.hoverLine.style('stroke-opacity', 0);
 
                 tooltip.draw(d, self, 'mouseout');
             },
@@ -345,7 +368,16 @@ export default class LineChart extends Chart {
                     sameTimeArr[i] = d.value;
                     sameTimeArr[i].sort(function(a, b) { return a.valueX - b.valueX; });
                     var idx = self._isTimeDomain ? self.bisectDate(sameTimeArr[i], new Date(curValueX)) : self.bisectDate(sameTimeArr[i], curValueX);
-                    sameTimeValueArr[i] = sameTimeArr[i][idx];
+                    
+                    var d0, d1;
+                    
+                    d0 = (idx === 0) ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
+                    d1 = sameTimeArr[i][idx];
+
+                    // work out which date value is closest to the mouse
+                    sameTimeValueArr[i] = (curValueX - d0.valueX > d1.valueX - curValueX) ? d1 : d0;
+
+                    // sameTimeValueArr[i] = sameTimeArr[i][idx];
 
                     // if (self._isTimeDomain) {
                     //     var idx = self.bisectDate(sameTimeArr[i], new Date(curValueX));
@@ -366,11 +398,26 @@ export default class LineChart extends Chart {
                 // var idx = self.bisectDate(arr, new Date(timeStamp));
                 // var value2 = self.dataTarget[1].value[idx].valueY;
                 
-                //** Display Hover line
+                var x = self.x(sameTimeValueArr[0].valueX);
+                var y = self.y(sameTimeValueArr[0].valueY);
+
+                // focus.select('#focusCircle')
+                //     .attr('cx', x)
+                //     .attr('cy', y);
                 self.hoverLine
-                    .attr('x1', self.x(sameTimeValueArr[0].valueX))
-                    .attr('x2', self.x(sameTimeValueArr[0].valueX))
-                    .attr('stroke-opacity', 1);
+                    .attr('x1', x).attr('y1', self.y(self.y.domain()[0]))
+                    .attr('x2', x).attr('y2', self.y(self.y.domain()[1]))
+                    .style('stroke-opacity', 1);
+                // self.hoverLine
+                //     .attr('x1', self.x(self.x.domain()[0])).attr('y1', y)
+                //     .attr('x2', self.x(self.x.domain()[1])).attr('y2', y)
+                //     .attr('stroke-opacity', 1);
+
+                //** Display Hover line
+                // self.hoverLine
+                //     .attr('x1', self.x(sameTimeValueArr[0].valueX))
+                //     .attr('x2', self.x(sameTimeValueArr[0].valueX))
+                //     .attr('stroke-opacity', 1);
                 
                 //** Display tool tip
                 // toolTip
