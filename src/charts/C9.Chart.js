@@ -158,13 +158,11 @@ export default class Chart {
         self._options   = options;
 
         self._options.table     = Helper.merge(options.table, config.table);
-        console.log(self._options.table);
         self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
         self._options.legend   = Helper.merge(options.legend, config.legend);
-        self._options.axis   = Helper.merge(options.axis, config.axis);
-        console.log(self._options.axis);
+        self._options.axis   = Helper.mergeDeep(config.axis, options.axis);
 
-
+console.log(self._options.axis)
         self.initConfig();
     }
 
