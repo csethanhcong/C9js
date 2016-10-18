@@ -23,13 +23,13 @@ export default class Chart {
                     onMouseOver: {
                         fadeIn: 200,
                         callback: function(data) {
-                            console.dir(data);
+                            // console.dir(data);
                         },
                     },
                     onMouseOut: {
                         fadeOut: 500,
                         callback: function(data) {
-                            console.dir(data);
+                            // console.dir(data);
                         },
                     },
                     onMouseMove: {
@@ -42,7 +42,7 @@ export default class Chart {
 
             click: {
                 callback: function(data) {
-                    console.dir(data);
+                    // console.dir(data);
                 },
             },
 
@@ -334,6 +334,13 @@ export default class Chart {
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
                   
+    }
+
+    /**
+     * Custom Event Listener
+     */
+    on(eventType, callback) {
+
     }
 
     /*=====  End of Main Functions  ======*/

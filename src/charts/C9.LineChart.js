@@ -18,16 +18,25 @@ export default class LineChart extends Chart {
         var config  = {
             point: {
                 show: true,
-                fill: "#fb8072",
+                fill: "steelblue",
                 stroke: "#d26b5f",
                 'stroke-width': 2,
                 opacity: 1.0,
                 radius: 5,
             },
+            area: {
+                show: true
+            },
+            line: {
+                style: "solid", // "dash", "dot"
+                width: 2
+            },
             interpolate: "linear", // refer: https://www.dashingd3js.com/svg-paths-and-d3js
         };
 
         self._point         = Helper.merge(options.point, config.point);
+        self._area          = Helper.merge(options.area, config.area);
+        self._line          = Helper.merge(options.line, config.line);
         self._interpolate   = options.interpolate           ||  config.interpolate;
 
         self.body.type = "line";
@@ -51,6 +60,14 @@ export default class LineChart extends Chart {
 
     get point() {
         return this._point;
+    }
+
+    get area() {
+        return this._area;
+    }
+
+    get line() {
+        return this._line;
     }
 
     get interpolate() {
@@ -89,6 +106,18 @@ export default class LineChart extends Chart {
     set point(arg) {
         if (arg) {
             this._point = arg;
+        }
+    }
+
+    set area(arg) {
+        if (arg) {
+            this._area = arg;
+        }
+    }
+
+    set line(arg) {
+        if (arg) {
+            this._line = arg;
         }
     }
 
@@ -189,16 +218,19 @@ export default class LineChart extends Chart {
         var areaGen = d3.svg.area()
                 .x(function(d) { return x(d.valueX); })
                 .y0(function(d) { return y(d.valueY); })
-                .y1(height);
+                .y1(height)
+                .interpolate(self.interpolate);
 
         self.dataTarget.forEach(function(d,i) {
-            self.body.append('path')
-                .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', areaGen(d.value))
-                .attr('data-ref', 'c9-'+d['data-ref'])
-                .style('fill', 'steelblue')
-                .style('stroke', 'none')
-                .style('opacity', '0.1');
+            if (self.area.show) {
+                self.body.append('path')
+                    .attr('class', 'c9-chart-line c9-path-area-custom')
+                    .attr('d', areaGen(d.value))
+                    .attr('data-ref', 'c9-'+d['data-ref'])
+                    .style('fill', d.color)
+                    .style('stroke', 'none')
+                    .style('opacity', '0.1');
+            }
 
             self.body
                 .append('path')
@@ -206,7 +238,11 @@ export default class LineChart extends Chart {
                 .attr('d', lineGen(d.value))
                 .attr('data-ref', 'c9-'+d['data-ref'])
                 .style('stroke', d.color)
-                .style('stroke-width', 2)
+                .style('stroke-dasharray', function() {
+                    console.log(self.getLineStyle());
+                    return self.getLineStyle();
+                })
+                .style('stroke-width', self.line.width)
                 .style('fill', 'none');
 
             if (self.point.show) {
@@ -252,13 +288,14 @@ export default class LineChart extends Chart {
 
         //** Add the line to the group
         self.hoverLine = self.body.append('g')
-            .attr('class', 'hover-line')
+            .attr('class', 'c9-chart-line c9-comparator-line')
             .append('line')
-                // .attr('id', 'hover-line')
-                // .attr('x1', 0).attr('x2', 0)
-                // .attr('y1', 0).attr('y2', self.actualHeight)
-                .style('stroke', 'grey')
-                .style('stroke-opacity', 0);
+            .style('stroke', 'grey')
+            .style('stroke-opacity', 0);
+
+        self.hoverCircle = self.hoverLine.append('circle')
+                .attr('class', 'c9-chart-line c9-comparator-line')
+                .attr('r', self.point.radius);
     }
 
     /**
@@ -289,7 +326,7 @@ export default class LineChart extends Chart {
     }
 
     /**
-     * Select all circle as type CIRCLE in Line Chart via its CLASS
+     * Select all rect as type RECT in Line Chart via its CLASS
      */
     selectRectLayer() {
         var self = this;
@@ -309,16 +346,6 @@ export default class LineChart extends Chart {
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
             onMouseMoveCallback  = hoverOptions.onMouseMove.callback,
             onClickCallback  = self.click.callback;
-
-        // Update Tooltip options for Timeline Chart
-        // self.options.tooltip = {
-        //     show: true,
-        //     position: 'left', // [top, right, bottom, left]
-        //     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        //     fontColor: '#fff',
-        //     fontSize: '11px',
-        //     // format: null
-        // };
 
         var tooltip = new Tooltip(self.options.tooltip);
 
@@ -349,6 +376,13 @@ export default class LineChart extends Chart {
 
                 self.hoverLine.style('stroke-opacity', 0);
 
+                // Remove circle style before
+                self.selectAllCircle()[0].forEach(function(circle) {
+                    d3.select(circle)
+                        .style('fill', self.point.fill)
+                        .style('fill-opacity', self.point.opacity);
+                }); 
+
                 tooltip.draw(d, self, 'mouseout');
             },
             'mousemove': function(d) {
@@ -360,7 +394,7 @@ export default class LineChart extends Chart {
                     mouseY  = mouse[1],
 
                     curValueX   = self.x.invert(mouseX);
-                //value       = yScale.invert(mouseY);
+
                 var sameTimeArr = [],
                     sameTimeValueArr = [];
 
@@ -376,30 +410,29 @@ export default class LineChart extends Chart {
 
                     // work out which date value is closest to the mouse
                     sameTimeValueArr[i] = (curValueX - d0.valueX > d1.valueX - curValueX) ? d1 : d0;
-
-                    // sameTimeValueArr[i] = sameTimeArr[i][idx];
-
-                    // if (self._isTimeDomain) {
-                    //     var idx = self.bisectDate(sameTimeArr[i], new Date(curValueX));
-                    //     var d0 = sameTimeArr[i][idx - 1], d1 = sameTimeArr[i][idx];
-                    //     sameTimeValueArr[i] = new Date(curValueX) - d0.valueX > d1.valueX - new Date(curValueX) ? d1 : d0;
-                    // } else {
-                    //     var idx = self.bisectDate(sameTimeArr[i], curValueX);
-                    //     var d0 = sameTimeArr[i][idx - 1], d1 = sameTimeArr[i][idx];
-                    //     sameTimeValueArr[i] = curValueX - d0.valueX > d1.valueX - curValueX ? d1 : d0;
-                    // }
                 });
 
                 if (Helper.isFunction(onMouseOverCallback)) {
                     onMouseMoveCallback.call(this, sameTimeValueArr);
                 }
-                // arr = self.dataTarget[1].value;
-                // arr.sort(function(a, b) { return a.valueX - b.valueX; });
-                // var idx = self.bisectDate(arr, new Date(timeStamp));
-                // var value2 = self.dataTarget[1].value[idx].valueY;
                 
                 var x = self.x(sameTimeValueArr[0].valueX);
                 var y = self.y(sameTimeValueArr[0].valueY);
+
+                // Remove circle style before
+                self.selectAllCircle()[0].forEach(function(circle) {
+                    d3.select(circle)
+                        .style('fill', self.point.fill)
+                        .style('fill-opacity', self.point.opacity);
+                }); 
+
+                // Update circle style after mouse move
+                for (let i=0; i < sameTimeValueArr.length; i++) {
+                    let circle = d3.select("circle[data-ref='" + sameTimeValueArr[i]['data-ref'] + "']");
+                    circle
+                    .style('fill', 'steelblue')
+                    .style('fill-opacity', 1);
+                }
 
                 // focus.select('#focusCircle')
                 //     .attr('cx', x)
@@ -418,13 +451,6 @@ export default class LineChart extends Chart {
                 //     .attr('x1', self.x(sameTimeValueArr[0].valueX))
                 //     .attr('x2', self.x(sameTimeValueArr[0].valueX))
                 //     .attr('stroke-opacity', 1);
-                
-                //** Display tool tip
-                // toolTip
-                //     .style('visibility', 'visible')
-                //     .style("left", (mouseX + 60 + "px"))
-                //     .style("top", (mouseY + "px"))
-                // .text(timeStamp + ' Series1: ' + value1 + ' Series2: ' + value2);
 
                 tooltip.draw(sameTimeValueArr, self, 'mousemove');
             }
@@ -472,6 +498,29 @@ export default class LineChart extends Chart {
         //         .style("top", (mouseY + "px"))
         //     .text(timeStamp + ' Series1: ' + value1 + ' Series2: ' + value2);
         // }
+    }
+
+    getLineStyle() {
+        var self = this;
+
+        let r;
+
+        switch(self.line.style) {
+            case 'dot':
+                r = "1, 1";
+                break;
+            case 'solid':
+                r = 'none';
+                break;
+            case 'dash':
+                r = "3, 3";
+                break;
+            default:
+                r = 'none';
+                break;
+        }
+
+        return r;
     }
     
     /*=====  End of Main Functions  ======*/

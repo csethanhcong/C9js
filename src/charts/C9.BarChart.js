@@ -352,6 +352,39 @@ export default class BarChart extends Chart {
 
         selector.on(self.eventFactory);
     }
+
+    on(eventType, callback) {
+        super.on(eventType, callback);
+        
+        var self = this;
+        var selector    = self.selectAllBar();
+
+        // Update Event Factory
+        let eventFactory = {
+            'click.event': function(d) {
+                console.log('test');
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, d);
+                }
+            },
+            'mouseover.event': function(d) {
+                console.log('test');
+                console.log(d);
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, d);
+                }
+            },
+            'mouseout.event': function(d) {
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, d);
+                }
+            }
+        }
+
+        let eventName = eventType + '.event';
+
+        selector.on(eventName, eventFactory[eventName]);
+    }
     
     /*=====  End of Main Functions  ======*/
     

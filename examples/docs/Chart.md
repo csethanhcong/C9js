@@ -157,10 +157,10 @@ option of that object
 4. `Line Chart`: 
 - DONE Add line to compare data in same x-value
 - DONE Add bisector
-- Add color area
-- Dot / Dash / Line Options
+- DONE Add color area
+- DONE Dot / Dash / Solid Options
 - Add y2-axis
-- Remake data structure
+- Remake data structure <- WON"T UPDATE!
 
 5. `Axis`: 
 - x, y: Tick format, Tick count, Label Rotate, Label Position, Axis Timezone
