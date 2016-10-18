@@ -89,14 +89,12 @@
 				axis: {
 					x: {
 						show: true,
-						grid: true,
 						tick: {
 							format: function(d, i) {var stacks = ["HAHA", "HEHE", "OOOO", "HIHI"];return d + " " + stacks[i%stacks.length]}
 						}
 					},
 					y: {
-						show: false,
-						grid: true,
+						show: true,
 						tick: {
 							format: d3.format("$,")
 						}

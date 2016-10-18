@@ -125,8 +125,6 @@ export default class Axis {
             }
         }
 
-        
-
         // Grid
         if (this._xGrid) {
             // Select CURRENT svg container, to make this axis outside
@@ -180,15 +178,15 @@ export default class Axis {
                     .append("text")
                     .attr("dx", "-.8em")
                     .attr("dy", "-.55em")
-                    .attr("x", width)
-                    .attr("y", "20")
+                    .attr("x", width + 20)
+                    .attr("y", 10)
                     .style("text-anchor", "start")
                     .text(this._xText);
 
             //hide axis
             if (!this._xShow) {
                 d3.select(".x.axis>.domain").style("display", "none");
-                // d3.selectAll(".x.axis>g.tick>line").style("display", "none");
+                if (!this._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
             }
             // } else {
                 // d3.selectAll(".x.axis text").style("display", "none");
@@ -214,7 +212,7 @@ export default class Axis {
                 // d3.selectAll(".y.axis text").style("display", "none")
             if (!this._yShow) {
                 d3.select(".y.axis>.domain").style("display", "none");
-                // d3.selectAll(".y.axis>g.tick>line").style("display", "none");
+                if (!this._yGrid) d3.selectAll(".y.axis>g.tick>line").style("display", "none");
             }
         }
 
