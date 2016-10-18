@@ -4,36 +4,68 @@ import Helper from '../../helper/C9.Helper';
 export default class Axis {
     constructor(options, body, data, width, height, x, y) {
         var config = {
-            xAxisShow     : true,
-            xAxisPadding  : {},   // TODO
-            xAxisText     : 'Name',
-            yAxisShow     : true,
-            yAxisPadding  : {},   // TODO
-            yAxisText     : 'Value',
-            numOfTickY   : 5,
-            tickFormat     : "s",   // refer: https://github.com/d3/d3-format
-            isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
-            y2AxisShow    : true,
-            y2AxisPadding : {},   // TODO
-            y2AxisText    : 'Value',
-            gridXShow: false,
-            gridYShow: false
+            // xAxisShow     : true,
+            // xAxisPadding  : {},   // TODO
+            // xAxisText     : 'Name',
+            // yAxisShow     : true,
+            // yAxisPadding  : {},   // TODO
+            // yAxisText     : 'Value',
+            // numOfTickY   : 5,
+            // tickFormat     : "s",   // refer: https://github.com/d3/d3-format
+            // isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
+            // y2AxisShow    : true,
+            // y2AxisPadding : {},   // TODO
+            // y2AxisText    : 'Value',
+            // gridXShow: false,
+            // gridYShow: false
+            x: {
+                tick: {
+                    rotate: 0,
+                    count: 10,
+                    size: 6,
+                    padding: 3,
+                    format: undefined,
+                    values: [],
+                    show: true
+                },
+                show: false,
+                grid: false,
+                text: "Name",
+                type: ""
+            },
+            y: {
+                tick: {
+                    rotate: 0,
+                    count: 10,
+                    size: 6,
+                    padding: 3,
+                    format: undefined,
+                    values: [],
+                    show: true
+                },
+                show: false,
+                grid: false,
+                text: "Value",
+                type: ""
+            }
         };
 
-        this._xAxisShow     = options.xAxisShow      || config.xAxisShow;
-        this._xAxisPadding  = options.xAxisPadding   || config.xAxisPadding;
-        this._xAxisText     = options.xAxisText      || config.xAxisText;
-        this._yAxisShow     = options.yAxisShow      || (body.type == "timeline" ? false : config.yAxisShow);
-        this._yAxisPadding  = options.yAxisPadding   || config.yAxisPadding;
-        this._yAxisText     = options.yAxisText      || config.yAxisText;
-        this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
-        this._tickFormat    = options.tickFormat      || config.tickFormat;
-        this._numOfTickY    = options.numOfTickY    || config.numOfTickY;
-        this._y2AxisShow    = options.y2AxisShow     || config.y2AxisShow;
-        this._y2AxisPadding = options.y2AxisPadding  || config.y2AxisPadding;
-        this._y2AxisText    = options.y2AxisText     || config.y2AxisText;
-        this._gridXShow     = options.gridXShow      || config.gridXShow;
-        this._gridYShow     = options.gridYShow      || config.gridYShow;
+        // this._xAxisPadding  = options.xAxisPadding   || config.xAxisPadding;
+        // // this._yAxisPadding  = options.yAxisPadding   || config.yAxisPadding;
+        // // this._y2.Show    = options.y2.Show     || config.y2.Show;
+        // this._y2.Padding = options.y2.Padding  || config.y2.Padding;
+        // this._y2.text    = options.y2.text     || config.y2.text;
+        this._xShow         = options.x.show      || config.x.show;
+        this._xText         = options.x.text      || config.x.text;
+        this._yShow     = options.y.show      || (body.type == "timeline" ? false : config.y.show);
+        this._yText     = options.y.text      || config.y.text;
+        // this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
+        this._xTick    = options.x.tick      || config.x.tick;
+        this._yTick    = options.y.tick    || config.y.tick;
+        this._xGrid     = options.x.grid      || config.x.grid;
+        this._yGrid     = options.y.grid      || config.y.grid;
+        this._xType     = options.x.type      || config.x.type;
+        this._yType     = options.y.type      || config.y.type;
         this._x             = x;
         this._y             = y;
 
@@ -64,24 +96,15 @@ export default class Axis {
             delete options.starting;
             delete options.ending;
 
-        } else if (body.type == "line") {
-
-            this._xAxis = d3.svg.axis()
-                            .scale(this._x);
-            this._yAxis = d3.svg.axis()
-                            .scale(this._y)
-                            .orient("left");
-
         } else {
-            // Currently, support logaric axis only for y-axis on bar-chart
-            // TODO: add for line-chart too
-            var _tickFormat = d3.format(this._tickFormat);
-            var _numOfTickY = this._numOfTickY;
 
             this._xAxis = d3.svg.axis()
                 .scale(this._x)
                 .orient("bottom")
-                .ticks(10);
+                .tickPadding(this._xTick.padding)
+                .ticks(this._xTick.count)
+                .tickValues(this._xTick.values.length > 0 ? this._xTick.values : undefined)
+                .tickFormat(this._xType == "timeseries" ? this._xTick.format || d3.time.format("%Y-%m-%d") : this._xTick.format ? this._xTick.format : undefined);
 
             // In LOG scale, can't specify default number of ticks
             // must be filter with tickFormat instead
@@ -90,22 +113,24 @@ export default class Axis {
                 this._yAxis = d3.svg.axis()
                     .scale(this._y)
                     .orient("left")
-                    .ticks(_numOfTickY, _tickFormat)
-                    .tickSize(10, 0);
+                    .tickPadding(this._yTick.padding)
+                    .ticks(this._yTick.count, this._yType == "timeseries" ? this._yTick.format || "%Y-%m-%d" : this._yTick.format ? this._yTick.format : undefined)
+                    .tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined);
             } else {
                 this._yAxis = d3.svg.axis()
                     .scale(this._y)
                     .orient("left")
-                    .ticks(_numOfTickY)
-                    .tickSize(10, 0)
-                    .tickFormat(_tickFormat);
+                    .tickPadding(this._yTick.padding)
+                    .ticks(this._yTick.count)
+                    .tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined)
+                    .tickFormat(this._yType == "timeseries" ? this._yTick.format || d3.time.format("%Y-%m-%d") : this._yTick.format ? this._yTick.format : undefined);
             }
         }
 
         
 
         // Grid
-        if (this._gridXShow) {
+        if (this._xGrid) {
             // Select CURRENT svg container, to make this axis outside
             // as a SEPARATED component, just like AXIS, of CHART
             // d3.select(this._svg[0][0].parentNode)
@@ -113,7 +138,7 @@ export default class Axis {
                 .outerTickSize(0);
         }
 
-        if (this._gridYShow) {
+        if (this._yGrid) {
             // Select CURRENT svg container, to make this axis outside
             // as a SEPARATED component, just like AXIS, of CHART
             // d3.select(this._svg[0][0].parentNode)
@@ -126,31 +151,73 @@ export default class Axis {
         this._width  = width;   // TODO : ADD Getter/setter
         this._height  = height;
 
-        if (this._xAxisShow) {
+        var textAnchor = function(angle) {
+            var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+            return sin == 0 ? "middle" : (sin > 0 ? "start" : "end");
+        };
+
+        var textDx = function(angle) {
+            var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+            return 8 * sin;
+        };
+
+        var textY = function(angle) {
+            return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
+        };
+
+        // if (this._xShow) {
             this._body.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(0," + (height) + ")")
-                .call(this._xAxis)
-                .append("text")
-                .attr("dx", "-.8em")
-                .attr("dy", "-.55em")
-                .attr("x", width)
-                .attr("y", "20")
-                .style("text-anchor", "start")
-                .text(this._xAxisText);
-                // .attr("transform", "rotate(-90)" );
-        }
+                .call(this._xAxis);
+            // if (this._xTick.show) {
+                d3.select(".x.axis").selectAll("text")
+                    .style("text-anchor", textAnchor(this._xTick.rotate))
+                    .attr("y", textY(this._xTick.rotate))
+                    .attr("x", 0)
+                    .attr("dy", ".71em")
+                    .attr("dx", textDx(this._xTick.rotate))
+                    .attr("transform", "rotate(" + this._xTick.rotate + ")");
+                d3.select(".x.axis")
+                    .append("text")
+                    .attr("dx", "-.8em")
+                    .attr("dy", "-.55em")
+                    .attr("x", width)
+                    .attr("y", "20")
+                    .style("text-anchor", "start")
+                    .text(this._xText);
 
-        if (this._yAxisShow) {
+            //hide axis
+            if (!this._xShow) {
+                d3.select(".x.axis>.domain").style("display", "none");
+                // d3.selectAll(".x.axis>g.tick>line").style("display", "none");
+            }
+            // } else {
+                // d3.selectAll(".x.axis text").style("display", "none");
+            // }
+                    
+                // .attr("transform", "rotate(-90)" );
+        // }
+
+        if (body.type != "timeline") {
             this._body.append("g")
                 .attr("class", "y axis")
                 .call(this._yAxis)
-                .append("text")
-                // .attr("transform", "rotate(-90)")
-                .attr("y", -10)
-                .attr("dy", ".10")
-                .style("text-anchor", "end")
-                .text(this._yAxisText);
+            // if (this._yTick.show)
+                d3.select(".y.axis")
+                    .append("text")
+                    // .attr("transform", "rotate(-90)")
+                    .attr("y", -10)
+                    .attr("dy", ".10")
+                    .style("text-anchor", "end")
+                    .text(this._yText);
+
+            // else
+                // d3.selectAll(".y.axis text").style("display", "none")
+            if (!this._yShow) {
+                d3.select(".y.axis>.domain").style("display", "none");
+                // d3.selectAll(".y.axis>g.tick>line").style("display", "none");
+            }
         }
 
 

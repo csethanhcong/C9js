@@ -266,14 +266,14 @@ export default class PieChart extends Chart {
         var table   = new Table(self.options.table, self.body, self.dataTarget);
 
         self.legend = legend;
-
+        self.table = table;
         // Draw legend
         legend.draw();
         legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
         
         // Draw table
         table.draw();
-
+        table.updateInteractionForPieChart(self);
         // Update interaction of this own chart
         self.updateInteraction();
 

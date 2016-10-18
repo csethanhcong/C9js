@@ -149,7 +149,7 @@ export default class LineChart extends Chart {
         var width   = self.width - self.margin.left - self.margin.right,
             height  = self.height - self.margin.top - self.margin.bottom;
 
-        var x = (!Helper.isEmpty(self._isTimeDomain)) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+        var x = (self._isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
             y = d3.scale.linear().range([height, 0]);
 
         var valueXArray = d3.merge(self.dataTarget.map(function(data) {
@@ -244,7 +244,7 @@ export default class LineChart extends Chart {
     draw() {
         var self = this;
 
-        var axis    = new Axis(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
+        var axis    = new Axis(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
 

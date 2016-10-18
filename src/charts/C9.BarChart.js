@@ -217,7 +217,7 @@ export default class BarChart extends Chart {
         var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null, self.isLogaric);
         y.domain([minMax.min, minMax.max]);
         self.axis.update(null, y, 750);
-
+        
         var xGroup = d3.scale.ordinal();
         xGroup.domain(groupNames).rangeRoundBands([0, self.x.rangeBand()]);
 
@@ -277,7 +277,7 @@ export default class BarChart extends Chart {
      */
     draw() {
         var self = this;
-        self.axis    = new Axis(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
+        self.axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
         
