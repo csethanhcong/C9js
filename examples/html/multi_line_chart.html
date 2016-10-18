@@ -77,11 +77,31 @@
 				data: {
 					plain: data1,
 					keys: {
-						x: 'valueX',
-						y: 'valueY'
+						y: 'valueY',
+						x: 'valueX'
 					},
-					// timeFormat: '%Y-%m-%d',
+					timeFormat: "%Y-%m-%d"
 				}, 
+				axis: {
+					x: {
+						show: true,
+						text: "Time",
+						type: "timeseries",
+						tick: {
+							// show: false,
+							rotate: -90
+							// padding: 10
+						}
+					},
+					y: {
+						show: false,
+						text: "Sale",
+						tick: {
+							// show: false
+						},
+						grid: true
+					}
+				},
 				xAxisText: 'Time',
 				yAxisText: 'Sale',
 				titleText: 'Line Chart',

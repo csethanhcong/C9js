@@ -48,8 +48,12 @@ export default class Chart {
 
             // legend
             legend: {
-                show: true,
-                position: "top"
+                show      : false,
+                position  : "top",
+                size      : 10,
+                textSize  : "12px",
+                margin    : [5, 5, 5, 5],
+                space     : 10,
             },
 
             // tooltip
@@ -96,6 +100,36 @@ export default class Chart {
                 },
                 groups: [],
                 stacks: [],
+            },
+
+            axis: {
+                x: {
+                    tick: {
+                        rotate: 0,
+                        count: 10,
+                        size: 6,
+                        padding: 3,
+                        format: undefined,
+                        values: [],
+                    },
+                    show: false,
+                    grid: false,
+                    text: "Name",
+                    type: ""
+                },
+                y: {
+                    tick: {
+                        count: 10,
+                        size: 6,
+                        padding: 3,
+                        format: undefined,
+                        values: [],
+                    },
+                    show: false,
+                    grid: false,
+                    text: "Value",
+                    type: ""
+                }
             }
         };
 
@@ -124,8 +158,12 @@ export default class Chart {
         self._options   = options;
 
         self._options.table     = Helper.merge(options.table, config.table);
+        console.log(self._options.table);
         self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
         self._options.legend   = Helper.merge(options.legend, config.legend);
+        self._options.axis   = Helper.merge(options.axis, config.axis);
+        console.log(self._options.axis);
+
 
         self.initConfig();
     }

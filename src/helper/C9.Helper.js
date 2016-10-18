@@ -69,6 +69,7 @@ var Helper = {
         var obj3 = {};
         for (var attrname in obj2) { if (!Util.isEmpty(obj2[attrname])) obj3[attrname] = obj2[attrname]; }
         for (var attrname in obj1) { if (!Util.isEmpty(obj1[attrname])) obj3[attrname] = obj1[attrname]; }
+            console.log(obj3);
         return obj3;
     },
 

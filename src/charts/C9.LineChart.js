@@ -304,7 +304,7 @@ export default class LineChart extends Chart {
     draw() {
         var self = this;
 
-        
+        var axis    = new Axis(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
 

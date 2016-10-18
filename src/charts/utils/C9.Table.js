@@ -206,6 +206,123 @@ export default class Table {
         }
 
     }
-    /*=====  End of Main Functions  ======*/
 
+    updateInteractionForPieChart(chart) {
+
+        var self = this;
+
+        var hoverOptions        = chart.hover.options,
+            hoverEnable         = chart.hover.enable,
+            onMouseOverCallback = hoverOptions.onMouseOver.callback,
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback,
+            onClickCallback     = chart.click.callback;
+
+        var chartType = chart.chartType;
+
+        var chartInnerBefore    = chartType == 'pie' ?  0 : chart.innerRadius,
+            chartOuterBefore    = chartType == 'pie' ?  chart.radius : chart.outerRadius,
+            chartInnerAfter     = chartType == 'pie' ?  0 : chart.innerRadius,
+            chartOuterAfter     = chartType == 'pie' ?  chart.radius * 1.2 : chart.outerRadius * 1.2;
+        self.itemEventFactory = {
+
+            'click': function(item) {
+                if (Helper.isFunction(onClickCallback)) {
+                    onClickCallback.call(this, item);
+                }
+
+                var selector = d3.select(this);
+                var enable = true,
+                    dataSet = self.data;
+                var totalEnable = d3.sum(dataSet.map(function(d) {
+                    return (d.enable) ? 1 : 0;
+                }));
+
+                // Add pointer to cursor
+                selector.style('cursor', 'pointer');
+
+                // If current selector is disabled, then turn it on back
+                // Else, set enable to false
+                if (selector.style('opacity') == '0.1') {
+                    selector.style('opacity', '1.0');
+                } else {
+                    if (totalEnable < 2) return;
+                    selector.style('opacity', '0.1');
+                    enable = false;
+                }
+
+            },
+
+            'mouseover': function(item) {
+                if (!item)
+                    return;
+
+                if (Helper.isFunction(onMouseOverCallback)) {
+                    onMouseOverCallback.call(this, item);
+                }
+
+                var legendSelector = d3.select(this);
+                // Add pointer to cursor
+                legendSelector.style('cursor', 'pointer');
+                // if (legendSelector.attr('enable') == 'true') {
+
+                    // For Chart
+                    chart.selectAllPath().each(function(){
+                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                            d3.select(this).attr('opacity', '0.3');
+                        }
+                    });
+
+                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+
+                    selector
+                        .transition()
+                            .duration(500)
+                            .ease('bounce')
+                            .attr('d', d3.svg.arc()
+                                .innerRadius(chartInnerAfter)
+                                .outerRadius(chartOuterAfter)
+                            );
+                // }
+
+            },
+
+            'mouseout': function(item) {
+                if (!item)
+                    return;
+                
+                if (Helper.isFunction(onMouseOutCallback)) {
+                    onMouseOutCallback.call(this, item);
+                }
+
+                var legendSelector = d3.select(this);
+                // Add pointer to cursor
+                legendSelector.style('cursor', 'pointer');
+
+                chart.selectAllPath().each(function(){
+                    if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                        d3.select(this).attr('opacity', '1.0');
+                    }
+                });
+
+                var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+
+                selector
+                    .transition()
+                        .duration(500)
+                        .ease('bounce')
+                        .attr('d', d3.svg.arc()
+                            .innerRadius(chartInnerBefore)
+                            .outerRadius(chartOuterBefore)
+                        );
+            }
+        
+        };
+
+        if (self.show)
+            self.selectAllRow().on(self.itemEventFactory);
+    }
+    /*=====  End of Main Functions  ======*/
+    selectAllRow(){
+        return d3.selectAll(".c9-table tr");
+    }
 }
