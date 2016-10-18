@@ -412,7 +412,7 @@ export default class LineChart extends Chart {
                     sameTimeValueArr[i] = (curValueX - d0.valueX > d1.valueX - curValueX) ? d1 : d0;
                 });
 
-                if (Helper.isFunction(onMouseOverCallback)) {
+                if (Helper.isFunction(onMouseMoveCallback)) {
                     onMouseMoveCallback.call(this, sameTimeValueArr);
                 }
                 
@@ -457,47 +457,6 @@ export default class LineChart extends Chart {
         }
 
         selector.on(self.eventFactory);
-
-        //** Mouse action helpers
-        // function mouseOut() {
-
-        //     // Hide Hover line
-        //     hoverLine.style('stroke-opacity', 0);
-        //     // toolTip.style('visibility', 'hidden');
-        // }
-
-        // function mouseMove() {
-
-        //     var mouse   = d3.mouse(this),
-        //         mouseX  = mouse[0],
-        //         mouseY  = mouse[1],
-
-        //         timeStamp   = self.x.invert(mouseX);
-        //         //value       = yScale.invert(mouseY);
-            
-        //     var arr = self.dataTarget[0].value;
-        //     arr.sort(function(a, b) { return a.valueX - b.valueX; });
-        //     var idx = self.bisectDate(arr, new Date(timeStamp));
-        //     var value1 = self.dataTarget[0].value[idx].valueY;
-            
-        //      arr = self.dataTarget[1].value;
-        //     arr.sort(function(a, b) { return a.valueX - b.valueX; });
-        //     var idx = self.bisectDate(arr, new Date(timeStamp));
-        //     var value2 = self.dataTarget[1].value[idx].valueY;
-            
-        //     //** Display Hover line
-        //     hoverLine
-        //         .attr('x1', mouseX)
-        //         .attr('x2', mouseX)
-        //         .style('stroke-opacity', 1);
-            
-        //     //** Display tool tip
-        //     toolTip
-        //         .style('visibility', 'visible')
-        //         .style("left", (mouseX + 60 + "px"))
-        //         .style("top", (mouseY + "px"))
-        //     .text(timeStamp + ' Series1: ' + value1 + ' Series2: ' + value2);
-        // }
     }
 
     getLineStyle() {
@@ -521,6 +480,56 @@ export default class LineChart extends Chart {
         }
 
         return r;
+    }
+
+    /**
+     * Custom Event Listener
+     * @param  {[type]}   eventType [description]
+     * @param  {Function} callback  [description]
+     * @return {[type]}             [description]
+     */
+    on(eventType, callback) {
+        super.on(eventType, callback);
+        
+        var self = this;
+        var selector    = self.selectRectLayer();
+
+        // Update Event Factory
+        let eventFactory = {
+            'mousemove.event': function(d) {
+
+                var mouse   = d3.mouse(this),
+                    mouseX  = mouse[0],
+                    mouseY  = mouse[1],
+
+                    curValueX   = self.x.invert(mouseX);
+
+                var sameTimeArr = [],
+                    sameTimeValueArr = [];
+
+                self.dataTarget.forEach(function(d, i) {
+                    sameTimeArr[i] = d.value;
+                    sameTimeArr[i].sort(function(a, b) { return a.valueX - b.valueX; });
+                    var idx = self._isTimeDomain ? self.bisectDate(sameTimeArr[i], new Date(curValueX)) : self.bisectDate(sameTimeArr[i], curValueX);
+                    
+                    var d0, d1;
+                    
+                    d0 = (idx === 0) ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
+                    d1 = sameTimeArr[i][idx];
+
+                    // work out which date value is closest to the mouse
+                    sameTimeValueArr[i] = (curValueX - d0.valueX > d1.valueX - curValueX) ? d1 : d0;
+                });
+
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, sameTimeValueArr);
+                }
+            }
+        }
+
+        let eventName = eventType + '.event';
+
+        selector.on(eventName, eventFactory[eventName]);
     }
     
     /*=====  End of Main Functions  ======*/

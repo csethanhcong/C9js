@@ -316,6 +316,42 @@ export default class DonutChart extends Chart {
 
         selector.on(self._eventFactory);
     }
+
+    /**
+     * Custom Event Listener
+     * @param  {[type]}   eventType [description]
+     * @param  {Function} callback  [description]
+     * @return {[type]}             [description]
+     */
+    on(eventType, callback) {
+        super.on(eventType, callback);
+        
+        var self = this;
+        var selector    = self.selectAllPath();
+
+        // Update Event Factory
+        let eventFactory = {
+            'click.event': function(d) {
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, d);
+                }
+            },
+            'mouseover.event': function(d) {
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, d);
+                }
+            },
+            'mouseout.event': function(d) {
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, d);
+                }
+            }
+        }
+
+        let eventName = eventType + '.event';
+
+        selector.on(eventName, eventFactory[eventName]);
+    }
     
     /*=====  End of Main Functions  ======*/
     

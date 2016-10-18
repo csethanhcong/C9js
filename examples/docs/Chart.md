@@ -147,6 +147,10 @@ Bar Chart (Group of bar chart)
 		+ Use ONLY with single, grouped bar chart
 		+ Value is positive
 
+14. `Axis`: 
+- x, y: Tick format, Tick count, Label Rotate, Label Position, Axis Timezone
+- Option to show/hide Tick/Axis
+
 #### TODO:
 
 1. `setOption`: After construct a new instance from defined class, we could change individual
@@ -161,10 +165,6 @@ option of that object
 - DONE Dot / Dash / Solid Options
 - Add y2-axis
 - Remake data structure <- WON"T UPDATE!
-
-5. `Axis`: 
-- x, y: Tick format, Tick count, Label Rotate, Label Position, Axis Timezone
-- Option to show/hide Tick/Axis
 
 6. `Table`:
 - Highlight

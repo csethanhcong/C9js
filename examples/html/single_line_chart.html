@@ -104,6 +104,9 @@
 			};
 			var lineChart = new C9.LineChart(options1);
 			lineChart.draw();
+			lineChart.on('mousemove', function(data){
+				console.log(data);
+			})
 		</script>
 		
 	</body>

@@ -353,6 +353,12 @@ export default class BarChart extends Chart {
         selector.on(self.eventFactory);
     }
 
+    /**
+     * Custom Event Listener
+     * @param  {[type]}   eventType [description]
+     * @param  {Function} callback  [description]
+     * @return {[type]}             [description]
+     */
     on(eventType, callback) {
         super.on(eventType, callback);
         
@@ -362,14 +368,11 @@ export default class BarChart extends Chart {
         // Update Event Factory
         let eventFactory = {
             'click.event': function(d) {
-                console.log('test');
                 if (Helper.isFunction(callback)) {
                     callback.call(this, d);
                 }
             },
             'mouseover.event': function(d) {
-                console.log('test');
-                console.log(d);
                 if (Helper.isFunction(callback)) {
                     callback.call(this, d);
                 }
