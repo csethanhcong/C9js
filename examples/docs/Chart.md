@@ -152,11 +152,15 @@ Bar Chart (Group of bar chart)
 1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
 
+2. Separate Event Listener onto invidual functions
+
 4. `Line Chart`: 
-- Add line to compare data in same x-value
-- Add bisector
+- DONE Add line to compare data in same x-value
+- DONE Add bisector
 - Add color area
 - Dot / Dash / Line Options
+- Add y2-axis
+- Remake data structure
 
 5. `Axis`: 
 - x, y: Tick format, Tick count, Label Rotate, Label Position, Axis Timezone
@@ -166,7 +170,7 @@ option of that object
 - Highlight
 - Scroll to
 
-7. `Add sub-chart` to re-draw Bar/Line Chart followed the sub-chart
+7. `Add sub-chart` to re-draw Bar/Line/Timeline Chart followed the sub-chart
 
 7. `Separate setting options into abc.xyz.blabla`, e.g.
 	grid: {

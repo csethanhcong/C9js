@@ -25,8 +25,7 @@ export default class Axis {
                     size: 6,
                     padding: 3,
                     format: undefined,
-                    values: [],
-                    show: true
+                    values: []
                 },
                 show: false,
                 grid: false,
@@ -40,8 +39,7 @@ export default class Axis {
                     size: 6,
                     padding: 3,
                     format: undefined,
-                    values: [],
-                    show: true
+                    values: []
                 },
                 show: false,
                 grid: false,

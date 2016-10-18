@@ -76,6 +76,25 @@
 			   data: {
 			   	plain: data3
 			   },
+			   hover: {
+	                options: {
+	                    onMouseOver: {
+	                        callback: function(data) {
+	                            console.log(data);
+	                        },
+	                    },
+	                    onMouseOut: {
+	                        callback: function(data) {
+	                            console.log(data);
+	                        },
+	                    },
+	                    onMouseMove: {
+	                        callback: function(data) {
+	                            // console.dir(data);
+	                        },
+	                    }
+	                }
+	            },
 			   titleText:'Donut Chart',
 			   colorRange:"category20",
 			   outerRadius:200,
@@ -83,6 +102,12 @@
 			   titlePosition:'bottom',
 			   titleSize:'20px',
 			   legendShow:true,
+			   tooltip: {
+			   	format: function(d) {
+				   	return 'Name: ' + d.data.name + ' <strong>Value: ' + d.data.value + '</strong>';
+				   }
+			   },
+			   
 			};
 			var donutChart = new C9.DonutChart(options3);
 			donutChart.draw();

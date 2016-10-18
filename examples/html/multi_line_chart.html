@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Line Chart</title>
+		<title>Examples - Multi Line Chart</title>
 		<!-- ICON -->
 		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
@@ -52,7 +52,7 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Line Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Multi Line Chart</h3>
 		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
@@ -94,7 +94,7 @@
 						}
 					},
 					y: {
-						// show: false,
+						show: false,
 						text: "Sale",
 						tick: {
 							// show: false
@@ -105,16 +105,17 @@
 				xAxisText: 'Time',
 				yAxisText: 'Sale',
 				titleText: 'Line Chart',
-				interpolate: 'monotone',
+				interpolate: 'linear',
 				point: {
 					show: true,
-					radius: 4,
-					opacity: 0.5,
-					stroke: 'white'
+					radius: 5,
+					fill: 'white',
+					stroke: 'steelblue',
+					'stroke-width': 2
 				},
-				colorRange: ['red', 'steelblue'],
-				gridYShow: true,
-				gridXShow: true,
+				colorRange: ['steelblue', 'red'],
+				// gridYShow: true,
+				// gridXShow: true,
 				legendShow:true,
 			};
 			var lineChart = new C9.LineChart(options1);

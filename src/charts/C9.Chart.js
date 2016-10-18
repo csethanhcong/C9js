@@ -111,7 +111,6 @@ export default class Chart {
                         padding: 3,
                         format: undefined,
                         values: [],
-                        show: true
                     },
                     show: false,
                     grid: false,
@@ -120,13 +119,11 @@ export default class Chart {
                 },
                 y: {
                     tick: {
-                        rotate: 0,
                         count: 10,
                         size: 6,
                         padding: 3,
                         format: undefined,
                         values: [],
-                        show: true
                     },
                     show: false,
                     grid: false,
@@ -161,16 +158,12 @@ export default class Chart {
         self._options   = options;
 
         self._options.table     = Helper.merge(options.table, config.table);
+        console.log(self._options.table);
         self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
         self._options.legend   = Helper.merge(options.legend, config.legend);
-        self._options.axis   = options.axis ? {
-            x: Helper.merge(options.axis.x, config.axis.x),
-            y: Helper.merge(options.axis.y, config.axis.y)
-        } : config.axis;
-        if (options.axis) {
-            self._options.axis.x.tick = Helper.merge(options.axis.x.tick, config.axis.x.tick);
-            self._options.axis.y.tick = Helper.merge(options.axis.y.tick, config.axis.y.tick);
-        }
+        self._options.axis   = Helper.merge(options.axis, config.axis);
+        console.log(self._options.axis);
+
 
         self.initConfig();
     }

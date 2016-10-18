@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Single Bar Chart</title>
+		<title>Examples - Single Line Chart</title>
 		<!-- ICON -->
 		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
@@ -52,22 +52,17 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Single Bar Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Single Line Chart</h3>
 		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: "A", v:	[.0245, 0.05, 0.1]},
-					{name: "B",	v:  [.01492, .02782, 0.05, 0.1]},
-					{name: "C", v:	[.02782, .02782, 0.05, 0.1]},
-					{name: "D", v:	[.04253, .02782, 0.05, 0.1]},
-					{name: "E", v:	[1, .02782, 0.05, 0.1]},
-					{name: "F", v:	[.02288, .02782, 0.05, 0.1]},
-					{name: "G", v:	[.02015, .02782, 0.05, 0.1]},
-					{name: "H", v:	[.06094, .02782, 0.05, 0.1]},
-					{name: "I", v:	[.5, .02782, 0.05, 0.1]},
-				];
-
+						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]}
+						];
+			// var data1 = [
+			// 			 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
+			// 			 // {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
+			// 			];
 			var options1 = {
 				id: "#demo1", 
 				width: 750, 
@@ -77,23 +72,38 @@
 					left: 50, 
 					right: 50, 
 					bottom:100
-				},
-				gridYShow: true,
+				}, 
 				data: {
 					plain: data1,
 					keys: {
-						value: "v"
+						x: 'valueX',
+						y: 'valueY'
 					},
-					stacks: ["HAHA", "HEHE", "HOHO", "HIHI"]
+					timeFormat: '%Y-%m',
 				}, 
-				barColor: "category20",
-				isLogaric: false,
-				// groupType: "group",
+				xAxisText: 'Time',
+				yAxisText: 'Sale',
+				titleText: 'Line Chart',
+				interpolate: 'linear',
+				point: {
+					show: true,
+					radius: 5,
+					fill: 'white',
+					stroke: 'steelblue',
+					'stroke-width': 2
+				},
+				tooltip: {
+					format: function(data) {
+						return 'At moment: ' + data[0].valueX + '<strong>' + data[0].name + '</strong>' + 'has ' + data[0].valueY;
+					}
+				},
+				colorRange: ['steelblue', 'red'],
+				// gridYShow: true,
+				// gridXShow: true,
 				legendShow:true,
-				groupNames: ["hihi", "haha", "kaka", "lol"]
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
+			var lineChart = new C9.LineChart(options1);
+			lineChart.draw();
 		</script>
 		
 	</body>
