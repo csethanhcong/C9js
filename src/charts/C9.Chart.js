@@ -111,6 +111,8 @@ export default class Chart {
                         padding: 3,
                         format: undefined,
                         values: [],
+                        type: d3.time.hours,
+                        interval: 1
                     },
                     show: false,
                     grid: false,
@@ -162,7 +164,6 @@ export default class Chart {
         self._options.legend   = Helper.merge(options.legend, config.legend);
         self._options.axis   = Helper.mergeDeep(config.axis, options.axis);
 
-console.log(self._options.axis)
         self.initConfig();
     }
 
