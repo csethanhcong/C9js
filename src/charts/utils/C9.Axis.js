@@ -4,20 +4,6 @@ import Helper from '../../helper/C9.Helper';
 export default class Axis {
     constructor(options, body, data, width, height, x, y) {
         var config = {
-            // xAxisShow     : true,
-            // xAxisPadding  : {},   // TODO
-            // xAxisText     : 'Name',
-            // yAxisShow     : true,
-            // yAxisPadding  : {},   // TODO
-            // yAxisText     : 'Value',
-            // numOfTickY   : 5,
-            // tickFormat     : "s",   // refer: https://github.com/d3/d3-format
-            // isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
-            // y2AxisShow    : true,
-            // y2AxisPadding : {},   // TODO
-            // y2AxisText    : 'Value',
-            // gridXShow: false,
-            // gridYShow: false
             x: {
                 tick: {
                     rotate: 0,
@@ -25,7 +11,10 @@ export default class Axis {
                     size: 6,
                     padding: 3,
                     format: undefined,
-                    values: []
+                    values: [],
+                    //the following use for timeline chart
+                    type: d3.time.hours,
+                    interval: 1
                 },
                 show: false,
                 grid: false,
@@ -47,12 +36,7 @@ export default class Axis {
                 type: ""
             }
         };
-
-        // this._xAxisPadding  = options.xAxisPadding   || config.xAxisPadding;
-        // // this._yAxisPadding  = options.yAxisPadding   || config.yAxisPadding;
-        // // this._y2.Show    = options.y2.Show     || config.y2.Show;
-        // this._y2.Padding = options.y2.Padding  || config.y2.Padding;
-        // this._y2.text    = options.y2.text     || config.y2.text;
+        
         this._xShow         = options.x.show      || config.x.show;
         this._xText         = options.x.text      || config.x.text;
         this._yShow     = options.y.show      || (body.type == "timeline" ? false : config.y.show);
@@ -88,9 +72,9 @@ export default class Axis {
             this._xAxis = d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
-                .tickFormat(options.tickFormat === undefined ? d3.time.format("%I %p") : options.tickFormat.format)
-                .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
-                .ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
+                .tickFormat(this._xTick.format === undefined ? d3.time.format("%I %p") : this._xTick.format)
+                // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
+                .ticks(this._xTick.type, this._xTick.interval);
             delete options.starting;
             delete options.ending;
 
@@ -125,21 +109,23 @@ export default class Axis {
             }
         }
 
-        // Grid
-        if (this._xGrid) {
-            // Select CURRENT svg container, to make this axis outside
-            // as a SEPARATED component, just like AXIS, of CHART
-            // d3.select(this._svg[0][0].parentNode)
-            this._xAxis.innerTickSize(-height)
-                .outerTickSize(0);
-        }
+        if (body.type != "timeline") {
+            // Grid
+            if (this._xGrid) {
+                // Select CURRENT svg container, to make this axis outside
+                // as a SEPARATED component, just like AXIS, of CHART
+                // d3.select(this._svg[0][0].parentNode)
+                this._xAxis.innerTickSize(-height)
+                    .outerTickSize(0);
+            }
 
-        if (this._yGrid) {
-            // Select CURRENT svg container, to make this axis outside
-            // as a SEPARATED component, just like AXIS, of CHART
-            // d3.select(this._svg[0][0].parentNode)
-            this._yAxis.innerTickSize(-width)
-                .outerTickSize(0);
+            if (this._yGrid) {
+                // Select CURRENT svg container, to make this axis outside
+                // as a SEPARATED component, just like AXIS, of CHART
+                // d3.select(this._svg[0][0].parentNode)
+                this._yAxis.innerTickSize(-width)
+                    .outerTickSize(0);
+            }
         }
 
         this._body    = body;
@@ -161,55 +147,46 @@ export default class Axis {
             return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
         };
 
-        // if (this._xShow) {
-            this._body.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + (height) + ")")
-                .call(this._xAxis);
-            // if (this._xTick.show) {
-                d3.select(".x.axis").selectAll("text")
-                    .style("text-anchor", textAnchor(this._xTick.rotate))
-                    .attr("y", textY(this._xTick.rotate))
-                    .attr("x", 0)
-                    .attr("dy", ".71em")
-                    .attr("dx", textDx(this._xTick.rotate))
-                    .attr("transform", "rotate(" + this._xTick.rotate + ")");
-                d3.select(".x.axis")
-                    .append("text")
-                    .attr("dx", "-.8em")
-                    .attr("dy", "-.55em")
-                    .attr("x", width + 20)
-                    .attr("y", 10)
-                    .style("text-anchor", "start")
-                    .text(this._xText);
+        //draw x axis
+        this._body.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + (height) + ")")
+            .call(this._xAxis);
+        //draw tick
+        d3.select(".x.axis").selectAll("text")
+            .style("text-anchor", textAnchor(this._xTick.rotate))
+            .attr("y", textY(this._xTick.rotate))
+            .attr("x", 0)
+            .attr("dy", ".71em")
+            .attr("dx", textDx(this._xTick.rotate))
+            .attr("transform", "rotate(" + this._xTick.rotate + ")");
+        //draw label
+        d3.select(".x.axis")
+            .append("text")
+            .attr("dx", "-.8em")
+            .attr("dy", "-.55em")
+            .attr("x", width + 20)
+            .attr("y", 10)
+            .style("text-anchor", "start")
+            .text(this._xText);
 
-            //hide axis
-            if (!this._xShow) {
-                d3.select(".x.axis>.domain").style("display", "none");
-                if (!this._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
-            }
-            // } else {
-                // d3.selectAll(".x.axis text").style("display", "none");
-            // }
-                    
-                // .attr("transform", "rotate(-90)" );
-        // }
+        //hide x axis
+        if (!this._xShow) {
+            d3.select(".x.axis>.domain").style("display", "none");
+            if (!this._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
+        }
 
         if (body.type != "timeline") {
             this._body.append("g")
                 .attr("class", "y axis")
-                .call(this._yAxis)
-            // if (this._yTick.show)
-                d3.select(".y.axis")
-                    .append("text")
-                    // .attr("transform", "rotate(-90)")
-                    .attr("y", -10)
-                    .attr("dy", ".10")
-                    .style("text-anchor", "end")
-                    .text(this._yText);
+                .call(this._yAxis);
+            d3.select(".y.axis")
+                .append("text")
+                .attr("y", -10)
+                .attr("dy", ".10")
+                .style("text-anchor", "end")
+                .text(this._yText);
 
-            // else
-                // d3.selectAll(".y.axis text").style("display", "none")
             if (!this._yShow) {
                 d3.select(".y.axis>.domain").style("display", "none");
                 if (!this._yGrid) d3.selectAll(".y.axis>g.tick>line").style("display", "none");

@@ -111,6 +111,8 @@ export default class Chart {
                         padding: 3,
                         format: undefined,
                         values: [],
+                        type: d3.time.hours,
+                        interval: 1
                     },
                     show: false,
                     grid: false,
