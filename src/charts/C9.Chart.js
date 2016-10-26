@@ -111,25 +111,33 @@ export default class Chart {
                         padding: 3,
                         format: undefined,
                         values: [],
+                        //the following use for timeline chart
                         type: d3.time.hours,
                         interval: 1
                     },
+                    label: {
+                        text: "Name",
+                        position: "default"
+                    },
                     show: false,
                     grid: false,
-                    text: "Name",
                     type: ""
                 },
                 y: {
                     tick: {
+                        rotate: 0,
                         count: 10,
                         size: 6,
                         padding: 3,
                         format: undefined,
-                        values: [],
+                        values: []
+                    },
+                    label: {
+                        text: "Value",
+                        position: "default"
                     },
                     show: false,
                     grid: false,
-                    text: "Value",
                     type: ""
                 }
             }

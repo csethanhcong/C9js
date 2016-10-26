@@ -64,11 +64,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C4 = _interopRequireDefault(_C3);
 	
-	var _C5 = __webpack_require__(10);
+	var _C5 = __webpack_require__(11);
 	
 	var _C6 = _interopRequireDefault(_C5);
 	
-	var _C7 = __webpack_require__(11);
+	var _C7 = __webpack_require__(12);
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
@@ -104,7 +104,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		Map: _C12.default,
 	
-		DataAdapter: _C16.default
+		DataAdapter: _C16.default,
+		Helper: _C14.default
 	};
 	
 	// CSS Importer
@@ -126,6 +127,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 	
 	var _C = __webpack_require__(2);
 	
@@ -189,6 +192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var da = new _C14.default(dataOption);
 	        self.dataTarget = da.getDataTarget("bar");
+	        self.dataSource = da.dataSource;
 	        var barChartType = da.getDataTypeForBarChart();
 	        if (barChartType != "single") {
 	            self._groupNames = da.groups || da.stacks; //define group names use for showing legend
@@ -199,7 +203,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
 	        var y = options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
 	
-	        var minMax = _C12.default.getMinMax(self.dataTarget, barChartType);
+	        var minMax = _C12.default.getMinMax(self.dataTarget, barChartType, options.isLogaric);
 	
 	        x.domain(self.dataTarget.map(function (d) {
 	            return d[0].name;
@@ -220,6 +224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._barWidth = options.barWidth || config.barWidth;
 	        self._x = x;
 	        self._y = y;
+	        self.isLogaric = options.isLogaric;
 	        self.updateConfig();
 	        return _this;
 	    }
@@ -265,7 +270,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }).attr("width", function (d) {
 	                return self.isGroup ? xGroup.rangeBand() : x.rangeBand();
 	            }).attr("height", function (d) {
-	                return y(0) - y(Math.abs(d.y0));
+	                return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
 	            });
 	        }
 	
@@ -284,9 +289,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var self = this;
 	            var type = self.groupType;
 	
-	            var minMax = _C12.default.getMinMax(data, self.isGroup == false ? "stack" : null);
 	            var y = self.y;
-	            // console.log(minMax);
+	            var minMax = _C12.default.getMinMax(data, self.isGroup == false ? "stack" : null, self.isLogaric);
 	            y.domain([minMax.min, minMax.max]);
 	            self.axis.update(null, y, 750);
 	
@@ -321,17 +325,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1) return self.x.rangeBand();
 	                return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
 	            }).attr("y", function (d) {
-	                return y(d.y1);
+	                return self.isGroup ? y(d.y1) : self.isLogaric ? y(y.domain()[1]) : y(0);
 	            }).attr("width", function (d) {
 	                return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
 	            }).attr("height", function (d) {
-	                return y(0) - y(Math.abs(d.y0));
+	                return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0;
 	            });
 	
 	            bars.transition().duration(750).attr("x", function (d) {
 	                return !self.isGroup ? undefined : xGroup(d.group);
 	            }).attr("width", function (d) {
 	                return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand();
+	            }).attr("y", function (d) {
+	                return y(d.y1);
+	            }).attr("height", function (d) {
+	                return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
 	            });
 	
 	            self.updateInteraction();
@@ -346,9 +354,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'draw',
 	        value: function draw() {
 	            var self = this;
-	            self.axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
+	            self.axis = new _C4.default(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
+	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
 	
 	            legend.draw();
 	            legend.updateInteractionForBarChart(self);
@@ -399,19 +407,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = self.click.callback;
 	
-	            // Define tooltip
-	            // TODO: Allow user to add custom DIV, CLASS
-	            // Make sure that: 
-	            // - Rect not overflow the bar, if not, hover effect will be messed
-	            // -> So, just align the rect to right/left (x: 25) to avoid it
-	            // -> And, the text will be align also
-	            var div = self.body.append('g').style('display', 'none');
-	            // Rect Container
-	            div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-	            // First line
-	            var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	            // Second line
-	            var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+	            var tooltip = new _C10.default(self.options.tooltip);
 	
 	            // Update Event Factory
 	            self.eventFactory = {
@@ -427,10 +423,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        onMouseOverCallback.call(this, d);
 	                    }
 	
-	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
-	
-	                    text_1.text('Name: ' + d.name);
-	                    text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
+	                    tooltip.draw(d, self, 'mouseover');
 	                },
 	                'mouseout': function mouseout(d) {
 	                    if (!hoverEnable) return;
@@ -439,11 +432,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        onMouseOutCallback.call(this, d);
 	                    }
 	
-	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
+	                    tooltip.draw(d, self, 'mouseout');
 	                }
 	            };
 	
 	            selector.on(self.eventFactory);
+	        }
+	
+	        /**
+	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {
+	            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'on', this).call(this, eventType, callback);
+	
+	            var self = this;
+	            var selector = self.selectAllBar();
+	
+	            // Update Event Factory
+	            var eventFactory = {
+	                'click.event': function clickEvent(d) {
+	                    if (_C12.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseover.event': function mouseoverEvent(d) {
+	                    if (_C12.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseout.event': function mouseoutEvent(d) {
+	                    if (_C12.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                }
+	            };
+	
+	            var eventName = eventType + '.event';
+	
+	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/
@@ -599,13 +631,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    onMouseOver: {
 	                        fadeIn: 200,
 	                        callback: function callback(data) {
-	                            console.dir(data);
+	                            // console.dir(data);
 	                        }
 	                    },
 	                    onMouseOut: {
 	                        fadeOut: 500,
 	                        callback: function callback(data) {
-	                            console.dir(data);
+	                            // console.dir(data);
+	                        }
+	                    },
+	                    onMouseMove: {
+	                        callback: function callback(data) {
+	                            // console.dir(data);
 	                        }
 	                    }
 	                }
@@ -613,30 +650,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            click: {
 	                callback: function callback(data) {
-	                    console.dir(data);
+	                    // console.dir(data);
 	                }
 	            },
 	
 	            // legend
-	            legendShow: true,
-	            legendPosition: "bottom",
-	            legendInsetAnchor: "top-left",
-	            legendPadding: 0,
+	            legend: {
+	                show: false,
+	                position: "top",
+	                size: 10,
+	                textSize: "12px",
+	                margin: [5, 5, 5, 5],
+	                space: 10
+	            },
 	
 	            // tooltip
 	            tooltip: {
 	                show: true,
-	                position: 'top', // [top, right, bottom, left]
+	                position: 'left', // [top, right, bottom, left]
 	                backgroundColor: 'rgba(0, 0, 0, 0.8)',
 	                fontColor: '#fff',
-	                format: {
-	                    name: function name(d) {
-	                        return 'Name ' + d;
-	                    },
-	                    value: function value(d) {
-	                        return 'Value ' + d;
-	                    }
-	                }
+	                format: null
 	            },
 	
 	            // table 
@@ -674,6 +708,46 @@ return /******/ (function(modules) { // webpackBootstrap
 	                },
 	                groups: [],
 	                stacks: []
+	            },
+	
+	            axis: {
+	                x: {
+	                    tick: {
+	                        rotate: 0,
+	                        count: 10,
+	                        size: 6,
+	                        padding: 3,
+	                        format: undefined,
+	                        values: [],
+	                        //the following use for timeline chart
+	                        type: d3.time.hours,
+	                        interval: 1
+	                    },
+	                    label: {
+	                        text: "Name",
+	                        position: "default"
+	                    },
+	                    show: false,
+	                    grid: false,
+	                    type: ""
+	                },
+	                y: {
+	                    tick: {
+	                        rotate: 0,
+	                        count: 10,
+	                        size: 6,
+	                        padding: 3,
+	                        format: undefined,
+	                        values: []
+	                    },
+	                    label: {
+	                        text: "Value",
+	                        position: "default"
+	                    },
+	                    show: false,
+	                    grid: false,
+	                    type: ""
+	                }
 	            }
 	        };
 	
@@ -702,6 +776,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        self._options.table = _C2.default.merge(options.table, config.table);
 	        self._options.tooltip = _C2.default.merge(options.tooltip, config.tooltip);
+	        self._options.legend = _C2.default.merge(options.legend, config.legend);
+	        self._options.axis = _C2.default.mergeDeep(config.axis, options.axis);
 	
 	        self.initConfig();
 	    }
@@ -735,6 +811,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            this.body = this.svg.append("g").attr('class', 'c9-chart c9-custom-container').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	        }
+	
+	        /**
+	         * Custom Event Listener
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {}
 	
 	        /*=====  End of Main Functions  ======*/
 	
@@ -778,6 +862,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'height',
 	        get: function get() {
 	            return this._height;
+	        },
+	        set: function set(newHeight) {
+	            if (newHeight) {
+	                this._height = newHeight;
+	            }
+	        }
+	    }, {
+	        key: 'actualWidth',
+	        get: function get() {
+	            return this._actualWidth;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._actualWidth = arg;
+	            }
+	        }
+	    }, {
+	        key: 'actualHeight',
+	        get: function get() {
+	            return this._actualHeight;
 	        }
 	
 	        /**
@@ -785,9 +889,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * If colorRange is a String like "category20", "category20b", etc. then scale using d3.scale.category
 	         */
 	        ,
-	        set: function set(newHeight) {
-	            if (newHeight) {
-	                this._height = newHeight;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._actualHeight = arg;
 	            }
 	        }
 	    }, {
@@ -909,6 +1013,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 	
 	var Helper = {
@@ -963,7 +1069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	
 	    isEmpty: function isEmpty(value) {
-	        return value === null || value === undefined || Util.isArray(value) && value.length === 0;
+	        return value === null || value === undefined || Util.isArray(value) && value.length === 0 || Util.isArray(value) && Util.isEmpty(value[0]);
 	    },
 	
 	    isObject: function isObject(object) {
@@ -971,7 +1077,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    },
 	
 	    isArray: function isArray(array) {
-	        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
+	        return !Util.isEmpty(array) && (Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]');
 	    },
 	
 	    isFunction: function isFunction(func) {
@@ -981,12 +1087,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    merge: function merge(obj1, obj2) {
 	        var obj3 = {};
 	        for (var attrname in obj2) {
-	            obj3[attrname] = obj2[attrname];
+	            if (!Util.isEmpty(obj2[attrname])) obj3[attrname] = obj2[attrname];
 	        }
 	        for (var attrname in obj1) {
-	            obj3[attrname] = obj1[attrname];
+	            if (!Util.isEmpty(obj1[attrname])) obj3[attrname] = obj1[attrname];
 	        }
 	        return obj3;
+	    },
+	
+	    mergeDeep: function mergeDeep(target, source) {
+	        return _mergeDeep(target, source);
 	    },
 	
 	    get: function get(_key, _data) {
@@ -1040,7 +1150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    },
 	
-	    getMinMax: function getMinMax(data, type, dataOld) {
+	    getMinMax: function getMinMax(data, type, isLogaric) {
 	        var self = this;
 	        var _temp = new Array();
 	        var _min = 0,
@@ -1057,10 +1167,59 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var _newMin = self.min(_temp);
 	        var _newMax = self.max(_temp);
-	        if (_newMin < _min) _min = _newMin;
+	        if (_newMin < _min || isLogaric) _min = _newMin;
 	        if (_newMax > _max) _max = _newMax;
 	
 	        return { min: _min, max: _max };
+	    },
+	    dateParser: function dateParser(format) {
+	        return d3.time.format(format).parse;
+	    },
+	    dateFormatter: function dateFormatter(format) {
+	        return d3.time.format(format);
+	    },
+	    // Convert color 'from' to 'to' (if any) in propotion of 'p'
+	    // Use to lighten/darken specific color
+	    shadeColor: function shadeColor(p, from, to) {
+	        if (typeof p != "number" || p < -1 || p > 1 || typeof from != "string" || from[0] != 'r' && from[0] != '#' || typeof to != "string" && typeof to != "undefined") return null; //ErrorCheck
+	        if (!this.sbcRip) this.sbcRip = function (d) {
+	            var l = d.length,
+	                RGB = new Object();
+	            if (l > 9) {
+	                d = d.split(",");
+	                if (d.length < 3 || d.length > 4) return null; //ErrorCheck
+	                RGB[0] = i(d[0].slice(4)), RGB[1] = i(d[1]), RGB[2] = i(d[2]), RGB[3] = d[3] ? parseFloat(d[3]) : -1;
+	            } else {
+	                if (l == 8 || l == 6 || l < 4) return null; //ErrorCheck
+	                if (l < 6) d = "#" + d[1] + d[1] + d[2] + d[2] + d[3] + d[3] + (l > 4 ? d[4] + "" + d[4] : ""); //3 digit
+	                d = i(d.slice(1), 16), RGB[0] = d >> 16 & 255, RGB[1] = d >> 8 & 255, RGB[2] = d & 255, RGB[3] = l == 9 || l == 5 ? r((d >> 24 & 255) / 255 * 10000) / 10000 : -1;
+	            }
+	            return RGB;
+	        };
+	        var i = parseInt,
+	            r = Math.round,
+	            h = from.length > 9,
+	            h = typeof to == "string" ? to.length > 9 ? true : to == "c" ? !h : false : h,
+	            b = p < 0,
+	            p = b ? p * -1 : p,
+	            to = to && to != "c" ? to : b ? "#000000" : "#FFFFFF",
+	            f = sbcRip(from),
+	            t = sbcRip(to);
+	        if (!f || !t) return null; //ErrorCheck
+	        if (h) return "rgb(" + r((t[0] - f[0]) * p + f[0]) + "," + r((t[1] - f[1]) * p + f[1]) + "," + r((t[2] - f[2]) * p + f[2]) + (f[3] < 0 && t[3] < 0 ? ")" : "," + (f[3] > -1 && t[3] > -1 ? r(((t[3] - f[3]) * p + f[3]) * 10000) / 10000 : t[3] < 0 ? f[3] : t[3]) + ")");else return "#" + (0x100000000 + (f[3] > -1 && t[3] > -1 ? r(((t[3] - f[3]) * p + f[3]) * 255) : t[3] > -1 ? r(t[3] * 255) : f[3] > -1 ? r(f[3] * 255) : 255) * 0x1000000 + r((t[0] - f[0]) * p + f[0]) * 0x10000 + r((t[1] - f[1]) * p + f[1]) * 0x100 + r((t[2] - f[2]) * p + f[2])).toString(16).slice(f[3] > -1 || t[3] > -1 ? 1 : 3);
+	    },
+	    //smooth scroll c9 table
+	    scroll: function scroll(element, to, duration) {
+	        var self = this;
+	        if (duration <= 0) return;
+	        var difference = to - element.scrollTop;
+	        var perTick = difference / duration * 10;
+	
+	        setTimeout(function () {
+	            element.scrollTop = element.scrollTop + perTick;
+	            if (element.scrollTop === to) return;
+	            self.scroll(element, to, duration - 10);
+	        }, 10);
 	    }
 	};
 	
@@ -1071,8 +1230,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    isArray: function isArray(array) {
 	        return Array.isArray(array) || Object.prototype.toString.call(array) === '[object Array]';
+	    },
+	
+	    isObject: function isObject(object) {
+	        return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object);
 	    }
 	};
+	
+	function _mergeDeep(target, source) {
+	    if (Util.isObject(target) && Util.isObject(source)) {
+	        for (var key in source) {
+	            if (Util.isObject(source[key])) {
+	                if (!target[key]) Object.assign(target, _defineProperty({}, key, {}));
+	                _mergeDeep(target[key], source[key]);
+	            } else {
+	                Object.assign(target, _defineProperty({}, key, source[key]));
+	            }
+	        }
+	    }
+	    return target;
+	}
 	
 	module.exports = Helper;
 
@@ -1101,36 +1278,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Axis);
 	
 	        var config = {
-	            xAxisShow: true,
-	            xAxisPadding: {}, // TODO
-	            xAxisText: 'Name',
-	            yAxisShow: true,
-	            yAxisPadding: {}, // TODO
-	            yAxisText: 'Value',
-	            numOfTickY: 5,
-	            tickFormat: "s", // refer: https://github.com/d3/d3-format
-	            isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
-	            y2AxisShow: true,
-	            y2AxisPadding: {}, // TODO
-	            y2AxisText: 'Value',
-	            gridXShow: false,
-	            gridYShow: false
+	            x: {
+	                tick: {
+	                    rotate: 0,
+	                    count: 10,
+	                    size: 6,
+	                    padding: 3,
+	                    format: undefined,
+	                    values: [],
+	                    //the following use for timeline chart
+	                    type: d3.time.hours,
+	                    interval: 1
+	                },
+	                label: {
+	                    text: "Name",
+	                    position: "default"
+	                },
+	                show: false,
+	                grid: false,
+	                type: ""
+	            },
+	            y: {
+	                tick: {
+	                    rotate: 0,
+	                    count: 10,
+	                    size: 6,
+	                    padding: 3,
+	                    format: undefined,
+	                    values: []
+	                },
+	                label: {
+	                    text: "Value",
+	                    position: "default"
+	                },
+	                show: false,
+	                grid: false,
+	                type: ""
+	            }
 	        };
 	
-	        this._xAxisShow = options.xAxisShow || config.xAxisShow;
-	        this._xAxisPadding = options.xAxisPadding || config.xAxisPadding;
-	        this._xAxisText = options.xAxisText || config.xAxisText;
-	        this._yAxisShow = options.yAxisShow || (body.type == "timeline" ? false : config.yAxisShow);
-	        this._yAxisPadding = options.yAxisPadding || config.yAxisPadding;
-	        this._yAxisText = options.yAxisText || config.yAxisText;
-	        this._isLogaricVariant = options.isLogaric || config.isLogaric;
-	        this._tickFormat = options.tickFormat || config.tickFormat;
-	        this._numOfTickY = options.numOfTickY || config.numOfTickY;
-	        this._y2AxisShow = options.y2AxisShow || config.y2AxisShow;
-	        this._y2AxisPadding = options.y2AxisPadding || config.y2AxisPadding;
-	        this._y2AxisText = options.y2AxisText || config.y2AxisText;
-	        this._gridXShow = options.gridXShow || config.gridXShow;
-	        this._gridYShow = options.gridYShow || config.gridYShow;
+	        this._xShow = options.x.show || config.x.show;
+	        this._xText = options.x.text || config.x.text;
+	        this._yShow = options.y.show || (body.type == "timeline" ? false : config.y.show);
+	        this._yText = options.y.text || config.y.text;
+	        // this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
+	        this._xTick = options.x.tick || config.x.tick;
+	        this._yTick = options.y.tick || config.y.tick;
+	        this._xGrid = options.x.grid || config.x.grid;
+	        this._yGrid = options.y.grid || config.y.grid;
+	        this._xType = options.x.type || config.x.type;
+	        this._yType = options.y.type || config.y.type;
 	        this._x = x;
 	        this._y = y;
 	
@@ -1150,44 +1347,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (body.type == "timeline") {
 	
 	            var xScale = d3.time.scale().domain([options.starting, options.ending]).range([0, width]);
-	            this._xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(options.tickFormat === undefined ? d3.time.format("%I %p") : options.tickFormat.format).tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize).ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
+	            this._xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(this._xTick.format === undefined ? d3.time.format("%I %p") : this._xTick.format)
+	            // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
+	            .ticks(this._xTick.type, this._xTick.interval);
 	            delete options.starting;
 	            delete options.ending;
-	        } else if (body.type == "line") {
-	
-	            this._xAxis = d3.svg.axis().scale(this._x);
-	            this._yAxis = d3.svg.axis().scale(this._y).orient("left");
 	        } else {
-	            // Currently, support logaric axis only for y-axis on bar-chart
-	            // TODO: add for line-chart too
-	            var _tickFormat = d3.format(this._tickFormat);
-	            var _numOfTickY = this._numOfTickY;
 	
-	            this._xAxis = d3.svg.axis().scale(this._x).orient("bottom").ticks(10);
+	            this._xAxis = d3.svg.axis().scale(this._x).orient("bottom").tickPadding(this._xTick.padding).ticks(this._xTick.count).tickValues(this._xTick.values.length > 0 ? this._xTick.values : undefined).tickFormat(this._xType == "timeseries" ? this._xTick.format || d3.time.format("%Y-%m-%d") : this._xTick.format ? this._xTick.format : undefined);
 	
 	            // In LOG scale, can't specify default number of ticks
 	            // must be filter with tickFormat instead
 	            // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
 	            if (this._isLogaricVariant) {
-	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(_numOfTickY, _tickFormat).tickSize(10, 0);
+	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").tickPadding(this._yTick.padding).ticks(this._yTick.count, this._yType == "timeseries" ? this._yTick.format || "%Y-%m-%d" : this._yTick.format ? this._yTick.format : undefined).tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined);
 	            } else {
-	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
+	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").tickPadding(this._yTick.padding).ticks(this._yTick.count).tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined).tickFormat(this._yType == "timeseries" ? this._yTick.format || d3.time.format("%Y-%m-%d") : this._yTick.format ? this._yTick.format : undefined);
 	            }
 	        }
 	
-	        // Grid
-	        if (this._gridXShow) {
-	            // Select CURRENT svg container, to make this axis outside
-	            // as a SEPARATED component, just like AXIS, of CHART
-	            // d3.select(this._svg[0][0].parentNode)
-	            this._xAxis.innerTickSize(-height).outerTickSize(0);
-	        }
+	        if (body.type != "timeline") {
+	            // Grid
+	            if (this._xGrid) {
+	                // Select CURRENT svg container, to make this axis outside
+	                // as a SEPARATED component, just like AXIS, of CHART
+	                // d3.select(this._svg[0][0].parentNode)
+	                this._xAxis.innerTickSize(-height).outerTickSize(0);
+	            }
 	
-	        if (this._gridYShow) {
-	            // Select CURRENT svg container, to make this axis outside
-	            // as a SEPARATED component, just like AXIS, of CHART
-	            // d3.select(this._svg[0][0].parentNode)
-	            this._yAxis.innerTickSize(-width).outerTickSize(0);
+	            if (this._yGrid) {
+	                // Select CURRENT svg container, to make this axis outside
+	                // as a SEPARATED component, just like AXIS, of CHART
+	                // d3.select(this._svg[0][0].parentNode)
+	                this._yAxis.innerTickSize(-width).outerTickSize(0);
+	            }
 	        }
 	
 	        this._body = body;
@@ -1195,15 +1388,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._width = width; // TODO : ADD Getter/setter
 	        this._height = height;
 	
-	        if (this._xAxisShow) {
-	            this._body.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(this._xAxis).append("text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", width).attr("y", "20").style("text-anchor", "start").text(this._xAxisText);
-	            // .attr("transform", "rotate(-90)" );
+	        var textAnchor = function textAnchor(angle) {
+	            var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+	            return sin == 0 ? "middle" : sin > 0 ? "start" : "end";
+	        };
+	
+	        var textDx = function textDx(angle) {
+	            var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+	            return 8 * sin;
+	        };
+	
+	        var textY = function textY(angle) {
+	            return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
+	        };
+	
+	        //draw x axis
+	        this._body.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(this._xAxis);
+	        //draw tick
+	        d3.select(".x.axis").selectAll("text").style("text-anchor", textAnchor(this._xTick.rotate)).attr("y", textY(this._xTick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(this._xTick.rotate)).attr("transform", "rotate(" + this._xTick.rotate + ")");
+	        //draw label
+	        d3.select(".x.axis").append("text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", width + 20).attr("y", 10).style("text-anchor", "start").text(this._xText);
+	
+	        //hide x axis
+	        if (!this._xShow) {
+	            d3.select(".x.axis>.domain").style("display", "none");
+	            if (!this._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
 	        }
 	
-	        if (this._yAxisShow) {
-	            this._body.append("g").attr("class", "y axis").call(this._yAxis).append("text")
-	            // .attr("transform", "rotate(-90)")
-	            .attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(this._yAxisText);
+	        if (body.type != "timeline") {
+	            this._body.append("g").attr("class", "y axis").call(this._yAxis);
+	            d3.select(".y.axis").append("text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(this._yText);
+	
+	            if (!this._yShow) {
+	                d3.select(".y.axis>.domain").style("display", "none");
+	                if (!this._yGrid) d3.selectAll(".y.axis>g.tick>line").style("display", "none");
+	            }
 	        }
 	
 	        /**
@@ -1487,28 +1706,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Legend);
 	
 	        var config = {
-	            legendShow: false,
-	            legendPosition: [0, 0],
-	            legendBox: false,
-	            legendSize: 18,
-	            legendTextSize: "14px",
-	            legendMargin: [50, 5, 5, 5],
-	            legendSpace: 150
+	            show: false,
+	            position: "top",
+	            box: false,
+	            size: 10,
+	            textSize: "12px",
+	            margin: [5, 5, 5, 5],
+	            space: 10
 	        };
 	
 	        var self = this;
 	
-	        self._legendShow = options.legendShow || config.legendShow;
-	        self._legendTextSize = options.legendTextSize || config.legendTextSize;
-	        self._legendPosition = options.legendPosition || config.legendPosition;
-	        self._legendSize = options.legendSize || config.legendSize;
-	        self._legendBox = options.legendBox || config.legendBox;
-	        self._legendMargin = options.legendMargin || config.legendMargin;
-	        self._legendSpace = options.legendSpace || config.legendSpace;
+	        self._show = options.show ? options.show : config.show;
+	        self._textSize = options.textSize || config.textSize;
+	        self._position = options.position || config.position;
+	        self._size = options.size || config.size;
+	        self._box = options.box || config.box;
+	        self._margin = options.margin || config.margin;
+	        self._space = options.space || config.space;
 	        // self._legendStyle        = options.legendStyle      || config.legendStyle;
 	
 	        self._options = options;
 	        self._body = body;
+	        self._maxWidth = d3.select(body[0][0].parentNode).attr('width');
+	        self._maxHeight = d3.select(body[0][0].parentNode).attr('height');
 	        // self._color     = color;
 	        self._data = data;
 	    }
@@ -1530,11 +1751,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function draw() {
 	            var self = this;
 	
-	            // var color = self.color;
-	
-	            if (self._legendShow) {
+	            if (self.show) {
+	                // var color = self.color;
 	                // TODO: Remove these conditional checks by getData for general purposes
-	                var legendDomain = [];
+	                var domain = [];
 	
 	                if (self._body.type == "bar") {
 	                    self.data = self.data[self.data.reduce(function (p, c, i, a) {
@@ -1550,29 +1770,98 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                // Legend will be appended in main SVG container
-	                var legendContainer = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
+	                var container = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container");
 	
 	                // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 	
-	                self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item")
+	                self.item = container.selectAll("g.c9-custom-legend.c9-custom-legend-item")
 	                // .data(color.domain())
 	                .data(self.data).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr('data-ref', function (d) {
 	                    return d['data-ref'];
-	                }).attr("transform", function (d, i) {
-	                    return "translate(" + (i * (self.legendSize + self.legendSpace) + self.legendMargin[0]) + "," + self.legendMargin[3] + ")";
+	                }).attr('data-enable', function (d) {
+	                    return d['enable'];
 	                });
 	
-	                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.legendSize * 2).attr('height', self.legendSize).attr('r', self.legendSize).attr('fill', function (d) {
+	                self.item.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.size).attr('height', self.size).attr('r', self.size).attr('fill', function (d) {
 	                    return d.color;
 	                }).attr('stroke', function (d) {
 	                    return d.color;
 	                });
 	
-	                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
+	                self.item.append('rect').attr('width', 5).attr('height', self.size).attr('x', self.size).attr('y', 0).attr('opacity', 0);
+	
+	                self.item.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self.size + 5).attr('y', self.size).style('font-size', self.textSize)
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
 	                    return self._body.type == "bar" ? d.group : d.name || d.key;
 	                });
+	
+	                //caculate position for legend
+	                var getSize = function getSize(item) {
+	                    return item.getBoundingClientRect();
+	                };
+	                var getXY = function getXY(item) {
+	                    var xy = d3.select(item).attr('transform').split(',');return { x: parseFloat(xy[0].replace('translate(', '')), y: parseFloat(xy[1].replace(')', '')) };
+	                };
+	                var r = 0; // current row
+	                var items = d3.selectAll(".c9-custom-legend-item")[0];
+	                var itemHeight = getSize(items[0]).height;
+	                var numItemsCol = Math.floor((self._maxHeight - self.margin[0] - self.margin[2]) / (itemHeight + self.space));
+	                if (self.space > itemHeight) numItemsCol++;
+	                var maxWidthCol = new Array(Math.floor(items.length / numItemsCol));
+	
+	                items.forEach(function (i, n) {
+	                    var pos = Math.floor(n / numItemsCol);
+	                    var width = getSize(i).width;
+	                    if (maxWidthCol[pos] == undefined || width > maxWidthCol[pos]) maxWidthCol[pos] = width;
+	                });
+	
+	                if (self.position == "bottom") {
+	                    /************ BOTTOM ***************/
+	                    self.item.attr("transform", function (d, i) {
+	                        if (i > 0) {
+	                            var item = items[i];
+	                            var preItem = items[i - 1];
+	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.space + getSize(item).width + self.margin[1]) / self._maxWidth);
+	                            if (newR > 0) r++;
+	                            return "translate(" + (newR > 0 ? self.margin[3] : getXY(preItem).x + getSize(preItem).width + self.space) + "," + (self._maxHeight - self.margin[0] - itemHeight - r * (itemHeight + self.space)) + ")";
+	                        } else return "translate(" + self.margin[3] + "," + (self._maxHeight - self.margin[0] - itemHeight) + ")";
+	                    });
+	                } else if (self.position == "left") {
+	                    /************ LEFT ***************/
+	                    self.item.attr("transform", function (d, i) {
+	                        var pos = Math.floor(i / numItemsCol);
+	
+	                        if (i > 0) {
+	                            var prePos = Math.floor((i - 1) / numItemsCol);
+	                            var item = items[i];
+	                            var preItem = items[i - 1];
+	                            return "translate(" + (pos > prePos ? maxWidthCol[pos] + self.space + getXY(preItem).x : getXY(preItem).x) + "," + (pos > prePos ? self.margin[0] : getXY(preItem).y + getSize(preItem).height + self.space) + ")";
+	                        } else return "translate(" + self.margin[3] + "," + self.margin[0] + ")";
+	                    });
+	                } else if (self.position == "right") {
+	                    /************ RIGHT ***************/
+	                    self.item.attr("transform", function (d, i) {
+	                        var pos = Math.floor(i / numItemsCol);
+	                        if (i > 0) {
+	                            var prePos = Math.floor((i - 1) / numItemsCol);
+	                            var item = items[i];
+	                            var preItem = items[i - 1];
+	                            return "translate(" + (pos > prePos ? getXY(preItem).x - self.space - maxWidthCol[pos] : getXY(preItem).x) + "," + (pos > prePos ? self.margin[0] : getXY(preItem).y + getSize(preItem).height + self.space) + ")";
+	                        } else return "translate(" + (self._maxWidth - self.margin[3] - maxWidthCol[pos]) + "," + self.margin[0] + ")";
+	                    });
+	                } else {
+	                    /************ TOP ***************/
+	                    self.item.attr("transform", function (d, i) {
+	                        if (i > 0) {
+	                            var item = items[i];
+	                            var preItem = items[i - 1];
+	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.space + getSize(item).width + self.margin[1]) / self._maxWidth);
+	                            if (newR > 0) r++;
+	                            return "translate(" + (newR > 0 ? self.margin[3] : getXY(preItem).x + getSize(preItem).width + self.space) + "," + (self.margin[0] + r * (itemHeight + self.space)) + ")";
+	                        } else return "translate(" + self.margin[3] + "," + self.margin[0] + ")";
+	                    });
+	                }
 	
 	                // if (self._legendBox && legendDomain.length > 0) {
 	                //     var box = legendContainer[0][0].getBBox();
@@ -1604,7 +1893,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = chart.click.callback;
 	
-	            self.legendItemEventFactory = {
+	            self.itemEventFactory = {
 	
 	                'click': function click(item) {
 	                    if (_C2.default.isFunction(onClickCallback)) {
@@ -1656,10 +1945,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            };
 	
-	            if (self.legendShow) {
-	
-	                self.legendItem.on(self.legendItemEventFactory);
-	            }
+	            if (self.show) self.item.on(self.itemEventFactory);
 	        }
 	
 	        /**
@@ -1686,7 +1972,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                chartInnerAfter = chartType == 'pie' ? 0 : chart.innerRadius,
 	                chartOuterAfter = chartType == 'pie' ? chart.radius * 1.2 : chart.outerRadius * 1.2;
 	
-	            self.legendItemEventFactory = {
+	            self.itemEventFactory = {
 	
 	                'click': function click(item) {
 	                    if (_C2.default.isFunction(onClickCallback)) {
@@ -1705,13 +1991,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    // If current selector is disabled, then turn it on back
 	                    // Else, set enable to false
-	                    if (selector.style('opacity') == '0.1') {
-	                        selector.style('opacity', '1.0');
+	                    if (selector.attr('data-enable') == 'false') {
+	                        selector.attr('data-enable', true);
+	                        selector.attr('opacity', '1.0');
 	                    } else {
 	                        if (totalEnable < 2) return;
-	                        selector.style('opacity', '0.1');
+	                        selector.attr('data-enable', false);
+	                        selector.attr('opacity', '0.1');
 	                        enable = false;
 	                    }
+	
+	                    /*----------  Reset opacity after click  ----------*/
+	
+	                    self.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    chart.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	                    /*----------  End Reset opacity after click  ----------*/
 	
 	                    chart.pie.value(function (d) {
 	                        if (d.name == item.name) d.enable = enable;
@@ -1742,9 +2045,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // Add pointer to cursor
 	                    legendSelector.style('cursor', 'pointer');
 	
-	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	                    if (legendSelector.attr('data-enable') == 'true') {
+	                        // For Legend
+	                        self.item.each(function () {
+	                            if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                                d3.select(this).attr('opacity', '0.3');
+	                            }
+	                        });
 	
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).attr('fill-opacity', '1.0');
+	                        // For Chart
+	                        chart.selectAllPath().each(function () {
+	                            if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                                d3.select(this).attr('opacity', '0.3');
+	                            }
+	                        });
+	
+	                        var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	
+	                        selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+	                    }
 	                },
 	
 	                'mouseout': function mouseout(item) {
@@ -1756,17 +2075,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // Add pointer to cursor
 	                    legendSelector.style('cursor', 'pointer');
 	
+	                    // if (legendSelector.attr('data-enable') == 'true') {
+	                    // For Legend
+	                    self.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    // For Chart
+	                    chart.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
 	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 	
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).attr('fill-opacity', '0.5');
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
+	                    // }
+	
 	                }
 	
 	            };
 	
-	            if (self.legendShow) {
-	
-	                self.legendItem.on(self.legendItemEventFactory);
-	            }
+	            if (self.show) self.item.on(self.itemEventFactory);
 	        }
 	
 	        /**
@@ -1787,7 +2120,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = chart.click.callback;
 	
-	            self.legendItemEventFactory = {
+	            self.itemEventFactory = {
 	
 	                'click': function click(item) {
 	                    if (_C2.default.isFunction(onClickCallback)) {
@@ -1810,10 +2143,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    // If current selector is disabled, then turn it on back
 	                    // Else, set enable to false
-	                    if (selector.style('opacity') == '0.1') {
+	                    if (selector.attr('data-enable') == 'false') {
+	                        selector.attr('data-enable', 'true');
 	                        selector.style('opacity', '1.0');
 	                    } else {
 	                        if (totalEnable < 2) return;
+	                        selector.attr('data-enable', 'false');
 	                        selector.style('opacity', '0.1');
 	                        enable = false;
 	                    }
@@ -1825,15 +2160,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        if (d.enable) enableSet.push(d.group);
 	                    });
 	
-	                    dataBackup.forEach(function (d, i) {
-	                        var element = [];
-	                        d.forEach(function (s, j) {
-	                            enableSet.forEach(function (e) {
+	                    dataBackup.forEach(function (d) {
+	                        var negElement = [];
+	                        var posElement = [];
+	                        d.forEach(function (s) {
+	                            enableSet.forEach(function (e, i) {
 	                                if (e == s.group) {
-	                                    element.push(s);
+	                                    if (s.y0 < 0) negElement.push({ e: s, s: i });else posElement.push({ e: s, s: i });
 	                                }
 	                            });
 	                        });
+	                        if (!chart.isGroup) {
+	                            if (negElement.length > 0) {
+	                                if (negElement[0].e.y1 < 0) negElement[0].e.y1 = 0;
+	                                for (var i = 1; i < negElement.length; i++) {
+	                                    negElement[i].e.y1 = negElement[i - 1].e.y1 + negElement[i - 1].e.y0;
+	                                };
+	                            }
+	                            if (posElement.length > 0) {
+	                                if (posElement[0].e.y1 - posElement[0].e.y0 != 0) posElement[0].e.y1 = posElement[0].e.y0;
+	                                for (var i = 1; i < posElement.length; i++) {
+	                                    posElement[i].e.y1 = posElement[i - 1].e.y1 + posElement[i].e.y0;
+	                                };
+	                            }
+	                        }
+	                        var element = new Array(negElement.length + posElement.length);
+	                        for (var i = 0; i < negElement.length; i++) {
+	                            element[negElement[i].s] = negElement[i].e;
+	                        };
+	                        for (var i = 0; i < posElement.length; i++) {
+	                            element[posElement[i].s] = posElement[i].e;
+	                        };
 	                        data.push(element);
 	                    });
 	
@@ -1841,111 +2198,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	                },
 	
 	                'mouseover': function mouseover(item) {
-	                    var legendSelector = d3.select(this);
-	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
-	
-	                    // var enable = true,
-	                    //     dataSet = self.legendDomain,
-	                    //     isCurrentEnable = true;
-	
-	                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-	                    //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
-	                    //     return (d.enable) ? 1 : 0;
-	                    // }));
-	
-	                    // // Add pointer to cursor
-	                    // selector.style('cursor', 'pointer');
-	
-	                    // // If current selector is disabled, then remains it
-	                    // // Else, turn enabled to disabled
-	                    // if (!isCurrentEnable) {
-	                    //     return false;
-	                    // } else {
-	                    //     if (totalEnable < 2) return;
-	                    //     selector.style('opacity', '0.5');
-	                    //     enable = false;
-	                    // }
-	
-	                    // chart.pie.value(function(d) {
-	                    //     if (d.data.name == item) d.tempEnable = enable;
-	                    //     else d.tempEnable = d.enable;
-	
-	                    //     return (d.tempEnable) ? d.data.value : 0;
-	                    // });
-	
-	                    // path = path.data(chart.pie(dataSet));
-	
-	                    // path.transition()
-	                    //     .duration(200)
-	                    //     .attrTween('d', function(d) {
-	                    //         var interpolate = d3.interpolate(chart.currentData, d);
-	                    //         // Returns an interpolator between the two arbitrary values a and b. 
-	                    //         // The interpolator implementation is based on the type of the end value b.
-	                    //         chart.currentData = interpolate(0);
-	                    //         return function(t) {
-	                    //             return arc(interpolate(t));
-	                    //         };
-	                    //     });
+	                    var selector = d3.select(this);
+	                    selector.style('cursor', 'pointer');
+	                    if (selector.attr('data-enable') == 'true') d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
+	                        return d.group != item.group;
+	                    }).attr('opacity', 0.3);
 	                },
 	
 	                'mouseout': function mouseout(item) {
-	
-	                    var legendSelector = d3.select(this);
-	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
-	
-	                    // var dataSet = self.legendDomain,
-	                    //     isCurrentEnable = true;
-	
-	                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-	                    //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
-	                    //     return (d.enable) ? 1 : 0;
-	                    // }));
-	
-	                    // // Add pointer to cursor
-	                    // selector.style('cursor', 'pointer');
-	
-	                    // chart.pie.value(function(d) {
-	                    //     if (d.data.name == item && !d.enable) d.enable = enable;
-	                    //     return (d.enable) ? d.data.value : 0;
-	                    // });
-	
-	                    // if (!isCurrentEnable) {
-	                    //     return;
-	                    // } else {
-	                    //     if (totalEnable < 2 || selector.style('opacity') == '1') return;
-	                    //     selector.style('opacity', '1.0');
-	                    // }
-	
-	                    // path = path.data(chart.pie(dataSet));
-	
-	                    // path.transition()
-	                    //     .duration(200)
-	                    //     .attrTween('d', function(d) {
-	                    //         var interpolate = d3.interpolate(chart.currentData, d);
-	                    //         // Returns an interpolator between the two arbitrary values a and b. 
-	                    //         // The interpolator implementation is based on the type of the end value b.
-	                    //         chart.currentData = interpolate(0);
-	                    //         return function(t) {
-	                    //             return arc(interpolate(t));
-	                    //         };
-	                    //     });
+	                    d3.select(this).style('cursor', 'pointer');
+	                    d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
+	                        return d.group != item.group;
+	                    }).attr('opacity', 1);
 	                }
 	
 	            };
-	
-	            if (self.legendShow) {
-	
-	                self.legendItem.on(self.legendItemEventFactory);
-	            }
+	            if (self.show) self.item.on(self.itemEventFactory);
 	        }
 	    }, {
 	        key: "setYLocation",
 	        value: function setYLocation(height, margin) {
-	            if (this.legendPosition === 'top') {
+	            if (this.position === 'top') {
 	                return margin.top / 2;
-	            } else if (this.legendPosition === 'bottom') {
+	            } else if (this.position === 'bottom') {
 	                return height - margin.bottom / 2;
 	            }
 	        }
@@ -1979,93 +2254,93 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return this._color;
 	        }
 	    }, {
-	        key: "legendShow",
+	        key: "show",
 	        get: function get() {
-	            return this._legendShow;
+	            return this._show;
+	        }
+	    }, {
+	        key: "text",
+	        get: function get() {
+	            return this._text;
 	        },
-	        set: function set(newlegendShow) {
-	            if (newlegendShow) {
-	                this._legendShow = newlegendShow;
+	        set: function set(newText) {
+	            if (newText) {
+	                this._text = newText;
 	            }
 	        }
 	    }, {
-	        key: "legendText",
+	        key: "position",
 	        get: function get() {
-	            return this._legendText;
+	            return this._position;
 	        },
-	        set: function set(newlegendText) {
-	            if (newlegendText) {
-	                this._legendText = newlegendText;
+	        set: function set(newPosition) {
+	            if (newPosition) {
+	                this._position = newPosition;
 	            }
 	        }
 	    }, {
-	        key: "legendPosition",
+	        key: "size",
 	        get: function get() {
-	            return this._legendPosition;
+	            return this._size;
 	        },
-	        set: function set(newlegendPosition) {
-	            if (newlegendPosition) {
-	                this._legendPosition = newlegendPosition;
+	        set: function set(newSize) {
+	            if (newSize) {
+	                this._size = newSize;
 	            }
 	        }
 	    }, {
-	        key: "legendSize",
+	        key: "margin",
 	        get: function get() {
-	            return this._legendSize;
-	        },
-	        set: function set(newlegendSize) {
-	            if (newlegendSize) {
-	                this._legendSize = newlegendSize;
-	            }
-	        }
-	    }, {
-	        key: "legendMargin",
-	        get: function get() {
-	            return this._legendMargin;
+	            return this._margin;
 	        },
 	        set: function set(arg) {
 	            if (arg) {
-	                this._legendMargin = arg;
+	                this._margin = arg;
 	            }
 	        }
 	    }, {
-	        key: "legendSpace",
+	        key: "space",
 	        get: function get() {
-	            return this._legendSpace;
+	            return this._space;
 	        },
 	        set: function set(arg) {
 	            if (arg) {
-	                this._legendSpace = arg;
+	                this._space = arg;
 	            }
 	        }
 	    }, {
-	        key: "legendItem",
+	        key: "textSize",
 	        get: function get() {
-	            return this._legendItem;
+	            return this._textSize;
+	        }
+	    }, {
+	        key: "item",
+	        get: function get() {
+	            return this._item;
 	        },
-	        set: function set(newLegendItem) {
-	            if (newLegendItem) {
-	                this._legendItem = newLegendItem;
+	        set: function set(newItem) {
+	            if (newItem) {
+	                this._item = newItem;
 	            }
 	        }
 	    }, {
-	        key: "legendDomain",
+	        key: "domain",
 	        get: function get() {
-	            return this._legendDomain;
+	            return this._domain;
 	        },
-	        set: function set(newLegendDomain) {
-	            if (newLegendDomain) {
-	                this._legendDomain = newLegendDomain;
+	        set: function set(newDomain) {
+	            if (newDomain) {
+	                this._domain = newDomain;
 	            }
 	        }
 	    }, {
-	        key: "legendItemEventFactory",
+	        key: "itemEventFactory",
 	        get: function get() {
-	            return this._legendItemEventFactory;
+	            return this._itemEventFactory;
 	        },
-	        set: function set(newLegendItemEventFactory) {
-	            if (newLegendItemEventFactory) {
-	                this._legendItemEventFactory = newLegendItemEventFactory;
+	        set: function set(newItemEventFactory) {
+	            if (newItemEventFactory) {
+	                this._itemEventFactory = newItemEventFactory;
 	            }
 	        }
 	    }]);
@@ -2103,19 +2378,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var config = {
 	            show: true,
-	            position: 'top', // [top, right, bottom, left]
+	            position: 'left', // [top, right, bottom, left]
 	            backgroundColor: 'rgba(0, 0, 0, 0.8)',
 	            fontColor: '#fff',
-	            fontSize: '11px',
-	            trianglePosition: 'left', // [top, right, bottom, left]
-	            format: {
-	                title: function title(d) {
-	                    return 'Title ' + d;
-	                },
-	                detail: function detail(d) {
-	                    return 'Detail ' + d;
-	                }
-	            }
+	            fontSize: '11px'
 	        };
 	
 	        self._show = options.show || config.show;
@@ -2123,9 +2389,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._backgroundColor = options.backgroundColor || config.backgroundColor;
 	        self._fontColor = options.fontColor || config.fontColor;
 	        self._fontSize = options.fontSize || config.fontSize;
-	        self._trianglePosition = options.trianglePosition || config.trianglePosition;
 	
-	        self._format = _C2.default.merge(options.format, config.format);
+	        self._options = options;
 	    }
 	
 	    /*==============================
@@ -2163,28 +2428,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return 'c9-custom-tooltip-container ' + self.getTriangleClass();
 	            })
 	            // .attr("transform", function() { return 'translate(' + (d3.mouse(this)[0] - 100) +","+ (d3.mouse(this)[1] - 100) + ')'; })
-	            .style('display', 'none').style('position', 'absolute').style('pointer-events', 'all').style('background-color', self.backgroundColor).style('color', self.fontColor).style('font-size', self.fontSize)
+	            .style('display', 'none').style('position', 'absolute').style('pointer-events', 'all').style('background-color', self.backgroundColor).style('color', self.fontColor).style('font-size', self.fontSize);
 	            // .style('width', '100px')
 	            // .style('height', '50px')
-	            .html(function () {
-	                return '<strong>' + self.format.title(data.data.name) + '</strong>' + '<br><span>' + self.format.detail(data.data.value) + '</span>';
-	            });
+	            // .html(function() {
+	            //     return self.getFormatByChartType(chart, data);
+	            // });
 	
 	            self.eventFactory = {
 	
-	                'mouseover': function mouseover(data) {
-	                    divOnHover.transition()
+	                'mouseover': function mouseover(_data) {
+	                    divOnHover.html(function () {
+	                        return self.getFormatByChartType(chart, _data);
+	                    }).transition()
 	                    // .style('left', function() {return d3.mouse(this)[0] + 'px';})
 	                    .style('left', function () {
-	                        return d3.event.pageX + 'px';
+	                        return self.getCoordinate()['left'];
 	                    })
 	                    // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
 	                    .style('top', function () {
-	                        return d3.event.pageY + 'px';
+	                        return self.getCoordinate()['top'];
 	                    }).duration(200).style("display", 'block').style('pointer-events', 'none');
 	                },
 	
-	                'mouseout': function mouseout(data) {
+	                'mousemove': function mousemove(_data) {
+	                    divOnHover.html(function () {
+	                        return self.getFormatByChartType(chart, _data);
+	                    }).transition()
+	                    // .style('left', function() {return d3.mouse(this)[0] + 'px';})
+	                    .style('left', function () {
+	                        return self.getCoordinate()['left'];
+	                    })
+	                    // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
+	                    .style('top', function () {
+	                        return self.getCoordinate()['top'];
+	                    }).duration(200).style("display", 'block').style('pointer-events', 'none');
+	                },
+	
+	                'mouseout': function mouseout(_data) {
 	                    divOnHover.transition().duration(200).style('display', 'none');
 	                }
 	
@@ -2199,6 +2480,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    case 'mouseout':
 	                        self.eventFactory.mouseout(data);
 	                        break;
+	                    case 'mousemove':
+	                        self.eventFactory.mousemove(data);
+	                        break;
 	                }
 	            }
 	        }
@@ -2208,7 +2492,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var self = this;
 	            var r = void 0;
 	
-	            switch (self.trianglePosition) {
+	            switch (self.position) {
 	                case 'top':
 	                    r = 'c9-tooltip-top';
 	                    break;
@@ -2222,6 +2506,96 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    r = 'c9-tooltip-left';
 	                    break;
 	            }
+	            return r;
+	        }
+	    }, {
+	        key: 'setDefaultFormatByChartType',
+	        value: function setDefaultFormatByChartType(chart, data) {
+	            // if (Helper.isEmpty(data)) { console.log(data);return false;}
+	            var self = this;
+	
+	            var chartType = chart.body.type,
+	                format = void 0;
+	
+	            switch (chartType) {
+	                case 'bar':
+	                    format = function format(data) {
+	                        return '<strong>' + data.name + '</strong>' + '<br><span>' + chart.retrieveValue(data.y0, data.y1) + '</span>';
+	                    };
+	                    break;
+	                case 'pie':
+	                    format = function format(data) {
+	                        return '<strong>' + data.data.name + '</strong>' + '<br><span>' + data.data.value + '</span>';
+	                    };
+	                    break;
+	                case 'donut':
+	                    format = function format(data) {
+	                        return '<strong>' + data.data.name + '</strong>' + '<br><span>' + data.data.value + '</span>';
+	                    };
+	                    break;
+	                case 'line':
+	                    format = function format(data) {
+	                        var _format = '';
+	                        data.forEach(function (d, i) {
+	                            _format += '<strong>' + d.name + '</strong>' + '<br><span> Value X: ' + d.valueX + '</span>' + '<br><span> Value Y: ' + d.valueY + '</span><br>';
+	                        });
+	                        return _format;
+	                    };
+	                    break;
+	                case 'timeline':
+	                    format = function format(data) {
+	                        return '<strong>' + data.name + '</strong>' + '<br><span>' + data.start, data.end + '</span>';
+	                    };
+	                    break;
+	            }
+	
+	            // Update format for tooltip based on chart type
+	            self.format = self.options.format || format;
+	            // console.log(self.format);
+	        }
+	    }, {
+	        key: 'getCoordinate',
+	        value: function getCoordinate() {
+	            var self = this;
+	            var r = void 0;
+	
+	            switch (self.position) {
+	                case 'top':
+	                    r = {
+	                        'left': d3.event.pageX - 50 + 'px',
+	                        'top': d3.event.pageY - 50 + 'px'
+	                    };
+	                    break;
+	                case 'right':
+	                    r = {
+	                        'left': d3.event.pageX - 50 + 'px',
+	                        'top': d3.event.pageY - 50 + 'px'
+	                    };
+	                    break;
+	                case 'bottom':
+	                    r = {
+	                        'left': d3.event.pageX - 50 + 'px',
+	                        'top': d3.event.pageY + 50 + 'px'
+	                    };
+	                    break;
+	                case 'left':
+	                    r = {
+	                        'left': d3.event.pageX + 50 + 'px',
+	                        'top': d3.event.pageY - 50 + 'px'
+	                    };
+	                    break;
+	            }
+	            return r;
+	        }
+	    }, {
+	        key: 'getFormatByChartType',
+	        value: function getFormatByChartType(chart, data) {
+	            var self = this;
+	
+	            self.setDefaultFormatByChartType(chart, data);
+	
+	            var r = self.format(data);
+	
 	            return r;
 	        }
 	
@@ -2285,16 +2659,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
-	        key: 'trianglePosition',
-	        get: function get() {
-	            return this._trianglePosition;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._trianglePosition = arg;
-	            }
-	        }
-	    }, {
 	        key: 'format',
 	        get: function get() {
 	            return this._format;
@@ -2312,6 +2676,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(arg) {
 	            if (arg) {
 	                this._eventFactory = arg;
+	            }
+	        }
+	    }, {
+	        key: 'options',
+	        get: function get() {
+	            return this._options;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
 	            }
 	        }
 	    }]);
@@ -2352,10 +2726,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            keys: {
 	                name: "name",
 	                value: "value",
-	                time: "time"
+	                x: "value.x",
+	                y: "value"
 	            },
 	            groups: [],
 	            stacks: [],
+	            timeFormat: false,
 	
 	            // NO NEED TO ADD TO DATA OPTIONS
 	            // Just use to define default parameters
@@ -2365,6 +2741,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._keys = _C2.default.merge(options.keys, config.keys);
 	        self._groups = options.groups || config.groups;
 	        self._stacks = options.stacks || config.stacks;
+	        self._timeFormat = options.timeFormat || config.timeFormat;
 	        self._colorRange = options.colorRange || config.colorRange;
 	
 	        self._dataSource = null;
@@ -2706,6 +3083,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var _dsArray = _C2.default.get(self.keys.value, data),
 	                    _valueArray = [],
 	                    _valueItem = {
+	                    "name": _C2.default.get(self.keys.name, data),
 	                    "start": null,
 	                    "end": null,
 	                    "color": "#fff",
@@ -2716,8 +3094,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (_C2.default.isArray(_dsArray)) {
 	                    _dsArray.forEach(function (d, i) {
 	                        _valueItem = {
-	                            "start": d.start,
-	                            "end": d.end,
+	                            "name": _C2.default.get(self.keys.name, data),
+	                            "start": new Date(d.start),
+	                            "end": new Date(d.end),
 	                            "color": color(index),
 	                            "data-ref": _C2.default.guid(),
 	                            "enable": true
@@ -2726,8 +3105,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    });
 	                } else {
 	                    _valueItem = {
-	                        "start": d.start,
-	                        "end": d.end,
+	                        "name": _C2.default.get(self.keys.name, data),
+	                        "start": new Date(d.start),
+	                        "end": new Date(d.end),
 	                        "color": color(index),
 	                        "data-ref": _C2.default.guid(),
 	                        "enable": true
@@ -2750,11 +3130,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var _data = {
 	                    "color": color(index),
 	                    "name": _C2.default.get(self.keys.name, data),
-	                    "value": _C2.default.get(self.keys.value, data),
-	                    "time": _C2.default.get(self.keys.time, data),
+	                    "value": [],
 	                    "data-ref": _C2.default.guid(),
 	                    "enable": true
 	                };
+	
+	                var _valueXArray = _C2.default.get(self.keys.x, data),
+	                    _valueYArray = _C2.default.get(self.keys.y, data),
+	                    _valueArray = [],
+	                    _valueItem = {
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "valueX": null,
+	                    "valueY": null,
+	                    "data-ref": _C2.default.guid(),
+	                    "enable": true
+	                };
+	
+	                if (_C2.default.isArray(_valueYArray)) {
+	                    /**
+	                     *
+	                     * CASE 1: [{name:, value: []}, {}, ..]
+	                     *
+	                     */
+	
+	                    if (!_C2.default.isArray(_valueXArray)) {
+	                        _valueYArray.forEach(function (d, i) {
+	                            _valueItem = {
+	                                "name": _C2.default.get(self.keys.name, data),
+	                                "valueX": i,
+	                                "valueY": d,
+	                                "data-ref": _C2.default.guid(),
+	                                "enable": true
+	                            };
+	                            _valueArray.push(_valueItem);
+	                        });
+	                    } else
+	
+	                        /**
+	                         *
+	                         * CASE 2: [{name:, value: {x: [], y:[]}, {}, ..]
+	                         *
+	                         */
+	
+	                        if (_C2.default.isArray(_valueXArray) && !self.timeFormat) {
+	                            _valueYArray.forEach(function (d, i) {
+	                                _valueItem = {
+	                                    "name": _C2.default.get(self.keys.name, data),
+	                                    "valueX": !_C2.default.isEmpty(_valueXArray[i]) ? _valueXArray[i] : i,
+	                                    "valueY": d,
+	                                    "data-ref": _C2.default.guid(),
+	                                    "enable": true
+	                                };
+	                                _valueArray.push(_valueItem);
+	                            });
+	                        } else
+	
+	                            /**
+	                             *
+	                             * CASE 3: [{name:, value: {x: [], y:[]}, {}, ..] with config `timeFormat`
+	                             *
+	                             */
+	
+	                            if (_C2.default.isArray(_valueXArray) && self.timeFormat) {
+	                                (function () {
+	                                    var _parser = _C2.default.dateParser(self.timeFormat);
+	
+	                                    _valueYArray.forEach(function (d, i) {
+	                                        _valueItem = {
+	                                            "name": _C2.default.get(self.keys.name, data),
+	                                            "valueX": !_C2.default.isEmpty(_valueXArray[i]) ? _parser(_valueXArray[i]) : i,
+	                                            "valueY": d,
+	                                            "data-ref": _C2.default.guid(),
+	                                            "enable": true
+	                                        };
+	                                        _valueArray.push(_valueItem);
+	                                    });
+	                                })();
+	                            }
+	                }
+	
+	                _data.value = _valueArray;
+	
 	                self.dataTarget.push(_data);
 	            });
 	
@@ -2927,6 +3383,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this._colorRange = arg;
 	            }
 	        }
+	    }, {
+	        key: "timeFormat",
+	        get: function get() {
+	            return this._timeFormat;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._timeFormat = arg;
+	            }
+	        }
 	    }]);
 	
 	    return DataAdapter;
@@ -2946,6 +3412,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
 	var _C = __webpack_require__(2);
 	
 	var _C2 = _interopRequireDefault(_C);
@@ -2962,13 +3430,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(3);
+	var _C9 = __webpack_require__(10);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(8);
+	var _C11 = __webpack_require__(7);
 	
 	var _C12 = _interopRequireDefault(_C11);
+	
+	var _C13 = __webpack_require__(3);
+	
+	var _C14 = _interopRequireDefault(_C13);
+	
+	var _C15 = __webpack_require__(8);
+	
+	var _C16 = _interopRequireDefault(_C15);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -3002,7 +3478,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dataOption = self.dataOption;
 	        dataOption.colorRange = self.colorRange;
 	
-	        var da = new _C12.default(dataOption);
+	        var da = new _C16.default(dataOption);
 	        self.dataTarget = da.getDataTarget("donut");
 	
 	        self.updateConfig();
@@ -3044,10 +3520,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = self.click.callback;
 	
+	            var tooltip = new _C12.default(self.options.tooltip);
+	
 	            // Main Event Dispatch for paths in donut chart
 	            self._eventFactory = {
 	                'click': function click(d, i) {
-	                    if (_C10.default.isFunction(onClickCallback)) {
+	                    if (_C14.default.isFunction(onClickCallback)) {
 	                        onClickCallback.call(this, d);
 	                    }
 	                },
@@ -3055,75 +3533,59 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'mouseover': function mouseover(d, i) {
 	                    if (!hoverEnable) return;
 	
-	                    if (_C10.default.isFunction(onMouseOverCallback)) {
+	                    if (_C14.default.isFunction(onMouseOverCallback)) {
 	                        onMouseOverCallback.call(this, d);
 	                    }
 	
 	                    var selector = d3.select(this);
-	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
-	                    // .style('stroke', '#000')
-	                    .attr('fill-opacity', '1.0');
+	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
 	
-	                    self.tooltip().mouseover(d);
+	                    // For legend
+	                    if (self.legend.item) self.legend.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            d3.select(this).attr('opacity', '0.3');
+	                        }
+	                    });
+	
+	                    // For Chart
+	                    self.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+	                            d3.select(this).attr('opacity', '0.3');
+	                        }
+	                    });
+	
+	                    // For Tooltip
+	                    tooltip.draw(d, self, 'mouseover');
 	                },
 	
 	                'mouseout': function mouseout(d, i) {
 	                    if (!hoverEnable) return;
 	
-	                    if (_C10.default.isFunction(onMouseOutCallback)) {
+	                    if (_C14.default.isFunction(onMouseOutCallback)) {
 	                        onMouseOutCallback.call(this, d);
 	                    }
 	
 	                    var selector = d3.select(this);
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
-	                    // .style('stroke', '#000')
-	                    .attr('fill-opacity', '0.5');
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
 	
-	                    self.tooltip().mouseout(d);
+	                    // For legend
+	                    if (self.legend.item) self.legend.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    // For Chart
+	                    self.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    // For Tooltip
+	                    tooltip.draw(d, self, 'mouseout');
 	                }
 	
-	            };
-	
-	            // Define the tooltip
-	            // TODO: Define it as a individual CLASS, in C9.Tooltip
-	            self.tooltip = function () {
-	                // First, remove all before hover div
-	                self.body.selectAll('g.c9-custom-tooltip-container').remove();
-	
-	                // TODO: Add margin to tooltip configs
-	                // Default: (100, 100) relative to mouse coordinate and chart margin transformation
-	                var divOnHover = self.body.append('g').attr('class', 'c9-custom-tooltip-container').attr("transform", function () {
-	                    return 'translate(' + (d3.mouse(this)[0] - 100) + "," + (d3.mouse(this)[1] - 100) + ')';
-	                }).style('display', 'none');
-	
-	                var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
-	
-	                // Rect Container
-	                divOnHover.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').attr('fill', '#FEE5E2').attr('stroke', '#FDCCC6').attr('stroke-width', 2);
-	                // First line
-	                var text_1 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	                // Second line
-	                var text_2 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
-	
-	                var tooltipEventFactory = {
-	
-	                    'mouseover': function mouseover(d) {
-	                        divOnHover.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block');
-	
-	                        var name = d.data.name || d.data.data.name,
-	                            value = d.data.value || d.data.data.value;
-	
-	                        text_1.text('Name: ' + name);
-	                        text_2.text('Value: ' + value);
-	                    },
-	
-	                    'mouseout': function mouseout(d) {
-	                        divOnHover.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
-	                    }
-	
-	                };
-	
-	                return tooltipEventFactory;
 	            };
 	
 	            self.arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
@@ -3142,7 +3604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return d.data['data-ref'];
 	            }).attr('d', self.arc).attr('fill', function (d, i) {
 	                return color(i);
-	            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
+	            }).attr('stroke', '#ffffff').each(function (d) {
 	                self._currentData = d;
 	            });
 	            // Current data used for calculate interpolation 
@@ -3171,7 +3633,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var self = this;
 	
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
+	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
+	
+	            self.legend = legend;
 	
 	            // Draw legend
 	            legend.draw();
@@ -3209,6 +3673,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(self._eventFactory);
 	        }
 	
+	        /**
+	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {
+	            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'on', this).call(this, eventType, callback);
+	
+	            var self = this;
+	            var selector = self.selectAllPath();
+	
+	            // Update Event Factory
+	            var eventFactory = {
+	                'click.event': function clickEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseover.event': function mouseoverEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseout.event': function mouseoutEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                }
+	            };
+	
+	            var eventName = eventType + '.event';
+	
+	            selector.on(eventName, eventFactory[eventName]);
+	        }
+	
 	        /*=====  End of Main Functions  ======*/
 	
 	    }, {
@@ -3222,9 +3725,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(newOuterRadius) {
-	            if (newOuterRadius) {
-	                this._outerRadius = newOuterRadius;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._outerRadius = arg;
 	            }
 	        }
 	    }, {
@@ -3232,9 +3735,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._innerRadius;
 	        },
-	        set: function set(newInnerRadius) {
-	            if (newInnerRadius) {
-	                this._innerRadius = newInnerRadius;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._innerRadius = arg;
 	            }
 	        }
 	    }, {
@@ -3242,9 +3745,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._showText;
 	        },
-	        set: function set(newShowText) {
-	            if (newShowText) {
-	                this._showText = newShowText;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._showText = arg;
 	            }
 	        }
 	    }, {
@@ -3252,9 +3755,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._tooltip;
 	        },
-	        set: function set(newTooltip) {
-	            if (newTooltip) {
-	                this._tooltip = newTooltip;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._tooltip = arg;
 	            }
 	        }
 	    }, {
@@ -3262,9 +3765,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._pie;
 	        },
-	        set: function set(newPie) {
-	            if (newPie) {
-	                this._pie = newPie;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._pie = arg;
 	            }
 	        }
 	    }, {
@@ -3272,9 +3775,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._arc;
 	        },
-	        set: function set(newArc) {
-	            if (newArc) {
-	                this._arc = newArc;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._arc = arg;
 	            }
 	        }
 	    }, {
@@ -3282,15 +3785,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._currentData;
 	        },
-	        set: function set(newCurrentData) {
-	            if (newCurrentData) {
-	                this._currentData = newCurrentData;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._currentData = arg;
 	            }
 	        }
 	    }, {
 	        key: 'chartType',
 	        get: function get() {
 	            return this._body.type;
+	        }
+	    }, {
+	        key: 'legend',
+	        get: function get() {
+	            return this._legend;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._legend = arg;
+	            }
 	        }
 	    }]);
 	
@@ -3301,757 +3814,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _C = __webpack_require__(2);
-	
-	var _C2 = _interopRequireDefault(_C);
-	
-	var _C3 = __webpack_require__(4);
-	
-	var _C4 = _interopRequireDefault(_C3);
-	
-	var _C5 = __webpack_require__(5);
-	
-	var _C6 = _interopRequireDefault(_C5);
-	
-	var _C7 = __webpack_require__(6);
-	
-	var _C8 = _interopRequireDefault(_C7);
-	
-	var _C9 = __webpack_require__(3);
-	
-	var _C10 = _interopRequireDefault(_C9);
-	
-	var _C11 = __webpack_require__(8);
-	
-	var _C12 = _interopRequireDefault(_C11);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var LineChart = function (_Chart) {
-	    _inherits(LineChart, _Chart);
-	
-	    function LineChart(options) {
-	        _classCallCheck(this, LineChart);
-	
-	        var _this = _possibleConstructorReturn(this, (LineChart.__proto__ || Object.getPrototypeOf(LineChart)).call(this, options));
-	
-	        var self = _this;
-	        var config = {
-	            pointShow: false,
-	            pointFill: "#fb8072",
-	            pointStroke: "#d26b5f",
-	            pointOpacity: 1.0,
-	            pointRadius: 5,
-	            pointHoverEnable: false,
-	            interpolate: "linear" // refer: https://www.dashingd3js.com/svg-paths-and-d3js
-	        };
-	
-	        self._pointShow = options.pointShow || config.pointShow;
-	        self._pointRadius = options.pointRadius || config.pointRadius;
-	        self._pointFill = options.pointFill || config.pointFill;
-	        self._pointStroke = options.pointStroke || config.pointStroke;
-	        self._pointOpacity = options.pointOpacity || config.pointOpacity;
-	        self._pointHoverEnable = options.pointHoverEnable || config.pointHoverEnable;
-	        self._interpolate = options.interpolate || config.interpolate;
-	        self.body.type = "line";
-	
-	        var width = self.width - self.margin.left - self.margin.right;
-	        var height = self.height - self.margin.top - self.margin.bottom;
-	
-	        var x = d3.scale.linear().range([0, width]);
-	        var y = d3.scale.linear().range([height, 0]);
-	
-	        self._x = x;
-	        self._y = y;
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        var da = new _C12.default(dataOption);
-	        self.dataTarget = da.getDataTarget("line");
-	
-	        self.updateConfig();
-	
-	        return _this;
-	    }
-	
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-	
-	    _createClass(LineChart, [{
-	        key: 'updateConfig',
-	
-	        /*=====  End of Setter  ======*/
-	
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	
-	        /**
-	         * First init Line Chart
-	         */
-	        value: function updateConfig() {
-	            var self = this,
-	                x = self._x,
-	                y = self._y;
-	
-	            self._dataGroup = d3.nest().key(function (d) {
-	                return d.name;
-	            }).entries(self.dataTarget);
-	
-	            var dataGroup = self._dataGroup;
-	
-	            x.domain([d3.min(self.dataTarget, function (d) {
-	                return d.time;
-	            }), d3.max(self.dataTarget, function (d) {
-	                return d.time;
-	            })]);
-	            y.domain([d3.min(self.dataTarget, function (d) {
-	                return d.value;
-	            }), d3.max(self.dataTarget, function (d) {
-	                return d.value;
-	            })]);
-	
-	            var lineGen = d3.svg.line().x(function (d) {
-	                return x(d.time);
-	            }).y(function (d) {
-	                return y(d.value);
-	            }).interpolate(self.interpolate);
-	
-	            var _body = self.body,
-	                _pointShow = self.pointShow,
-	                _pointRadius = self.pointRadius,
-	                _pointFill = self.pointFill,
-	                _pointStroke = self.pointStroke,
-	                _pointOpacity = self.pointOpacity;
-	
-	            dataGroup.forEach(function (d, i) {
-	                _body.append('path').attr('d', lineGen(d.values)).attr('stroke', d.values[0].color).attr('stroke-width', 2).attr('data-ref', 'c9-' + d.key).attr('fill', 'none');
-	
-	                if (_pointShow) {
-	                    _body.selectAll("dot").data(d.values).enter().append("circle").attr('class', 'c9-chart-line c9-circle-custom').attr("r", _pointRadius).attr("cx", function (_d) {
-	                        return x(_d.time);
-	                    }).attr("cy", function (_d) {
-	                        return y(_d.value);
-	                    }).attr("data-ref", function (d) {
-	                        return d["data-ref"];
-	                    }).style("fill", _pointFill).style("stroke", _pointStroke).style("opacity", _pointOpacity);
-	                }
-	            });
-	        }
-	
-	        /**
-	         * Main draw function of Line Chart
-	         */
-	
-	    }, {
-	        key: 'draw',
-	        value: function draw() {
-	            var self = this;
-	
-	            var axis = new _C4.default(self.options, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
-	
-	            // Draw legend
-	            legend.draw();
-	            legend.updateInteractionForLineChart(self);
-	
-	            self.updateInteraction();
-	        }
-	
-	        /**
-	         * Select all circle as type CIRCLE in Line Chart via its CLASS
-	         */
-	
-	    }, {
-	        key: 'selectAllCircle',
-	        value: function selectAllCircle() {
-	            var self = this;
-	
-	            return self.body.selectAll('circle.c9-chart-line.c9-circle-custom');
-	        }
-	
-	        /**
-	         * Update Interaction: Hover
-	         */
-	
-	    }, {
-	        key: 'updateInteraction',
-	        value: function updateInteraction() {
-	            var self = this,
-	                hoverEnable = self.hover.enable,
-	                hoverOptions = self.hover.options,
-	                selector = self.selectAllCircle(),
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
-	                onClickCallback = self.click.callback;
-	
-	            // Define the div for the tooltip
-	            // TODO: Allow user to add custom DIV, CLASS
-	            // Make sure that: 
-	            // - Rect not overflow the bar, if not, hover effect will be messed
-	            // -> So, just align the rect to right/left (x: 25) to avoid it
-	            // -> And, the text will be align also
-	            var div = self.body.append('g').style('display', 'none');
-	            // .style('opacity', 0);
-	            // Rect Container
-	            div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-	            // First line
-	            var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-	            // Second line
-	            var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
-	
-	            // Update Event Factory
-	            self.eventFactory = {
-	                'click': function click(d) {
-	                    if (_C10.default.isFunction(onClickCallback)) {
-	                        onClickCallback.call(this, d);
-	                    }
-	                },
-	                'mouseover': function mouseover(d) {
-	                    if (!hoverEnable) return;
-	
-	                    if (_C10.default.isFunction(onMouseOverCallback)) {
-	                        onMouseOverCallback.call(this, d);
-	                    }
-	
-	                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.time) + "," + self.y(d.value) + ")");
-	
-	                    text_1.text('Name: ' + d.time);
-	                    text_2.text('Value: ' + d.value);
-	                },
-	                'mouseout': function mouseout(d) {
-	                    if (!hoverEnable) return;
-	
-	                    if (_C10.default.isFunction(onMouseOutCallback)) {
-	                        onMouseOutCallback.call(this, d);
-	                    }
-	
-	                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style("display", 'none');
-	                }
-	            };
-	
-	            selector.on(self.eventFactory);
-	        }
-	
-	        /*=====  End of Main Functions  ======*/
-	
-	    }, {
-	        key: 'pointShow',
-	        get: function get() {
-	            return this._pointShow;
-	        },
-	
-	        /*=====  End of Getter  ======*/
-	
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	
-	        set: function set(newPointShow) {
-	            if (newPointShow) {
-	                this._pointShow = newPointShow;
-	            }
-	        }
-	    }, {
-	        key: 'pointFill',
-	        get: function get() {
-	            return this._pointFill;
-	        },
-	        set: function set(newPointFill) {
-	            if (newPointFill) {
-	                this._pointFill = newPointFill;
-	            }
-	        }
-	    }, {
-	        key: 'pointStroke',
-	        get: function get() {
-	            return this._pointStroke;
-	        },
-	        set: function set(newPointStroke) {
-	            if (newPointStroke) {
-	                this._pointStroke = newPointStroke;
-	            }
-	        }
-	    }, {
-	        key: 'pointOpacity',
-	        get: function get() {
-	            return this._pointOpacity;
-	        },
-	        set: function set(newPointOpacity) {
-	            if (newPointOpacity) {
-	                this._pointOpacity = newPointOpacity;
-	            }
-	        }
-	    }, {
-	        key: 'pointRadius',
-	        get: function get() {
-	            return this._pointRadius;
-	        },
-	        set: function set(newPointRadius) {
-	            if (newPointRadius) {
-	                this._pointRadius = newPointRadius;
-	            }
-	        }
-	    }, {
-	        key: 'pointHoverEnable',
-	        get: function get() {
-	            return this._pointHoverEnable;
-	        },
-	        set: function set(newPointHoverEnable) {
-	            if (newPointHoverEnable) {
-	                this._pointHoverEnable = newPointHoverEnable;
-	            }
-	        }
-	    }, {
-	        key: 'interpolate',
-	        get: function get() {
-	            return this._interpolate;
-	        },
-	        set: function set(newInterpolate) {
-	            if (newInterpolate) {
-	                this._interpolate = newInterpolate;
-	            }
-	        }
-	    }, {
-	        key: 'x',
-	        get: function get() {
-	            return this._x;
-	        },
-	        set: function set(newX) {
-	            if (newX) {
-	                this._x = newX;
-	            }
-	        }
-	    }, {
-	        key: 'y',
-	        get: function get() {
-	            return this._y;
-	        },
-	        set: function set(newY) {
-	            if (newY) {
-	                this._y = newY;
-	            }
-	        }
-	    }, {
-	        key: 'dataGroup',
-	        get: function get() {
-	            return this._dataGroup;
-	        },
-	        set: function set(newDataGroup) {
-	            if (newDataGroup) {
-	                this._dataGroup = newDataGroup;
-	            }
-	        }
-	    }]);
-	
-	    return LineChart;
-	}(_C2.default);
-	
-	// Backup - LOL
-	// var _currentDataY = this.data;
-	//         _currentDataY.forEach(function(_currentValue,_index,_arr) {
-	//                                     _currentDataY[_index].coordinate.sort(function(a,b) {
-	//                                         return (a.y > b.y) ? 1 : ((b.y > a.y) ? -1 : 0);
-	//                                     });
-	//                                 });
-	//         this.sortedDataY         = _currentDataY;
-	
-	//         // Get maximum value of coordinate {x, y}
-	//         var tempMaxY = [];
-	
-	//         for (var i=0; i<this.sortedDataY.length; i++) {
-	//             tempMaxY[i] = this.sortedDataY[i].coordinate[this.sortedDataY[i].coordinate.length - 1].y;
-	//         }
-	
-	//         var _maxY = Math.max(...tempMaxY);
-	
-	
-	//         var _currentDataX = this.data;
-	//         _currentDataX.forEach(function(currentValue,index,arr) {
-	//                                     _currentDataX[index].coordinate.sort(function(a,b) {
-	//                                         return (a.x > b.x) ? 1 : ((b.x > a.x) ? -1 : 0);
-	//                                     });
-	//                                 });
-	//         this.sortedDataX         = _currentDataX;
-	//         var tempMaxX = [];
-	//         for (var i=0; i<this.sortedDataX.length; i++) {
-	//             tempMaxX[i] = this.sortedDataX[i].coordinate[this.sortedDataX[i].coordinate.length - 1].x;
-	//         }
-	//         var _maxX = Math.max(...tempMaxX);
-	
-	//         // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-	//         var width   = this.width - this.margin.left - this.margin.right;
-	//         var height  = this.height - this.margin.top - this.margin.bottom;
-	
-	//         var x = d3.scale.linear().range([0, width]);
-	//         var y = d3.scale.linear().range([height, 0]);
-	
-	//         x.domain([_maxX, 0]);
-	//         y.domain([_maxY, 0]);
-	
-	//         var lineFunc = d3.svg.line()
-	//             .x(function(d, i) { return x(d.x); })
-	//             .y(function(d, i) { return y(d.y); })
-	//             .interpolate("linear");
-	
-	//         // this.body.selectAll('g')
-	//         //         .data(this.sortedDataX)
-	//         //         .enter()
-	//         //         .append('path')
-	//         //         .attr('class', 'line')
-	//         //         .attr('d', function(d){
-	//         //             return lineFunc(d.coordinate);
-	//         //         });
-	//         this.body.selectAll('dot')
-	//                 .data(this.sortedDataX)
-	//                 .selectAll('dot')
-	//                 .data(function(d,i) {return d;})
-	//                 .enter()
-	//                 .append("circle")
-	//                 .attr("r", 3.5)
-	//                 .attr("cx", function(d, i) { console.log(d, i); return x(d.coordinate[i].x); })
-	//                 .attr("cy", function(d, i) { console.log(d, i); return y(d.coordinate[i].y); });
-	
-	
-	exports.default = LineChart;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _C = __webpack_require__(2);
-	
-	var _C2 = _interopRequireDefault(_C);
-	
-	var _C3 = __webpack_require__(4);
-	
-	var _C4 = _interopRequireDefault(_C3);
-	
-	var _C5 = __webpack_require__(5);
-	
-	var _C6 = _interopRequireDefault(_C5);
-	
-	var _C7 = __webpack_require__(6);
-	
-	var _C8 = _interopRequireDefault(_C7);
-	
-	var _C9 = __webpack_require__(12);
-	
-	var _C10 = _interopRequireDefault(_C9);
-	
-	var _C11 = __webpack_require__(7);
-	
-	var _C12 = _interopRequireDefault(_C11);
-	
-	var _C13 = __webpack_require__(3);
-	
-	var _C14 = _interopRequireDefault(_C13);
-	
-	var _C15 = __webpack_require__(8);
-	
-	var _C16 = _interopRequireDefault(_C15);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var PieChart = function (_Chart) {
-	    _inherits(PieChart, _Chart);
-	
-	    function PieChart(options) {
-	        _classCallCheck(this, PieChart);
-	
-	        var _this = _possibleConstructorReturn(this, (PieChart.__proto__ || Object.getPrototypeOf(PieChart)).call(this, options));
-	
-	        var self = _this;
-	
-	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
-	        var config = {
-	            radius: R,
-	            showText: true
-	        };
-	
-	        self._radius = options.radius || config.radius;
-	        self._showText = options.showText || config.showText;
-	
-	        self.body.type = 'pie';
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        var da = new _C16.default(dataOption);
-	        self.dataTarget = da.getDataTarget("pie");
-	
-	        self.updateConfig();
-	        return _this;
-	    }
-	
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-	
-	
-	    _createClass(PieChart, [{
-	        key: 'updateConfig',
-	
-	        /*=====  End of Setter  ======*/
-	
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	        /**
-	         * Update Donut Chart Config
-	         */
-	        value: function updateConfig() {
-	            var self = this;
-	
-	            // chartInnerAfter, chartOuterAfter define easing radius of pie chart during animation
-	            // TODO: Add configs allow users to define these radius
-	            var width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom,
-	                color = self.colorRange,
-	                chartInnerBefore = 0,
-	                chartOuterBefore = self.radius,
-	                chartInnerAfter = 0,
-	                chartOuterAfter = self.radius * 1.2;
-	
-	            var hoverOptions = self.hover.options,
-	                hoverEnable = self.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
-	                onClickCallback = self.click.callback;
-	
-	            var tooltip = new _C12.default(self.options.tooltip);
-	
-	            // Main Event Dispatch for paths in pie chart
-	            self._eventFactory = {
-	                'click': function click(d, i) {
-	                    if (_C14.default.isFunction(onClickCallback)) {
-	                        onClickCallback.call(this, d);
-	                    }
-	                },
-	
-	                'mouseover': function mouseover(d, i) {
-	                    if (!hoverEnable) return;
-	
-	                    if (_C14.default.isFunction(onMouseOverCallback)) {
-	                        onMouseOverCallback.call(this, d);
-	                    }
-	
-	                    var selector = d3.select(this);
-	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
-	                    // .style('stroke', '#FFFFF3')
-	                    .attr('fill-opacity', '1.0');
-	
-	                    tooltip.draw(d, self, 'mouseover');
-	                },
-	
-	                'mouseout': function mouseout(d, i) {
-	                    if (!hoverEnable) return;
-	
-	                    if (_C14.default.isFunction(onMouseOutCallback)) {
-	                        onMouseOutCallback.call(this, d);
-	                    }
-	
-	                    var selector = d3.select(this);
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
-	                    // .style('stroke', '#ffffff')
-	                    .attr('fill-opacity', '0.5');
-	
-	                    tooltip.draw(d, self, 'mouseout');
-	                }
-	
-	            };
-	
-	            self.arc = d3.svg.arc().innerRadius(0).outerRadius(self.radius);
-	
-	            //we can sort data here
-	            self.pie = d3.layout.pie().sort(null).value(function (d) {
-	                return d.value;
-	            });
-	
-	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
-	
-	            // Append main path contains pie
-	            arcs.append('path').attr('class', 'c9-chart-pie c9-custom-path').attr('data-ref', function (d) {
-	                return d.data['data-ref'];
-	            }).attr('d', self.arc).attr('fill', function (d, i) {
-	                return color(i);
-	            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
-	                self._currentData = d;
-	            });
-	            // Current data used for calculate interpolation 
-	            // between current arc vs disabled arc
-	
-	
-	            // Append middle text display name
-	            // if (self.showText) {
-	            //     arcs.append('text')
-	            //             .attr('class', 'c9-chart-pie c9-custom-text')
-	            //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
-	            //             .attr('dy', '.35em')
-	            //             .attr('text-anchor', 'middle')
-	            //             .text(function(d) { return d.data.name; });
-	            // }
-	        }
-	
-	        /**
-	         * Main draw function of Donut Chart
-	         */
-	
-	    }, {
-	        key: 'draw',
-	        value: function draw() {
-	
-	            var self = this;
-	
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.dataTarget);
-	            var table = new _C10.default(self.options.table, self.body, self.dataTarget);
-	
-	            // Draw legend
-	            legend.draw();
-	            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
-	
-	            // Draw table
-	            table.draw();
-	
-	            // Update interaction of this own chart
-	            self.updateInteraction();
-	        }
-	
-	        /**
-	         * Select all path as type PATH in Donut Chart via its CLASS
-	         */
-	
-	    }, {
-	        key: 'selectAllPath',
-	        value: function selectAllPath() {
-	            var self = this;
-	
-	            return self.body
-	            // .selectAll('g')
-	            .selectAll('path.c9-chart-pie.c9-custom-path');
-	        }
-	
-	        /**
-	         * Update Interaction: Hover
-	         * @return {} 
-	         */
-	
-	    }, {
-	        key: 'updateInteraction',
-	        value: function updateInteraction() {
-	            var self = this,
-	                selector = self.selectAllPath();
-	
-	            selector.on(self.eventFactory);
-	        }
-	
-	        /*=====  End of Main Functions  ======*/
-	
-	    }, {
-	        key: 'radius',
-	        get: function get() {
-	            return this._radius;
-	        },
-	
-	        /*=====  End of Getter  ======*/
-	
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	        set: function set(newradius) {
-	            if (newradius) {
-	                this._radius = newradius;
-	            }
-	        }
-	    }, {
-	        key: 'showText',
-	        get: function get() {
-	            return this._showText;
-	        },
-	        set: function set(newShowText) {
-	            if (newShowText) {
-	                this._showText = newShowText;
-	            }
-	        }
-	    }, {
-	        key: 'pie',
-	        get: function get() {
-	            return this._pie;
-	        },
-	        set: function set(newPie) {
-	            if (newPie) {
-	                this._pie = newPie;
-	            }
-	        }
-	    }, {
-	        key: 'arc',
-	        get: function get() {
-	            return this._arc;
-	        },
-	        set: function set(newArc) {
-	            if (newArc) {
-	                this._arc = newArc;
-	            }
-	        }
-	    }, {
-	        key: 'currentData',
-	        get: function get() {
-	            return this._currentData;
-	        },
-	        set: function set(newCurrentData) {
-	            if (newCurrentData) {
-	                this._currentData = newCurrentData;
-	            }
-	        }
-	    }, {
-	        key: 'chartType',
-	        get: function get() {
-	            return this._body.type;
-	        }
-	    }]);
-	
-	    return PieChart;
-	}(_C2.default);
-	
-	exports.default = PieChart;
-
-/***/ },
-/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -4145,7 +3907,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                // Bind each statistic to a line of the table
 	                // Show serial no.
-	                var bRows = tbody.selectAll("tr").data(self.data).enter().append("tr");
+	                var bRows = tbody.selectAll("tr").data(self.data).enter().append("tr").attr("data-ref", function (d) {
+	                    return d["data-ref"];
+	                });
 	
 	                if (self.serial) {
 	                    bRows.append("td").text(function (d, i) {
@@ -4164,8 +3928,110 @@ return /******/ (function(modules) { // webpackBootstrap
 	                });
 	            }
 	        }
+	    }, {
+	        key: "updateInteractionForPieChart",
+	        value: function updateInteractionForPieChart(chart) {
+	
+	            var self = this;
+	
+	            var hoverOptions = chart.hover.options,
+	                hoverEnable = chart.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = chart.click.callback;
+	
+	            var chartType = chart.chartType;
+	
+	            var chartInnerBefore = chartType == 'pie' ? 0 : chart.innerRadius,
+	                chartOuterBefore = chartType == 'pie' ? chart.radius : chart.outerRadius,
+	                chartInnerAfter = chartType == 'pie' ? 0 : chart.innerRadius,
+	                chartOuterAfter = chartType == 'pie' ? chart.radius * 1.2 : chart.outerRadius * 1.2;
+	            self.itemEventFactory = {
+	
+	                'click': function click(item) {
+	                    if (_C2.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, item);
+	                    }
+	
+	                    // var selector = d3.select(this);
+	                    // var enable = true,
+	                    //     dataSet = self.data;
+	                    // var totalEnable = d3.sum(dataSet.map(function(d) {
+	                    //     return (d.enable) ? 1 : 0;
+	                    // }));
+	
+	                    // // Add pointer to cursor
+	                    // selector.style('cursor', 'pointer');
+	
+	                    // // If current selector is disabled, then turn it on back
+	                    // // Else, set enable to false
+	                    // if (selector.style('opacity') == '0.1') {
+	                    //     selector.style('opacity', '1.0');
+	                    // } else {
+	                    //     if (totalEnable < 2) return;
+	                    //     selector.style('opacity', '0.1');
+	                    //     enable = false;
+	                    // }
+	                },
+	
+	                'mouseover': function mouseover(item) {
+	                    if (!item) return;
+	
+	                    if (_C2.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	                    // if (legendSelector.attr('enable') == 'true') {
+	
+	                    // For Chart
+	                    chart.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                            d3.select(this).attr('opacity', '0.3');
+	                        }
+	                    });
+	
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+	                    // }
+	                },
+	
+	                'mouseout': function mouseout(item) {
+	                    if (!item) return;
+	
+	                    if (_C2.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	
+	                    chart.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
+	                }
+	
+	            };
+	
+	            if (self.show) self.selectAllRow().on(self.itemEventFactory);
+	        }
 	        /*=====  End of Main Functions  ======*/
 	
+	    }, {
+	        key: "selectAllRow",
+	        value: function selectAllRow() {
+	            return d3.selectAll(".c9-table tr");
+	        }
 	    }, {
 	        key: "data",
 	        get: function get() {
@@ -4271,7 +4137,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Table;
 
 /***/ },
-/* 13 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4281,6 +4147,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 	
 	var _C = __webpack_require__(2);
 	
@@ -4298,13 +4166,1002 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(3);
+	var _C9 = __webpack_require__(10);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(8);
+	var _C11 = __webpack_require__(7);
 	
 	var _C12 = _interopRequireDefault(_C11);
+	
+	var _C13 = __webpack_require__(3);
+	
+	var _C14 = _interopRequireDefault(_C13);
+	
+	var _C15 = __webpack_require__(8);
+	
+	var _C16 = _interopRequireDefault(_C15);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var LineChart = function (_Chart) {
+	    _inherits(LineChart, _Chart);
+	
+	    function LineChart(options) {
+	        _classCallCheck(this, LineChart);
+	
+	        var _this = _possibleConstructorReturn(this, (LineChart.__proto__ || Object.getPrototypeOf(LineChart)).call(this, options));
+	
+	        var self = _this;
+	
+	        var config = {
+	            point: {
+	                show: true,
+	                fill: "steelblue",
+	                stroke: "#d26b5f",
+	                'stroke-width': 2,
+	                opacity: 1.0,
+	                radius: 5
+	            },
+	            area: {
+	                show: true
+	            },
+	            line: {
+	                style: "solid", // "dash", "dot"
+	                width: 2
+	            },
+	            interpolate: "linear" };
+	
+	        self._point = _C14.default.merge(options.point, config.point);
+	        self._area = _C14.default.merge(options.area, config.area);
+	        self._line = _C14.default.merge(options.line, config.line);
+	        self._interpolate = options.interpolate || config.interpolate;
+	
+	        self.body.type = "line";
+	        self._bisectDate = d3.bisector(function (d) {
+	            return d.valueX;
+	        }).left;;
+	
+	        var dataOption = self.dataOption;
+	        dataOption.colorRange = self.colorRange;
+	
+	        self._da = new _C16.default(dataOption);
+	        self.dataTarget = self._da.getDataTarget("line");
+	
+	        self._isTimeDomain = self._da.timeFormat;
+	
+	        self.updateConfig();
+	
+	        return _this;
+	    }
+	
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+	
+	    _createClass(LineChart, [{
+	        key: 'updateConfig',
+	
+	        /*=====  End of Setter  ======*/
+	
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	
+	        /**
+	         * First init Line Chart
+	         */
+	        value: function updateConfig() {
+	            var self = this;
+	
+	            var da = self._da;
+	
+	            var width = self.width - self.margin.left - self.margin.right,
+	                height = self.height - self.margin.top - self.margin.bottom;
+	
+	            var x = self._isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+	                y = d3.scale.linear().range([height, 0]);
+	
+	            var valueXArray = d3.merge(self.dataTarget.map(function (data) {
+	                return data.value.map(function (d) {
+	                    return d.valueX;
+	                });
+	            }));
+	
+	            var valueYArray = d3.merge(self.dataTarget.map(function (data) {
+	                return data.value.map(function (d) {
+	                    return d.valueY;
+	                });
+	            }));
+	
+	            x.domain(d3.extent(valueXArray));
+	
+	            y.domain(d3.extent(valueYArray));
+	
+	            // Update domain if all values positive / negative
+	            if (y.domain()[0] > 0 && y.domain()[1] > 0) {
+	                y.domain([0, y.domain()[1]]);
+	            } else if (y.domain()[0] < 0 && y.domain()[1] < 0) {
+	                y.domain([y.domain()[0], 0]);
+	            }
+	
+	            self._x = x;
+	            self._y = y;
+	
+	            var lineGen = d3.svg.line().x(function (d) {
+	                return x(d.valueX);
+	            }).y(function (d) {
+	                return y(d.valueY);
+	            }).interpolate(self.interpolate);
+	
+	            var areaGen = d3.svg.area().x(function (d) {
+	                return x(d.valueX);
+	            }).y0(function (d) {
+	                return y(d.valueY);
+	            }).y1(height).interpolate(self.interpolate);
+	
+	            self.dataTarget.forEach(function (d, i) {
+	                if (self.area.show) {
+	                    self.body.append('path').attr('class', 'c9-chart-line c9-path-area-custom').attr('d', areaGen(d.value)).attr('data-ref', 'c9-' + d['data-ref']).style('fill', d.color).style('stroke', 'none').style('opacity', '0.1');
+	                }
+	
+	                self.body.append('path').attr('class', 'c9-chart-line c9-path-line-custom').attr('d', lineGen(d.value)).attr('data-ref', 'c9-' + d['data-ref']).style('stroke', d.color).style('stroke-dasharray', function () {
+	                    console.log(self.getLineStyle());
+	                    return self.getLineStyle();
+	                }).style('stroke-width', self.line.width).style('fill', 'none');
+	
+	                if (self.point.show) {
+	                    self.body.selectAll("dot").data(d.value).enter().append("circle").attr('class', 'c9-chart-line c9-circle-custom').attr("r", self.point.radius).attr("cx", function (_d) {
+	                        return x(_d.valueX);
+	                    }).attr("cy", function (_d) {
+	                        return y(_d.valueY);
+	                    }).attr("data-ref", function (d) {
+	                        return d["data-ref"];
+	                    }).style("fill", self.point.fill).style("stroke", self.point.stroke).style("stroke-width", self.point['stroke-width']).style("opacity", self.point.opacity);
+	                }
+	            });
+	
+	            // Draw axis before rect-overlay
+	            var axis = new _C4.default(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
+	
+	            // Set actual size for chart after initialization
+	            var chartBox = self.body.node().getBBox();
+	            self.actualWidth = chartBox.width - 4 * self.point.radius;
+	            self.actualHeight = chartBox.height;
+	
+	            //** Create a invisible rect for mouse tracking
+	            self.body.append('rect').attr('class', 'c9-chart-line c9-rect-overlay')
+	            // .attr('width', self.actualWidth)
+	            // .attr('height', self.actualHeight)
+	            .attr('width', width).attr('height', height).style('fill', 'none').style('pointer-events', 'all');
+	
+	            //** Hover line & invisible rect
+	
+	            //** Add the line to the group
+	            self.hoverLine = self.body.append('g').attr('class', 'c9-chart-line c9-comparator-line').append('line').style('stroke', 'grey').style('stroke-opacity', 0);
+	
+	            self.hoverCircle = self.hoverLine.append('circle').attr('class', 'c9-chart-line c9-comparator-line').attr('r', self.point.radius);
+	        }
+	
+	        /**
+	         * Main draw function of Line Chart
+	         */
+	
+	    }, {
+	        key: 'draw',
+	        value: function draw() {
+	            var self = this;
+	
+	            // var axis    = new Axis(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
+	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
+	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
+	
+	            // Draw legend
+	            legend.draw();
+	            legend.updateInteractionForLineChart(self);
+	
+	            self.updateInteraction();
+	        }
+	
+	        /**
+	         * Select all circle as type CIRCLE in Line Chart via its CLASS
+	         */
+	
+	    }, {
+	        key: 'selectAllCircle',
+	        value: function selectAllCircle() {
+	            var self = this;
+	
+	            return self.body.selectAll('circle.c9-chart-line.c9-circle-custom');
+	        }
+	
+	        /**
+	         * Select all rect as type RECT in Line Chart via its CLASS
+	         */
+	
+	    }, {
+	        key: 'selectRectLayer',
+	        value: function selectRectLayer() {
+	            var self = this;
+	
+	            return d3.selectAll('svg rect.c9-chart-line.c9-rect-overlay');
+	        }
+	
+	        /**
+	         * Update Interaction: Hover
+	         */
+	
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                hoverEnable = self.hover.enable,
+	                hoverOptions = self.hover.options,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onMouseMoveCallback = hoverOptions.onMouseMove.callback,
+	                onClickCallback = self.click.callback;
+	
+	            var tooltip = new _C12.default(self.options.tooltip);
+	
+	            var selector = self.selectRectLayer();
+	
+	            // Update Event Factory
+	            self.eventFactory = {
+	                // 'click': function(d) {
+	                //     if (Helper.isFunction(onClickCallback)) {
+	                //         onClickCallback.call(this, d);
+	                //     }
+	                // },
+	                // 'mouseover': function(d) {
+	                //     if (!hoverEnable) return;
+	
+	                //     if (Helper.isFunction(onMouseOverCallback)) {
+	                //         onMouseOverCallback.call(this, d);
+	                //     }
+	
+	                //     // tooltip.draw(d, self, 'mouseover');
+	                // },
+	                'mouseout': function mouseout(d) {
+	                    if (!hoverEnable) return;
+	
+	                    // if (Helper.isFunction(onMouseOutCallback)) {
+	                    //     onMouseOutCallback.call(this, d);
+	                    // }
+	
+	                    self.hoverLine.style('stroke-opacity', 0);
+	
+	                    // Remove circle style before
+	                    self.selectAllCircle()[0].forEach(function (circle) {
+	                        d3.select(circle).style('fill', self.point.fill).style('fill-opacity', self.point.opacity);
+	                    });
+	
+	                    tooltip.draw(d, self, 'mouseout');
+	                },
+	                'mousemove': function mousemove(d) {
+	                    if (!hoverEnable) return;
+	
+	                    var mouse = d3.mouse(this),
+	                        mouseX = mouse[0],
+	                        mouseY = mouse[1],
+	                        curValueX = self.x.invert(mouseX);
+	
+	                    var sameTimeArr = [],
+	                        sameTimeValueArr = [];
+	
+	                    self.dataTarget.forEach(function (d, i) {
+	                        sameTimeArr[i] = d.value;
+	                        sameTimeArr[i].sort(function (a, b) {
+	                            return a.valueX - b.valueX;
+	                        });
+	                        var idx = self._isTimeDomain ? self.bisectDate(sameTimeArr[i], new Date(curValueX)) : self.bisectDate(sameTimeArr[i], curValueX);
+	
+	                        var d0, d1;
+	
+	                        d0 = idx === 0 ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
+	                        d1 = sameTimeArr[i][idx];
+	
+	                        // work out which date value is closest to the mouse
+	                        sameTimeValueArr[i] = curValueX - d0.valueX > d1.valueX - curValueX ? d1 : d0;
+	                    });
+	
+	                    if (_C14.default.isFunction(onMouseMoveCallback)) {
+	                        onMouseMoveCallback.call(this, sameTimeValueArr);
+	                    }
+	
+	                    var x = self.x(sameTimeValueArr[0].valueX);
+	                    var y = self.y(sameTimeValueArr[0].valueY);
+	
+	                    // Remove circle style before
+	                    self.selectAllCircle()[0].forEach(function (circle) {
+	                        d3.select(circle).style('fill', self.point.fill).style('fill-opacity', self.point.opacity);
+	                    });
+	
+	                    // Update circle style after mouse move
+	                    for (var i = 0; i < sameTimeValueArr.length; i++) {
+	                        var circle = d3.select("circle[data-ref='" + sameTimeValueArr[i]['data-ref'] + "']");
+	                        circle.style('fill', 'steelblue').style('fill-opacity', 1);
+	                    }
+	
+	                    // focus.select('#focusCircle')
+	                    //     .attr('cx', x)
+	                    //     .attr('cy', y);
+	                    self.hoverLine.attr('x1', x).attr('y1', self.y(self.y.domain()[0])).attr('x2', x).attr('y2', self.y(self.y.domain()[1])).style('stroke-opacity', 1);
+	                    // self.hoverLine
+	                    //     .attr('x1', self.x(self.x.domain()[0])).attr('y1', y)
+	                    //     .attr('x2', self.x(self.x.domain()[1])).attr('y2', y)
+	                    //     .attr('stroke-opacity', 1);
+	
+	                    //** Display Hover line
+	                    // self.hoverLine
+	                    //     .attr('x1', self.x(sameTimeValueArr[0].valueX))
+	                    //     .attr('x2', self.x(sameTimeValueArr[0].valueX))
+	                    //     .attr('stroke-opacity', 1);
+	
+	                    tooltip.draw(sameTimeValueArr, self, 'mousemove');
+	                }
+	            };
+	
+	            selector.on(self.eventFactory);
+	        }
+	    }, {
+	        key: 'getLineStyle',
+	        value: function getLineStyle() {
+	            var self = this;
+	
+	            var r = void 0;
+	
+	            switch (self.line.style) {
+	                case 'dot':
+	                    r = "1, 1";
+	                    break;
+	                case 'solid':
+	                    r = 'none';
+	                    break;
+	                case 'dash':
+	                    r = "3, 3";
+	                    break;
+	                default:
+	                    r = 'none';
+	                    break;
+	            }
+	
+	            return r;
+	        }
+	
+	        /**
+	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {
+	            _get(LineChart.prototype.__proto__ || Object.getPrototypeOf(LineChart.prototype), 'on', this).call(this, eventType, callback);
+	
+	            var self = this;
+	            var selector = self.selectRectLayer();
+	
+	            // Update Event Factory
+	            var eventFactory = {
+	                'mousemove.event': function mousemoveEvent(d) {
+	
+	                    var mouse = d3.mouse(this),
+	                        mouseX = mouse[0],
+	                        mouseY = mouse[1],
+	                        curValueX = self.x.invert(mouseX);
+	
+	                    var sameTimeArr = [],
+	                        sameTimeValueArr = [];
+	
+	                    self.dataTarget.forEach(function (d, i) {
+	                        sameTimeArr[i] = d.value;
+	                        sameTimeArr[i].sort(function (a, b) {
+	                            return a.valueX - b.valueX;
+	                        });
+	                        var idx = self._isTimeDomain ? self.bisectDate(sameTimeArr[i], new Date(curValueX)) : self.bisectDate(sameTimeArr[i], curValueX);
+	
+	                        var d0, d1;
+	
+	                        d0 = idx === 0 ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
+	                        d1 = sameTimeArr[i][idx];
+	
+	                        // work out which date value is closest to the mouse
+	                        sameTimeValueArr[i] = curValueX - d0.valueX > d1.valueX - curValueX ? d1 : d0;
+	                    });
+	
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, sameTimeValueArr);
+	                    }
+	                }
+	            };
+	
+	            var eventName = eventType + '.event';
+	
+	            selector.on(eventName, eventFactory[eventName]);
+	        }
+	
+	        /*=====  End of Main Functions  ======*/
+	
+	    }, {
+	        key: 'point',
+	        get: function get() {
+	            return this._point;
+	        },
+	
+	        /*=====  End of Getter  ======*/
+	
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	
+	        set: function set(arg) {
+	            if (arg) {
+	                this._point = arg;
+	            }
+	        }
+	    }, {
+	        key: 'area',
+	        get: function get() {
+	            return this._area;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._area = arg;
+	            }
+	        }
+	    }, {
+	        key: 'line',
+	        get: function get() {
+	            return this._line;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._line = arg;
+	            }
+	        }
+	    }, {
+	        key: 'interpolate',
+	        get: function get() {
+	            return this._interpolate;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._interpolate = arg;
+	            }
+	        }
+	    }, {
+	        key: 'x',
+	        get: function get() {
+	            return this._x;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._x = arg;
+	            }
+	        }
+	    }, {
+	        key: 'y',
+	        get: function get() {
+	            return this._y;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._y = arg;
+	            }
+	        }
+	    }, {
+	        key: 'isTimeDomain',
+	        get: function get() {
+	            return this._isTimeDomain;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._isTimeDomain = arg;
+	            }
+	        }
+	    }, {
+	        key: 'da',
+	        get: function get() {
+	            return this._da;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._da = arg;
+	            }
+	        }
+	    }, {
+	        key: 'bisectDate',
+	        get: function get() {
+	            return this._bisectDate;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._bisectDate = arg;
+	            }
+	        }
+	    }, {
+	        key: 'hoverLine',
+	        get: function get() {
+	            return this._hoverLine;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._hoverLine = arg;
+	            }
+	        }
+	    }]);
+	
+	    return LineChart;
+	}(_C2.default);
+	
+	exports.default = LineChart;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _C = __webpack_require__(2);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	var _C3 = __webpack_require__(4);
+	
+	var _C4 = _interopRequireDefault(_C3);
+	
+	var _C5 = __webpack_require__(5);
+	
+	var _C6 = _interopRequireDefault(_C5);
+	
+	var _C7 = __webpack_require__(6);
+	
+	var _C8 = _interopRequireDefault(_C7);
+	
+	var _C9 = __webpack_require__(10);
+	
+	var _C10 = _interopRequireDefault(_C9);
+	
+	var _C11 = __webpack_require__(7);
+	
+	var _C12 = _interopRequireDefault(_C11);
+	
+	var _C13 = __webpack_require__(3);
+	
+	var _C14 = _interopRequireDefault(_C13);
+	
+	var _C15 = __webpack_require__(8);
+	
+	var _C16 = _interopRequireDefault(_C15);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var PieChart = function (_Chart) {
+	    _inherits(PieChart, _Chart);
+	
+	    function PieChart(options) {
+	        _classCallCheck(this, PieChart);
+	
+	        var _this = _possibleConstructorReturn(this, (PieChart.__proto__ || Object.getPrototypeOf(PieChart)).call(this, options));
+	
+	        var self = _this;
+	
+	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
+	        var config = {
+	            radius: R,
+	            showText: true
+	        };
+	
+	        self._radius = options.radius || config.radius;
+	        self._showText = options.showText || config.showText;
+	
+	        self.body.type = 'pie';
+	
+	        var dataOption = self.dataOption;
+	        dataOption.colorRange = self.colorRange;
+	
+	        var da = new _C16.default(dataOption);
+	        self.dataTarget = da.getDataTarget("pie");
+	
+	        self.updateConfig();
+	        return _this;
+	    }
+	
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+	
+	
+	    _createClass(PieChart, [{
+	        key: 'updateConfig',
+	
+	        /*=====  End of Setter  ======*/
+	
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        /**
+	         * Update Donut Chart Config
+	         */
+	        value: function updateConfig() {
+	            var self = this;
+	
+	            // chartInnerAfter, chartOuterAfter define easing radius of pie chart during animation
+	            // TODO: Add configs allow users to define these radius
+	            var width = self.width - self.margin.left - self.margin.right,
+	                height = self.height - self.margin.top - self.margin.bottom,
+	                color = self.colorRange,
+	                chartInnerBefore = 0,
+	                chartOuterBefore = self.radius,
+	                chartInnerAfter = 0,
+	                chartOuterAfter = self.radius * 1.2;
+	
+	            var hoverOptions = self.hover.options,
+	                hoverEnable = self.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
+	
+	            var tooltip = new _C12.default(self.options.tooltip);
+	
+	            // Main Event Dispatch for paths in pie chart
+	            self.eventFactory = {
+	                'click': function click(d, i) {
+	                    if (_C14.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
+	                },
+	
+	                'mouseover': function mouseover(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+	
+	                    // For legend
+	                    if (self.legend.show) self.legend.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            d3.select(this).attr('opacity', '0.3');
+	                        }
+	                    });
+	
+	                    // For Table
+	                    if (self.table.show) {
+	                        var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+	                        tr.filter(function (i) {
+	                            return i['data-ref'] != d.data['data-ref'];
+	                        }).selectAll('td').style('opacity', '0.5');
+	                        var selectedItem = tr.filter(function (i) {
+	                            return i['data-ref'] == d.data['data-ref'];
+	                        });
+	                        //set its style and scroll to its pos
+	                        selectedItem.selectAll('td').style('opacity', '1');
+	                        _C14.default.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+	                    }
+	
+	                    // For Chart
+	                    self.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+	                            d3.select(this).attr('opacity', '0.3');
+	                        }
+	                    });
+	
+	                    // For Tooltip
+	                    tooltip.draw(d, self, 'mouseover');
+	                },
+	
+	                'mouseout': function mouseout(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
+	                    var selector = d3.select(this);
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
+	
+	                    // For legend
+	                    if (self.legend.item) self.legend.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    // For Table
+	                    if (self.table.show) d3.selectAll('.c9-table-container>.c9-table-body tr').filter(function (i) {
+	                        return i['data-ref'] != d.data['data-ref'];
+	                    }).selectAll('td').style('opacity', '1');
+	
+	                    // For Chart
+	                    self.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    // For Tooltip
+	                    tooltip.draw(d, self, 'mouseout');
+	                }
+	
+	            };
+	
+	            self.arc = d3.svg.arc().innerRadius(0).outerRadius(self.radius);
+	
+	            //we can sort data here
+	            self.pie = d3.layout.pie().sort(null).value(function (d) {
+	                return d.value;
+	            });
+	
+	            //draw chart
+	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
+	
+	            // Append main path contains pie
+	            arcs.append('path').attr('class', 'c9-chart-pie c9-custom-path').attr('data-ref', function (d) {
+	                return d.data['data-ref'];
+	            }).attr('d', self.arc).attr('fill', function (d, i) {
+	                return color(i);
+	            }).attr('stroke', '#ffffff').each(function (d) {
+	                self._currentData = d;
+	            });
+	            // Current data used for calculate interpolation 
+	            // between current arc vs disabled arc
+	
+	
+	            // Append middle text display name
+	            // if (self.showText) {
+	            //     arcs.append('text')
+	            //             .attr('class', 'c9-chart-pie c9-custom-text')
+	            //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
+	            //             .attr('dy', '.35em')
+	            //             .attr('text-anchor', 'middle')
+	            //             .text(function(d) { return d.data.name; });
+	            // }
+	        }
+	
+	        /**
+	         * Main draw function of Donut Chart
+	         */
+	
+	    }, {
+	        key: 'draw',
+	        value: function draw() {
+	
+	            var self = this;
+	
+	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
+	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
+	            var table = new _C10.default(self.options.table, self.body, self.dataTarget);
+	
+	            self.legend = legend;
+	            self.table = table;
+	            // Draw legend
+	            legend.draw();
+	            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	
+	            // Draw table
+	            table.draw();
+	            table.updateInteractionForPieChart(self);
+	            // Update interaction of this own chart
+	            self.updateInteraction();
+	        }
+	
+	        /**
+	         * Select all path as type PATH in Donut Chart via its CLASS
+	         */
+	
+	    }, {
+	        key: 'selectAllPath',
+	        value: function selectAllPath() {
+	            var self = this;
+	
+	            return self.body.selectAll('path.c9-chart-pie.c9-custom-path');
+	        }
+	
+	        /**
+	         * Update Interaction: Hover
+	         * @return {} 
+	         */
+	
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                selector = self.selectAllPath();
+	
+	            selector.on(self.eventFactory);
+	        }
+	
+	        /**
+	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {
+	            _get(PieChart.prototype.__proto__ || Object.getPrototypeOf(PieChart.prototype), 'on', this).call(this, eventType, callback);
+	
+	            var self = this;
+	            var selector = self.selectAllPath();
+	
+	            // Update Event Factory
+	            var eventFactory = {
+	                'click.event': function clickEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseover.event': function mouseoverEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseout.event': function mouseoutEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                }
+	            };
+	
+	            var eventName = eventType + '.event';
+	
+	            selector.on(eventName, eventFactory[eventName]);
+	        }
+	
+	        /*=====  End of Main Functions  ======*/
+	
+	    }, {
+	        key: 'radius',
+	        get: function get() {
+	            return this._radius;
+	        },
+	
+	        /*=====  End of Getter  ======*/
+	
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        set: function set(newradius) {
+	            if (newradius) {
+	                this._radius = newradius;
+	            }
+	        }
+	    }, {
+	        key: 'showText',
+	        get: function get() {
+	            return this._showText;
+	        },
+	        set: function set(newShowText) {
+	            if (newShowText) {
+	                this._showText = newShowText;
+	            }
+	        }
+	    }, {
+	        key: 'pie',
+	        get: function get() {
+	            return this._pie;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._pie = arg;
+	            }
+	        }
+	    }, {
+	        key: 'arc',
+	        get: function get() {
+	            return this._arc;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._arc = arg;
+	            }
+	        }
+	    }, {
+	        key: 'currentData',
+	        get: function get() {
+	            return this._currentData;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._currentData = arg;
+	            }
+	        }
+	    }, {
+	        key: 'chartType',
+	        get: function get() {
+	            return this._body.type;
+	        }
+	    }, {
+	        key: 'legend',
+	        get: function get() {
+	            return this._legend;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._legend = arg;
+	            }
+	        }
+	    }]);
+	
+	    return PieChart;
+	}(_C2.default);
+	
+	exports.default = PieChart;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+	
+	var _C = __webpack_require__(2);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	var _C3 = __webpack_require__(4);
+	
+	var _C4 = _interopRequireDefault(_C3);
+	
+	var _C5 = __webpack_require__(5);
+	
+	var _C6 = _interopRequireDefault(_C5);
+	
+	var _C7 = __webpack_require__(6);
+	
+	var _C8 = _interopRequireDefault(_C7);
+	
+	var _C9 = __webpack_require__(10);
+	
+	var _C10 = _interopRequireDefault(_C9);
+	
+	var _C11 = __webpack_require__(7);
+	
+	var _C12 = _interopRequireDefault(_C11);
+	
+	var _C13 = __webpack_require__(3);
+	
+	var _C14 = _interopRequireDefault(_C13);
+	
+	var _C15 = __webpack_require__(8);
+	
+	var _C16 = _interopRequireDefault(_C15);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -4352,10 +5209,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dataOption = self.dataOption;
 	        dataOption.colorRange = self.colorRange;
 	
-	        var da = new _C12.default(dataOption);
+	        var da = new _C16.default(dataOption);
 	        self.dataTarget = da.getDataTarget("timeline");
 	
-	        self.initTimelineConfig();
+	        self.updateConfig();
 	        return _this;
 	    }
 	
@@ -4365,7 +5222,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(TimeLine, [{
-	        key: 'initTimelineConfig',
+	        key: 'updateConfig',
 	
 	        /*=====  End of Setter  ======*/
 	
@@ -4373,15 +5230,85 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Main Functions            =
 	        ======================================*/
 	
-	        value: function initTimelineConfig() {
+	        value: function updateConfig() {
 	            var self = this;
+	
 	            var color = self.colorRange;
+	
 	            var stackList = {},
 	                maxStack = 0,
 	                minTime = 0,
 	                maxTime = 0,
 	                width = self.width - self.margin.left - self.margin.right,
 	                height = self.height - self.margin.top - self.margin.bottom;
+	
+	            var hoverOptions = self.hover.options,
+	                hoverEnable = self.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
+	
+	            // Update Tooltip options for Timeline Chart
+	            self.options.tooltip = {
+	                show: true,
+	                position: 'left', // [top, right, bottom, left]
+	                backgroundColor: 'rgba(0, 0, 0, 0.8)',
+	                fontColor: '#fff',
+	                fontSize: '11px',
+	                format: null
+	            };
+	
+	            var tooltip = new _C12.default(self.options.tooltip);
+	
+	            // Main Event Dispatch for paths in pie chart
+	            self._eventFactory = {
+	                'click': function click(d, i) {
+	                    if (_C14.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
+	                },
+	
+	                'mouseover': function mouseover(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
+	                    }
+	
+	                    // var selector = d3.select(this);
+	                    // selector.transition()
+	                    //         .attr('d', d3.svg.arc()
+	                    //             .innerRadius(chartInnerAfter)
+	                    //             .outerRadius(chartOuterAfter)
+	                    //         )
+	                    //         // .style('stroke', '#FFFFF3')
+	                    //         .attr('fill-opacity', '1.0');
+	
+	                    tooltip.draw(d, self, 'mouseover');
+	                },
+	
+	                'mouseout': function mouseout(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
+	                    // var selector = d3.select(this);
+	                    // selector.transition()
+	                    //         .duration(500)
+	                    //         .ease('bounce')
+	                    //         .attr('d', d3.svg.arc()
+	                    //             .innerRadius(chartInnerBefore)
+	                    //             .outerRadius(chartOuterBefore)
+	                    //         )
+	                    //         // .style('stroke', '#ffffff')
+	                    //         .attr('fill-opacity', '0.5');
+	
+	                    tooltip.draw(d, self, 'mouseout');
+	                }
+	
+	            };
 	
 	            // count number of stack and calculate min time, max time from data
 	            if (self.stack || self.ending === 0 || self.starting === 0) {
@@ -4414,7 +5341,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var scale = width / (self.ending - self.starting);
 	
 	            //draw border
-	            self.body.append("rect").attr("class", "timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.itemMargin / 2).attr("height", (self.itemHeight + self.itemMargin) * self.dataTarget.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
+	            self.body.append("rect").attr("class", "c9-timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.itemMargin / 2).attr("height", (self.itemHeight + self.itemMargin) * self.dataTarget.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
 	
 	            self.dataTarget.forEach(function (datum, index) {
 	                var data = datum.value;
@@ -4422,47 +5349,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	                //draw background
 	                if (self.backgroundColor) {
 	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", _C10.default.isArray(self.backgroundColor) ? self.backgroundColor[index % (self.maxStack - 1)] : self.backgroundColor);
+	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", _C14.default.isArray(self.backgroundColor) ? self.backgroundColor[index % (self.maxStack - 1)] : self.backgroundColor);
 	                }
 	
 	                if (self.striped) {
 	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
+	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
 	                }
 	
 	                //draw item
 	                self.body.selectAll("g").data(data).enter().append(function (d, i) {
-	                    return document.createElementNS(d3.ns.prefix.svg, d.end ? "rect" : "circle");
-	                }).attr("x", getXPos).attr("y", getStackPosition).attr("width", function (d, i) {
+	                    return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
+	                }).attr('class', 'c9-timeline-custom-rect').attr("x", getXPos).attr("y", getStackPosition).attr("width", function (d, i) {
 	                    return (d.end - d.start) * scale;
 	                }).attr("cy", function (d, i) {
 	                    return getStackPosition(d, i) + self.itemHeight / 2;
 	                }).attr("cx", getXPos).attr("r", self.itemHeight / 2).attr("height", self.itemHeight).style("fill", color(index));
 	
-	                //draw label inside item
-	                // self.body.selectAll("g")
-	                //     .data(data).enter()
-	                //     .append("text")
-	                //     .attr("x", getXTextPos)
-	                //     .attr("y", getStackTextPosition)
-	                //     .text(function(d) {
-	                //       return d.name;
-	                //     });
-	
 	                if (self.rowSeparator && index < self.maxStack - 1) {
 	                    var lineYAxis = self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.append("svg:line").attr("class", "timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C10.default.isArray(self.rowSeparator) ? self.rowSeparator[index % (self.maxStack - 1)] : self.rowSeparator);
+	                    self.body.append("svg:line").attr("class", "c9-timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C14.default.isArray(self.rowSeparator) ? self.rowSeparator[index % (self.maxStack - 1)] : self.rowSeparator);
 	                }
 	
 	                //draw the label left side item
-	                if (!_C10.default.isEmpty(datum.name) && datum.name != "") {
+	                if (!_C14.default.isEmpty(datum.name) && datum.name != "") {
 	                    var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 	
-	                    d3.select(self.body[0][0].parentNode).append("text").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")").text(datum.name);
+	                    d3.select(self.body[0][0].parentNode).append("text").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")").text(datum.name);
 	                }
 	                //draw icon
-	                else if (!_C10.default.isEmpty(datum.icon) && datum.icon != "") {
-	                        d3.select(self.body[0][0].parentNode).append("image").attr("class", "timeline-label").attr("transform", "translate(" + self.labelMargin + "," + (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.itemHeight).attr("height", self.itemHeight);
+	                else if (!_C14.default.isEmpty(datum.icon) && datum.icon != "") {
+	                        d3.select(self.body[0][0].parentNode).append("image").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.labelMargin + "," + (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.itemHeight).attr("height", self.itemHeight);
 	                    }
 	
 	                function getStackPosition(d, i) {
@@ -4492,11 +5409,78 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function draw() {
 	            var self = this;
 	
-	            self.options.starting = self.starting;
-	            self.options.ending = self.ending;
-	            var axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
+	            self.options.axis.starting = self.starting;
+	            self.options.axis.ending = self.ending;
+	            var axis = new _C4.default(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
 	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options, self.body, self.colorRange, self.dataTarget);
+	            var legend = new _C8.default(self.options.legend, self.body, self.colorRange, self.dataTarget);
+	
+	            self.updateInteraction();
+	        }
+	
+	        /**
+	         * Select all path as type RECT in Timeline Chart via its CLASS
+	         */
+	
+	    }, {
+	        key: 'selectAllRect',
+	        value: function selectAllRect() {
+	            var self = this;
+	
+	            return self.body.selectAll('.c9-timeline-custom-rect');
+	        }
+	
+	        /**
+	         * Update Interaction: Hover
+	         * @return {} 
+	         */
+	
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                selector = self.selectAllRect();
+	
+	            selector.on(self.eventFactory);
+	        }
+	
+	        /**
+	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
+	         * @return {[type]}             [description]
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {
+	            _get(TimeLine.prototype.__proto__ || Object.getPrototypeOf(TimeLine.prototype), 'on', this).call(this, eventType, callback);
+	
+	            var self = this;
+	            var selector = self.selectAllRect();
+	
+	            // Update Event Factory
+	            var eventFactory = {
+	                'click.event': function clickEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseover.event': function mouseoverEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                },
+	                'mouseout.event': function mouseoutEvent(d) {
+	                    if (_C14.default.isFunction(callback)) {
+	                        callback.call(this, d);
+	                    }
+	                }
+	            };
+	
+	            var eventName = eventType + '.event';
+	
+	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
 	        /*=====  End of Main Functions  ======*/

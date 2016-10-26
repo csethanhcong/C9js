@@ -157,12 +157,22 @@ export default class PieChart extends Chart {
                         );
 
                 // For legend
-                if (self.legend.item)
+                if (self.legend.show)
                     self.legend.item.each(function() {
                         if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
                             d3.select(this).attr('opacity', '0.3');
                         }
                     });
+
+                // For Table
+                if (self.table.show) {
+                    var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+                    tr.filter(function(i) { return i['data-ref'] != d.data['data-ref'] }).selectAll('td').style('opacity', '0.5');
+                    var selectedItem = tr.filter(function(i) { return i['data-ref'] == d.data['data-ref'] });
+                    //set its style and scroll to its pos
+                    selectedItem.selectAll('td').style('opacity', '1');
+                    Helper.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+                }
 
                 // For Chart
                 self.selectAllPath().each(function(){
@@ -198,6 +208,11 @@ export default class PieChart extends Chart {
                             d3.select(this).attr('opacity', '1.0');
                         }
                     });
+
+                // For Table
+                if (self.table.show) 
+                    d3.selectAll('.c9-table-container>.c9-table-body tr').filter(function(i) { return i['data-ref'] != d.data['data-ref'] }).selectAll('td').style('opacity', '1');
+                
 
                 // For Chart
                 self.selectAllPath().each(function(){

@@ -230,25 +230,25 @@ export default class Table {
                     onClickCallback.call(this, item);
                 }
 
-                var selector = d3.select(this);
-                var enable = true,
-                    dataSet = self.data;
-                var totalEnable = d3.sum(dataSet.map(function(d) {
-                    return (d.enable) ? 1 : 0;
-                }));
+                // var selector = d3.select(this);
+                // var enable = true,
+                //     dataSet = self.data;
+                // var totalEnable = d3.sum(dataSet.map(function(d) {
+                //     return (d.enable) ? 1 : 0;
+                // }));
 
-                // Add pointer to cursor
-                selector.style('cursor', 'pointer');
+                // // Add pointer to cursor
+                // selector.style('cursor', 'pointer');
 
-                // If current selector is disabled, then turn it on back
-                // Else, set enable to false
-                if (selector.style('opacity') == '0.1') {
-                    selector.style('opacity', '1.0');
-                } else {
-                    if (totalEnable < 2) return;
-                    selector.style('opacity', '0.1');
-                    enable = false;
-                }
+                // // If current selector is disabled, then turn it on back
+                // // Else, set enable to false
+                // if (selector.style('opacity') == '0.1') {
+                //     selector.style('opacity', '1.0');
+                // } else {
+                //     if (totalEnable < 2) return;
+                //     selector.style('opacity', '0.1');
+                //     enable = false;
+                // }
 
             },
 

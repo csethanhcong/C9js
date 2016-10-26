@@ -16,9 +16,12 @@ export default class Axis {
                     type: d3.time.hours,
                     interval: 1
                 },
+                label: {
+                    text: "Name",
+                    position: "default"
+                },
                 show: false,
                 grid: false,
-                text: "Name",
                 type: ""
             },
             y: {
@@ -30,9 +33,12 @@ export default class Axis {
                     format: undefined,
                     values: []
                 },
+                label: {
+                    text: "Value",
+                    position: "default"
+                },
                 show: false,
                 grid: false,
-                text: "Value",
                 type: ""
             }
         };
