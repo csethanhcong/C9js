@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Single Line Chart</title>
+		<title>Examples - Line Chart & Sub Chart</title>
 		<!-- ICON -->
 		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
@@ -52,17 +52,14 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Single Line Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Line Chart & Sub Chart</h3>
 		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]}
+						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
+						 {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
 						];
-			// var data1 = [
-			// 			 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
-			// 			 // {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
-			// 			];
 			var options1 = {
 				id: "#demo1", 
 				width: 750, 
@@ -76,7 +73,6 @@
 				data: {
 					plain: data1,
 					keys: {
-						x: 'valueX',
 						y: 'valueY'
 					},
 					// timeFormat: '%Y-%m',
@@ -84,11 +80,10 @@
 				axis: {
 					x: {
 						show: true,
-						text: "Time",
-						type: "timeseries",
+						text: " ",
 						tick: {
 							// show: false,
-							rotate: -90
+							rotate: -45
 							// padding: 10
 						}
 					},
@@ -96,6 +91,7 @@
 						show: false,
 						text: "Sale",
 						tick: {
+							rotate: -45
 							// show: false
 						},
 						grid: true
@@ -105,15 +101,22 @@
 				interpolate: 'linear',
 				point: {
 					show: true,
-					radius: 5,
+					radius: 2,
 					fill: 'white',
-					stroke: 'steelblue',
-					'stroke-width': 2
+					stroke: '#444',
+					'stroke-width': 1
 				},
 				tooltip: {
 					format: function(data) {
-						return 'At moment: ' + data[0].valueX + '<strong>' + data[0].name + '</strong>' + 'has ' + data[0].valueY;
+						var r = '';
+						data.forEach(function(_data) {
+							r += 'At moment: ' +_data.valueX + ', <strong>' +_data.name + '</strong>' + ' consist of: ' +_data.valueY + '<br>';
+						});
+						return r;
 					}
+				},
+				subchart: {
+					show: true
 				},
 				colorRange: ['steelblue', 'red'],
 				// gridYShow: true,
@@ -122,9 +125,9 @@
 			};
 			var lineChart = new C9.LineChart(options1);
 			lineChart.draw();
-			lineChart.on('mousemove', function(data){
-				console.log(data);
-			})
+			// lineChart.on('mousemove', function(data){
+			// 	console.log(data);
+			// });
 		</script>
 		
 	</body>

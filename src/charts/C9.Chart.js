@@ -140,7 +140,13 @@ export default class Chart {
                     grid: false,
                     type: ""
                 }
-            }
+            },
+
+            // sub-chart
+            subchart: {
+                show: false,
+                height: 100,
+            },
         };
 
         self._id        = options.id        || config.id;
@@ -167,10 +173,11 @@ export default class Chart {
         self._body      = null;
         self._options   = options;
 
+        self._options.subchart  = Helper.merge(options.subchart, config.subchart);
         self._options.table     = Helper.merge(options.table, config.table);
         self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
-        self._options.legend   = Helper.merge(options.legend, config.legend);
-        self._options.axis   = Helper.mergeDeep(config.axis, options.axis);
+        self._options.legend    = Helper.merge(options.legend, config.legend);
+        self._options.axis      = Helper.mergeDeep(config.axis, options.axis);
 
         self.initConfig();
     }
@@ -370,8 +377,15 @@ export default class Chart {
         this.svg = d3.select(id)
             .append("svg")
             .style('overflow', 'visible') // to overwrite overflow: hidden by Boostrap as default
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom);
+            .attr("width", this.width)
+            .attr("height", this.height);
+
+
+        this.svg.append("defs").append("clipPath")
+            .attr("id", "clip")
+          .append("rect")
+            .attr("width", width)
+            .attr("height", height);
 
         this.body = this.svg
                     .append("g")

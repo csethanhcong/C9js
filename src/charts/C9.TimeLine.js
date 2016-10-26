@@ -394,6 +394,7 @@ export default class TimeLine extends Chart {
         
         self.options.axis.starting = self.starting;
         self.options.axis.ending = self.ending;
+
         var axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);    
         var legend  = new Legend(self.options.legend, self.body, self.colorRange, self.dataTarget);

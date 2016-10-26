@@ -220,3 +220,27 @@
     top: 100%;
     left: 0;*/
 }
+
+/*----------  SUBCHART  ----------*/
+.c9-subchart-brush .extent {
+	stroke: #fff;
+	/*fill: #cfd6d9;*/
+	fill-opacity: .125;
+	shape-rendering: crispEdges;
+}
+
+.c9-subchart-axis {
+    font: 10px sans-serif;
+  }
+
+.c9-subchart-axis path,
+.c9-subchart-axis line {
+	fill: none;
+	stroke: black;
+	shape-rendering: crispEdges;
+}
+
+.tick line {
+	opacity: 0.2;
+}
+
