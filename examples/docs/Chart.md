@@ -151,12 +151,13 @@ Bar Chart (Group of bar chart)
 - x, y: Tick format, Tick count, Label Rotate, Label Position, Axis Timezone
 - Option to show/hide Tick/Axis
 
+15. Separate `Event Listener` onto invidual functions
+
 #### TODO:
 
 1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
 
-2. Separate Event Listener onto invidual functions
 
 4. `Line Chart`: 
 - DONE Add line to compare data in same x-value
@@ -182,3 +183,7 @@ option of that object
 	}
 
 8. Load `real-time data`, re-draw chart (setTimeOut)
+
+9. `Convert to d3.v4`:
+
+- REF: https://github.com/d3/d3/blob/master/CHANGES.md
