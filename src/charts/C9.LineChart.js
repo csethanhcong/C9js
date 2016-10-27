@@ -224,59 +224,57 @@ export default class LineChart extends Chart {
                         .y1(height)
                         .interpolate(self.interpolate);
 
-        // var dotGen = d3.svg.
+        /*----------  Draw line chart  ----------*/
+        self.updatePath(lineGen, areaGen, self.dataTarget);              
+        // if (self.area.show) {
+        //     self.body.selectAll("dot")
+        //         .data(self.dataTarget)
+        //         .enter()
+        //         .append('path')
+        //         .attr("clip-path", "url(#clip)")
+        //         .attr('class', 'c9-chart-line c9-path-area-custom')
+        //         .attr('d', function(d) { return areaGen(d.value); })
+        //         .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
+        //         .style('fill', function(d) { return d.color; })
+        //         .style('stroke', 'none')
+        //         .style('opacity', '0.5');
+        // }
 
-        // Draw main path at first
-        // self.dataTarget.forEach(function(d,i) {
-        //     self.drawPath(lineGen, areaGen, d, i);
-        // });
-        if (self.area.show) {
-            self.body.selectAll("dot")
-                .data(self.dataTarget)
-                .enter()
-                .append('path')
-                .attr("clip-path", "url(#clip)")
-                .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', function(d) { return areaGen(d.value); })
-                .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
-                .style('fill', function(d) { return d.color; })
-                .style('stroke', 'none')
-                .style('opacity', '0.5');
-        }
+        // self.body.selectAll("dot")
+        //     .data(self.dataTarget)
+        //     .enter()
+        //     .append('path')
+        //     .attr("clip-path", "url(#clip)")
+        //     .attr('class', 'c9-chart-line c9-path-line-custom')
+        //     .attr('d', function(d) { return lineGen(d.value); })
+        //     .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
+        //     .style('stroke', function(d) { return d.color; })
+        //     .style('stroke-dasharray', function() {
+        //         return self.getLineStyle();
+        //     })
+        //     .style('stroke-width', self.line.width)
+        //     .style('fill', 'none');
 
-        self.body.selectAll("dot")
-            .data(self.dataTarget)
-            .enter()
-            .append('path')
-            .attr("clip-path", "url(#clip)")
-            .attr('class', 'c9-chart-line c9-path-line-custom')
-            .attr('d', function(d) { return lineGen(d.value); })
-            .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
-            .style('stroke', function(d) { return d.color; })
-            .style('stroke-dasharray', function() {
-                return self.getLineStyle();
-            })
-            .style('stroke-width', self.line.width)
-            .style('fill', 'none');
-
-        if (self.point.show) {
-            self.dataTarget.forEach(function(d) {
-                self.body.selectAll("dot")
-                    .data(d.value)
-                    .enter()
-                        .append("circle")
-                        .attr("clip-path", "url(#clip)")
-                        .attr('class', 'c9-chart-line c9-circle-custom')
-                        .attr("r", self.point.radius)
-                        .attr("cx", function(_d) { return self.x(_d.valueX); })
-                        .attr("cy", function(_d) { return self.y(_d.valueY); })
-                        .attr("data-ref", function (data) { return data["data-ref"]; })
-                        .style("fill", self.point.fill) 
-                        .style("stroke", self.point.stroke)
-                        .style("stroke-width", self.point['stroke-width'])
-                        .style("opacity", self.point.opacity);
-            });
-        }
+        // if (self.point.show) {
+        //     self.dataTarget.forEach(function(d) {
+        //         self.body.selectAll("dot")
+        //             .data(d.value)
+        //             .enter()
+        //                 .append("circle")
+        //                 .attr("clip-path", "url(#clip)")
+        //                 .attr('class', 'c9-chart-line c9-circle-custom')
+        //                 .attr("r", self.point.radius)
+        //                 .attr("cx", function(_d) { return self.x(_d.valueX); })
+        //                 .attr("cy", function(_d) { return self.y(_d.valueY); })
+        //                 .attr("data-ref", function (data) { return data["data-ref"]; })
+        //                 .style("fill", self.point.fill) 
+        //                 .style("stroke", self.point.stroke)
+        //                 .style("stroke-width", self.point['stroke-width'])
+        //                 .style("opacity", self.point.opacity);
+        //     });
+        // }
+        /*----------  End Draw line chart  ----------*/
+        
 
 
         // Set actual size for chart after initialization
@@ -410,73 +408,35 @@ export default class LineChart extends Chart {
         self.updateInteraction();
     }
 
-    /**
-     * Draw main path of Line Chart
-     */
-     drawPath(lineGen, areaGen, data, index) {
-        var self = this;
-
-        if (self.area.show) {
-            self.body.append('path')
-                .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', areaGen(data.value))
-                .attr('data-ref', 'c9-'+data['data-ref'])
-                .style('fill', data.color)
-                .style('stroke', 'none')
-                .style('opacity', '0.1');
-        }
-
-        self.body
-            .append('path')
-            .attr('class', 'c9-chart-line c9-path-line-custom')
-            .attr('d', lineGen(data.value))
-            .attr('data-ref', 'c9-'+data['data-ref'])
-            .style('stroke', data.color)
-            .style('stroke-dasharray', function() {
-                return self.getLineStyle();
-            })
-            .style('stroke-width', self.line.width)
-            .style('fill', 'none');
-
-        if (self.point.show) {
-            self.body.selectAll("dot")
-                .data(data.value)
-                .enter()
-                .append("circle")
-                .attr('class', 'c9-chart-line c9-circle-custom')
-                .attr("r", self.point.radius)
-                .attr("cx", function(_d) { return self.x(_d.valueX); })
-                .attr("cy", function(_d) { return self.y(_d.valueY); })
-                .attr("data-ref", function (data) { return data["data-ref"]; })
-                .style("fill", self.point.fill) 
-                .style("stroke", self.point.stroke)
-                .style("stroke-width", self.point['stroke-width'])
-                .style("opacity", self.point.opacity);
-        }
-     }
-
      /**
      * Update main path of Line Chart when brushing
      */
-     updatePath(lineGen, areaGen, data, index) {
+     updatePath(lineGen, areaGen, data) {
         var self = this;
 
         if (self.area.show) {
-            self.body.append('path')
+            self.body.selectAll("dot")
+                .data(data)
+                .enter()
+                .append('path')
+                .attr("clip-path", "url(#clip)")
                 .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', areaGen(data.value))
-                .attr('data-ref', 'c9-'+data['data-ref'])
-                .style('fill', data.color)
+                .attr('d', function(d) { return areaGen(d.value); })
+                .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
+                .style('fill', function(d) { return d.color; })
                 .style('stroke', 'none')
-                .style('opacity', '0.1');
+                .style('opacity', '0.5');
         }
 
-        self.body
+        self.body.selectAll("dot")
+            .data(data)
+            .enter()
             .append('path')
+            .attr("clip-path", "url(#clip)")
             .attr('class', 'c9-chart-line c9-path-line-custom')
-            .attr('d', lineGen(data.value))
-            .attr('data-ref', 'c9-'+data['data-ref'])
-            .style('stroke', data.color)
+            .attr('d', function(d) { return lineGen(d.value); })
+            .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
+            .style('stroke', function(d) { return d.color; })
             .style('stroke-dasharray', function() {
                 return self.getLineStyle();
             })
@@ -484,19 +444,22 @@ export default class LineChart extends Chart {
             .style('fill', 'none');
 
         if (self.point.show) {
-            self.body.selectAll("dot")
-                .data(data.value)
-                .enter()
-                .append("circle")
-                .attr('class', 'c9-chart-line c9-circle-custom')
-                .attr("r", self.point.radius)
-                .attr("cx", function(_d) { return self.x(_d.valueX); })
-                .attr("cy", function(_d) { return self.y(_d.valueY); })
-                .attr("data-ref", function (data) { return data["data-ref"]; })
-                .style("fill", self.point.fill) 
-                .style("stroke", self.point.stroke)
-                .style("stroke-width", self.point['stroke-width'])
-                .style("opacity", self.point.opacity);
+            data.forEach(function(d) {
+                self.body.selectAll("dot")
+                    .data(d.value)
+                    .enter()
+                        .append("circle")
+                        .attr("clip-path", "url(#clip)")
+                        .attr('class', 'c9-chart-line c9-circle-custom')
+                        .attr("r", self.point.radius)
+                        .attr("cx", function(_d) { return self.x(_d.valueX); })
+                        .attr("cy", function(_d) { return self.y(_d.valueY); })
+                        .attr("data-ref", function (data) { return data["data-ref"]; })
+                        .style("fill", self.point.fill) 
+                        .style("stroke", self.point.stroke)
+                        .style("stroke-width", self.point['stroke-width'])
+                        .style("opacity", self.point.opacity);
+            });
         }
      }
 
