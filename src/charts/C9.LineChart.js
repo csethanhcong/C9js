@@ -223,7 +223,7 @@ export default class LineChart extends Chart {
                         .y0(function(d) { return y(d.valueY); })
                         .y1(height)
                         .interpolate(self.interpolate);
-                        
+
         /*----------  Draw line chart  ----------*/
         self.updatePath(lineGen, areaGen, self.dataTarget);
         /*----------  End Draw line chart  ----------*/
@@ -340,14 +340,19 @@ export default class LineChart extends Chart {
         var self = this;
 
         if (self.area.show) {
-            self.body.selectAll("dot")
+            var areaContainer = self.body.append('g')
+                                .attr('class', 'c9-chart-line c9-area-container')
+                                .attr("clip-path", "url(#clip)");
+
+            areaContainer.selectAll("dot")
+            // self.body.selectAll("dot")
                 .data(data)
                 .enter()
                 .append('path')
                 .filter(function(d) {
                     return d.enable;
                 })
-                .attr("clip-path", "url(#clip)")
+                // .attr("clip-path", "url(#clip)")
                 .attr('class', 'c9-chart-line c9-path-area-custom')
                 .attr('d', function(d) {
                     return areaGen(d.value);
@@ -362,14 +367,18 @@ export default class LineChart extends Chart {
                 .style('opacity', '0.5');
         }
 
-        self.body.selectAll("dot")
+        var pathContainer = self.body.append('g')
+                            .attr('class', 'c9-chart-line c9-path-container')
+                            .attr("clip-path", "url(#clip)");
+            
+            pathContainer.selectAll("dot")
+        // self.body.selectAll("dot")
             .data(data)
             .enter()
             .append('path')
             .filter(function(d) {
                 return d.enable;
             })
-            .attr("clip-path", "url(#clip)")
             .attr('class', 'c9-chart-line c9-path-line-custom')
             .attr('d', function(d) {
                 return lineGen(d.value);
@@ -387,13 +396,18 @@ export default class LineChart extends Chart {
             .style('fill', 'none');
 
         if (self.point.show) {
+            var pointContainer = self.body.append('g')
+                                    .attr('class', 'c9-chart-line c9-point-container')
+                                    .attr("clip-path", "url(#clip)");
+            
             data.forEach(function(d) {
                 if (!d.enable) return;
-                self.body.selectAll("dot")
+                pointContainer.selectAll("dot")
+                // self.body.selectAll("dot")
                     .data(d.value)
                     .enter()
                     .append("circle")
-                    .attr("clip-path", "url(#clip)")
+                    // .attr("clip-path", "url(#clip)")
                     .attr('class', 'c9-chart-line c9-circle-custom')
                     .attr("r", self.point.radius)
                     .attr("cx", function(_d) {
@@ -426,10 +440,14 @@ export default class LineChart extends Chart {
                             .attr("class", "c9-subchart-custom")
                             .attr("transform", "translate(" + subChartMargin.left + "," + subChartMargin.top + ")");
 
+            var subChartAreaContainer = subChart.append('g')
+                                    .attr('class', 'c9-subchart-custom c9-subchart-area-container')
+                                    .attr("clip-path", "url(#clip)");
+
             data.forEach(function(d,i) {
                 if (!d.enable) return;
 
-                subChart.append("path")
+                subChartAreaContainer.append("path")
                     // .attr("clip-path", "url(#clip)")
                     .attr("class", "c9-subchart-area")
                     .attr("d", function() { return subChartAreaGen(d.value) })
