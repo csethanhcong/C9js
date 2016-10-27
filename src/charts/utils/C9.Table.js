@@ -28,7 +28,22 @@ export default class Table {
         self._hover = Helper.merge(options.hover, config.hover);
         self._click = Helper.merge(options.click, config.click);
 
-        self._data = data;
+        if (body.type == "bar") {
+            //headings
+            if (self._headings.length < 3 && data[0][0]["group-ref"] != undefined) 
+                self._headings.push("Group");
+
+            //data
+            self._data = [];
+            data.forEach(function(d) {
+                d.forEach(function(b) {
+                    self._data.push(b);
+                })
+            });
+        }
+        else 
+            self._data = data;
+
         self._body = body;
 
     }
@@ -200,14 +215,65 @@ export default class Table {
             // Add values to each row
             bRows.append("td")
                     .text(function(d) {
-                        return d.value;
+                        return d.value || d.y0;
                     });
+
+            // Add group if chart is bar chart
+            if (self.body.type == "bar")
+                bRows.append("td")
+                        .text(function(d) {
+                            return d.group;
+                        });
 
         }
 
     }
 
-    updateInteractionForPieChart(chart) {
+    updateInteractionForBarChart(chart) {
+
+        var self = this;
+
+        var hoverOptions        = chart.hover.options,
+            hoverEnable         = chart.hover.enable,
+            onMouseOverCallback = hoverOptions.onMouseOver.callback,
+            onMouseOutCallback  = hoverOptions.onMouseOut.callback,
+            onClickCallback     = chart.click.callback;
+
+        self.itemEventFactory = {
+
+            'click': function(item) {
+                if (Helper.isFunction(onClickCallback)) {
+                    onClickCallback.call(this, item);
+                }
+                
+            },
+
+            'mouseover': function(item) {
+                if (!item) return;
+
+                var selector = d3.select(this);
+                selector.style('cursor', 'pointer');
+                // if (selector.attr('data-enable') == 'true')
+                    d3.selectAll('.c9-custom-bar>.c9-custom-rect')
+                        .filter(function (d){ return d['data-ref'] != item['data-ref']; })
+                        .attr('opacity', 0.3);
+            },
+
+            'mouseout': function(item) {
+                if (!item) return;
+                d3.select(this).style('cursor', 'pointer');
+                d3.selectAll('.c9-custom-bar>.c9-custom-rect')
+                    .filter(function (d){ return d['data-ref'] != item['data-ref']; })
+                    .attr('opacity', 1);
+            }
+        
+        };
+        if (self.show)
+            self.selectAllRow().on(self.itemEventFactory);
+
+    }
+
+    updateInteractionForDonutPieChart(chart) {
 
         var self = this;
 
@@ -229,26 +295,6 @@ export default class Table {
                 if (Helper.isFunction(onClickCallback)) {
                     onClickCallback.call(this, item);
                 }
-
-                // var selector = d3.select(this);
-                // var enable = true,
-                //     dataSet = self.data;
-                // var totalEnable = d3.sum(dataSet.map(function(d) {
-                //     return (d.enable) ? 1 : 0;
-                // }));
-
-                // // Add pointer to cursor
-                // selector.style('cursor', 'pointer');
-
-                // // If current selector is disabled, then turn it on back
-                // // Else, set enable to false
-                // if (selector.style('opacity') == '0.1') {
-                //     selector.style('opacity', '1.0');
-                // } else {
-                //     if (totalEnable < 2) return;
-                //     selector.style('opacity', '0.1');
-                //     enable = false;
-                // }
 
             },
 

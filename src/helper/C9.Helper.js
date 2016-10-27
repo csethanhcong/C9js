@@ -148,6 +148,7 @@ var Helper = {
                 })
             });
 
+
         var _newMin = self.min(_temp);
         var _newMax = self.max(_temp);
         if (_newMin < _min || isLogaric)

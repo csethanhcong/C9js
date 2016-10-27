@@ -68,7 +68,7 @@ export default class Chart {
             // table 
             table: {
                 container: "body",
-                show: true,
+                show: false,
                 headings: ["Name", "Value"],
                 style: "default", // "strip", "border"
                 serial: true,

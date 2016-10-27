@@ -646,14 +646,14 @@ export default class Legend {
                 selector.style('cursor', 'pointer');
                 if (selector.attr('data-enable') == 'true')
                     d3.selectAll('.c9-custom-bar>.c9-custom-rect')
-                        .filter(function (d){ return d.group != item.group; })
+                        .filter(function (d){ return d['group-ref'] != item['group-ref']; })
                         .attr('opacity', 0.3);
             },
 
             'mouseout': function(item) {
                 d3.select(this).style('cursor', 'pointer');
                 d3.selectAll('.c9-custom-bar>.c9-custom-rect')
-                    .filter(function (d){ return d.group != item.group; })
+                    .filter(function (d){ return d['group-ref'] != item['group-ref']; })
                     .attr('opacity', 1);
             }
         

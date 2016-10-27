@@ -237,16 +237,13 @@ export default class DataAdapter {
         switch(self.getDataTypeForBarChart()) {
             case "single":
                 self.dataSource.forEach(function(data, index) {
-                    let _stack = [];
-                    let _data = {
-                        "max": Helper.get(self.keys.value, data),
-                        "stack": [{
-                            "name" : Helper.get(self.keys.name, data),
-                            "y0" : 0,
-                            "y1" : Helper.get(self.keys.value, data),
-                            "enable" : true,
-                        }]
-                    };
+                    let _data = [{
+                        "name" : Helper.get(self.keys.name, data),
+                        "y0" : Helper.get(self.keys.value, data),
+                        "y1" : Helper.get(self.keys.value, data),
+                        "data-ref": Helper.guid(),
+                        "enable" : true,
+                    }];
                     self.dataTarget.push(_data);
                 });
 
@@ -255,7 +252,7 @@ export default class DataAdapter {
 
             case "group":
                 var groups = self.groups;
-
+                var groupRefs = [];
                 // Iterate over each group
                 self.dataSource.forEach(function(data, index) {
                     let _dsArray    = Helper.get(self.keys.value, data);
@@ -268,6 +265,7 @@ export default class DataAdapter {
                             "group": "",
                             "name": "",
                             "data-ref": "",
+                            "group-ref": "",
                             "enable"    : true,
                         },
                         color = self.colorRange;
@@ -275,6 +273,8 @@ export default class DataAdapter {
                     // Iterate each single bar in a group
                     if (Helper.isArray(_dsArray)) {
                         _dsArray.forEach(function(d, i) {
+                            if (groupRefs.length - 1 < i)
+                                groupRefs.push(Helper.guid());
                             _stackItem = {
                                 "color": color(i),
                                 "y0": d,
@@ -282,11 +282,14 @@ export default class DataAdapter {
                                 "group": groups[i] || i,
                                 "name": Helper.get(self.keys.name, data),
                                 "data-ref": Helper.guid(),
+                                "group-ref": groupRefs[i],
                                 "enable"    : true,
                             };
                             _stack.push(_stackItem);
                         });
                     } else {
+                        if (groupRefs.length == 0)
+                            groupRefs.push(Helper.guid());
                         _stackItem = {
                             "color": color(0),
                             "y0": _dsArray,
@@ -294,6 +297,7 @@ export default class DataAdapter {
                             "group": groups[0] || 0,
                             "name": Helper.get(self.keys.name, data),
                             "data-ref": Helper.guid(),
+                            "group-ref": groupRefs[0],
                             "enable"    : true,
                         };
                         _stack.push(_stackItem);
@@ -307,7 +311,7 @@ export default class DataAdapter {
 
             case "stack":
                 var stacks = self.stacks;
-
+                var groupRefs = [];
                 // Iterate over each group
                 self.dataSource.forEach(function(data, index) {
                     let _dsArray    = Helper.get(self.keys.value, data);
@@ -329,6 +333,8 @@ export default class DataAdapter {
                         let _negBase = 0;
                         let _posBase = 0;
                         _dsArray.forEach(function(d, i) {
+                            if (groupRefs.length - 1 < i)
+                                groupRefs.push(Helper.guid());
                             _stackItem = {
                                 "color": color(i),
                                 "y0": d,
@@ -336,6 +342,7 @@ export default class DataAdapter {
                                 "group": stacks[i] || i,
                                 "name": Helper.get(self.keys.name, data),
                                 "data-ref": Helper.guid(),
+                                "group-ref": groupRefs[i],
                                 "enable"    : true,
                             };
                             _stack.push(_stackItem);
@@ -343,6 +350,8 @@ export default class DataAdapter {
                             else _negBase += d;
                         });
                     } else {
+                        if (groupRefs.length == 0)
+                            groupRefs.push(Helper.guid());
                         _stackItem = {
                             "color": color(0),
                             "y0": _dsArray,
@@ -350,6 +359,7 @@ export default class DataAdapter {
                             "group": stacks[0] || 0,
                             "name": Helper.get(self.keys.name, data),
                             "data-ref": Helper.guid(),
+                            "group-ref": groupRefs[0],
                             "enable"    : true,
                         };
                         _stack.push(_stackItem);

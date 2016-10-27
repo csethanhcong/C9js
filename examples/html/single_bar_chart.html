@@ -57,15 +57,15 @@
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: "A", v:	[.0245, 0.05, 0.1]},
-					{name: "B",	v:  [.01492, .02782, 0.05, 0.1]},
-					{name: "C", v:	[.02782, .02782, 0.05, 0.1]},
-					{name: "D", v:	[.04253, .02782, 0.05, 0.1]},
-					{name: "E", v:	[1, .02782, 0.05, 0.1]},
-					{name: "F", v:	[.02288, .02782, 0.05, 0.1]},
-					{name: "G", v:	[.02015, .02782, 0.05, 0.1]},
-					{name: "H", v:	[.06094, .02782, 0.05, 0.1]},
-					{name: "I", v:	[.5, .02782, 0.05, 0.1]},
+					{name: "A", v:	.0245},
+					{name: "B",	v:  .01492},
+					{name: "C", v:	.02782},
+					{name: "D", v:	.04253},
+					{name: "E", v:	1},
+					{name: "F", v:	.02288},
+					{name: "G", v:	.02015},
+					{name: "H", v:	.06094},
+					{name: "I", v:	.5},
 				];
 
 			var options1 = {
@@ -84,10 +84,22 @@
 					keys: {
 						value: "v"
 					},
-					stacks: ["HAHA", "HEHE", "HOHO", "HIHI"]
+					// stacks: ["HAHA", "HEHE", "HOHO", "HIHI"]
 				}, 
+				axis: {
+					y: {
+						show: true,
+						tick: {
+							count: 5
+						}
+					}
+				},
+				table: {
+					show: true
+				}
+				,
 				barColor: "category20",
-				isLogaric: false,
+				isLogaric: true,
 				// groupType: "group",
 				legendShow:true,
 				groupNames: ["hihi", "haha", "kaka", "lol"]

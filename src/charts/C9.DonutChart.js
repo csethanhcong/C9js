@@ -176,12 +176,22 @@ export default class DonutChart extends Chart {
                         );
 
                 // For legend
-                if (self.legend.item)
+                if (self.legend.show)
                     self.legend.item.each(function() {
                         if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
                             d3.select(this).attr('opacity', '0.3');
                         }
                     });
+
+                // For Table
+                if (self.table.show) {
+                    var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+                    tr.filter(function(i) { return i['data-ref'] != d.data['data-ref'] }).selectAll('td').style('opacity', '0.5');
+                    var selectedItem = tr.filter(function(i) { return i['data-ref'] == d.data['data-ref'] });
+                    //set its style and scroll to its pos
+                    selectedItem.selectAll('td').style('opacity', '1');
+                    Helper.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+                }
 
                 // For Chart
                 self.selectAllPath().each(function(){
@@ -211,13 +221,17 @@ export default class DonutChart extends Chart {
                         );
 
                 // For legend
-                if (self.legend.item)
+                if (self.legend.show)
                 self.legend.item.each(function() {
                     if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
                         d3.select(this).attr('opacity', '1.0');
                     }
                 });
 
+                // For Table
+                if (self.table.show)
+                    d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
+                
                 // For Chart
                 self.selectAllPath().each(function(){
                     if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
@@ -283,13 +297,18 @@ export default class DonutChart extends Chart {
         
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
+        var table   = new Table(self.options.table, self.body, self.dataTarget);
 
         self.legend = legend;
-        
+        self.table = table;
+
         // Draw legend
         legend.draw();
         legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
+        // Draw table
+        table.draw();
+        table.updateInteractionForDonutPieChart(self);
         // Update interaction of this own chart
         self.updateInteraction();
 

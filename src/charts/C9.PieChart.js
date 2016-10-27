@@ -211,7 +211,7 @@ export default class PieChart extends Chart {
 
                 // For Table
                 if (self.table.show) 
-                    d3.selectAll('.c9-table-container>.c9-table-body tr').filter(function(i) { return i['data-ref'] != d.data['data-ref'] }).selectAll('td').style('opacity', '1');
+                    d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
                 
 
                 // For Chart
@@ -288,7 +288,7 @@ export default class PieChart extends Chart {
         
         // Draw table
         table.draw();
-        table.updateInteractionForPieChart(self);
+        table.updateInteractionForDonutPieChart(self);
         // Update interaction of this own chart
         self.updateInteraction();
 

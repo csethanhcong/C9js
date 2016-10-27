@@ -3,6 +3,7 @@ import Chart from './C9.Chart';
 import Axis from './utils/C9.Axis';
 import Title from './utils/C9.Title';
 import Legend from './utils/C9.Legend';
+import Table from './utils/C9.Table';
 import Tooltip from './utils/C9.Tooltip';
 
 import Helper from '../helper/C9.Helper';
@@ -280,9 +281,17 @@ export default class BarChart extends Chart {
         self.axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
         var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
-        
+        var table   = new Table(self.options.table, self.body, self.dataTarget);
+
+        self.table = table;
+
+        // Draw legend
         legend.draw();
         legend.updateInteractionForBarChart(self);
+
+        // Draw table
+        table.draw();
+        table.updateInteractionForBarChart(self);
 
         self.updateInteraction();
     }
@@ -337,6 +346,16 @@ export default class BarChart extends Chart {
                     onMouseOverCallback.call(this, d);
                 }
 
+                // For table
+                if (self.table.show) {
+                    var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+                    tr.filter(function(i) { return i['data-ref'] != d['data-ref'] }).selectAll('td').style('opacity', '0.5');
+                    var selectedItem = tr.filter(function(i) { return i['data-ref'] == d['data-ref'] });
+                    //set its style and scroll to its pos
+                    selectedItem.selectAll('td').style('opacity', '1');
+                    Helper.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+                }
+
                 tooltip.draw(d, self, 'mouseover');
             },
             'mouseout': function(d) {
@@ -345,6 +364,10 @@ export default class BarChart extends Chart {
                 if (Helper.isFunction(onMouseOutCallback)) {
                     onMouseOutCallback.call(this, d);
                 }
+
+                // For Table
+                if (self.table.show)
+                    d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
 
                 tooltip.draw(d, self, 'mouseout');
             }
