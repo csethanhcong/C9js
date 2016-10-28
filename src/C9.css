@@ -223,7 +223,7 @@
 
 /*----------  SUBCHART  ----------*/
 .c9-subchart-brush .extent {
-	stroke: #fff;
+	/*stroke: #fff;*/
 	/*fill: #cfd6d9;*/
 	fill-opacity: .125;
 	shape-rendering: crispEdges;

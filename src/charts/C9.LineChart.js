@@ -224,59 +224,10 @@ export default class LineChart extends Chart {
                         .y1(height)
                         .interpolate(self.interpolate);
 
-        // var dotGen = d3.svg.
-
-        // Draw main path at first
-        // self.dataTarget.forEach(function(d,i) {
-        //     self.drawPath(lineGen, areaGen, d, i);
-        // });
-        if (self.area.show) {
-            self.body.selectAll("dot")
-                .data(self.dataTarget)
-                .enter()
-                .append('path')
-                .attr("clip-path", "url(#clip)")
-                .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', function(d) { return areaGen(d.value); })
-                .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
-                .style('fill', function(d) { return d.color; })
-                .style('stroke', 'none')
-                .style('opacity', '0.5');
-        }
-
-        self.body.selectAll("dot")
-            .data(self.dataTarget)
-            .enter()
-            .append('path')
-            .attr("clip-path", "url(#clip)")
-            .attr('class', 'c9-chart-line c9-path-line-custom')
-            .attr('d', function(d) { return lineGen(d.value); })
-            .attr('data-ref', function(d) { return 'c9-'+d['data-ref']; })
-            .style('stroke', function(d) { return d.color; })
-            .style('stroke-dasharray', function() {
-                return self.getLineStyle();
-            })
-            .style('stroke-width', self.line.width)
-            .style('fill', 'none');
-
-        if (self.point.show) {
-            self.dataTarget.forEach(function(d) {
-                self.body.selectAll("dot")
-                    .data(d.value)
-                    .enter()
-                        .append("circle")
-                        .attr("clip-path", "url(#clip)")
-                        .attr('class', 'c9-chart-line c9-circle-custom')
-                        .attr("r", self.point.radius)
-                        .attr("cx", function(_d) { return self.x(_d.valueX); })
-                        .attr("cy", function(_d) { return self.y(_d.valueY); })
-                        .attr("data-ref", function (data) { return data["data-ref"]; })
-                        .style("fill", self.point.fill) 
-                        .style("stroke", self.point.stroke)
-                        .style("stroke-width", self.point['stroke-width'])
-                        .style("opacity", self.point.opacity);
-            });
-        }
+        /*----------  Draw line chart  ----------*/
+        self.updatePath(lineGen, areaGen, self.dataTarget);
+        /*----------  End Draw line chart  ----------*/
+        
 
 
         // Set actual size for chart after initialization
@@ -307,43 +258,15 @@ export default class LineChart extends Chart {
                         .x(x2)
                         .on("brush", brushed);
 
-        var subChartArea = d3.svg.area()
+        var subChartAreaGen = d3.svg.area()
                         .x(function(d) { return x2(d.valueX) })
                         .y0(function(d) { return y2(d.valueY) })
                         .y1(subChartHeight);
 
-        if (self.options.subchart.show) {
-            self.svg.attr('height', self.height + subChartHeight);
-
-            var subChart = self.svg.append("g")
-                            .attr("class", "c9-subchart-custom")
-                            .attr("transform", "translate(" + subChartMargin.left + "," + subChartMargin.top + ")");
-
-            self.dataTarget.forEach(function(d,i) {
-                subChart.append("path")
-                    // .attr("clip-path", "url(#clip)")
-                    .attr("class", "c9-subchart-area")
-                    .attr("d", function() { return subChartArea(d.value) })
-                    .attr('data-ref', 'c9-'+d['data-ref'])
-                    .style('fill', d.color)
-                    .style('stroke', 'none')
-                    .style('opacity', '0.5');;
-            });
-            
-
-            subChart.append("g")
-                .attr("class", "c9-subchart-axis")
-                .attr("transform", "translate(0," + subChartHeight + ")")
-                .call(xAxis2);
-
-            //append the brush for the selection of subsection  
-            subChart.append("g")
-                .attr("class", "c9-subchart-brush")
-                .call(brush)
-                .selectAll("rect")
-                .attr("height", subChartHeight);
-
-        }
+        /*----------  Draw subchart  ----------*/
+        self.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, xAxis2, brush, self.dataTarget);
+        /*----------  End Draw sub chart  ----------*/
+        
 
         function brushed() {
             // Update axis
@@ -415,72 +338,61 @@ export default class LineChart extends Chart {
     }
 
     /**
-     * Draw main path of Line Chart
-     */
-     drawPath(lineGen, areaGen, data, index) {
-        var self = this;
-
-        if (self.area.show) {
-            self.body.append('path')
-                .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', areaGen(data.value))
-                .attr('data-ref', 'c9-'+data['data-ref'])
-                .style('fill', data.color)
-                .style('stroke', 'none')
-                .style('opacity', '0.1');
-        }
-
-        self.body
-            .append('path')
-            .attr('class', 'c9-chart-line c9-path-line-custom')
-            .attr('d', lineGen(data.value))
-            .attr('data-ref', 'c9-'+data['data-ref'])
-            .style('stroke', data.color)
-            .style('stroke-dasharray', function() {
-                return self.getLineStyle();
-            })
-            .style('stroke-width', self.line.width)
-            .style('fill', 'none');
-
-        if (self.point.show) {
-            self.body.selectAll("dot")
-                .data(data.value)
-                .enter()
-                .append("circle")
-                .attr('class', 'c9-chart-line c9-circle-custom')
-                .attr("r", self.point.radius)
-                .attr("cx", function(_d) { return self.x(_d.valueX); })
-                .attr("cy", function(_d) { return self.y(_d.valueY); })
-                .attr("data-ref", function (data) { return data["data-ref"]; })
-                .style("fill", self.point.fill) 
-                .style("stroke", self.point.stroke)
-                .style("stroke-width", self.point['stroke-width'])
-                .style("opacity", self.point.opacity);
-        }
-     }
-
-     /**
      * Update main path of Line Chart when brushing
      */
-     updatePath(lineGen, areaGen, data, index) {
+    updatePath(lineGen, areaGen, data) {
         var self = this;
 
         if (self.area.show) {
-            self.body.append('path')
+            var areaContainer = self.body.append('g')
+                                .attr('class', 'c9-chart-line c9-area-container')
+                                .attr("clip-path", "url(#clip)");
+
+            areaContainer.selectAll("dot")
+            // self.body.selectAll("dot")
+                .data(data)
+                .enter()
+                .append('path')
+                .filter(function(d) {
+                    return d.enable;
+                })
+                // .attr("clip-path", "url(#clip)")
                 .attr('class', 'c9-chart-line c9-path-area-custom')
-                .attr('d', areaGen(data.value))
-                .attr('data-ref', 'c9-'+data['data-ref'])
-                .style('fill', data.color)
+                .attr('d', function(d) {
+                    return areaGen(d.value);
+                })
+                .attr('data-ref', function(d) {
+                    return 'c9-' + d['data-ref'];
+                })
+                .style('fill', function(d) {
+                    return d.color;
+                })
                 .style('stroke', 'none')
-                .style('opacity', '0.1');
+                .style('opacity', '0.5');
         }
 
-        self.body
+        var pathContainer = self.body.append('g')
+                            .attr('class', 'c9-chart-line c9-path-container')
+                            .attr("clip-path", "url(#clip)");
+            
+            pathContainer.selectAll("dot")
+        // self.body.selectAll("dot")
+            .data(data)
+            .enter()
             .append('path')
+            .filter(function(d) {
+                return d.enable;
+            })
             .attr('class', 'c9-chart-line c9-path-line-custom')
-            .attr('d', lineGen(data.value))
-            .attr('data-ref', 'c9-'+data['data-ref'])
-            .style('stroke', data.color)
+            .attr('d', function(d) {
+                return lineGen(d.value);
+            })
+            .attr('data-ref', function(d) {
+                return 'c9-' + d['data-ref'];
+            })
+            .style('stroke', function(d) {
+                return d.color;
+            })
             .style('stroke-dasharray', function() {
                 return self.getLineStyle();
             })
@@ -488,21 +400,82 @@ export default class LineChart extends Chart {
             .style('fill', 'none');
 
         if (self.point.show) {
-            self.body.selectAll("dot")
-                .data(data.value)
-                .enter()
-                .append("circle")
-                .attr('class', 'c9-chart-line c9-circle-custom')
-                .attr("r", self.point.radius)
-                .attr("cx", function(_d) { return self.x(_d.valueX); })
-                .attr("cy", function(_d) { return self.y(_d.valueY); })
-                .attr("data-ref", function (data) { return data["data-ref"]; })
-                .style("fill", self.point.fill) 
-                .style("stroke", self.point.stroke)
-                .style("stroke-width", self.point['stroke-width'])
-                .style("opacity", self.point.opacity);
+            var pointContainer = self.body.append('g')
+                                    .attr('class', 'c9-chart-line c9-point-container')
+                                    .attr("clip-path", "url(#clip)");
+            
+            data.forEach(function(d) {
+                if (!d.enable) return;
+                pointContainer.selectAll("dot")
+                // self.body.selectAll("dot")
+                    .data(d.value)
+                    .enter()
+                    .append("circle")
+                    // .attr("clip-path", "url(#clip)")
+                    .attr('class', 'c9-chart-line c9-circle-custom')
+                    .attr("r", self.point.radius)
+                    .attr("cx", function(_d) {
+                        return self.x(_d.valueX);
+                    })
+                    .attr("cy", function(_d) {
+                        return self.y(_d.valueY);
+                    })
+                    .attr("data-ref", function(data) {
+                        return data["data-ref"];
+                    })
+                    .style("fill", self.point.fill)
+                    .style("stroke", self.point.stroke)
+                    .style("stroke-width", self.point['stroke-width'])
+                    .style("opacity", self.point.opacity);
+            });
         }
-     }
+    }    
+
+    /**
+     * Update sub chart
+     */
+    updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, xAxis2, brush, data) {
+        var self = this;
+
+        if (self.options.subchart.show) {
+            self.svg.attr('height', self.height + subChartHeight);
+
+            var subChart = self.svg.append("g")
+                            .attr("class", "c9-subchart-custom")
+                            .attr("transform", "translate(" + subChartMargin.left + "," + subChartMargin.top + ")");
+
+            var subChartAreaContainer = subChart.append('g')
+                                    .attr('class', 'c9-subchart-custom c9-subchart-area-container')
+                                    .attr("clip-path", "url(#clip)");
+
+            data.forEach(function(d,i) {
+                if (!d.enable) return;
+
+                subChartAreaContainer.append("path")
+                    // .attr("clip-path", "url(#clip)")
+                    .attr("class", "c9-subchart-area")
+                    .attr("d", function() { return subChartAreaGen(d.value) })
+                    .attr('data-ref', 'c9-'+d['data-ref'])
+                    .style('fill', d.color)
+                    .style('stroke', 'none')
+                    .style('opacity', '0.5');;
+            });
+            
+
+            subChart.append("g")
+                .attr("class", "c9-subchart-axis")
+                .attr("transform", "translate(0," + subChartHeight + ")")
+                .call(xAxis2);
+
+            //append the brush for the selection of subsection  
+            subChart.append("g")
+                .attr("class", "c9-subchart-brush")
+                .call(brush)
+                .selectAll("rect")
+                .attr("height", subChartHeight);
+
+        }
+    }
 
     /**
      * Select all circle as type CIRCLE in Line Chart via its CLASS
