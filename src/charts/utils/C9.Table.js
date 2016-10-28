@@ -28,15 +28,15 @@ export default class Table {
         self._hover = Helper.merge(options.hover, config.hover);
         self._click = Helper.merge(options.click, config.click);
 
-        if (body.type == "bar") {
+        if (body.type == "bar" || body.type == "line") {
             //headings
-            if (self._headings.length < 3 && data[0][0]["group-ref"] != undefined) 
+            if (self._headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) 
                 self._headings.push("Group");
 
             //data
             self._data = [];
             data.forEach(function(d) {
-                d.forEach(function(b) {
+                (Helper.isArray(d) ? d : d.value).forEach(function(b) {
                     self._data.push(b);
                 })
             });
@@ -215,7 +215,7 @@ export default class Table {
             // Add values to each row
             bRows.append("td")
                     .text(function(d) {
-                        return d.value || d.y0;
+                        return d.value || d.y0 || d.valueY;
                     });
 
             // Add group if chart is bar chart

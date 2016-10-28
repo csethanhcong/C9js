@@ -56,6 +56,14 @@ export default class Axis {
         this._yType     = options.y.type      || config.y.type;
         this._x             = x;
         this._y             = y;
+        
+        if (body.type == "line") {
+            var xDomain = x.domain(), paddingX = (x.domain()[1] - x.domain()[0]) * 0.01;
+            var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
+            x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
+            y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
+        }
+
 
         // x.domain(data.map(function(d) {
         //     return d.name || d[0].name;
@@ -185,6 +193,7 @@ export default class Axis {
         if (body.type != "timeline") {
             this._body.append("g")
                 .attr("class", "y axis")
+                .attr("transform", "translate(0, 0)")
                 .call(this._yAxis);
             d3.select(".y.axis")
                 .append("text")

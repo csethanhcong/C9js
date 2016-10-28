@@ -340,6 +340,7 @@ export default class Legend {
             },
 
             'mouseover': function(item) {
+                console.log(item)
                 if (Helper.isFunction(onMouseOverCallback)) {
                     onMouseOverCallback.call(this, item);
                 }
@@ -436,7 +437,7 @@ export default class Legend {
                 
 
                 chart.pie.value(function(d) {
-                    if (d.name == item.name) d.enable = enable;
+                    if (d["data-ref"] == item["data-ref"]) d.enable = enable;
                     return (d.enable) ? d.value : 0;
                 });
 
