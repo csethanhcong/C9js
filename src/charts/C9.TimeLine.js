@@ -95,63 +95,63 @@ export default class TimeLine extends Chart {
     /*==============================
     =            Setter            =
     ==============================*/
-    set stack(newStack) {
-        if (newStack) {
-            this._stacked = newStack;
+    set stack(arg) {
+        if (arg) {
+            this._stacked = arg;
         }
     }
 
-    set backgroundColor(newBackgroundColor) {
-        if (newBackgroundColor) {
-            this._backgroundColor = newBackgroundColor;
+    set backgroundColor(arg) {
+        if (arg) {
+            this._backgroundColor = arg;
         }
     }
 
-    set rowSeparator(newRowSeparator) {
-        if (newRowSeparator) {
-            this._rowSeparator = newRowSeparator;
+    set rowSeparator(arg) {
+        if (arg) {
+            this._rowSeparator = arg;
         }
     }
 
-    set starting(newStarting) {
-        if (newStarting) {
-            this._starting = newStarting;
+    set starting(arg) {
+        if (arg) {
+            this._starting = arg;
         }
     }
 
-    set ending(newEnding) {
-        if (newEnding) {
-            this._ending = newEnding;
+    set ending(arg) {
+        if (arg) {
+            this._ending = arg;
         }
     }
 
-    set itemHeight(newItemHeight) {
-        if (newItemHeight) {
-            this._itemHeight = newItemHeight;
+    set itemHeight(arg) {
+        if (arg) {
+            this._itemHeight = arg;
         }
     }
 
-    set itemMargin(newItemMargin) {
-        if (newItemMargin) {
-            this._itemMargin = newItemMargin;
+    set itemMargin(arg) {
+        if (arg) {
+            this._itemMargin = arg;
         }
     }
 
-    set labelMargin(newLabelMargin) {
-        if (newLabelMargin) {
-            this._labelMargin = newLabelMargin;
+    set labelMargin(arg) {
+        if (arg) {
+            this._labelMargin = arg;
         }
     }
 
-    set maxStack(newMaxStack) {
-        if (newMaxStack) {
-            this._maxStack = newMaxStack;
+    set maxStack(arg) {
+        if (arg) {
+            this._maxStack = arg;
         }
     }
 
-    set striped(newStriped) {
-        if (newStriped) {
-            this._striped = newStriped;
+    set striped(arg) {
+        if (arg) {
+            this._striped = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -162,6 +162,8 @@ export default class TimeLine extends Chart {
 
     updateConfig() {
         var self = this;
+
+        var subChartOptions = self.options.subchart;
 
         var color = self.colorRange;
 
@@ -205,15 +207,6 @@ export default class TimeLine extends Chart {
                     onMouseOverCallback.call(this, d);
                 }
 
-                // var selector = d3.select(this);
-                // selector.transition()
-                //         .attr('d', d3.svg.arc()
-                //             .innerRadius(chartInnerAfter)
-                //             .outerRadius(chartOuterAfter)
-                //         )
-                //         // .style('stroke', '#FFFFF3')
-                //         .attr('fill-opacity', '1.0');
-
                 tooltip.draw(d, self, 'mouseover');
             },
             
@@ -224,20 +217,8 @@ export default class TimeLine extends Chart {
                     onMouseOutCallback.call(this, d);
                 }
 
-                // var selector = d3.select(this);
-                // selector.transition()
-                //         .duration(500)
-                //         .ease('bounce')
-                //         .attr('d', d3.svg.arc()
-                //             .innerRadius(chartInnerBefore)
-                //             .outerRadius(chartOuterBefore)
-                //         )
-                //         // .style('stroke', '#ffffff')
-                //         .attr('fill-opacity', '0.5');
-
                 tooltip.draw(d, self, 'mouseout');
             }
-
         };
 
         // count number of stack and calculate min time, max time from data
@@ -274,26 +255,101 @@ export default class TimeLine extends Chart {
         self.maxStack = maxStack;
         var scale = width / (self.ending - self.starting);
 
+        self.drawMain(self.dataTarget, width, stackList, scale, color);
+
+        // Draw axis before adding brushing
+        self.options.axis.starting = self.starting;
+        self.options.axis.ending = self.ending;
+
+        var axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
+
+        /*----------  Sub Chart  ----------*/
+        
+        // var subChartWidth = width,
+        //     subChartHeight = self.options.subchart.height,
+        //     subChartMargin = {
+        //         'top': self.actualHeight + 100,
+        //         'left': self.margin.left
+        //     };
+
+        // var x2 = d3.time.scale().range([0, subChartWidth]);
+
+        // x2.domain([self.options.starting, self.options.ending]);
+
+        // var xAxis2 = d3.svg.axis()
+        //                 .scale(x2)
+        //                 .orient("bottom");
+
+        // var brush = d3.svg.brush()
+        //                 .x(x2)
+        //                 .on("brush", brushed);
+
+        // var subChartAreaGen = d3.svg.area()
+        //                 .x(function(d) { return x2(d.valueX) })
+        //                 .y0(function(d) { return y2(d.valueY) })
+        //                 .y1(subChartHeight);
+
+        // /*----------  Draw subchart  ----------*/
+        // // self.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, xAxis2, brush, self.dataTarget);
+        // /*----------  End Draw sub chart  ----------*/
+        
+
+        // function brushed() {
+        //     // Update axis
+        //     self.x.domain(brush.empty() ? x2.domain() : brush.extent());
+        //     axis.update(self.x, self.y, 500);
+
+        //     // Update main path of Line Chart
+        //     if (self.area.show) {
+        //         self.body.selectAll("path.c9-chart-line.c9-path-area-custom")
+        //             .attr("d",  function(d) { return areaGen(d.value) });
+        //     }
+        //     self.body.selectAll("path.c9-chart-line.c9-path-line-custom")
+        //             .attr("d",  function(d) { return lineGen(d.value) });
+
+        //     if (self.point.show) {
+        //         self.body.selectAll("circle.c9-chart-line.c9-circle-custom")
+        //                 .attr("cx", function(d) { return self.x(d.valueX); })
+        //                 .attr("cy", function(d) { return self.y(d.valueY); });
+        //     }
+        // }
+
+        /*----------  End of Sub Chart  ----------*/
+    }
+
+    draw() {
+        var self = this;
+        
+        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);    
+        var legend  = new Legend(self.options.legend, self.body, self.colorRange, self.dataTarget);
+
+        self.updateInteraction();
+    }
+
+    drawMain(data, width, stackList, scale, color) {
+        var self = this;
+
         //draw border
         self.body.append("rect")
             .attr("class", "c9-timeline-border-bar")
             .attr("x", 0)
             .attr("width", width)
             .attr("y", 0 - self.itemMargin / 2)
-            .attr("height", (self.itemHeight + self.itemMargin) * self.dataTarget.length)
+            .attr("height", (self.itemHeight + self.itemMargin) * data.length)
             .attr("stroke", "rgb(154, 154, 154)")
             .attr("stroke-width", 2)
             .attr("fill", "none");
 
-        self.dataTarget.forEach( function(datum, index){
-            var data = datum.value;
-
+        data.forEach( function(datum, index) {
             //draw background
             if (self.backgroundColor) { 
                 var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
-                self.body.selectAll("g")
-                    .data(data).enter()
-                    .insert("rect")
+                var bgContainer = self.body.append("g")
+                                    .attr('class', 'c9-timeline-chart c9-background-container');
+
+                bgContainer.selectAll("g")
+                    .data(datum.value).enter()
+                    .append("rect")
                     .attr("class", "c9-timeline-background-bar")
                     .attr("x", 0)
                     .attr("width", width)
@@ -305,7 +361,7 @@ export default class TimeLine extends Chart {
             if (self.striped) { 
                 var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
                 self.body.selectAll("g")
-                    .data(data).enter()
+                    .data(datum.value).enter()
                     .insert("rect")
                     .attr("class", "c9-timeline-background-bar")
                     .attr("x", 0)
@@ -317,20 +373,20 @@ export default class TimeLine extends Chart {
 
             //draw item
             self.body.selectAll("g")
-                .data(data).enter()
+                .data(datum.value).enter()
                 .append(function (d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
                 })
                 .attr('class', 'c9-timeline-custom-rect')
-                .attr("x", getXPos)
-                .attr("y", getStackPosition)
+                .attr("x", function(d, i) { getXPos(d,i); })
+                .attr("y", function(d, i) { getStackPosition(d,i ); })
                 .attr("width", function (d, i) {
                     return (d.end - d.start) * scale;
                 })
                 .attr("cy", function (d, i) {
                     return getStackPosition(d, i) + self.itemHeight / 2;
                 })
-                .attr("cx", getXPos)
+                .attr("cx", function(d, i) { getXPos(d,i); })
                 .attr("r", self.itemHeight / 2)
                 .attr("height", self.itemHeight)
                 .style("fill", color(index));
@@ -372,34 +428,22 @@ export default class TimeLine extends Chart {
                 }
                 return 0;
             }
-            function getStackTextPosition(d, i) {
-                if (self.stack) {
-                    return (self.itemHeight + self.itemMargin) * stackList[index] + self.itemHeight * 0.75;
-                }
-                return self.itemHeight * 0.75;
+
+            // function getStackTextPosition(d, i) {
+            //     if (self.stack) {
+            //         return (self.itemHeight + self.itemMargin) * stackList[index] + self.itemHeight * 0.75;
+            //     }
+            //     return self.itemHeight * 0.75;
+            // }
+
+            function getXPos(d, i) {
+                return (d.start - self.starting) * scale;
             }
+
+            // function getXTextPos(d, i) {
+            //     return (d.start - self.starting) * scale + 5;
+            // }
         });
-
-        function getXPos(d, i) {
-            return (d.start - self.starting) * scale;
-        }
-
-        function getXTextPos(d, i) {
-            return (d.start - self.starting) * scale + 5;
-        }
-    }
-
-    draw() {
-        var self = this;
-        
-        self.options.axis.starting = self.starting;
-        self.options.axis.ending = self.ending;
-
-        var axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
-        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);    
-        var legend  = new Legend(self.options.legend, self.body, self.colorRange, self.dataTarget);
-
-        self.updateInteraction();
     }
 
     /**
