@@ -322,29 +322,30 @@ export default class Legend {
                 // If current selector is disabled, then turn it on back
                 // Else, set enable to false
                 if (selector.attr('data-enable') == 'false') {
-                    selector.attr('data-enable', 'true');
+                    selector.attr('data-enable', true);
                     selector.style('opacity', '1');
                 } else {
                     if (totalEnable < 2) return;
-                    selector.attr('data-enable', 'false');
+                    selector.attr('data-enable', false);
                     selector.style('opacity', '0.1');
                     enable = false;
                 }
 
                 // update line
-                var lineGen = d3.svg.line()
-                                .x(function(d) { return chart.x(d.valueX); })
-                                .y(function(d) { return chart.y(d.valueY); })
-                                .interpolate(chart.interpolate);
+                var newData = [];
+                chart.dataTarget.forEach(function(_data) {
+                    if (_data['data-ref'] == item['data-ref']) _data.enable = enable;
+                    if (_data.enable) newData.push(_data);
+                });
 
-                var areaGen = d3.svg.area()
-                                .x(function(d) { return chart.x(d.valueX); })
-                                .y0(function(d) { return chart.y(d.valueY); })
-                                .y1(chart.height - chart.margin.top - chart.margin.bottom)
-                                .interpolate(chart.interpolate);
-
-                chart.updatePath(lineGen, areaGen, chart.dataTarget.splice(chart.dataTarget.indexOf(item), 1));
-                console.log(chart.dataTarget.splice(chart.dataTarget.indexOf(item), 1))
+                chart.updateDomain(newData);
+                chart.axis.update(chart.x, chart.y, 750);
+                chart.update(newData);
+//                 chart.axis.x.domain([-0.04, 4.04])
+// console.log(chart.axis.x.domain())
+                // update axis
+                
+                
 
             },
 

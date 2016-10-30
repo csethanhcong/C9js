@@ -179,53 +179,34 @@ export default class LineChart extends Chart {
         var width   = self.width - self.margin.left - self.margin.right,
             height  = self.height - self.margin.top - self.margin.bottom;
 
-        var subChartOptions = self.options.subchart;
-
         var x = (self._isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
             y = d3.scale.linear().range([height, 0]);
 
-        var valueXArray = d3.merge(self.dataTarget.map(function(data) {
-            return data.value.map(function(d) {
-                return d.valueX;
-            })
-        }));
+        self.x = x;
+        self.y = y;
 
-        var valueYArray = d3.merge(self.dataTarget.map(function(data) {
-            return data.value.map(function(d) {
-                return d.valueY;
-            })
-        }));
+        var subChartOptions = self.options.subchart;
 
-        x.domain(d3.extent(valueXArray));
+        self.updateDomain(self.dataTarget);
 
-        y.domain(d3.extent(valueYArray));
+        var lineGen = d3.svg.line()
+                        .x(function(d) { return self.x(d.valueX); })
+                        .y(function(d) { return self.y(d.valueY); })
+                        .interpolate(self.interpolate);
 
-        // Update domain if all values positive / negative
-        if (y.domain()[0] > 0 && y.domain()[1] > 0) {
-            y.domain([0, y.domain()[1]]);
-        } else if (y.domain()[0] < 0 && y.domain()[1] < 0) {
-            y.domain([y.domain()[0], 0]);
-        }
-
-        self._x = x;
-        self._y = y;
+        var areaGen = d3.svg.area()
+                        .x(function(d) { return self.x(d.valueX); })
+                        .y0(function(d) { return self.y(d.valueY); })
+                        .y1(height)
+                        .interpolate(self.interpolate);
 
         // Draw axis before rect-overlay
         var axis    = new Axis(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
 
-        var lineGen = d3.svg.line()
-                        .x(function(d) { return x(d.valueX); })
-                        .y(function(d) { return y(d.valueY); })
-                        .interpolate(self.interpolate);
-
-        var areaGen = d3.svg.area()
-                        .x(function(d) { return x(d.valueX); })
-                        .y0(function(d) { return y(d.valueY); })
-                        .y1(height)
-                        .interpolate(self.interpolate);
+        self.axis = axis;
 
         /*----------  Draw line chart  ----------*/
-        self.updatePath(lineGen, areaGen, self.dataTarget);
+        self.update(self.dataTarget);
         /*----------  End Draw line chart  ----------*/
         
 
@@ -244,17 +225,17 @@ export default class LineChart extends Chart {
                 'left': self.margin.left
             };
 
-        var x2 = (self._isTimeDomain) ? d3.time.scale().range([0, subChartWidth]) : d3.scale.linear().range([0, subChartWidth]),
-            y2 = d3.scale.linear().range([subChartHeight, 0]);
+        var subchartX = (self._isTimeDomain) ? d3.time.scale().range([0, subChartWidth]) : d3.scale.linear().range([0, subChartWidth]),
+            subchartY = d3.scale.linear().range([subChartHeight, 0]);
 
-        x2.domain(x.domain());
-        y2.domain(y.domain());
+        subchartX.domain(x.domain());
+        subchartY.domain(y.domain());
 
-        var xAxis2 = d3.svg.axis()
+        self.subchartXAxis = d3.svg.axis()
                         .scale(x2)
                         .orient("bottom");
 
-        var brush = d3.svg.brush()
+        self.brush = d3.svg.brush()
                         .x(x2)
                         .on("brush", brushed);
 
@@ -266,7 +247,6 @@ export default class LineChart extends Chart {
         /*----------  Draw subchart  ----------*/
         self.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, xAxis2, brush, self.dataTarget);
         /*----------  End Draw sub chart  ----------*/
-        
 
         function brushed() {
             // Update axis
@@ -291,12 +271,16 @@ export default class LineChart extends Chart {
         /*----------  End of Sub Chart  ----------*/
 
         //** Create a invisible rect for mouse tracking
+        var xDomain = self.x.domain(), paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01;
+        var yDomain = self.y.domain(), paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
+
         self.body.append('rect')
             .attr('class', 'c9-chart-line c9-rect-overlay')
             // .attr('width', self.actualWidth)
             // .attr('height', self.actualHeight)
-            .attr('width', width)
+            .attr('width', width - self.x(paddingX))
             .attr('height', height)
+            .attr('x', self.x(paddingX) / 2)
             .style('fill', 'none')
             .style('pointer-events', 'all');
 
@@ -337,11 +321,57 @@ export default class LineChart extends Chart {
         self.updateInteraction();
     }
 
+    updateDomain(data) {
+        var self = this;
+
+        var valueXArray = d3.merge(data.map(function(_data) {
+            return _data.value.map(function(d) {
+                return d.valueX;
+            })
+        }));
+
+        var valueYArray = d3.merge(data.map(function(_data) {
+            return _data.value.map(function(d) {
+                return d.valueY;
+            })
+        }));
+
+        self.x.domain(d3.extent(valueXArray));
+
+        self.y.domain(d3.extent(valueYArray));
+
+        // Update domain if all values positive / negative
+        if (self.y.domain()[0] > 0 && self.y.domain()[1] > 0) {
+            self.y.domain([0, self.y.domain()[1]]);
+        } else if (self.y.domain()[0] < 0 && self.y.domain()[1] < 0) {
+            self.y.domain([self.y.domain()[0], 0]);
+        }
+
+    }
+
     /**
      * Update main path of Line Chart when brushing
      */
-    updatePath(lineGen, areaGen, data) {
+    update(data) {
         var self = this;
+
+        var width   = self.width - self.margin.left - self.margin.right,
+            height  = self.height - self.margin.top - self.margin.bottom;
+
+        var lineGen = d3.svg.line()
+                        .x(function(d) { return self.x(d.valueX); })
+                        .y(function(d) { return self.y(d.valueY); })
+                        .interpolate(self.interpolate);
+
+        var areaGen = d3.svg.area()
+                        .x(function(d) { return self.x(d.valueX); })
+                        .y0(function(d) { return self.y(d.valueY); })
+                        .y1(height)
+                        .interpolate(self.interpolate);
+
+        self.body.selectAll(".c9-chart-line.c9-area-container").data([]).exit().remove();
+        self.body.selectAll(".c9-chart-line.c9-path-container").data([]).exit().remove();
+        self.body.selectAll(".c9-chart-line.c9-point-container").data([]).exit().remove();
 
         if (self.area.show) {
             var areaContainer = self.body.append('g')
@@ -406,7 +436,7 @@ export default class LineChart extends Chart {
             
             data.forEach(function(d) {
                 if (!d.enable) return;
-                pointContainer.selectAll(".c9-chart-line.c9-circle-custom")
+                pointContainer.selectAll(".c9-chart-line.c9-point-container")
                 // self.body.selectAll("dot")
                     .data(d.value)
                     .enter()

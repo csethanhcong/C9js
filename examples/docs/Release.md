@@ -98,4 +98,9 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 ### Support CSS Loader
 
+### Examples using data visualization:
+
+1. Chart: https://blog.risingstack.com/node-js-developer-survey-results-2016/
+2. Map: https://www.weforum.org/agenda/2016/10/this-map-shows-where-the-world-s-most-generous-people-live
+
 

@@ -3,6 +3,8 @@ import Helper from '../../helper/C9.Helper';
 
 export default class Axis {
     constructor(options, body, data, width, height, x, y) {
+        var self = this;
+
         var config = {
             x: {
                 tick: {
@@ -43,25 +45,26 @@ export default class Axis {
             }
         };
         
-        this._xShow         = options.x.show      || config.x.show;
-        this._xText         = options.x.text      || config.x.text;
-        this._yShow     = options.y.show      || (body.type == "timeline" ? false : config.y.show);
-        this._yText     = options.y.text      || config.y.text;
-        // this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
-        this._xTick    = options.x.tick      || config.x.tick;
-        this._yTick    = options.y.tick    || config.y.tick;
-        this._xGrid     = options.x.grid      || config.x.grid;
-        this._yGrid     = options.y.grid      || config.y.grid;
-        this._xType     = options.x.type      || config.x.type;
-        this._yType     = options.y.type      || config.y.type;
-        this._x             = x;
-        this._y             = y;
+// <<<<<<< HEAD
+        // this._xShow         = options.x.show      || config.x.show;
+        // this._xText         = options.x.text      || config.x.text;
+        // this._yShow     = options.y.show      || (body.type == "timeline" ? false : config.y.show);
+        // this._yText     = options.y.text      || config.y.text;
+        // // this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
+        // this._xTick    = options.x.tick      || config.x.tick;
+        // this._yTick    = options.y.tick    || config.y.tick;
+        // this._xGrid     = options.x.grid      || config.x.grid;
+        // this._yGrid     = options.y.grid      || config.y.grid;
+        // this._xType     = options.x.type      || config.x.type;
+        // this._yType     = options.y.type      || config.y.type;
+        // this._x             = x;
+        // this._y             = y;
         
         if (body.type == "line") {
             var xDomain = x.domain(), paddingX = (x.domain()[1] - x.domain()[0]) * 0.01;
-            var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
+            // var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
             x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
-            y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
+            // y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
         }
 
 
@@ -78,74 +81,287 @@ export default class Axis {
         //     })
         // ]);
 
-        if (body.type == "timeline") {
+        // if (body.type == "timeline") {
+// =======
+        self._xShow = options.x.show || config.x.show;
+        self._xText = options.x.text || config.x.text;
+        self._xTick = options.x.tick || config.x.tick;
+        self._xGrid = options.x.grid || config.x.grid;
+        self._xType = options.x.type || config.x.type;
+
+        self._yShow = options.y.show || (body.type == "timeline" ? false : config.y.show);
+        self._yText = options.y.text || config.y.text;
+        self._yTick = options.y.tick || config.y.tick;
+        self._yGrid = options.y.grid || config.y.grid;
+        self._yType = options.y.type || config.y.type;
+        // self._isLogaricVariant     = options.isLogaric      || config.isLogaric;
+        
+        self._x = x;
+        self._y = y;
+
+        self._body    = body;
+        self._data   = data;
+        self._width  = width;
+        self._height  = height;
+        self._options = options;
+
+        self.updateConfig();
+            
+    }
+
+    /*==============================
+    =            Getter            =
+    ==============================*/
+    
+    get x() {
+        return this._x;
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    get xShow() {
+        return this._xShow;
+    }
+
+    get xText() {
+        return this._xText;
+    }
+
+    get xTick() {
+        return this._xTick;
+    }
+
+    get xGrid() {
+        return this._xGrid;
+    }
+
+    get xType() {
+        return this._xType;
+    }
+
+    get yShow() {
+        return this._yShow;
+    }
+
+    get yText() {
+        return this._yText;
+    }
+
+    get yTick() {
+        return this._yTick;
+    }
+
+    get yGrid() {
+        return this._yGrid;
+    }
+
+    get yType() {
+        return this._yType;
+    }
+
+    get body() {
+        return this._body;
+    }
+
+    get width() {
+        return this._width;
+    }
+
+    get height() {
+        return this._height;
+    }
+
+    get data() {
+        return this._data;
+    }
+
+    get options() {
+        return this._options;
+    }
+    
+    /*=====  End of Getter  ======*/
+
+    /*==============================
+    =            Setter            =
+    ==============================*/
+    
+    set x(arg) {
+        if (arg) {
+            this._x = arg;
+        }
+    }
+
+    set y(arg) {
+        if (arg) {
+            this._y = arg;
+        }
+    }
+
+    set xShow(arg) {
+        if (arg) {
+            this._xShow = arg;
+        }
+    }
+
+    set xText(arg) {
+        if (arg) {
+            this._xText = arg;
+        }
+    }
+
+    set xTick(arg) {
+        if (arg) {
+            this._xTick = arg;
+        }
+    }
+
+    set xGrid(arg) {
+        if (arg) {
+            this._xGrid = arg;
+        }
+    }
+
+    set xType(arg) {
+        if (arg) {
+            this._xType = arg;
+        }
+    }
+
+    set yShow(arg) {
+        if (arg) {
+            this._yShow = arg;
+        }
+    }
+
+    set yText(arg) {
+        if (arg) {
+            this._yText = arg;
+        }
+    }
+
+    set yTick(arg) {
+        if (arg) {
+            this._yTick = arg;
+        }
+    }
+
+    set yGrid(arg) {
+        if (arg) {
+            this._yGrid = arg;
+        }
+    }
+
+    set yType(arg) {
+        if (arg) {
+            this._yType = arg;
+        }
+    }
+
+    set body(arg) {
+        if (arg) {
+            this._body = arg;
+        }
+    }
+
+    set width(arg) {
+        if (arg) {
+            this._width = arg;
+        }
+    }
+
+    set height(arg) {
+        if (arg) {
+            this._height = arg;
+        }
+    }
+
+    set data(arg) {
+        if (arg) {
+            this._data = arg;
+        }
+    }
+
+    set options(arg) {
+        if (arg) {
+            this._options = arg;
+        }
+    }
+    
+    /*=====  End of Setter  ======*/
+    
+    /*======================================
+    =            Main Functions            =
+    ======================================*/
+    updateConfig() {
+        var self = this;
+
+        if (self.body.type == "timeline") {
+// >>>>>>> bb41668b9af6709bfb99ecd0de8c551e35683930
 
             var xScale = d3.time.scale()
-                .domain([options.starting, options.ending])
-                .range([0, width]);
-            this._xAxis = d3.svg.axis()
+                .domain([self.options.starting, self.options.ending])
+                .range([0, self.width]);
+            self._xAxis = d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
-                .tickFormat(this._xTick.format === undefined ? d3.time.format("%I %p") : this._xTick.format)
+                .tickFormat(self._xTick.format === undefined ? d3.time.format("%I %p") : self._xTick.format)
                 // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
-                .ticks(this._xTick.type, this._xTick.interval);
-            delete options.starting;
-            delete options.ending;
+                .ticks(self._xTick.type, self._xTick.interval);
+            // delete options.starting;
+            // delete options.ending;
 
         } else {
 
-            this._xAxis = d3.svg.axis()
-                .scale(this._x)
+            self._xAxis = d3.svg.axis()
+                .scale(self._x)
                 .orient("bottom")
-                .tickPadding(this._xTick.padding)
-                .ticks(this._xTick.count)
-                .tickValues(this._xTick.values.length > 0 ? this._xTick.values : undefined)
-                .tickFormat(this._xType == "timeseries" ? this._xTick.format || d3.time.format("%Y-%m-%d") : this._xTick.format ? this._xTick.format : undefined);
+                .tickPadding(self._xTick.padding)
+                .ticks(self._xTick.count)
+                .tickValues(self._xTick.values.length > 0 ? self._xTick.values : undefined)
+                .tickFormat(self._xType == "timeseries" ? self._xTick.format || d3.time.format("%Y-%m-%d") : self._xTick.format ? self._xTick.format : undefined);
 
             // In LOG scale, can't specify default number of ticks
             // must be filter with tickFormat instead
             // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
-            if (this._isLogaricVariant) {
-                this._yAxis = d3.svg.axis()
-                    .scale(this._y)
+            if (self._isLogaricVariant) {
+                self._yAxis = d3.svg.axis()
+                    .scale(self._y)
                     .orient("left")
-                    .tickPadding(this._yTick.padding)
-                    .ticks(this._yTick.count, this._yType == "timeseries" ? this._yTick.format || "%Y-%m-%d" : this._yTick.format ? this._yTick.format : undefined)
-                    .tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined);
+                    .tickPadding(self._yTick.padding)
+                    .ticks(self._yTick.count, self._yType == "timeseries" ? self._yTick.format || "%Y-%m-%d" : self._yTick.format ? self._yTick.format : undefined)
+                    .tickValues(self._yTick.values.length > 0 ? self._yTick.values : undefined);
             } else {
-                this._yAxis = d3.svg.axis()
-                    .scale(this._y)
+                self._yAxis = d3.svg.axis()
+                    .scale(self._y)
                     .orient("left")
-                    .tickPadding(this._yTick.padding)
-                    .ticks(this._yTick.count)
-                    .tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined)
-                    .tickFormat(this._yType == "timeseries" ? this._yTick.format || d3.time.format("%Y-%m-%d") : this._yTick.format ? this._yTick.format : undefined);
+                    .tickPadding(self._yTick.padding)
+                    .ticks(self._yTick.count)
+                    .tickValues(self._yTick.values.length > 0 ? self._yTick.values : undefined)
+                    .tickFormat(self._yType == "timeseries" ? self._yTick.format || d3.time.format("%Y-%m-%d") : self._yTick.format ? self._yTick.format : undefined);
             }
+        
         }
 
-        if (body.type != "timeline") {
+        if (self.body.type != "timeline") {
             // Grid
-            if (this._xGrid) {
-                // Select CURRENT svg container, to make this axis outside
+            if (self._xGrid) {
+                // Select CURRENT svg container, to make self axis outside
                 // as a SEPARATED component, just like AXIS, of CHART
-                // d3.select(this._svg[0][0].parentNode)
-                this._xAxis.innerTickSize(-height)
+                // d3.select(self._svg[0][0].parentNode)
+                self._xAxis.innerTickSize(-self.height)
                     .outerTickSize(0);
             }
 
-            if (this._yGrid) {
-                // Select CURRENT svg container, to make this axis outside
+            if (self._yGrid) {
+                // Select CURRENT svg container, to make self axis outside
                 // as a SEPARATED component, just like AXIS, of CHART
-                // d3.select(this._svg[0][0].parentNode)
-                this._yAxis.innerTickSize(-width)
+                // d3.select(self._svg[0][0].parentNode)
+                self._yAxis.innerTickSize(-self.width)
                     .outerTickSize(0);
             }
         }
-
-        this._body    = body;
-        this._data   = data;
-        this._width  = width;   // TODO : ADD Getter/setter
-        this._height  = height;
 
         var textAnchor = function(angle) {
             var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
@@ -162,176 +378,71 @@ export default class Axis {
         };
 
         //draw x axis
-        this._body.append("g")
+        self._body.append("g")
             .attr("class", "x axis")
-            .attr("transform", "translate(0," + (height) + ")")
-            .call(this._xAxis);
+            .attr("transform", "translate(0," + (self.height) + ")")
+            .call(self._xAxis);
         //draw tick
         d3.select(".x.axis").selectAll("text")
-            .style("text-anchor", textAnchor(this._xTick.rotate))
-            .attr("y", textY(this._xTick.rotate))
+            .style("text-anchor", textAnchor(self._xTick.rotate))
+            .attr("y", textY(self._xTick.rotate))
             .attr("x", 0)
             .attr("dy", ".71em")
-            .attr("dx", textDx(this._xTick.rotate))
-            .attr("transform", "rotate(" + this._xTick.rotate + ")");
+            .attr("dx", textDx(self._xTick.rotate))
+            .attr("transform", "rotate(" + self._xTick.rotate + ")");
         //draw label
         d3.select(".x.axis")
             .append("text")
             .attr("dx", "-.8em")
             .attr("dy", "-.55em")
-            .attr("x", width + 20)
+            .attr("x", self.width + 20)
             .attr("y", 10)
             .style("text-anchor", "start")
-            .text(this._xText);
+            .text(self._xText);
 
         //hide x axis
-        if (!this._xShow) {
+        if (!self._xShow) {
             d3.select(".x.axis>.domain").style("display", "none");
-            if (!this._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
+            if (!self._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
         }
 
-        if (body.type != "timeline") {
-            this._body.append("g")
+        if (self.body.type != "timeline") {
+            self._body.append("g")
                 .attr("class", "y axis")
-                .attr("transform", "translate(0, 0)")
-                .call(this._yAxis);
+                .call(self._yAxis);
             d3.select(".y.axis")
                 .append("text")
                 .attr("y", -10)
                 .attr("dy", ".10")
                 .style("text-anchor", "end")
-                .text(this._yText);
+                .text(self._yText);
 
-            if (!this._yShow) {
+            if (!self._yShow) {
                 d3.select(".y.axis>.domain").style("display", "none");
-                if (!this._yGrid) d3.selectAll(".y.axis>g.tick>line").style("display", "none");
+                if (!self._yGrid) d3.selectAll(".y.axis>g.tick>line").style("display", "none");
             }
         }
-
-
-        /**
-            TODO:
-            - Add y2-axis
-        **/
-            
     }
 
     update(x, y, duration) {
+        var self = this;
+
+        if (self.body.type == "line") {
+            var xDomain = x.domain(), paddingX = (x.domain()[1] - x.domain()[0]) * 0.01;
+            // var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
+            x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
+            // y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
+        }
+
         if (x) {
-            this._x = x;
-            this._body.select('.x.axis').transition().duration(duration).call(this._xAxis);
+            self._x = x;
+            self._body.select('.x.axis').transition().duration(duration).call(self._xAxis);
         }
         if (y) {
-            this._y = y;
-            this._body.select(".y.axis").transition().duration(duration).call(this._yAxis);
+            self._y = y;
+            self._body.select(".y.axis").transition().duration(duration).call(self._yAxis);
         }
     }
-
-    /*==============================
-    =            Getter            =
-    ==============================*/
-    
-    get xAxis() {
-        return this._xAxis;
-    }
-
-    get yAxis() {
-        return this._yAxis;
-    }
-
-    get xAxisShow() {
-        return this._xAxisShow;
-    }
-
-    get xAxisPadding() {
-        return this._xAxisPadding;
-    }
-
-    get yAxisShow() {
-        return this._yAxisShow;
-    }
-
-    get yAxisPadding() {
-        return this._yAxisPadding;
-    }
-
-    get isLogaricVariant() {
-        return this._isLogaricVariant;
-    }
-
-    get y2AxisShow() {
-        return this._y2AxisShow;
-    }
-
-    get y2AxisPadding() {
-        return this._y2AxisPadding;
-    }
-    
-    /*=====  End of Getter  ======*/
-
-    /*==============================
-    =            Setter            =
-    ==============================*/
-    
-    set xAxis(newXAxis) {
-        if (newXAxis) {
-            this._xAxis = newXAxis;
-        }
-    }
-
-    set yAxis(newYAxis) {
-        if (newYAxis) {
-            this._yAxis = newYAxis;
-        }
-    }
-
-    set xAxisShow(newXAxisShow) {
-        if (newXAxisShow) {
-            this._xAxisShow = newXAxisShow;
-        }
-    }
-
-    set xAxisPadding(newXAxisPadding) {
-        if (newXAxisPadding) {
-            this._xAxisPadding = newXAxisPadding;
-        }
-    }
-
-    set yAxisShow(newYAxisShow) {
-        if (newYAxisShow) {
-            this._yAxisShow = newYAxisShow;
-        }
-    }
-
-    set yAxisPadding(newYAxisPadding) {
-        if (newYAxisPadding) {
-            this._yAxisPadding = newYAxisPadding;
-        }
-    }
-
-    set isLogaricVariant(newIsLogaricVariant) {
-        if (newIsLogaricVariant) {
-            this._isLogaricVariant = newIsLogaricVariant;
-        }
-    }
-
-    set y2AxisShow(newY2AxisShow) {
-        if (newY2AxisShow) {
-            this._y2AxisShow = newY2AxisShow;
-        }
-    }
-
-    set y2AxisPadding(newY2AxisPadding) {
-        if (newY2AxisPadding) {
-            this._y2AxisPadding = newY2AxisPadding;
-        }
-    }
-    
-    /*=====  End of Setter  ======*/
-    
-    /*======================================
-    =            Main Functions            =
-    ======================================*/
     /*=====  End of Main Functions  ======*/
     
 }

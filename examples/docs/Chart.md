@@ -187,3 +187,41 @@ option of that object
 9. `Convert to d3.v4`:
 
 - REF: https://github.com/d3/d3/blob/master/CHANGES.md
+
+#### Important remaining tasks:
+
+1. Chart:
+
+- Chung:
+	+ Thêm table tương ứng (các cột như total, ...) cho các chart còn lại (Huy)
+	+ Tạo hiệu ứng màu sáng hơn khi tương tác (Cong)
+	+ Tách riêng hàm vẽ chart (updateChart) thay vì vẽ trực tiếp trong updateConfig(), để dùng về sau updateData thì updateChart (Huy)
+	+ Thêm hàm updateData(newData [, newDataOption]): Hàm này sẽ tự vẽ lại chart (gọi updateChart) ở trên (Cong)
+	
+- Timeline: 
+	+ Thêm sub-chart (Cong)
+
+2. Map:
+
+- Thể hiện tất cả các dữ liệu đi kèm (trừ lat, lon) tại điểm, đường, vùng (Huy)
+	+ Cấu trúc dữ liệu:
+		{
+			name: 'Paris',
+			coor: [{lat:1, lon: 1}, {}, ...],
+			value: 
+		}
+	Tất nhiên cũng có dataConfig để định nghĩa key cho value
+
+- Event Listener: Sẽ trả về name, value tương ứng giống như Chart (Cong)
+
+- Tạo hiệu ứng màu giống như Chart (Cong)
+
+3. Chart + Map:
+
+- Tạo demo: Click data trên Map -> trả về data đó -> update lại chart dựa trên data trả về -> tương tác giữa map+chart (Huy)
+
+4. `Documentation`: Dùng GitHub Page (có thể thêm Jekyll) (Cong)
+
+
+
+
