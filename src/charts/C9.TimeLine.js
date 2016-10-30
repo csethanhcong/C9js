@@ -255,7 +255,7 @@ export default class TimeLine extends Chart {
         self.maxStack = maxStack;
         var scale = width / (self.ending - self.starting);
 
-        self.drawMain(self.dataTarget, width, stackList, scale, color);
+        self.updateTimeline(self.dataTarget, width, stackList, scale, color);
 
         // Draw axis before adding brushing
         self.options.axis.starting = self.starting;
@@ -326,7 +326,7 @@ export default class TimeLine extends Chart {
         self.updateInteraction();
     }
 
-    drawMain(data, width, stackList, scale, color) {
+    updateTimeline(data, width, stackList, scale, color) {
         var self = this;
 
         //draw border
@@ -347,7 +347,7 @@ export default class TimeLine extends Chart {
                 var bgContainer = self.body.append("g")
                                     .attr('class', 'c9-timeline-chart c9-background-container');
 
-                bgContainer.selectAll("g")
+                bgContainer.selectAll("dot")
                     .data(datum.value).enter()
                     .append("rect")
                     .attr("class", "c9-timeline-background-bar")
@@ -360,7 +360,7 @@ export default class TimeLine extends Chart {
 
             if (self.striped) { 
                 var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
-                self.body.selectAll("g")
+                self.body.selectAll("dot")
                     .data(datum.value).enter()
                     .insert("rect")
                     .attr("class", "c9-timeline-background-bar")
@@ -372,7 +372,7 @@ export default class TimeLine extends Chart {
             }
 
             //draw item
-            self.body.selectAll("g")
+            self.body.selectAll("dot")
                 .data(datum.value).enter()
                 .append(function (d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");

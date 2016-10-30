@@ -181,34 +181,7 @@ export default class LineChart extends Chart {
 
         var subChartOptions = self.options.subchart;
 
-        var x = (self._isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
-            y = d3.scale.linear().range([height, 0]);
-
-        var valueXArray = d3.merge(self.dataTarget.map(function(data) {
-            return data.value.map(function(d) {
-                return d.valueX;
-            })
-        }));
-
-        var valueYArray = d3.merge(self.dataTarget.map(function(data) {
-            return data.value.map(function(d) {
-                return d.valueY;
-            })
-        }));
-
-        x.domain(d3.extent(valueXArray));
-
-        y.domain(d3.extent(valueYArray));
-
-        // Update domain if all values positive / negative
-        if (y.domain()[0] > 0 && y.domain()[1] > 0) {
-            y.domain([0, y.domain()[1]]);
-        } else if (y.domain()[0] < 0 && y.domain()[1] < 0) {
-            y.domain([y.domain()[0], 0]);
-        }
-
-        self._x = x;
-        self._y = y;
+        self.updateDomain(self.dataTarget);
 
         // Draw axis before rect-overlay
         var axis    = new Axis(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
@@ -333,6 +306,42 @@ export default class LineChart extends Chart {
         self.updateInteraction();
     }
 
+    updateDomain(data) {
+        var self = this;
+
+        var width   = self.width - self.margin.left - self.margin.right,
+            height  = self.height - self.margin.top - self.margin.bottom;
+
+        var x = (self._isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+            y = d3.scale.linear().range([height, 0]);
+
+        var valueXArray = d3.merge(data.map(function(_data) {
+            return _data.value.map(function(d) {
+                return d.valueX;
+            })
+        }));
+
+        var valueYArray = d3.merge(data.map(function(_data) {
+            return _data.value.map(function(d) {
+                return d.valueY;
+            })
+        }));
+
+        x.domain(d3.extent(valueXArray));
+
+        y.domain(d3.extent(valueYArray));
+
+        // Update domain if all values positive / negative
+        if (y.domain()[0] > 0 && y.domain()[1] > 0) {
+            y.domain([0, y.domain()[1]]);
+        } else if (y.domain()[0] < 0 && y.domain()[1] < 0) {
+            y.domain([y.domain()[0], 0]);
+        }
+
+        self.x = x;
+        self.y = y;
+    }
+
     /**
      * Update main path of Line Chart when brushing
      */
@@ -344,7 +353,7 @@ export default class LineChart extends Chart {
                                 .attr('class', 'c9-chart-line c9-area-container')
                                 .attr("clip-path", "url(#clip)");
 
-            areaContainer.selectAll("dot")
+            areaContainer.selectAll(".c9-chart-line.c9-path-area-custom")
             // self.body.selectAll("dot")
                 .data(data)
                 .enter()
@@ -371,7 +380,7 @@ export default class LineChart extends Chart {
                             .attr('class', 'c9-chart-line c9-path-container')
                             .attr("clip-path", "url(#clip)");
             
-            pathContainer.selectAll("dot")
+            pathContainer.selectAll(".c9-chart-line.c9-path-line-custom")
         // self.body.selectAll("dot")
             .data(data)
             .enter()
@@ -402,7 +411,7 @@ export default class LineChart extends Chart {
             
             data.forEach(function(d) {
                 if (!d.enable) return;
-                pointContainer.selectAll("dot")
+                pointContainer.selectAll(".c9-chart-line.c9-circle-custom")
                 // self.body.selectAll("dot")
                     .data(d.value)
                     .enter()
