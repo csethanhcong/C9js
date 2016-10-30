@@ -348,7 +348,7 @@ export default class LineChart extends Chart {
                                 .attr('class', 'c9-chart-line c9-area-container')
                                 .attr("clip-path", "url(#clip)");
 
-            areaContainer.selectAll("dot")
+            areaContainer.selectAll(".c9-chart-line.c9-path-area-custom")
             // self.body.selectAll("dot")
                 .data(data)
                 .enter()
@@ -375,7 +375,7 @@ export default class LineChart extends Chart {
                             .attr('class', 'c9-chart-line c9-path-container')
                             .attr("clip-path", "url(#clip)");
             
-            pathContainer.selectAll("dot")
+            pathContainer.selectAll(".c9-chart-line.c9-path-line-custom")
         // self.body.selectAll("dot")
             .data(data)
             .enter()
@@ -406,7 +406,7 @@ export default class LineChart extends Chart {
             
             data.forEach(function(d) {
                 if (!d.enable) return;
-                pointContainer.selectAll("dot")
+                pointContainer.selectAll(".c9-chart-line.c9-circle-custom")
                 // self.body.selectAll("dot")
                     .data(d.value)
                     .enter()
@@ -429,7 +429,7 @@ export default class LineChart extends Chart {
                     .style("opacity", self.point.opacity);
             });
         }
-    }    
+    }  
 
     /**
      * Update sub chart

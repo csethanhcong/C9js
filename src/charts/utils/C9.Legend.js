@@ -163,14 +163,6 @@ export default class Legend {
             if (self._body.type == "bar") {
                 self.data = self.data[self.data.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)];
             }
-            else if (self._body.type == "line") {
-                self.data = d3.nest()
-                    .key(function(d) { return d.name; })
-                    .entries(self.data);
-                self.data.forEach(function(d) {
-                    d.color = d.values[0].color;
-                })
-            }
 
             // Legend will be appended in main SVG container
             var container = d3.select(self._body[0][0].parentNode)
@@ -193,8 +185,8 @@ export default class Legend {
                 .attr('width', self.size)
                 .attr('height', self.size)
                 .attr('r', self.size)
-                .attr('fill', function(d){ return d.color; })
-                .attr('stroke', function(d){ return d.color; });
+                .attr('fill', function(d){ return d.color || d.values[0].color; })
+                .attr('stroke', function(d){ return d.color || d.values[0].color; });
 
             self.item.append('rect')
                 .attr('width', 5)
@@ -329,13 +321,30 @@ export default class Legend {
 
                 // If current selector is disabled, then turn it on back
                 // Else, set enable to false
-                if (selector.style('opacity') == '0.1') {
-                    selector.style('opacity', '1.0');
+                if (selector.attr('data-enable') == 'false') {
+                    selector.attr('data-enable', 'true');
+                    selector.style('opacity', '1');
                 } else {
                     if (totalEnable < 2) return;
+                    selector.attr('data-enable', 'false');
                     selector.style('opacity', '0.1');
                     enable = false;
                 }
+
+                // update line
+                var lineGen = d3.svg.line()
+                                .x(function(d) { return chart.x(d.valueX); })
+                                .y(function(d) { return chart.y(d.valueY); })
+                                .interpolate(chart.interpolate);
+
+                var areaGen = d3.svg.area()
+                                .x(function(d) { return chart.x(d.valueX); })
+                                .y0(function(d) { return chart.y(d.valueY); })
+                                .y1(chart.height - chart.margin.top - chart.margin.bottom)
+                                .interpolate(chart.interpolate);
+
+                chart.updatePath(lineGen, areaGen, chart.dataTarget.splice(chart.dataTarget.indexOf(item), 1));
+                console.log(chart.dataTarget.splice(chart.dataTarget.indexOf(item), 1))
 
             },
 
