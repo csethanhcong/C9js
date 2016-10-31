@@ -341,9 +341,25 @@ export default class Legend {
                 chart.updateDomain(newData);
                 chart.axis.update(chart.x, chart.y, 750);
                 chart.update(newData);
-//                 chart.axis.x.domain([-0.04, 4.04])
-// console.log(chart.axis.x.domain())
-                // update axis
+                // update subchart
+                var subChartHeight = chart.options.subchart.height,
+                    subChartMargin = {
+                        'top': chart.actualHeight + 100,
+                        'left': chart.margin.left
+                    };
+
+                chart.subChartX.domain(chart.x.domain());
+                chart.subChartY.domain(chart.y.domain());
+
+                var subChartAreaGen = d3.svg.area()
+                        .x(function(d) { return chart.subChartX(d.valueX) })
+                        .y0(function(d) { return chart.subChartY(d.valueY) })
+                        .y1(subChartHeight);
+
+                // chart.
+                chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
+
+                chart.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, chart.subChartXAxis, chart.brush, newData)
                 
                 
 

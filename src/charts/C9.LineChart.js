@@ -97,6 +97,10 @@ export default class LineChart extends Chart {
     get hoverLine() {
         return this._hoverLine;
     }
+
+    get subChartX() {
+        return this._subChartX;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -162,6 +166,12 @@ export default class LineChart extends Chart {
             this._hoverLine = arg;
         }
     }
+
+    set subChartX(arg) {
+        if (arg) {
+            this._subChartX = arg;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -225,32 +235,35 @@ export default class LineChart extends Chart {
                 'left': self.margin.left
             };
 
-        var subchartX = (self._isTimeDomain) ? d3.time.scale().range([0, subChartWidth]) : d3.scale.linear().range([0, subChartWidth]),
-            subchartY = d3.scale.linear().range([subChartHeight, 0]);
+        var subChartX = (self._isTimeDomain) ? d3.time.scale().range([0, subChartWidth]) : d3.scale.linear().range([0, subChartWidth]),
+            subChartY = d3.scale.linear().range([subChartHeight, 0]);
 
-        subchartX.domain(x.domain());
-        subchartY.domain(y.domain());
+        self.subChartX = subChartX;
+        self.subChartY = subChartY;
 
-        self.subchartXAxis = d3.svg.axis()
-                        .scale(x2)
+        self.subChartX.domain(x.domain());
+        self.subChartY.domain(y.domain());
+
+        self.subChartXAxis = d3.svg.axis()
+                        .scale(self.subChartX)
                         .orient("bottom");
 
         self.brush = d3.svg.brush()
-                        .x(x2)
+                        .x(self.subChartX)
                         .on("brush", brushed);
 
         var subChartAreaGen = d3.svg.area()
-                        .x(function(d) { return x2(d.valueX) })
-                        .y0(function(d) { return y2(d.valueY) })
+                        .x(function(d) { return self.subChartX(d.valueX) })
+                        .y0(function(d) { return self.subChartY(d.valueY) })
                         .y1(subChartHeight);
 
         /*----------  Draw subchart  ----------*/
-        self.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, xAxis2, brush, self.dataTarget);
+        self.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, self.subChartXAxis, self.brush, self.dataTarget);
         /*----------  End Draw sub chart  ----------*/
 
         function brushed() {
             // Update axis
-            self.x.domain(brush.empty() ? x2.domain() : brush.extent());
+            self.x.domain(self.brush.empty() ? self.subChartX.domain() :self.brush.extent());
             axis.update(self.x, self.y, 500);
 
             // Update main path of Line Chart
@@ -468,7 +481,11 @@ export default class LineChart extends Chart {
         var self = this;
 
         if (self.options.subchart.show) {
+
             self.svg.attr('height', self.height + subChartHeight);
+
+            self.svg.selectAll(".c9-subchart-custom").remove();
+            self.svg.selectAll(".c9-subchart-custom .c9-subchart-axis").remove();
 
             var subChart = self.svg.append("g")
                             .attr("class", "c9-subchart-custom")
@@ -598,7 +615,10 @@ export default class LineChart extends Chart {
                     var d0, d1;
                     
                     d0 = (idx === 0) ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
-                    d1 = sameTimeArr[i][idx];
+                    d1 = !Helper.isEmpty(sameTimeArr[i][idx]) ? sameTimeArr[i][idx] : sameTimeArr[i][idx-1] ;
+
+                    console.log(sameTimeArr[i])
+                    console.log(idx)
 
                     // Check d0, d1 still in boundary or not
                     // To work well with brushing
@@ -613,8 +633,8 @@ export default class LineChart extends Chart {
                     onMouseMoveCallback.call(this, sameTimeValueArr);
                 }
                 
-                var x = self.x(sameTimeValueArr[0].valueX);
-                var y = self.y(sameTimeValueArr[0].valueY);
+                var x = self.x(!Helper.isEmpty(sameTimeValueArr[0].valueX) ? sameTimeValueArr[0].valueX : sameTimeValueArr[1].valueX);
+                var y = self.y(!Helper.isEmpty(sameTimeValueArr[0].valueY) ? sameTimeValueArr[0].valueY : sameTimeValueArr[1].valueY);
 
                 // console.log(x);
 
