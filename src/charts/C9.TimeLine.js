@@ -90,6 +90,10 @@ export default class TimeLine extends Chart {
     get striped() {
         return this._striped;
     }
+
+    get x() {
+        return this._x;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -154,6 +158,12 @@ export default class TimeLine extends Chart {
             this._striped = arg;
         }
     }
+
+    set x(arg) {
+        if (arg) {
+            this._x = arg;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -164,8 +174,6 @@ export default class TimeLine extends Chart {
         var self = this;
 
         var subChartOptions = self.options.subchart;
-
-        var color = self.colorRange;
 
         var stackList = {},
             maxStack = 0,
@@ -253,66 +261,71 @@ export default class TimeLine extends Chart {
         }
 
         self.maxStack = maxStack;
-        var scale = width / (self.ending - self.starting);
 
-        self.updateTimeline(self.dataTarget, width, stackList, scale, color);
+        self.update(self.dataTarget, stackList);
 
         // Draw axis before adding brushing
         self.options.axis.starting = self.starting;
         self.options.axis.ending = self.ending;
 
+        var x = d3.time.scale()
+                .domain([self.options.starting, self.options.ending])
+                .range([0, self.width]);
+
+        self._x = x;
+
         var axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
+
+        // Set actual size for chart after initialization
+        var chartBox = self.body.node().getBBox();
+        // self.actualWidth = chartBox.width - 4 * self.point.radius;
+        self.actualHeight = chartBox.height;
 
         /*----------  Sub Chart  ----------*/
         
-        // var subChartWidth = width,
-        //     subChartHeight = self.options.subchart.height,
-        //     subChartMargin = {
-        //         'top': self.actualHeight + 100,
-        //         'left': self.margin.left
-        //     };
+        var subChartWidth = width,
+            subChartHeight = self.options.subchart.height,
+            subChartMargin = {
+                'top': self.actualHeight + 100,
+                'left': self.margin.left
+            };
 
-        // var x2 = d3.time.scale().range([0, subChartWidth]);
+        var x2 = d3.time.scale().range([0, subChartWidth]);
 
-        // x2.domain([self.options.starting, self.options.ending]);
+        x2.domain([self.options.starting, self.options.ending]);
 
-        // var xAxis2 = d3.svg.axis()
-        //                 .scale(x2)
-        //                 .orient("bottom");
+        var xAxis2 = d3.svg.axis()
+                        .scale(x2)
+                        .orient("bottom");
 
-        // var brush = d3.svg.brush()
-        //                 .x(x2)
-        //                 .on("brush", brushed);
+        var brush = d3.svg.brush()
+                        .x(x2)
+                        .on("brush", brushed);
 
-        // var subChartAreaGen = d3.svg.area()
-        //                 .x(function(d) { return x2(d.valueX) })
-        //                 .y0(function(d) { return y2(d.valueY) })
-        //                 .y1(subChartHeight);
+        var subChartAreaGen = d3.svg.area()
+                        .x(function(d) { return x2(d.valueX) })
+                        .y0(function(d) { return y2(d.valueY) })
+                        .y1(subChartHeight);
 
-        // /*----------  Draw subchart  ----------*/
-        // // self.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, xAxis2, brush, self.dataTarget);
-        // /*----------  End Draw sub chart  ----------*/
+        /*----------  Draw subchart  ----------*/
+        self.updateSubChart(subChartHeight, subChartMargin, stackList, xAxis2, brush, self.dataTarget);
+        /*----------  End Draw sub chart  ----------*/
         
 
-        // function brushed() {
-        //     // Update axis
-        //     self.x.domain(brush.empty() ? x2.domain() : brush.extent());
-        //     axis.update(self.x, self.y, 500);
-
-        //     // Update main path of Line Chart
-        //     if (self.area.show) {
-        //         self.body.selectAll("path.c9-chart-line.c9-path-area-custom")
-        //             .attr("d",  function(d) { return areaGen(d.value) });
-        //     }
-        //     self.body.selectAll("path.c9-chart-line.c9-path-line-custom")
-        //             .attr("d",  function(d) { return lineGen(d.value) });
-
-        //     if (self.point.show) {
-        //         self.body.selectAll("circle.c9-chart-line.c9-circle-custom")
-        //                 .attr("cx", function(d) { return self.x(d.valueX); })
-        //                 .attr("cy", function(d) { return self.y(d.valueY); });
-        //     }
-        // }
+        function brushed() {
+            // Update axis
+            self.x.domain(brush.empty() ? x2.domain() : brush.extent());
+            axis.update(self.x, self.y, 500);
+            var scale = width / (self.ending - self.starting);
+            // Update main path of Line Chart
+            self.body.selectAll(".c9-timeline-custom-rect")
+                    .attr("x", function(d, i) { return self.getXPos(d,i, scale); });
+                    // .attr("y", function(d, i) { return self.getStackPosition(d,i,stackList, index); })
+                    // .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
+                    // .attr("cy", function (d, i) {
+                    //     return self.getStackPosition(d, i, stackList, index) + self.itemHeight / 2;
+                    // });
+        }
 
         /*----------  End of Sub Chart  ----------*/
     }
@@ -326,8 +339,20 @@ export default class TimeLine extends Chart {
         self.updateInteraction();
     }
 
-    updateTimeline(data, width, stackList, scale, color) {
+    update(data, stackList) {
         var self = this;
+
+        var width = self.width - self.margin.left - self.margin.right,
+            height = self.height - self.margin.top - self.margin.bottom;
+
+        var scale = width / (self.ending - self.starting);
+
+        var color = self.colorRange;
+
+        self.body.selectAll(".c9-timeline-border-bar").data([]).exit().remove();
+        self.body.selectAll(".c9-timeline-chart.c9-background-container").data([]).exit().remove();
+        self.body.selectAll(".c9-timeline-chart.c9-stripe-background-container").data([]).exit().remove();
+        self.body.selectAll(".c9-timeline-chart.c9-rect-container").data([]).exit().remove();
 
         //draw border
         self.body.append("rect")
@@ -340,14 +365,19 @@ export default class TimeLine extends Chart {
             .attr("stroke-width", 2)
             .attr("fill", "none");
 
+
+
+        var labelContainer = self.svg.append("g")
+                                .attr('class', 'c9-timeline-chart c9-label-container');
+
         data.forEach( function(datum, index) {
+            var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
             //draw background
             if (self.backgroundColor) { 
-                var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
                 var bgContainer = self.body.append("g")
                                     .attr('class', 'c9-timeline-chart c9-background-container');
 
-                bgContainer.selectAll("dot")
+                bgContainer.selectAll(".c9-background-container")
                     .data(datum.value).enter()
                     .append("rect")
                     .attr("class", "c9-timeline-background-bar")
@@ -359,11 +389,12 @@ export default class TimeLine extends Chart {
             }
 
             if (self.striped) { 
-                var barYAxis = ((self.itemHeight + self.itemMargin) * stackList[index]);
-                self.body.selectAll("dot")
+                var bgContainer = self.body.append("g")
+                                    .attr('class', 'c9-timeline-chart c9-stripe-background-container');
+                bgContainer.selectAll(".c9-stripe-background-container")
                     .data(datum.value).enter()
                     .insert("rect")
-                    .attr("class", "c9-timeline-background-bar")
+                    .attr("class", "c9-timeline-stripe-background-bar")
                     .attr("x", 0)
                     .attr("width", width)
                     .attr("y", barYAxis - self.itemMargin / 2)
@@ -372,21 +403,23 @@ export default class TimeLine extends Chart {
             }
 
             //draw item
-            self.body.selectAll("dot")
+            var itemContainer = self.body.append("g")
+                                    .attr('class', 'c9-timeline-chart c9-rect-container');
+            itemContainer.selectAll(".c9-rect-container")
                 .data(datum.value).enter()
                 .append(function (d, i) {
                     return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
                 })
                 .attr('class', 'c9-timeline-custom-rect')
-                .attr("x", function(d, i) { getXPos(d,i); })
-                .attr("y", function(d, i) { getStackPosition(d,i ); })
+                .attr("x", function(d, i) { return self.getXPos(d,i,scale); })
+                .attr("y", function(d, i) { return self.getStackPosition(d, i, stackList, index); })
                 .attr("width", function (d, i) {
                     return (d.end - d.start) * scale;
                 })
                 .attr("cy", function (d, i) {
-                    return getStackPosition(d, i) + self.itemHeight / 2;
+                    return self.getStackPosition(d, i, stackList, index) + self.itemHeight / 2;
                 })
-                .attr("cx", function(d, i) { getXPos(d,i); })
+                .attr("cx", function(d, i) { return self.getXPos(d,i,scale); })
                 .attr("r", self.itemHeight / 2)
                 .attr("height", self.itemHeight)
                 .style("fill", color(index));
@@ -407,14 +440,14 @@ export default class TimeLine extends Chart {
             if (!Helper.isEmpty(datum.name) && datum.name != "") { 
                 var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
 
-                d3.select(self.body[0][0].parentNode).append("text")
+                labelContainer.append("text")
                     .attr("class", "c9-timeline-label")
                     .attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")")
                     .text(datum.name);
             }
             //draw icon
             else if (!Helper.isEmpty(datum.icon) && datum.icon != "") {
-                d3.select(self.body[0][0].parentNode).append("image")
+                labelContainer.append("image")
                     .attr("class", "c9-timeline-label")
                     .attr("transform", "translate("+ self.labelMargin +","+ (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index])+")")
                     .attr("xlink:href", datum.icon)
@@ -422,12 +455,7 @@ export default class TimeLine extends Chart {
                     .attr("height", self.itemHeight);
             }
 
-            function getStackPosition(d, i) {
-                if (self.stack) {
-                    return (self.itemHeight + self.itemMargin) * stackList[index];
-                }
-                return 0;
-            }
+            
 
             // function getStackTextPosition(d, i) {
             //     if (self.stack) {
@@ -436,14 +464,79 @@ export default class TimeLine extends Chart {
             //     return self.itemHeight * 0.75;
             // }
 
-            function getXPos(d, i) {
-                return (d.start - self.starting) * scale;
-            }
+            
 
             // function getXTextPos(d, i) {
             //     return (d.start - self.starting) * scale + 5;
             // }
         });
+    }
+
+    /**
+     * Update sub chart
+     */
+    updateSubChart(subChartHeight, subChartMargin, stackList, xAxis2, brush, data) {
+        var self = this;
+
+        var width = self.width - self.margin.left - self.margin.right,
+            height = self.height - self.margin.top - self.margin.bottom;
+
+        var scale = width / (self.ending - self.starting);
+
+        var color = self.colorRange;
+
+        if (self.options.subchart.show) {
+
+            self.svg.attr('height', self.height + subChartHeight);
+
+            self.svg.selectAll(".c9-subchart-custom").remove();
+            self.svg.selectAll(".c9-subchart-custom .c9-subchart-axis").remove();
+
+            var subChart = self.svg.append("g")
+                            .attr("class", "c9-subchart-custom")
+                            .attr("transform", "translate(" + subChartMargin.left + "," + subChartMargin.top + ")");
+
+            var itemContainer = subChart.append('g')
+                                    .attr('class', 'c9-subchart-custom c9-subchart-timeline-container')
+                                    .attr("clip-path", "url(#clip)");
+
+            data.forEach(function(datum, index) {
+                if (!datum.enable) return;
+
+                itemContainer.selectAll(".c9-subchart-timeline-container")
+                    .data(datum.value).enter()
+                    .append(function (d, i) {
+                        return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
+                    })
+                    .attr('class', 'c9-timeline-custom-rect')
+                    .attr("x", function(d, i) { return self.getXPos(d,i, scale); })
+                    .attr("y", function(d, i) { return self.getStackPosition(d,i,stackList, index); })
+                    .attr("width", function (d, i) {
+                        return (d.end - d.start) * scale;
+                    })
+                    .attr("cy", function (d, i) {
+                        return self.getStackPosition(d, i, stackList, index) + self.itemHeight / 2;
+                    })
+                    .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
+                    .attr("r", self.itemHeight / 2)
+                    .attr("height", self.itemHeight)
+                    .style("fill", color(index));
+            });
+            
+
+            itemContainer.append("g")
+                .attr("class", "c9-subchart-axis")
+                .attr("transform", "translate(0," + subChartHeight + ")")
+                .call(xAxis2);
+
+            //append the brush for the selection of subsection  
+            itemContainer.append("g")
+                .attr("class", "c9-subchart-brush")
+                .call(brush)
+                .selectAll("rect")
+                .attr("height", subChartHeight);
+
+        }
     }
 
     /**
@@ -501,6 +594,19 @@ export default class TimeLine extends Chart {
         let eventName = eventType + '.event';
 
         selector.on(eventName, eventFactory[eventName]);
+    }
+
+    getXPos(d, i, scale) {
+        var self = this;
+        return (d.start - self.starting) * scale;
+    }
+
+    getStackPosition(d, i, stackList, index) {
+        var self = this;
+        if (self.stack) {
+            return (self.itemHeight + self.itemMargin) * stackList[index];
+        }
+        return 0;
     }
     
     /*=====  End of Main Functions  ======*/

@@ -397,9 +397,22 @@ export default class Chart {
 
     /**
      * Custom Event Listener
+     * @param  {[type]}   eventType [description]
+     * @param  {Function} callback  [description]
      */
     on(eventType, callback) {
 
+    }
+
+    /**
+     * Set option via stand-alone function
+     * @param {[type]} key   [description]
+     * @param {[type]} value [description]
+     */
+    setOption(key, value) {
+        var self = this;
+
+        Helper.set(key, value, self.options);
     }
 
     /*=====  End of Main Functions  ======*/

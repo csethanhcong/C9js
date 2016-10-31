@@ -57,7 +57,7 @@
     <div id="demo1"></div>
       <script type="text/javascript" charset="utf-8">
       var data3 = [
-              {name: "test", icon: "../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"},{"name":"Me", "start": "December 18, 2012 01:10:00"}]},
+              {name: "test", icon: "../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
               {icon: "../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
               {icon: "../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
             ];
@@ -80,11 +80,12 @@
             text: "Time",
             tick: {
               interval: 5
-            }
+            },
           }
         },
-        title_text: 'Timeline Chart',
-        x_axis_text: ' ',
+        subchart: {
+          show: true
+        },
         stack: true,
         // backgroundColor: ["yellow", "red"],
         // colorRange: ["red", "green", "blue"],

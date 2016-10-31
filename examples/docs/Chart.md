@@ -155,7 +155,7 @@ Bar Chart (Group of bar chart)
 
 #### TODO:
 
-1. `setOption`: After construct a new instance from defined class, we could change individual
+[IN PROGRESS] 1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
 
 
@@ -208,7 +208,7 @@ option of that object
 		{
 			name: 'Paris',
 			coor: [{lat:1, lon: 1}, {}, ...],
-			value: 
+			value: {population : ,area: }
 		}
 	Tất nhiên cũng có dataConfig để định nghĩa key cho value
 

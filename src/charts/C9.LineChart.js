@@ -418,7 +418,7 @@ export default class LineChart extends Chart {
                             .attr('class', 'c9-chart-line c9-path-container')
                             .attr("clip-path", "url(#clip)");
             
-            pathContainer.selectAll(".c9-chart-line.c9-path-line-custom")
+        pathContainer.selectAll(".c9-chart-line.c9-path-line-custom")
         // self.body.selectAll("dot")
             .data(data)
             .enter()

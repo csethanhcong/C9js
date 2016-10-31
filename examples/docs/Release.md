@@ -100,7 +100,9 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 ### Examples using data visualization:
 
-1. Chart: https://blog.risingstack.com/node-js-developer-survey-results-2016/
+1. Chart: 
+- https://blog.risingstack.com/node-js-developer-survey-results-2016/
+- https://tinhte.vn/threads/tham-hoa-note-7-da-cuon-sach-96-loi-nhuan-mang-mobile-cua-samsung.2654369/
 2. Map: https://www.weforum.org/agenda/2016/10/this-map-shows-where-the-world-s-most-generous-people-live
 
 

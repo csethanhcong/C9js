@@ -298,7 +298,6 @@ export default class Axis {
         var self = this;
 
         if (self.body.type == "timeline") {
-// >>>>>>> bb41668b9af6709bfb99ecd0de8c551e35683930
 
             var xScale = d3.time.scale()
                 .domain([self.options.starting, self.options.ending])

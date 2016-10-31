@@ -79,32 +79,30 @@ var Helper = {
     get: function(_key, _data){
         var _keys = _key.split(".");
         var _current = _data;
-        var self = this;
-        
-        for(var i=0, len=_keys.length; i<len; i++){
-            var _fun = _keys[i].split("|");
-            
-            if(_fun && _fun.length == 2){
-                _keys[i] = _fun[0];
-                _fun = _fun[1];
-            }
-            else{
-                _fun = null;
-            }
-            
-            if('undefined' == typeof(_current[_keys[i]])){
+
+        for (var i = 0; i < _keys.length; i++) {
+
+            if ('undefined' == typeof(_current[_keys[i]])) {
                 return '';
-            }
-            else{
+            } else {
                 _current = _current[_keys[i]];
             }
-            
-            if(null !== _fun){
-                _current = self.filter[_fun].call(this, _current);
-            }
         }
-        
+
         return _current;
+    },
+    
+    set: function(_key, _value, _context) {
+        var _current = _context;  // a moving reference to internal objects within obj
+        var _keys = _key.split('.');
+        var len = _keys.length;
+        for(var i = 0; i < len-1; i++) {
+            var _handle = _keys[i];
+            if( !_current[_handle] ) _current[_handle] = {}
+            _current = _current[_handle];
+        }
+
+        _current[_keys[len-1]] = _value;
     },
 
     max: function(arr) {
