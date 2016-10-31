@@ -45,7 +45,6 @@ export default class Axis {
             }
         };
         
-// <<<<<<< HEAD
         // this._xShow         = options.x.show      || config.x.show;
         // this._xText         = options.x.text      || config.x.text;
         // this._yShow     = options.y.show      || (body.type == "timeline" ? false : config.y.show);

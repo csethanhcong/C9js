@@ -94,6 +94,14 @@ export default class TimeLine extends Chart {
     get x() {
         return this._x;
     }
+
+    get subChartX() {
+        return this._subChartX;
+    }
+
+    get subChartXAxis() {
+        return this._subChartXAxis;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -162,6 +170,18 @@ export default class TimeLine extends Chart {
     set x(arg) {
         if (arg) {
             this._x = arg;
+        }
+    }
+
+    set subChartX(arg) {
+        if (arg) {
+            this._subChartX = arg;
+        }
+    }
+
+    set subChartXAxis(arg) {
+        if (arg) {
+            this._subChartXAxis = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -269,7 +289,7 @@ export default class TimeLine extends Chart {
         self.options.axis.ending = self.ending;
 
         var x = d3.time.scale()
-                .domain([self.options.starting, self.options.ending])
+                .domain([self.starting, self.ending])
                 .range([0, self.width]);
 
         self._x = x;
@@ -290,36 +310,32 @@ export default class TimeLine extends Chart {
                 'left': self.margin.left
             };
 
-        var x2 = d3.time.scale().range([0, subChartWidth]);
+        self.subChartX = d3.time.scale().range([0, subChartWidth]);
 
-        x2.domain([self.options.starting, self.options.ending]);
+        self.subChartX.domain([self.starting, self.ending]);
 
-        var xAxis2 = d3.svg.axis()
-                        .scale(x2)
+        self.subChartXAxis = d3.svg.axis()
+                        .scale(self.subChartX)
                         .orient("bottom");
 
         var brush = d3.svg.brush()
-                        .x(x2)
+                        .x(self.subChartX)
                         .on("brush", brushed);
 
-        var subChartAreaGen = d3.svg.area()
-                        .x(function(d) { return x2(d.valueX) })
-                        .y0(function(d) { return y2(d.valueY) })
-                        .y1(subChartHeight);
-
         /*----------  Draw subchart  ----------*/
-        self.updateSubChart(subChartHeight, subChartMargin, stackList, xAxis2, brush, self.dataTarget);
+        self.updateSubChart(subChartHeight, subChartMargin, stackList, self.subChartXAxis, brush, self.dataTarget);
         /*----------  End Draw sub chart  ----------*/
         
 
         function brushed() {
             // Update axis
-            self.x.domain(brush.empty() ? x2.domain() : brush.extent());
+            self.x.domain(brush.empty() ? self.subChartX.domain() : brush.extent());
             axis.update(self.x, self.y, 500);
             var scale = width / (self.ending - self.starting);
             // Update main path of Line Chart
             self.body.selectAll(".c9-timeline-custom-rect")
-                    .attr("x", function(d, i) { return self.getXPos(d,i, scale); });
+                    .attr("x", function(d, i) { console.log(self.x(d.start));return self.x(d.start); });
+                    // .attr("x", function(d, i) { return self.getXPos(d,i, scale); });
                     // .attr("y", function(d, i) { return self.getStackPosition(d,i,stackList, index); })
                     // .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
                     // .attr("cy", function (d, i) {
@@ -353,6 +369,9 @@ export default class TimeLine extends Chart {
         self.body.selectAll(".c9-timeline-chart.c9-background-container").data([]).exit().remove();
         self.body.selectAll(".c9-timeline-chart.c9-stripe-background-container").data([]).exit().remove();
         self.body.selectAll(".c9-timeline-chart.c9-rect-container").data([]).exit().remove();
+
+        // Update clip-parth
+        self.svg.select('#clip').select('rect').attr('height', (self.itemHeight + self.itemMargin) * data.length);
 
         //draw border
         self.body.append("rect")
@@ -404,7 +423,9 @@ export default class TimeLine extends Chart {
 
             //draw item
             var itemContainer = self.body.append("g")
-                                    .attr('class', 'c9-timeline-chart c9-rect-container');
+                                    .attr('class', 'c9-timeline-chart c9-rect-container')
+                                    .attr("clip-path", "url(#clip)");
+
             itemContainer.selectAll(".c9-rect-container")
                 .data(datum.value).enter()
                 .append(function (d, i) {
@@ -475,7 +496,7 @@ export default class TimeLine extends Chart {
     /**
      * Update sub chart
      */
-    updateSubChart(subChartHeight, subChartMargin, stackList, xAxis2, brush, data) {
+    updateSubChart(subChartHeight, subChartMargin, stackList, subChartXAxis, brush, data) {
         var self = this;
 
         var width = self.width - self.margin.left - self.margin.right,
@@ -509,17 +530,22 @@ export default class TimeLine extends Chart {
                         return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
                     })
                     .attr('class', 'c9-timeline-custom-rect')
-                    .attr("x", function(d, i) { return self.getXPos(d,i, scale); })
+                    // .attr("x", function(d, i) { return self.getXPos(d,i, scale); })
+                    .attr("x", function(d, i) { return self.subChartX(d.start); })
                     .attr("y", function(d, i) { return self.getStackPosition(d,i,stackList, index); })
+                    // .attr("width", function (d, i) {
+                    //     return (d.end - d.start) * scale;
+                    // })
                     .attr("width", function (d, i) {
-                        return (d.end - d.start) * scale;
+                        return self.subChartX(d.end) - self.subChartX(d.start);
                     })
                     .attr("cy", function (d, i) {
                         return self.getStackPosition(d, i, stackList, index) + self.itemHeight / 2;
                     })
-                    .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
+                    // .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
+                    .attr("cx", function(d, i) { return self.subChartX(d.start); })
                     .attr("r", self.itemHeight / 2)
-                    .attr("height", self.itemHeight)
+                    .attr("height", self.itemHeight / 2)
                     .style("fill", color(index));
             });
             
@@ -527,7 +553,7 @@ export default class TimeLine extends Chart {
             itemContainer.append("g")
                 .attr("class", "c9-subchart-axis")
                 .attr("transform", "translate(0," + subChartHeight + ")")
-                .call(xAxis2);
+                .call(subChartXAxis);
 
             //append the brush for the selection of subsection  
             itemContainer.append("g")
