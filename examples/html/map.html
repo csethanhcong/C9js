@@ -9,13 +9,15 @@
 		<link rel="stylesheet" href="../libs/bootstrap/dist/css/bootstrap.min.css">
 		<link rel="stylesheet" href="../css/main.css">
 		<!-- JS -->
-		<!-- <script src="./libs/c9/libs/jquery.min.js"></script> -->
+		<!-- <script src="../libs/jquery.min.js"></script> -->
 
 	    <!-- D3 & OL3 & C9 -->
 	    <script src="../libs/d3.min.js"></script>
+	    <script src="../libs/ol3/ol.js"></script>
 	    <script src="../../dist/C9.js"></script>
 	    <link rel="stylesheet" href="../../dist/C9.min.css" />
 	    <link rel="stylesheet" href="../libs/ol3/ol.css" />
+	    <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> -->
 		<!-- End of D3 & OL3 & C9 -->
 	</head>
 	<body>
@@ -54,8 +56,10 @@
 		<div class="page-header">
 		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart</h3>
 		</div>
-		<div id="chart"></div>
-		<div id="table"></div>
+		<div id="chart" style="display: none"></div>
+		<div id="map"></div>
+		<!-- <div id="popup" class="c9-custom-tooltip-container c9-tooltip-top">testtest</div> -->
+		<!-- <div id="table"></div> -->
 	    <script type="text/javascript" charset="utf-8">
 			var data = [
 					{name: "Male", value:	10},
@@ -65,32 +69,32 @@
 					{name: "Female3",	value:  25},
 				];
 			var options = {  
+			   id:"map",
+			   data: {
+					plain: {
+						name: "UK",
+						coor: {lat: 11, lon: 12},
+						value: { population: 105, area: 101 }
+					},
+					keys: {value: ['value.population', 'value.area']}
+				}
+			};
+			var options2 = {  
 			   id:"#chart",
-			   width:750,
-			   height:600,
-			   margin:{  
-			      top:100,
-			      left:100,
-			      right:50,
-			      bottom:100
-			   },
+			   width:120,
+			   height:100,
 			   data: {
 			   	plain: data
 			   },
-			   titleText:'Pie Chart',
-			   colorRange:"category20",
-			   outerRadius:200,
-			   innerRadius:100,
-			   titlePosition:'bottom',
-			   titleSize:'20px',
-			   legendShow:true,
-			   table: {
-			   	show: true,
-			   	container: "#table"
+			   margin: {
+			   	right: 20
 			   }
 			};
-			var pieChart = new C9.PieChart(options);
-			pieChart.draw();
+			
+			// var chart = new C9.PieChart(options2);
+			// chart.draw();
+			var map = new C9.Map(options);
+			map.draw();
 		</script>
 		
 	</body>

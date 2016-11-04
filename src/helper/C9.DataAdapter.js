@@ -12,7 +12,8 @@ export default class DataAdapter {
                 name: "name",
                 value: "value",
                 x: "value.x",
-                y: "value"
+                y: "value",
+                coor: "coor"
             },
             groups: [],
             stacks: [],
@@ -129,7 +130,8 @@ export default class DataAdapter {
     }
 
     hasPlainData(options) {
-        return options.plain && Helper.isArray(options.plain);
+        // return options.plain && Helper.isArray(options.plain);
+        return options.plain; // fix for map
     }
 
     hasFile(options) {
@@ -187,10 +189,10 @@ export default class DataAdapter {
         return "single";
     }
 
-    getDataTarget(chartType) {
+    getDataTarget(type) {
         var self = this;
 
-        switch(chartType) {
+        switch(type) {
             case "bar":
                 return self.getDataTargetForBarChart();
                 break;
@@ -210,6 +212,11 @@ export default class DataAdapter {
             case "timeline":
                 return self.getDataTargetForTimelineChart();
                 break;
+
+            case "map":
+                return self.getDataTargetForMap();
+                break;
+
             default:
                 return self.dataSource;
                 break;
@@ -570,6 +577,58 @@ export default class DataAdapter {
     }
     /*=====  End of Normalize Data For Charts  ======*/
     
+    /*=================================================
+    =              Normalize Data For Map             =
+    =================================================*/
+
+    getDataTargetForMap() {
+        var self = this;
+
+        var getDataValue = function(key, data, isArray){
+            let _keys = key.split('.');
+            let _value = Helper.get(key, data);
+            let _v;
+            if (_keys.length == 1 && keys[0] == 'value' && !isArray) {
+                _v = _value;
+            } else {
+                _v = new Object();
+                _v[_keys[_keys.length - 1]] = _value;
+            }
+            return _v;
+        }
+
+        var getData = function(data) {
+            let _data = {
+                "name": Helper.get(self.keys.name, data),
+                "coor": Helper.get(self.keys.coor, data),
+                "value": null
+            }
+            if (Helper.isArray(self.keys.value)) {
+                self.keys.value.forEach(function(k) {
+                    let _v = getDataValue(k, data, true);
+                    _data.value = Helper.merge(_data.value, _v);
+                });
+            }
+            else {
+                _data.value = getDataValue(self.keys.value, data, false);
+            }
+
+            return _data;
+        }
+
+        if (!Helper.isArray(self.dataSource)) 
+            self.dataTarget = getData(self.dataSource);
+        else 
+            self.dataSource.forEach(function(data) {
+                self.dataTarget.push(getData(data));
+            });
+
+        return self.dataTarget;
+    }
+
+    /*=====    End of Normalize Data For Map   ======*/
+
+
     /*=============================
     =            Utils            =
     =============================*/

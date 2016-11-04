@@ -1,10 +1,12 @@
+import Helper from '../helper/C9.Helper';
+import Tooltip from '../charts/utils/C9.Tooltip';
+import DataAdapter from '../helper/C9.DataAdapter';
 export default class Map {
     constructor(options) {
         var self    = this;
         var config  = {
             // container
             id: "body",
-            
             // Layers:
             // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
             // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
@@ -18,15 +20,16 @@ export default class Map {
                 lat: 0,
                 lon: 0,
                 zoom: 2
-            }
+            },
+            data: null
         };
 
         self._id        = options.id        || config.id;
-        self._data      = options.data      || config.data;
-        self._view      = options.view      || config.view;
+        self._dataSource      = Helper.merge(options.data, config.data);
+        self._view      = Helper.merge(options.view, config.view);
         self._markers   = options.markers   || [];
         self._options   = options;
-        self._layers    = options.layers    || config.layers;
+        self._layers    = Helper.merge(options.layers, config.layers);
         self.initMapConfig();
     }
 
@@ -56,6 +59,10 @@ export default class Map {
 
     get layers() {
         return this._layers;
+    }
+
+    get dataSource() {
+        return this._dataSource;
     }
 
     get data() {
@@ -104,6 +111,12 @@ export default class Map {
         }
     }
 
+    set dataSource(newData) {
+        if (newData) {
+            this._dataSource = newData;
+        }
+    }
+
     set data(newData) {
         if (newData) {
             this._data = newData;
@@ -122,7 +135,7 @@ export default class Map {
         //c9Layers contain all layers
         self.c9Layers = [];
         //c9Markers contain all markers
-        self.c9Markers = new ol.source.Vector({});
+        // self.c9Markers = new ol.source.Vector({});
         //c9Objects contain all polygons, lines
         self.c9Objs = new ol.source.Vector({});
         //init all thing relating to user's data
@@ -131,10 +144,17 @@ export default class Map {
         self.initLayer();
         
         //quick markers
-        self.initMarker();
+        // self.initMarker();
 
         //object
         self.initObj();
+
+        //init popup
+        var popup = document.createElement('div');
+        popup.id = 'c9MapPopup';
+        popup.className = 'c9-map-tooltip-container c9-custom-tooltip-container c9-tooltip-top';
+        document.body.appendChild(popup);
+
     }
 
     draw() {
@@ -151,7 +171,16 @@ export default class Map {
             interactions : ol.interaction.defaults({doubleClickZoom :false})
         });
 
-        //TODO - Create a function to gather all these event function
+        //create popup overlay
+        self.c9Popup = new ol.Overlay({
+            positioning: 'bottom-center',
+            element: document.getElementById('c9MapPopup')
+        });
+
+        self.c9Map.addOverlay(self.c9Popup);
+
+        self.update(self.dataSource);
+
         self.updateInteraction();
 
     }
@@ -188,66 +217,8 @@ export default class Map {
 
     
 
-    /**
-     * Create marker
-     * @param  {Number} latitude of marker
-     * @param  {Number} longitude of marker
-     * @param  {String} image source (support for both local and net)
-     * @param  {Number} scale image if its size is too large - default = 1
-     */
-    createMarker(lat, lon, imgSrc = 'http://s21.postimg.org/blklb8scn/marker_icon.png', scale = 1){
-        var self = this;
+    
 
-        var marker = new ol.Feature({
-            type: 'c9GeoMarker',
-            geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
-        });
-
-        /**
-         * Create marker style
-         * @param  {String} image source
-         * @param  {Number} scale
-         * @return {ol.style.Style} return marker style
-         */
-        var createMarkerStyle = function(imgSrc, scale){
-            return new ol.style.Style({
-                image: new ol.style.Icon({
-                    anchor: [0.5, 1], //middle-width and bottom-height of image
-                    src: imgSrc,
-                    scale: scale
-                })
-            });
-        }
-
-        marker.setStyle(createMarkerStyle(imgSrc, scale));
-
-        //add this marker to marker list (c9Markers)
-        self.c9Markers.addFeature(marker);
-    }
-
-    /**
-     * marker first set up
-     */
-    initMarker() {
-        var self = this;
-        //data
-        var markers = self.markers;
-        //add marker layer to layer list (c9Layers)
-        self.c9Layers.push(new ol.layer.Vector({
-            source: self.c9Markers
-        }));
-
-        if (markers.length === 0) return;
-
-        if (markers instanceof Array) {
-            markers.forEach(function(m, i) {
-                self.createMarker(m.lat, m.lon, m.img, m.scale);
-            });
-        }
-        else {
-            self.createMarker(markers.lat, markers.lon, markers.img, markers.scale);
-        }
-    }
 
     /**
      * Setup source for layer
@@ -389,8 +360,9 @@ export default class Map {
         //register map first render's event to show marker's effect
         self.c9Map.once('postrender', function(evt) {
             setTimeout(function(){
-                self.c9Markers.getFeatures().forEach(function(f, i){
-                    self.createMarkerEffect(f);
+                self.c9Objs.getFeatures().forEach(function(f, i){
+                    if (f.get('type') == 'c9-marker')
+                        self.createMarkerEffect(f);
                 })
             }, LOAD_MAP_DELAY);
         });
@@ -400,24 +372,32 @@ export default class Map {
             var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
                 return feature;
             });
-            if (f && f.get('type') == 'c9GeoMarker') {
+            if (f && f.get('type') == 'c9-marker') {
                 // self.createMarkerEffect(f);
                 //test
-                panAnimation(f)
+                panAnimation(f);
+console.log(f.get('data'))                
+                self.c9Popup.getElement().style.display = 'block';
+
+                // self.c9Popup.getElement().style.display = 'none';
+                self.c9Popup.getElement().innerHTML = "<strong>Name:" + f.get('data').name + "</strong></br><strong>" ;
+                self.c9Popup.setPosition(getCoordinates(f));
             }
         });
 
         //register keydown event to change center view
-        $(document).keydown(function(e) {
+        document.getElementById(self.id).addEventListener('keydown', function(e) {
             var keydownAnimate = function(k) {
                 var selectedFeature = undefined;
                 var minDistance = Infinity;
-                self.c9Markers.getFeatures().forEach(function(f, i) {
-                    var checkAnimate = distanceAndDirection(f);
+                self.c9Objs.getFeatures().forEach(function(f, i) {
+                    if (f.get('type') == "c9-marker") {
+                        var checkAnimate = distanceAndDirection(f);
 
-                    if (((checkAnimate[1] && k == LEFT_KEY) || (!checkAnimate[1] && k == RIGHT_KEY)) && checkAnimate[0] < minDistance && checkAnimate[0] != 0) {
-                        minDistance = checkAnimate[0];
-                        selectedFeature = f;
+                        if (((checkAnimate[1] && k == LEFT_KEY) || (!checkAnimate[1] && k == RIGHT_KEY)) && checkAnimate[0] < minDistance && checkAnimate[0] != 0) {
+                            minDistance = checkAnimate[0];
+                            selectedFeature = f;
+                        }
                     }
                 });
                 if (selectedFeature) {
@@ -436,6 +416,29 @@ export default class Map {
         })
     }
 
+    // /**
+    //  * marker first set up
+    //  */
+    // initMarker() {
+    //     var self = this;
+    //     //data
+    //     var markers = self.markers;
+    //     //add marker layer to layer list (c9Layers)
+    //     self.c9Layers.push(new ol.layer.Vector({
+    //         source: self.c9Markers
+    //     }));
+
+    //     if (markers.length === 0) return;
+
+    //     if (markers instanceof Array) {
+    //         markers.forEach(function(m, i) {
+    //             self.createMarker({lat: m.lat, lon: m.lon, imgSrc: m.img, scale: m.scale});
+    //         });
+    //     }
+    //     else {
+    //         self.createMarker({lat: markers.lat, lon: markers.lon, imgSrc: markers.img, scale: markers.scale});
+    //     }
+    // }
     /**
      * obj first set up
      */
@@ -450,28 +453,81 @@ export default class Map {
 
     /**
      * [createObj description]
-     * @param  {[type]} type        [description]
-     * @param  {[type]} data        [description]
-     * @param  {[type]} strokeWidth [description]
-     * @param  {[type]} strokeColor [description]
-     * @param  {[type]} fillColor   [description]
-     * @return {[type]}             [description]
+     * @param  {Object} coordinate
+     * @param  {Object} some options: strokeWidth,strokeColor,fillColor,imgSrc,scale
+     * @return {}
      */
-    createObj(type, data, strokeWidth, strokeColor, fillColor){
+    createObj(data, options){
         var self = this;
 
-        if (type != "polygon" && type != "line")
-            throw "No support";
+        /**
+         * Create marker
+         * @param  {Number} latitude of marker
+         * @param  {Number} longitude of marker
+         * @param  {String} image source (support for both local and net)
+         * @param  {Number} scale image if its size is too large - default = 1
+         */
+        var createMarker = function(data, coor, options){
 
-        if (data == self.c9Markers) {
-            data = [];
-            self.c9Markers.getFeatures().forEach(function (d) {
-                data.push(ol.proj.transform(d.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
-            })
+            if (!Helper.isArray(coor) && coor.length != 2) return;
+
+            const DEFAULT_SRC = 'http://s21.postimg.org/blklb8scn/marker_icon.png'
+            const DEFAULT_SCALE = 1;
+
+            var lat    = coor[1],
+                lon    = coor[0],
+                imgSrc = options ? (options.imgSrc || DEFAULT_SRC) : DEFAULT_SRC,
+                scale  = options ? (options.scale  || DEFAULT_SCALE) : DEFAULT_SCALE;
+
+            var marker = new ol.Feature({
+                'data-ref': '',
+                type: 'c9-marker',
+                data: data,
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
+            });
+
+            /**
+             * Create marker style
+             * @param  {String} image source
+             * @param  {Number} scale
+             * @return {ol.style.Style} return marker style
+             */
+            var createMarkerStyle = function(imgSrc, scale){
+                return new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 1], //middle-width and bottom-height of image
+                        src: imgSrc,
+                        scale: scale
+                    })
+                });
+            }
+
+            marker.setStyle(createMarkerStyle(imgSrc, scale));
+
+            //add this marker to marker list (c9Objs)
+            self.c9Objs.addFeature(marker);
         }
 
+        var coorAndType = self.normalizeCoordinate(data.coor);
+
+        //marker
+        if (coorAndType.type == "marker") {
+            createMarker(data, coorAndType.coor, options);
+            return;
+        }
+
+        // if (data == self.c9Markers) {
+        //     data = [];
+        //     self.c9Markers.getFeatures().forEach(function (d) {
+        //         data.push(ol.proj.transform(d.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
+        //     })
+        // }
+
         var obj = new ol.Feature({
-            geometry: type == "polygon" ? new ol.geom.Polygon([data]) : new ol.geom.LineString(data, 'XY')
+            'data-ref': '',
+            type: "c9-" + coorAndType.type,
+            data: data,
+            geometry: coorAndType.type == "polygon" ? new ol.geom.Polygon([coorAndType.coor]) : new ol.geom.LineString(coorAndType.coor)
         });
 
         obj.getGeometry().transform('EPSG:4326', 'EPSG:3857');
@@ -497,7 +553,59 @@ export default class Map {
 
         obj.setStyle(createObjStyle(strokeWidth, strokeColor, fillColor));
 
-        //add this marker to marker list (c9Markers)
+        //add this marker to marker list (c9Objs)
         self.c9Objs.addFeature(obj);
+    }
+
+    //x - lon, y - lat
+    normalizeCoordinate(coor){
+        var normCoor = [], type;
+        if (Helper.isObject(coor)) {
+            //is marker
+            type = "marker";
+            if (Helper.isEmpty(coor.lat) || Helper.isEmpty(coor.lon))
+                return;
+            normCoor = [coor.lon, coor. lat];
+        } else if (Helper.isArray(coor)) {
+            coor.forEach(function(c) {
+                //if data error, skip that data
+                if (Helper.isObject(c)) {
+                    if (!Helper.isEmpty(c.lat) && !Helper.isEmpty(c.lon))
+                        normCoor.push([c.lon, c.lat]);
+                }
+                else if (Helper.isArray(c) && c.length == 2 && !isNaN(c[0]) && !isNaN(c[1])) {
+                    normCoor.push(c);
+                }
+            })
+        }
+        if (Helper.isEmpty(type)) {
+            if (normCoor.length == 2)
+                type = "line";
+            else type = "polygon";
+        }
+        return {
+            coor: normCoor,
+            type: type
+        };
+    }
+
+    update(data){
+        var self = this;
+
+        var da = new DataAdapter(data);
+        self.data = da.getDataTarget('map');
+
+        if (!Helper.isEmpty(self.c9Map)) {
+            if (Helper.isArray(self.data))
+                self.data.forEach(function(d){
+                    self.createObj(d);
+                })
+            else
+                self.createObj(self.data);
+        }
+    }
+
+    getObjs(){
+        return this.c9Objs.getFeatures();
     }
 }

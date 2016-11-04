@@ -10,10 +10,10 @@ export default class Chart {
             width: 960,
             height: 480,
             margin: {
-                top: 20,
-                right: 20,
-                bottom: 70,
-                left: 40,
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
             },
             // interaction in chart
             hover: {
