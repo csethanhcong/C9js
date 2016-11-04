@@ -236,13 +236,17 @@ export default class DataAdapter {
 
         switch(self.getDataTypeForBarChart()) {
             case "single":
+                let color = self.colorRange;
+
                 self.dataSource.forEach(function(data, index) {
                     let _data = [{
                         "name" : Helper.get(self.keys.name, data),
+                        "value": Helper.get(self.keys.value, data),
                         "y0" : Helper.get(self.keys.value, data),
                         "y1" : Helper.get(self.keys.value, data),
                         "data-ref": Helper.guid(),
                         "enable" : true,
+                        "color": color(index),
                     }];
                     self.dataTarget.push(_data);
                 });
@@ -281,6 +285,7 @@ export default class DataAdapter {
                                 "y1": d > 0 ? d : 0,
                                 "group": groups[i] || i,
                                 "name": Helper.get(self.keys.name, data),
+                                "value": d,
                                 "data-ref": Helper.guid(),
                                 "group-ref": groupRefs[i],
                                 "enable"    : true,
@@ -296,6 +301,7 @@ export default class DataAdapter {
                             "y1": _dsArray > 0 ? _dsArray : 0,
                             "group": groups[0] || 0,
                             "name": Helper.get(self.keys.name, data),
+                            "value": _dsArray,
                             "data-ref": Helper.guid(),
                             "group-ref": groupRefs[0],
                             "enable"    : true,
@@ -341,6 +347,7 @@ export default class DataAdapter {
                                 "y1": d > 0 ? d + _posBase : _negBase,
                                 "group": stacks[i] || i,
                                 "name": Helper.get(self.keys.name, data),
+                                "value": d,
                                 "data-ref": Helper.guid(),
                                 "group-ref": groupRefs[i],
                                 "enable"    : true,
@@ -358,6 +365,7 @@ export default class DataAdapter {
                             "y1": _dsArray > 0 ? _dsArray : 0,
                             "group": stacks[0] || 0,
                             "name": Helper.get(self.keys.name, data),
+                            "value": _dsArray,
                             "data-ref": Helper.guid(),
                             "group-ref": groupRefs[0],
                             "enable"    : true,

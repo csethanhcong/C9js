@@ -2,7 +2,7 @@
 import Helper from '../../helper/C9.Helper';
 
 export default class Axis {
-    constructor(options, body, data, width, height, x, y) {
+    constructor(options, chart, data, width, height, x, y) {
         var self = this;
 
         var config = {
@@ -45,50 +45,20 @@ export default class Axis {
             }
         };
         
-        // this._xShow         = options.x.show      || config.x.show;
-        // this._xText         = options.x.text      || config.x.text;
-        // this._yShow     = options.y.show      || (body.type == "timeline" ? false : config.y.show);
-        // this._yText     = options.y.text      || config.y.text;
-        // // this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
-        // this._xTick    = options.x.tick      || config.x.tick;
-        // this._yTick    = options.y.tick    || config.y.tick;
-        // this._xGrid     = options.x.grid      || config.x.grid;
-        // this._yGrid     = options.y.grid      || config.y.grid;
-        // this._xType     = options.x.type      || config.x.type;
-        // this._yType     = options.y.type      || config.y.type;
-        // this._x             = x;
-        // this._y             = y;
+        // if (chart.chartType == "line") {
+        //     var xDomain = x.domain(), paddingX = (x.domain()[1] - x.domain()[0]) * 0.01;
+        //     // var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
+        //     x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
+        //     // y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
+        // }
         
-        if (body.type == "line") {
-            var xDomain = x.domain(), paddingX = (x.domain()[1] - x.domain()[0]) * 0.01;
-            // var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
-            x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
-            // y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
-        }
-
-
-        // x.domain(data.map(function(d) {
-        //     return d.name || d[0].name;
-        // }));
-
-        // y.domain([
-        //     d3.min(data, function(d) {
-        //         return d.value;
-        //     }), 
-        //     d3.max(data, function(d) {
-        //         return d.value;
-        //     })
-        // ]);
-
-        // if (body.type == "timeline") {
-// =======
         self._xShow = options.x.show || config.x.show;
         self._xText = options.x.text || config.x.text;
         self._xTick = options.x.tick || config.x.tick;
         self._xGrid = options.x.grid || config.x.grid;
         self._xType = options.x.type || config.x.type;
 
-        self._yShow = options.y.show || (body.type == "timeline" ? false : config.y.show);
+        self._yShow = options.y.show || (chart.chartType == "timeline" ? false : config.y.show);
         self._yText = options.y.text || config.y.text;
         self._yTick = options.y.tick || config.y.tick;
         self._yGrid = options.y.grid || config.y.grid;
@@ -98,7 +68,7 @@ export default class Axis {
         self._x = x;
         self._y = y;
 
-        self._body    = body;
+        self._chart    = chart;
         self._data   = data;
         self._width  = width;
         self._height  = height;
@@ -160,8 +130,8 @@ export default class Axis {
         return this._yType;
     }
 
-    get body() {
-        return this._body;
+    get chart() {
+        return this._chart;
     }
 
     get width() {
@@ -258,12 +228,6 @@ export default class Axis {
         }
     }
 
-    set body(arg) {
-        if (arg) {
-            this._body = arg;
-        }
-    }
-
     set width(arg) {
         if (arg) {
             this._width = arg;
@@ -296,10 +260,9 @@ export default class Axis {
     updateConfig() {
         var self = this;
 
-        if (self.body.type == "timeline") {
-
+        if (self.chart.chartType == "timeline") {
             var xScale = d3.time.scale()
-                .domain([self.options.starting, self.options.ending])
+                .domain([self.chart.options.starting, self.chart.options.ending])
                 .range([0, self.width]);
             self._xAxis = d3.svg.axis()
                 .scale(xScale)
@@ -309,7 +272,6 @@ export default class Axis {
                 .ticks(self._xTick.type, self._xTick.interval);
             // delete options.starting;
             // delete options.ending;
-
         } else {
 
             self._xAxis = d3.svg.axis()
@@ -342,7 +304,7 @@ export default class Axis {
         
         }
 
-        if (self.body.type != "timeline") {
+        if (self.chart.chartType != "timeline") {
             // Grid
             if (self._xGrid) {
                 // Select CURRENT svg container, to make self axis outside
@@ -376,7 +338,7 @@ export default class Axis {
         };
 
         //draw x axis
-        self._body.append("g")
+        self.chart.body.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + (self.height) + ")")
             .call(self._xAxis);
@@ -404,8 +366,8 @@ export default class Axis {
             if (!self._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
         }
 
-        if (self.body.type != "timeline") {
-            self._body.append("g")
+        if (self.chart.chartType != "timeline") {
+            self.chart.body.append("g")
                 .attr("class", "y axis")
                 .call(self._yAxis);
             d3.select(".y.axis")
@@ -425,7 +387,7 @@ export default class Axis {
     update(x, y, duration) {
         var self = this;
 
-        if (self.body.type == "line") {
+        if (self.chart.chartType == "line") {
             var xDomain = x.domain(), paddingX = (x.domain()[1] - x.domain()[0]) * 0.01;
             // var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
             x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
@@ -434,11 +396,11 @@ export default class Axis {
 
         if (x) {
             self._x = x;
-            self._body.select('.x.axis').transition().duration(duration).call(self._xAxis);
+            self.chart.body.select('.x.axis').transition().duration(duration).call(self._xAxis);
         }
         if (y) {
             self._y = y;
-            self._body.select(".y.axis").transition().duration(duration).call(self._yAxis);
+            self.chart.body.select(".y.axis").transition().duration(duration).call(self._yAxis);
         }
     }
     /*=====  End of Main Functions  ======*/

@@ -23,20 +23,6 @@ var Helper = {
         }
     },
 
-    // setDefaultConfig: function() {
-    //     var self = this;
-
-    //     if (self.defaultConfig == null || self.defaultConfig === undefined) {
-    //         return;
-    //     } else {
-    //         self.lastConfig = self.merge(Chart._options, Chart);
-    //         self.each(self.lastConfig, function(value, index) {
-    //             // var prefixCfg = self.setPrefix(index);
-    //             self.setValue(self.lastConfig[index], index);
-    //         }, self);
-    //     }
-    // }
-
     setValue: function(value, key) {
         var self = this;
         self[key] = value;
@@ -65,13 +51,15 @@ var Helper = {
         return !Util.isEmpty(func) && typeof(func) === 'function';
     },
 
-    merge: function(obj1,obj2){
+    // Overlap source by target
+    merge: function(target, source){
         var obj3 = {};
-        for (var attrname in obj2) { if (!Util.isEmpty(obj2[attrname])) obj3[attrname] = obj2[attrname]; }
-        for (var attrname in obj1) { if (!Util.isEmpty(obj1[attrname])) obj3[attrname] = obj1[attrname]; }
+        for (var attrname in source) { if (!Util.isEmpty(source[attrname])) obj3[attrname] = source[attrname]; }
+        for (var attrname in target) { if (!Util.isEmpty(target[attrname])) obj3[attrname] = target[attrname]; }
         return obj3;
     },
 
+    // Overlap target by source
     mergeDeep: function(target, source) {
         return mergeDeep(target, source);
     },
@@ -216,9 +204,11 @@ function mergeDeep(target, source) {
     if (Util.isObject(target) && Util.isObject(source)) {
         for (const key in source) {
             if (Util.isObject(source[key])) {
-                if (!target[key]) Object.assign(target, {
-                    [key]: {}
-                });
+                if (Helper.isEmpty(target[key])) {
+                    Object.assign(target, {
+                        [key]: {}
+                    });
+                }
                 mergeDeep(target[key], source[key]);
             } else {
                 Object.assign(target, {
@@ -229,5 +219,6 @@ function mergeDeep(target, source) {
     }
     return target;
 }
+
 
 module.exports = Helper;

@@ -12,94 +12,26 @@ import DataAdapter from '../helper/C9.DataAdapter';
 export default class BarChart extends Chart {
     constructor(options) {
         super(options);
+
         var self = this;
+
         var config = {
-            barWidth: undefined,
-            // groupType: "stack"
+            // barWidth: undefined,
+            isLogaric: false,
         };
 
-        var width        = self.width - self.margin.left - self.margin.right;
-        var height       = self.height - self.margin.top - self.margin.bottom;
-        // var groupCount   = 0; // use to count how many element in group
-        // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
-
-        self.body.type      = "bar";
-        // self._groupType     = options.groupType     ||  config.groupType;
-
-        var dataOption          = self.dataOption;
-        dataOption.colorRange   = self.colorRange;
-
-        var da = new DataAdapter(dataOption);
-        self.dataTarget = da.getDataTarget("bar");
-        self.dataSource = da.dataSource;
-        var barChartType = da.getDataTypeForBarChart()
-        if (barChartType != "single") {
-            self._groupNames    = da.groups || da.stacks;  //define group names use for showing legend
-            self._isGroup       = barChartType == "group";
-        }
-
-        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-        var y = options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
-
-        var minMax = Helper.getMinMax(self.dataTarget, barChartType, options.isLogaric);
-
-        x.domain(self.dataTarget.map(function(d) {
-            return d[0].name;
-        }));
-
-        y.domain([minMax.min, minMax.max]);
-
-        /******** Handle for grouped, stacked bar chart ********/
-        if (self._groupNames) {
-            self._xGroup = d3.scale.ordinal();
-            self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
-        }
-        
-        /**********************************************/
-
-        // Make flexible width according to barWidth
-        config.barWidth      = x.rangeBand();
-        self._barWidth       = options.barWidth  ||  config.barWidth;
-        self._x              = x;
-        self._y              = y;
-        self.isLogaric       = options.isLogaric;
-        self.updateConfig();
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-    get barWidth() {
-        return this._barWidth;
-    }
-
-    get colorRange() {
-        var color = this._colorRange;
-        if (typeof color == 'string') {
-            try {
-                return d3.scale[color]();    
-            }
-            catch(err) {
-                return function(i) {
-                    return color;
-                };
-            }
-        } else if (typeof color == 'object') {
-            return d3.scale.ordinal().range(color);
-        }
-    }
+    // get barWidth() {
+    //     return this._barWidth;
+    // }
 
     get groupType() {
         return this._groupType;
-    }
-
-    get x() {
-        return this._x;
-    }
-
-    get y() {
-        return this._y;
     }
     
     get xGroup() {
@@ -110,10 +42,6 @@ export default class BarChart extends Chart {
         return this._groupNames;
     }
 
-    get chartType() {
-        return this._body.type;
-    }
-
     get isGroup() {
         return this._isGroup;
     }
@@ -122,45 +50,27 @@ export default class BarChart extends Chart {
     /*==============================
     =            Setter            =
     ==============================*/
-    set barWidth(newBarWidth) {
-        if (newBarWidth) {
-            this._barWidth = newBarWidth;
-        }
-    }
-    
-    set colorRange(newBarColor) {
-        if (newBarColor) {
-            this._colorRange = newBarColor;
+    // set barWidth(arg) {
+    //     if (arg) {
+    //         this._barWidth = arg;
+    //     }
+    // }
+
+    set groupType(arg) {
+        if (arg) {
+            this._groupType = arg;
         }
     }
 
-    set groupType(newGroupType) {
-        if (newGroupType) {
-            this._groupType = newGroupType;
+    set xGroup(arg) {
+        if (arg) {
+            this._xGroup = arg;
         }
     }
 
-    set x(newX) {
-        if (newX) {
-            this._x = newX;
-        }
-    }
-
-    set y(newY) {
-        if (newY) {
-            this._y = newY;
-        }
-    }
-
-    set xGroup(newXGroup) {
-        if (newXGroup) {
-            this._xGroup = newXGroup;
-        }
-    }
-
-    set groupNames(newGroupNames) {
-        if (newGroupNames) {
-            this._groupNames = newGroupNames;
+    set groupNames(arg) {
+        if (arg) {
+            this._groupNames = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -168,54 +78,165 @@ export default class BarChart extends Chart {
     /*======================================
     =            Main Functions            =
     ======================================*/
-
-
-
     /**
      * Init Bar Chart Config
      */
-    updateConfig(){
-        var self  = this,
-            color = self.colorRange,
-            x     = self._x,
-            y     = self._y,
-            xGroup= self._xGroup;
+    updateConfig(config){
+        super.updateConfig(config);
+
+        var self  = this;
+
+        self.options = Helper.mergeDeep(config, self.options);
+
+        self.chartType      = "bar";
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget = da.getDataTarget(self.chartType);
+        self.dataSource = da.dataSource;
+
+        var barChartType = da.getDataTypeForBarChart();
+        if (barChartType != "single") {
+            self.groupNames    = da.groups || da.stacks;  //define group names use for showing legend
+            self.isGroup       = barChartType == "group";
+        }
+
+        var width        = self.width - self.margin.left - self.margin.right,
+            height       = self.height - self.margin.top - self.margin.bottom;
+
+        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+            y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+
+        var minMax = Helper.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+
+        x.domain(self.dataTarget.map(function(d) {
+            return d[0].name;
+        }));
+
+        y.domain([minMax.min, minMax.max]);
+
+        /******** Handle for grouped, stacked bar chart ********/
+        if (self.groupNames) {
+            self.xGroup = d3.scale.ordinal();
+            self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+        }
+        
+        /**********************************************/
+
+        // Make flexible width according to barWidth
+        // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+        self.x              = x;
+        self.y              = y;
+        
+    }
+
+    /**
+     * Update Chart Data Config
+     * Notes: Merge Deep change order of Config and Option
+     * ---------------------------------------------------
+     */
+    updateDataConfig(dataCfg){
+        var self  = this;
+
+        self.options = Helper.mergeDeep(self.options, dataCfg);
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget = da.getDataTarget(self.chartType);
+        self.dataSource = da.dataSource;
+
+        var barChartType = da.getDataTypeForBarChart();
+        if (barChartType != "single") {
+            self.groupNames    = da.groups || da.stacks;  //define group names use for showing legend
+            self.isGroup       = barChartType == "group";
+        }
+
+        var width        = self.width - self.margin.left - self.margin.right,
+            height       = self.height - self.margin.top - self.margin.bottom;
+
+        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+            y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+
+        var minMax = Helper.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+
+        x.domain(self.dataTarget.map(function(d) {
+            return d[0].name;
+        }));
+
+        y.domain([minMax.min, minMax.max]);
+
+        /******** Handle for grouped, stacked bar chart ********/
+        if (self.groupNames) {
+            self.xGroup = d3.scale.ordinal();
+            self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+        }
+        
+        /**********************************************/
+
+        // Make flexible width according to barWidth
+        // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+        self.x              = x;
+        self.y              = y;
+        
+    }
+
+    /**
+     * Update chart based on data
+     * @param  {[type]} data [description]
+     */
+    update(data) {
+        var self = this;
+
+        self.body.selectAll(".c9-chart-bar.c9-custom-rect").data([]).exit().remove();
+        self.body.selectAll(".c9-chart-bar.c9-custom-bar").data([]).exit().remove();
+
+        var color = self.colorRange,
+            x     = self.x,
+            y     = self.y,
+            xGroup= self.xGroup;
 
         var bar = self.body
-                    .selectAll(".bar")
-                    .data(self.dataTarget)
+                    .selectAll(".c9-chart-bar.c9-custom-bar")
+                    .data(data)
                     .enter()
                         .append("g")
                         .attr("class", "c9-chart-bar c9-custom-bar")
                         .attr("transform", function(d) { return "translate(" + x(d[0].name) + ",0)"; });
 
-        var bars = bar.selectAll(".c9-custom-rect")
+        var bars = bar.selectAll(".c9-chart-bar.c9-custom-rect")
             .data(function(d) { return d; });
 
         bars.enter()
             .append("rect")
-            .attr("class", "c9-custom-rect")
+            .attr("class", "c9-chart-bar c9-custom-rect")
             .style("fill", function (d, i) { return d.color || color(i); })
             .attr("x", function(d) { return self.isGroup ? xGroup(d.group) : undefined; })
             .attr("y", function(d) { return y(d.y1); })
             .attr("width", function(d) { return self.isGroup ? xGroup.rangeBand() : x.rangeBand(); })
-            .attr("height", function(d) { return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0)); });
+            .attr("height", function(d) { return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0)); });
+            
+        self.updateInteraction();
     }
 
     /**
-     * [updateLegendInteraction description]
+     * Update Interaction with Legend
      * @param  {[type]} data          [description]
      * @param  {[type]} groupNames    [description]
      * @param  {[type]} groupNamesOld [description]
      * @param  {[type]} newLabel      [description]
-     * @return {[type]}               [description]
      */
     updateLegendInteraction(data, groupNames, groupNamesOld, newLabel){
         var self = this;
         var type = self.groupType;
 
         var y = self.y;
-        var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null, self.isLogaric);
+        var minMax = Helper.getMinMax(data, self.isGroup == false ? "stack" : null, self.options.isLogaric);
         y.domain([minMax.min, minMax.max]);
         self.axis.update(null, y, 750);
         
@@ -231,8 +252,9 @@ export default class BarChart extends Chart {
             midGroup = groupNamesOld[groupNames.indexOf(newLabel)];
 
         // self.body.selectAll(".c9-custom-rect").transition().duration(750).attr("height", 0).remove();
-        self.body.selectAll(".c9-custom-rect").data([]).exit().remove();
-        self.body.selectAll(".c9-custom-bar").data([]).exit().remove();
+        self.body.selectAll(".c9-chart-bar.c9-custom-rect").data([]).exit().remove();
+        self.body.selectAll(".c9-chart-bar.c9-custom-bar").data([]).exit().remove();
+
         var bar = self.body
                     .selectAll(".c9-chart-bar.c9-custom-bar")
                     .data(data)
@@ -246,7 +268,7 @@ export default class BarChart extends Chart {
 
         bars.enter()
             .append("rect")
-            .attr("class", "c9-custom-rect")
+            .attr("class", "c9-chart-bar c9-custom-rect")
             .style("fill", function(d) { return d.color; })
             .attr("x", function(d) {
                 // use for stack
@@ -257,42 +279,18 @@ export default class BarChart extends Chart {
                     return self.x.rangeBand();
                 return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
             })
-            .attr("y", function(d) { return self.isGroup ? y(d.y1) : self.isLogaric ? y(y.domain()[1]) : y(0); })
+            .attr("y", function(d) { return self.isGroup ? y(d.y1) : self.options.isLogaric ? y(y.domain()[1]) : y(0); })
             .attr("width", function(d) {
                 return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             })
-            .attr("height", function(d) { return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0; });
+            .attr("height", function(d) { return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0; });
 
         bars.transition().duration(750)
             .attr("x", function(d) { return !self.isGroup ? undefined : xGroup(d.group); })
             .attr("width", function(d) { return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand(); })
             .attr("y", function(d) { return y(d.y1); })
-            .attr("height", function(d) { return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0)); });
+            .attr("height", function(d) { return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0)); });
             
-        self.updateInteraction();
-    }
-
-    /**
-     * [Main draw function of Bar Chart]
-     * @return {[type]} [description]
-     */
-    draw() {
-        var self = this;
-        self.axis    = new Axis(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
-        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
-        var table   = new Table(self.options.table, self.body, self.dataTarget);
-
-        self.table = table;
-
-        // Draw legend
-        legend.draw();
-        legend.updateInteractionForBarChart(self);
-
-        // Draw table
-        table.draw();
-        table.updateInteractionForBarChart(self);
-
         self.updateInteraction();
     }
 
@@ -319,7 +317,6 @@ export default class BarChart extends Chart {
 
     /**
      * Update Interaction: Hover
-     * @return {} 
      */
     updateInteraction() {
         var self = this,
@@ -375,12 +372,18 @@ export default class BarChart extends Chart {
 
         selector.on(self.eventFactory);
     }
+    
+    /*=====  End of Main Functions  ======*/
+    
+    /*========================================
+    =            User's Functions            =
+    ========================================*/
+    
 
     /**
      * Custom Event Listener
      * @param  {[type]}   eventType [description]
      * @param  {Function} callback  [description]
-     * @return {[type]}             [description]
      */
     on(eventType, callback) {
         super.on(eventType, callback);
@@ -412,7 +415,81 @@ export default class BarChart extends Chart {
         selector.on(eventName, eventFactory[eventName]);
     }
     
-    /*=====  End of Main Functions  ======*/
+    /**
+     * [Main draw function of Bar Chart]
+     * @return {[type]} [description]
+     */
+    draw() {
+        super.draw();
+
+        var self = this;
+
+        var axis    = new Axis(self.options.axis, self, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
+        var title   = new Title(self.options, self, self.width, self.height, self.margin);
+        var legend  = new Legend(self.options.legend, self, self.dataTarget);
+        var table   = new Table(self.options.table, self, self.dataTarget);
+
+        self.axis = axis;
+        self.table = table;
+        self.legend = legend;
+
+        // Update Chart based on dataTarget
+        self.update(self.dataTarget);
+        self.updateInteraction();
+
+        // Draw legend
+        legend.draw();
+        legend.updateInteractionForBarChart(self);
+
+        // Draw table
+        table.draw();
+        table.updateInteractionForBarChart(self);
+    }
+
+    /**
+     * Set option via stand-alone function
+     * @param {[type]} key   [description]
+     * @param {[type]} value [description]
+     */
+    setOption(key, value) {
+        super.setOption(key, value);
+
+        var self = this;
+
+        Helper.set(key, value, self.options);
+
+        self.updateConfig(self.options);
+    }
+
+    /**
+     * Update chart based on new data with optional dataConfig
+     * @param  {[type]} data       [description]
+     * @param  {[type]} dataConfig [description]
+     */
+    updateData(newData, newDataConfig) {
+        var self = this;
+
+        var newCfg = {};
+
+        if (!Helper.isEmpty(newDataConfig)) {
+
+            newCfg.data = {
+                plain: newData,
+                keys: newDataConfig,
+            };
+
+        } else {
+
+            newCfg.data = {
+                plain: newData,
+            };
+
+        }
+        
+        self.updateDataConfig(newCfg);
+        self.update(self.dataTarget);
+    }
+    /*=====  End of User's Functions  ======*/
     
     
 }

@@ -12,47 +12,22 @@ import DataAdapter from '../helper/C9.DataAdapter';
 export default class DonutChart extends Chart {
     constructor(options) {
         super(options);
+
         var self = this;
+
         var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
         var config = {
             outerRadius: R,
             innerRadius: R > 80 ? R - 80 : R - 40,
-            showText: true // show/hide text on middle or each donut
+            // showText: true // show/hide text on middle or each donut
         };
 
-        self._outerRadius   = options.outerRadius || config.outerRadius;
-        self._innerRadius   = options.innerRadius || config.innerRadius;
-        self._showText      = options.showText || config.showText;
-        self.body.type      = 'donut';
-
-        var dataOption          = self.dataOption;
-        dataOption.colorRange   = self.colorRange;
-
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget("donut");
-
-        self.updateConfig();
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-    get outerRadius() {
-        return this._outerRadius;
-    }
-
-    get innerRadius() {
-        return this._innerRadius;
-    }
-
-    get showText() {
-        return this._showText;
-    }
-
-    get tooltip() {
-        return this._tooltip;
-    }
-
     get pie() {
         return this._pie;
     }
@@ -64,43 +39,11 @@ export default class DonutChart extends Chart {
     get currentData() {
         return this._currentData;
     }
-
-    get chartType() {
-        return this._body.type;
-    }
-
-    get legend() {
-        return this._legend;
-    }
     /*=====  End of Getter  ======*/
 
     /*==============================
     =            Setter            =
     ==============================*/
-    set outerRadius(arg) {
-        if (arg) {
-            this._outerRadius = arg;
-        }
-    }
-
-    set innerRadius(arg) {
-        if (arg) {
-            this._innerRadius = arg;
-        }
-    }
-
-    set showText(arg) {
-        if (arg) {
-            this._showText = arg;
-        }
-    }
-
-    set tooltip(arg) {
-        if (arg) {
-            this._tooltip = arg;
-        }
-    }
-
     set pie(arg) {
         if (arg) {
             this._pie = arg;
@@ -118,12 +61,6 @@ export default class DonutChart extends Chart {
             this._currentData = arg;
         }
     }
-
-    set legend(arg) {
-        if (arg) {
-            this._legend = arg;
-        }
-    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -132,18 +69,122 @@ export default class DonutChart extends Chart {
     /**
      * Update Donut Chart Config
      */
-    updateConfig() {
+    updateConfig(config) {
+        super.updateConfig(config);
+
         var self = this;
 
-        // chartInnerAfter, chartOuterAfter define easing radius of donut chart during animation
-        // TODO: Add configs allow users to define these radius
+        self.options = Helper.mergeDeep(config, self.options);
+
+        self.chartType      = 'donut';
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget(self.chartType);
+    }
+
+    /**
+     * Update Donut Chart Config
+     */
+    updateDataConfig(dataCfg) {
+        var self = this;
+
+        self.options = Helper.mergeDeep(self.options, dataCfg);
+
+        self.chartType      = 'donut';
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget(self.chartType);
+    }
+
+    /**
+     * Update Donut Chart based on new data
+     * @param  {[type]} data [description]
+     */
+    update(data) {
+        var self = this;
+
         var width   = self.width - self.margin.left - self.margin.right,
             height  = self.height - self.margin.top - self.margin.bottom,
+            color   = self.colorRange;
+
+        self.arc = d3.svg.arc()
+                    .outerRadius(self.options.outerRadius)
+                    .innerRadius(self.options.innerRadius);
+
+        //we can sort data here
+        self.pie = d3.layout.pie()
+                    .sort(null)
+                    .value(function(d) { return d.value; });
+
+        self.body.selectAll(".c9-chart-donut.c9-custom-arc-container").data([]).exit().remove();
+
+        //draw chart
+        var arcs = self.body
+                    .append('g')
+                        .attr('class', 'c9-chart-donut c9-custom-arc-container')
+                        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
+                        .selectAll('.c9-chart-donut.c9-custom-arc')
+                        .data(self.pie(data)).enter()
+                        .append('g')
+                            .attr('class', 'c9-chart-donut c9-custom-arc');
+
+        // Append main path contains donut
+        // TODO: add a unique class to allow Legend could find selected donut/pie
+        arcs.append('path')
+                .attr('class', 'c9-chart-donut c9-custom-path')
+                .attr('data-ref', function(d) { return d.data['data-ref']; })
+                .attr('d', self.arc)
+                .attr('fill', function(d, i) { return color(i); })
+                .attr('stroke', '#ffffff')
+                .each(function(d) { self.currentData = d; }); 
+                // Current data used for calculate interpolation 
+                // between current arc vs disabled arc
+
+
+        // Append middle text display name
+        // if (self.showText) {
+        //     arcs.append('text')
+        //             .attr('class', 'c9-chart-donut c9-custom-text')
+        //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
+        //             .attr('dy', '.35em')
+        //             .attr('text-anchor', 'middle')
+        //             .text(function(d) { return d.data.name; });
+        // }
+        
+        self.updateInteraction();
+    }
+
+    /**
+     * Select all path as type PATH in Donut Chart via its CLASS
+     */
+    selectAllPath() {
+        var self = this;
+
+        return self.body
+                // .selectAll('g')
+                    .selectAll('path.c9-chart-donut.c9-custom-path');
+    }
+
+    /**
+     * Update Interaction: Hover
+     * @return {} 
+     */
+    updateInteraction() {
+        var self    = this,
+            selector= self.selectAllPath(),
+            width   = self.width - self.margin.left - self.margin.right,
+            height  = self.height - self.margin.top - self.margin.bottom,
             color   = self.colorRange,
-            chartInnerBefore = self.innerRadius,
-            chartOuterBefore = self.outerRadius,
-            chartInnerAfter = self.innerRadius,
-            chartOuterAfter = self.outerRadius * 1.2;
+            chartInnerBefore = self.options.innerRadius,
+            chartOuterBefore = self.options.outerRadius,
+            chartInnerAfter = self.options.innerRadius,
+            chartOuterAfter = self.options.outerRadius * 1.2;
 
         var hoverOptions        = self.hover.options,
             hoverEnable         = self.hover.enable,
@@ -245,97 +286,14 @@ export default class DonutChart extends Chart {
 
         };
 
-        self.arc = d3.svg.arc()
-                    .outerRadius(self.outerRadius)
-                    .innerRadius(self.innerRadius);
-
-        //we can sort data here
-        self.pie = d3.layout.pie()
-                    .sort(null)
-                    .value(function(d) { return d.value; });
-
-        //draw chart
-        var arcs = self.body
-                    .append('g')
-                        .attr('class', 'c9-chart c9-custom-arc-container')
-                        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
-                        .selectAll('.c9-chart-donut.c9-custom-arc')
-                        .data(self.pie(self.dataTarget)).enter()
-                        .append('g')
-                            .attr('class', 'c9-chart-donut c9-custom-arc');
-
-        // Append main path contains donut
-        // TODO: add a unique class to allow Legend could find selected donut/pie
-        arcs.append('path')
-                .attr('class', 'c9-chart-donut c9-custom-path')
-                .attr('data-ref', function(d) { return d.data['data-ref']; })
-                .attr('d', self.arc)
-                .attr('fill', function(d, i) { return color(i); })
-                .attr('stroke', '#ffffff')
-                .each(function(d) { self._currentData = d; }); 
-                // Current data used for calculate interpolation 
-                // between current arc vs disabled arc
-
-
-        // Append middle text display name
-        // if (self.showText) {
-        //     arcs.append('text')
-        //             .attr('class', 'c9-chart-donut c9-custom-text')
-        //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
-        //             .attr('dy', '.35em')
-        //             .attr('text-anchor', 'middle')
-        //             .text(function(d) { return d.data.name; });
-        // }
-    }
-
-    /**
-     * Main draw function of Donut Chart
-     */
-    draw() {
-
-        var self = this;
-        
-        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
-        var table   = new Table(self.options.table, self.body, self.dataTarget);
-
-        self.legend = legend;
-        self.table = table;
-
-        // Draw legend
-        legend.draw();
-        legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
-
-        // Draw table
-        table.draw();
-        table.updateInteractionForDonutPieChart(self);
-        // Update interaction of this own chart
-        self.updateInteraction();
-
-    }
-
-    /**
-     * Select all path as type PATH in Donut Chart via its CLASS
-     */
-    selectAllPath() {
-        var self = this;
-
-        return self.body
-                // .selectAll('g')
-                    .selectAll('path.c9-chart-donut.c9-custom-path');
-    }
-
-    /**
-     * Update Interaction: Hover
-     * @return {} 
-     */
-    updateInteraction() {
-        var self    = this,
-            selector= self.selectAllPath();
-
         selector.on(self._eventFactory);
     }
-
+    
+    /*=====  End of Main Functions  ======*/
+    
+    /*========================================
+    =            User's Functions            =
+    ========================================*/
     /**
      * Custom Event Listener
      * @param  {[type]}   eventType [description]
@@ -371,8 +329,81 @@ export default class DonutChart extends Chart {
 
         selector.on(eventName, eventFactory[eventName]);
     }
+
+    /**
+     * Main draw function of Donut Chart
+     */
+    draw() {
+        super.draw();
+
+        var self = this;
+        
+        var title   = new Title(self.options, self, self.width, self.height, self.margin);
+        var legend  = new Legend(self.options.legend, self, self.dataTarget);
+        var table   = new Table(self.options.table, self, self.dataTarget);
+
+        // Update interaction of this own chart
+        self.update(self.dataTarget);
+        self.updateInteraction();
+
+        self.legend = legend;
+        self.table = table;
+
+        // Draw legend
+        legend.draw();
+        legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+        // Draw table
+        table.draw();
+        table.updateInteractionForDonutPieChart(self);
+    }
     
-    /*=====  End of Main Functions  ======*/
+    /**
+     * Set option via stand-alone function
+     * @param {[type]} key   [description]
+     * @param {[type]} value [description]
+     */
+    setOption(key, value) {
+        super.setOption(key, value);
+
+        var self = this;
+
+        Helper.set(key, value, self.options);
+
+        self.updateConfig(self.options);
+    }
+
+    /**
+     * Update chart based on new data with optional dataConfig
+     * @param  {[type]} data       [description]
+     * @param  {[type]} dataConfig [description]
+     */
+    updateData(newData, newDataConfig) {
+        var self = this;
+
+        var newCfg = {};
+
+        if (!Helper.isEmpty(newDataConfig)) {
+
+            newCfg.data = {
+                plain: newData,
+                keys: newDataConfig,
+            };
+
+        } else {
+
+            newCfg.data = {
+                plain: newData,
+            };
+
+        }
+        
+        self.updateDataConfig(newCfg);
+        self.update(self.dataTarget);
+    }
+    
+    
+    /*=====  End of User's Functions  ======*/
     
     
 }

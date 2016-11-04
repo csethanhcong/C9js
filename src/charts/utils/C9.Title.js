@@ -1,7 +1,9 @@
 'use strict';
 
 export default class Title {
-    constructor(options, body, width, height, margin) {
+    constructor(options, chart, width, height, margin) {
+        var self = this;
+
         var config = {
             titleShow      : true,
             titleText      : "Sample Chart",
@@ -9,29 +11,29 @@ export default class Title {
             titleSize      : "14px"
         };
 
-        this._titleShow     = options.titleShow       || config.titleShow;
-        this._titleText     = options.titleText       || config.titleText;
-        this._titlePosition = options.titlePosition   || config.titlePosition;
-        this._titleSize     = options.titleSize       || config.titleSize;
+        self._titleShow     = options.titleShow       || config.titleShow;
+        self._titleText     = options.titleText       || config.titleText;
+        self._titlePosition = options.titlePosition   || config.titlePosition;
+        self._titleSize     = options.titleSize       || config.titleSize;
 
-        this._body    = body;
+        self._chart    = chart;
 
-        if (this._titleShow) {
-            var self = this;
+        if (self._titleShow) {
             // Select CURRENT body container, to make this axis outside
             // as a SEPARATED component, just like AXIS, of CHART
-            var text = d3.select(self._body[0][0].parentNode)
-                .append("g")
-                    .attr('class', 'c9-custom-title c9-custom-title-container')
-                    .append("text")
-                        .attr("class", "c9-custom-title c9-custom-title-text");
+            // var text = d3.select(self._body[0][0].parentNode)
+            var text = self._chart.svg
+                            .append("g")
+                                .attr('class', 'c9-custom-title c9-custom-title-container')
+                            .append("text")
+                                .attr("class", "c9-custom-title c9-custom-title-text");
 
                 // Get title width: text.node().getComputedTextLength()           
                 text.attr("x", (((width - text.node().getComputedTextLength()) / 2)))           
-                    .attr("y", this.setYLocation(height, margin))
+                    .attr("y", self.setYLocation(height, margin))
                     .attr("text-anchor", "middle")  
-                    .style("font-size", this._titleSize)  
-                    .text(this._titleText);
+                    .style("font-size", self._titleSize)  
+                    .text(self._titleText);
         }
             
     }
@@ -54,6 +56,10 @@ export default class Title {
 
     get titleSize() {
         return this._titleSize;
+    }
+
+    get chart() {
+        return this._chart;
     }
     
     /*=====  End of Getter  ======*/
@@ -92,9 +98,11 @@ export default class Title {
     =            Main Functions            =
     ======================================*/
     setYLocation(height, margin) {
-        if (this.titlePosition === 'top') {
+        var self = this;
+        
+        if (self.titlePosition === 'top') {
             return (margin.top / 2);
-        } else if (this.titlePosition === 'bottom') {
+        } else if (self.titlePosition === 'bottom') {
             return (height - margin.bottom / 2);
         }
     }
