@@ -342,6 +342,9 @@ export default class Map {
             self.c9Map.beforeRender(pan);
             self.c9View.setCenter(getCoordinates(f));
         }
+        var formatPopup = function(d){
+            
+        }
         /**
          * Caculate distance between marker and center view, plus direction compare with center
          * @param  {ol.Feature}
@@ -376,7 +379,7 @@ export default class Map {
                 // self.createMarkerEffect(f);
                 //test
                 panAnimation(f);
-console.log(f.get('data'))                
+        
                 self.c9Popup.getElement().style.display = 'block';
 
                 // self.c9Popup.getElement().style.display = 'none';

@@ -15,6 +15,7 @@ export default class Chart {
                 bottom: 0,
                 left: 0,
             },
+
             // interaction in chart
             hover: {
                 enable: true,
@@ -149,37 +150,9 @@ export default class Chart {
             },
         };
 
-        self._id        = options.id        || config.id;
-        self._width     = options.width     || config.width;
-        self._height    = options.height    || config.height;
-        self._colorRange= options.colorRange|| config.colorRange;
-
-        
-        self._margin    = Helper.merge(options.margin, config.margin);
-        self._hover     = Helper.merge(options.hover, config.hover);
-        self._click     = Helper.merge(options.click, config.click);
-
-        // Main factory contains all interactions
-        self._eventFactory = null;
-        
-        self._dataOption= Helper.merge(options.data, config.data);
-        self._dataTarget= null;
-
-        // Skeleton: 
-        // SVG
-        // ---BODY (g)
-        // -------BlaBla
-        self._svg       = null;
-        self._body      = null;
         self._options   = options;
 
-        self._options.subchart  = Helper.merge(options.subchart, config.subchart);
-        self._options.table     = Helper.merge(options.table, config.table);
-        self._options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
-        self._options.legend    = Helper.merge(options.legend, config.legend);
-        self._options.axis      = Helper.mergeDeep(config.axis, options.axis);
-
-        self.initConfig();
+        self.updateConfig(config);
     }
 
     /*==============================
@@ -214,10 +187,19 @@ export default class Chart {
      * If colorRange is a String like "category20", "category20b", etc. then scale using d3.scale.category
      */
     get colorRange() {
-        if (typeof this._colorRange == 'string') {
-            return d3.scale[this._colorRange]();
-        } else if (typeof this._colorRange == 'object') {
-            return d3.scale.ordinal().range(this._colorRange);
+        var color = this._colorRange;
+
+        if (typeof color == 'string') {
+            try {
+                return d3.scale[color]();    
+            }
+            catch(err) {
+                return function(i) {
+                    return color;
+                };
+            }
+        } else if (typeof color == 'object') {
+            return d3.scale.ordinal().range(color);
         }
     }
 
@@ -253,8 +235,40 @@ export default class Chart {
         return this._dataTarget;
     }
 
+    get dataSource() {
+        return this._dataSource;
+    }
+
     get eventFactory() {
         return this._eventFactory;
+    }
+
+    get x() {
+        return this._x;
+    }
+
+    get y() {
+        return this._y;
+    }
+
+    get chartType() {
+        return this._chartType;
+    }
+
+    get axis() {
+        return this._axis;
+    }
+
+    get legend() {
+        return this._legend;
+    }
+
+    get table() {
+        return this._table;
+    }
+
+    get tooltip() {
+        return this._tooltip;
     }
     /*=====  End of Getter  ======*/
     
@@ -262,27 +276,27 @@ export default class Chart {
     /*==============================
     =            Setter            =
     ==============================*/
-    set container(newContainer) {
-        if (newContainer) {
-            this._container = newContainer;
+    set container(arg) {
+        if (arg) {
+            this._container = arg;
         }
     }
     
-    set id(newId) {
-        if (newId) {
-            this._id = newId;
+    set id(arg) {
+        if (arg) {
+            this._id = arg;
         }
     }
 
-    set width(newWidth) {
-        if (newWidth) {
-            this._width = newWidth;
+    set width(arg) {
+        if (arg) {
+            this._width = arg;
         }
     }
 
-    set height(newHeight) {
-        if (newHeight) {
-            this._height = newHeight;
+    set height(arg) {
+        if (arg) {
+            this._height = arg;
         }
     }
 
@@ -298,15 +312,15 @@ export default class Chart {
         }
     }
 
-    set colorRange(newColorRange) {
-        if (newColorRange) {
-            this._colorRange = newColorRange;
+    set colorRange(arg) {
+        if (arg) {
+            this._colorRange = arg;
         }
     }
 
-    set margin(newMargin) {
-        if (newMargin) {
-            this._margin = newMargin;
+    set margin(arg) {
+        if (arg) {
+            this._margin = arg;
         }
     }
 
@@ -316,27 +330,27 @@ export default class Chart {
         }
     }
 
-    set svg(newSvg) {
-        if (newSvg) {
-            this._svg = newSvg;
+    set svg(arg) {
+        if (arg) {
+            this._svg = arg;
         }
     }
 
-    set body(newBody) {
-        if (newBody) {
-            this._body = newBody;
+    set body(arg) {
+        if (arg) {
+            this._body = arg;
         }
     }
 
-    set options(newOptions) {
-        if (newOptions) {
-            this._options = newOptions;
+    set options(arg) {
+        if (arg) {
+            this._options = arg;
         }
     }
 
-    set hover(newHover) {
-        if (newHover) {
-            this._hover = newHover;
+    set hover(arg) {
+        if (arg) {
+            this._hover = arg;
         }
     }
 
@@ -352,9 +366,57 @@ export default class Chart {
         }
     }
 
+    set dataSource(arg) {
+        if (arg) {
+            this._dataSource = arg;
+        }
+    }
+
     set eventFactory(arg) {
         if (arg) {
             this._eventFactory = arg;
+        }
+    }
+
+    set x(arg) {
+        if (arg) {
+            this._x = arg;
+        }
+    }
+
+    set y(arg) {
+        if (arg) {
+            this._y = arg;
+        }
+    }
+
+    set chartType(arg) {
+        if (arg) {
+            this._chartType = arg;
+        }
+    }
+
+    set axis(arg) {
+        if (arg) {
+            this._axis = arg;
+        }
+    }
+
+    set legend(arg) {
+        if (arg) {
+            this._legend = arg;
+        }
+    }
+
+    set table(arg) {
+        if (arg) {
+            this._table = arg;
+        }
+    }
+
+    set tooltip(arg) {
+        if (arg) {
+            this._tooltip = arg;
         }
     }
     /*=====  End of Setter  ======*/
@@ -364,30 +426,65 @@ export default class Chart {
     =            Main Functions            =
     ======================================*/
     /**
-     * Init & Update Parent Chart Config
+     * Update parent config
      */
-    initConfig() {
-        var margin  = this.margin,
-            id      = this.id,
-            width   = this.width - margin.left - margin.right,
-            height  = this.height - margin.top - margin.bottom;
+    updateConfig(config) {
+        var self = this;
 
-        this.container = d3.select(id);
+        self.options = Helper.mergeDeep(config, self.options);
 
-        this.svg = d3.select(id)
+        var options = self.options;
+
+        self.id        = options.id        || config.id;
+        self.width     = options.width     || config.width;
+        self.height    = options.height    || config.height;
+        self.colorRange= options.colorRange|| config.colorRange;
+        
+        self.margin    = Helper.merge(options.margin, config.margin);
+        self.hover     = Helper.merge(options.hover, config.hover);
+        self.click     = Helper.merge(options.click, config.click);
+        
+        self.dataOption= Helper.mergeDeep(config.data, options.data);
+
+        self.options.subchart  = Helper.merge(options.subchart, config.subchart);
+        self.options.table     = Helper.merge(options.table, config.table);
+        self.options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
+        self.options.legend    = Helper.merge(options.legend, config.legend);
+        self.options.axis      = Helper.mergeDeep(config.axis, options.axis);
+    }
+
+    /**
+     * Draw or Re-draw Base Chart
+     */
+    draw() {
+        var self = this;
+
+        var margin  = self.margin,
+            id      = self.id,
+            width   = self.width - margin.left - margin.right,
+            height  = self.height - margin.top - margin.bottom;
+
+        self.container = d3.select(id);
+
+        // Remove existing chart at current container
+        self.container.selectAll(".c9-svg").data([]).exit().remove();
+
+        self.svg = d3.select(id)
             .append("svg")
-            .style('overflow', 'visible') // to overwrite overflow: hidden by Boostrap as default
-            .attr("width", this.width)
-            .attr("height", this.height);
+            .attr('class', 'c9-svg')
+            .attr("width", self.width)
+            .attr("height", self.height)
+            .style('overflow', 'visible'); // to overwrite overflow: hidden by Boostrap as default
 
 
-        this.svg.append("defs").append("clipPath")
-            .attr("id", "clip")
-          .append("rect")
-            .attr("width", width)
-            .attr("height", height);
+        self.svg.append("defs")
+            .append("clipPath")
+                .attr("id", "clip")
+            .append("rect")
+                .attr("width", width)
+                .attr("height", height);
 
-        this.body = this.svg
+        self.body = self.svg
                     .append("g")
                     .attr('class', 'c9-chart c9-custom-container')
                     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -395,6 +492,11 @@ export default class Chart {
                   
     }
 
+    /*=====  End of Main Functions  ======*/
+
+    /*========================================
+    =            User's Functions            =
+    ========================================*/
     /**
      * Custom Event Listener
      * @param  {[type]}   eventType [description]
@@ -413,8 +515,21 @@ export default class Chart {
         var self = this;
 
         Helper.set(key, value, self.options);
+
+        // Self-update on Base Chart to make sure that self.options consisting
+        // of all new values
+        self.updateConfig(self.options);
     }
 
-    /*=====  End of Main Functions  ======*/
+    /**
+     * Update chart based on new data with optional dataConfig
+     * @param  {[type]} data       [description]
+     * @param  {[type]} dataConfig [description]
+     */
+    updateData(data, dataConfig) {
+
+    }
+    /*=====  End of User's Functions  ======*/
+    
 
 }
