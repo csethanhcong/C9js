@@ -1,7 +1,7 @@
 import Helper from '../../helper/C9.Helper';
 
 export default class Table {
-    constructor(options, body, data) {
+    constructor(options, chart, data) {
         var config = {
             container: "body",
             show: false,
@@ -28,7 +28,7 @@ export default class Table {
         self._hover = Helper.merge(options.hover, config.hover);
         self._click = Helper.merge(options.click, config.click);
 
-        if (body.type == "bar" || body.type == "line") {
+        if (chart.chartType == "bar" || chart.chartType == "line") {
             //headings
             if (self._headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) 
                 self._headings.push("Group");
@@ -44,7 +44,7 @@ export default class Table {
         else 
             self._data = data;
 
-        self._body = body;
+        self._chart = chart;
 
     }
 
@@ -55,8 +55,8 @@ export default class Table {
         return this._data;
     }
 
-    get body() {
-        return this._body;
+    get chart() {
+        return this._chart;
     }
 
     get container() {
@@ -95,12 +95,6 @@ export default class Table {
     set data(arg) {
         if (arg) {
             this._data = arg;
-        }
-    }
-
-    set body(arg) {
-        if (arg) {
-            this._body = arg;
         }
     }
 
@@ -219,7 +213,7 @@ export default class Table {
                     });
 
             // Add group if chart is bar chart
-            if (self.body.type == "bar")
+            if (self.chart.chartType == "bar")
                 bRows.append("td")
                         .text(function(d) {
                             return d.group;
@@ -285,10 +279,10 @@ export default class Table {
 
         var chartType = chart.chartType;
 
-        var chartInnerBefore    = chartType == 'pie' ?  0 : chart.innerRadius,
-            chartOuterBefore    = chartType == 'pie' ?  chart.radius : chart.outerRadius,
-            chartInnerAfter     = chartType == 'pie' ?  0 : chart.innerRadius,
-            chartOuterAfter     = chartType == 'pie' ?  chart.radius * 1.2 : chart.outerRadius * 1.2;
+        var chartInnerBefore    = chartType == 'pie' ?  0 : chart.options.innerRadius,
+            chartOuterBefore    = chartType == 'pie' ?  chart.options.radius : chart.options.outerRadius,
+            chartInnerAfter     = chartType == 'pie' ?  0 : chart.options.innerRadius,
+            chartOuterAfter     = chartType == 'pie' ?  chart.options.radius * 1.2 : chart.options.outerRadius * 1.2;
         self.itemEventFactory = {
 
             'click': function(item) {

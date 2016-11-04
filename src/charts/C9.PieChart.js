@@ -15,37 +15,17 @@ export default class PieChart extends Chart {
 
         var self = this;
 
-        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
         var config = {
-            radius: R,
-            showText: true
+            radius: Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2,
+            // showText: true
         };
 
-        self._radius    = options.radius || config.radius;
-        self._showText  = options.showText || config.showText;
-
-        self.body.type  = 'pie';
-
-        var dataOption          = self.dataOption;
-        dataOption.colorRange   = self.colorRange;
-
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget("pie");
-
-        self.updateConfig();
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-    get radius() {
-        return this._radius;
-    }
-
-    get showText() {
-        return this._showText;
-    }
-
     get pie() {
         return this._pie;
     }
@@ -57,31 +37,11 @@ export default class PieChart extends Chart {
     get currentData() {
         return this._currentData;
     }
-
-    get chartType() {
-        return this._body.type;
-    }
-
-    get legend() {
-        return this._legend;
-    }
     /*=====  End of Getter  ======*/
 
     /*==============================
     =            Setter            =
     ==============================*/
-    set radius(newradius) {
-        if (newradius) {
-            this._radius = newradius;
-        }
-    }
-
-    set showText(newShowText) {
-        if (newShowText) {
-            this._showText = newShowText;
-        }
-    }
-
     set pie(arg) {
         if (arg) {
             this._pie = arg;
@@ -99,12 +59,6 @@ export default class PieChart extends Chart {
             this._currentData = arg;
         }
     }
-
-    set legend(arg) {
-        if (arg) {
-            this._legend = arg;
-        }
-    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -113,20 +67,119 @@ export default class PieChart extends Chart {
     /**
      * Update Donut Chart Config
      */
-    updateConfig() {
+    updateConfig(config) {
+        super.updateConfig(config);
+
         var self = this;
 
-        // chartInnerAfter, chartOuterAfter define easing radius of pie chart during animation
-        // TODO: Add configs allow users to define these radius
+        self.options = Helper.mergeDeep(config, self.options);
+
+        self.chartType  = 'pie';
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget(self.chartType);
+    }
+
+    /**
+     * Update Donut Chart Config
+     */
+    updateDataConfig(dataCfg) {
+        var self = this;
+
+        self.options = Helper.mergeDeep(self.options, dataCfg);
+
+        self.chartType  = 'pie';
+
+        var dataOption          = self.dataOption;
+        dataOption.colorRange   = self.colorRange;
+
+        var da = new DataAdapter(dataOption);
+        self.dataTarget     = da.getDataTarget(self.chartType);
+    }
+
+    /**
+     * Update Donut Chart based on new data
+     * @param  {[type]} data [description]
+     */
+    update(data) {
+        var self = this;
+
         var width   = self.width - self.margin.left - self.margin.right,
             height  = self.height - self.margin.top - self.margin.bottom,
+            color   = self.colorRange;
+
+        self.arc = d3.svg.arc()
+                    .innerRadius(0)
+                    .outerRadius(self.options.radius);
+
+        //we can sort data here
+        self.pie = d3.layout.pie()
+                    .sort(null)
+                    .value(function(d) { return d.value; });
+
+        self.body.selectAll(".c9-chart-pie.c9-custom-arc-container").data([]).exit().remove();
+
+        //draw chart
+        var arcs = self.body
+                    .append('g')
+                        .attr('class', 'c9-chart-pie c9-custom-arc-container')
+                        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
+                        .selectAll('.c9-chart-pie.c9-custom-arc')
+                        .data(self.pie(self.dataTarget)).enter()
+                        .append('g')
+                            .attr('class', 'c9-chart-pie c9-custom-arc');
+
+        // Append main path contains pie
+        arcs.append('path')
+                .attr('class', 'c9-chart-pie c9-custom-path')
+                .attr('data-ref', function(d) { return d.data['data-ref']; })
+                .attr('d', self.arc)
+                .attr('fill', function(d, i) { return color(i); })
+                .attr('stroke', '#ffffff')
+                .each(function(d) { self.currentData = d; }); 
+                // Current data used for calculate interpolation 
+                // between current arc vs disabled arc
+
+
+        // Append middle text display name
+        // if (self.options.showText) {
+        //     arcs.append('text')
+        //             .attr('class', 'c9-chart-pie c9-custom-text')
+        //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
+        //             .attr('dy', '.35em')
+        //             .attr('text-anchor', 'middle')
+        //             .text(function(d) { return d.data.name; });
+        // }
+        
+        self.updateInteraction();
+    }
+
+    /**
+     * Select all path as type PATH in Donut Chart via its CLASS
+     */
+    selectAllPath() {
+        var self = this;
+
+        return self.body
+                    .selectAll('path.c9-chart-pie.c9-custom-path');
+    }
+
+    /**
+     * Update Interaction: Hover
+     * @return {} 
+     */
+    updateInteraction() {
+        var self    = this,
+            selector= self.selectAllPath(),
             color   = self.colorRange,
             chartInnerBefore = 0,
-            chartOuterBefore = self.radius,
+            chartOuterBefore = self.options.radius,
             chartInnerAfter = 0,
-            chartOuterAfter = self.radius * 1.2;
-
-        var hoverOptions        = self.hover.options,
+            chartOuterAfter = self.options.radius * 1.2,
+            hoverOptions        = self.hover.options,
             hoverEnable         = self.hover.enable,
             onMouseOverCallback = hoverOptions.onMouseOver.callback,
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
@@ -224,97 +277,16 @@ export default class PieChart extends Chart {
                 // For Tooltip
                 tooltip.draw(d, self, 'mouseout');
             }
-
-        };
-
-        self.arc = d3.svg.arc()
-                    .innerRadius(0)
-                    .outerRadius(self.radius);
-
-        //we can sort data here
-        self.pie = d3.layout.pie()
-                    .sort(null)
-                    .value(function(d) { return d.value; });
-
-        //draw chart
-        var arcs = self.body
-                    .append('g')
-                        .attr('class', 'c9-chart c9-custom-arc-container')
-                        .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
-                        .selectAll('.c9-chart-pie.c9-custom-arc')
-                        .data(self.pie(self.dataTarget)).enter()
-                        .append('g')
-                            .attr('class', 'c9-chart-pie c9-custom-arc');
-
-        // Append main path contains pie
-        arcs.append('path')
-                .attr('class', 'c9-chart-pie c9-custom-path')
-                .attr('data-ref', function(d) { return d.data['data-ref']; })
-                .attr('d', self.arc)
-                .attr('fill', function(d, i) { return color(i); })
-                .attr('stroke', '#ffffff')
-                .each(function(d) { self._currentData = d; }); 
-                // Current data used for calculate interpolation 
-                // between current arc vs disabled arc
-
-
-        // Append middle text display name
-        // if (self.showText) {
-        //     arcs.append('text')
-        //             .attr('class', 'c9-chart-pie c9-custom-text')
-        //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
-        //             .attr('dy', '.35em')
-        //             .attr('text-anchor', 'middle')
-        //             .text(function(d) { return d.data.name; });
-        // }
-    }
-
-    /**
-     * Main draw function of Donut Chart
-     */
-    draw() {
-
-        var self = this;
-        
-        var title   = new Title(self.options, self.body, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options.legend, self.body, self.dataTarget);
-        var table   = new Table(self.options.table, self.body, self.dataTarget);
-
-        self.legend = legend;
-        self.table = table;
-        // Draw legend
-        legend.draw();
-        legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
-        
-        // Draw table
-        table.draw();
-        table.updateInteractionForDonutPieChart(self);
-        // Update interaction of this own chart
-        self.updateInteraction();
-
-    }
-
-    /**
-     * Select all path as type PATH in Donut Chart via its CLASS
-     */
-    selectAllPath() {
-        var self = this;
-
-        return self.body
-                    .selectAll('path.c9-chart-pie.c9-custom-path');
-    }
-
-    /**
-     * Update Interaction: Hover
-     * @return {} 
-     */
-    updateInteraction() {
-        var self    = this,
-            selector= self.selectAllPath();
+        }
 
         selector.on(self.eventFactory);
     }
+    
+    /*=====  End of Main Functions  ======*/
 
+    /*========================================
+    =            User's Functions            =
+    ========================================*/
     /**
      * Custom Event Listener
      * @param  {[type]}   eventType [description]
@@ -350,8 +322,81 @@ export default class PieChart extends Chart {
 
         selector.on(eventName, eventFactory[eventName]);
     }
+
+    /**
+     * Main draw function of Pie Chart
+     */
+    draw() {
+        super.draw();
+
+        var self = this;
+        
+        var title   = new Title(self.options, self, self.width, self.height, self.margin);
+        var legend  = new Legend(self.options.legend, self, self.dataTarget);
+        var table   = new Table(self.options.table, self, self.dataTarget);
+
+
+        // Update interaction of this own chart
+        self.update(self.dataTarget);
+        self.updateInteraction();
+
+        self.legend = legend;
+        self.table = table;
+        
+        // Draw legend
+        legend.draw();
+        legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
+        
+        // Draw table
+        table.draw();
+        table.updateInteractionForDonutPieChart(self);
+    }
     
-    /*=====  End of Main Functions  ======*/
+    /**
+     * Set option via stand-alone function
+     * @param {[type]} key   [description]
+     * @param {[type]} value [description]
+     */
+    setOption(key, value) {
+        super.setOption(key, value);
+
+        var self = this;
+
+        Helper.set(key, value, self.options);
+
+        self.updateConfig(self.options);
+    }
+
+    /**
+     * Update chart based on new data with optional dataConfig
+     * @param  {[type]} data       [description]
+     * @param  {[type]} dataConfig [description]
+     */
+    updateData(newData, newDataConfig) {
+        var self = this;
+
+        var newCfg = {};
+
+        if (!Helper.isEmpty(newDataConfig)) {
+
+            newCfg.data = {
+                plain: newData,
+                keys: newDataConfig,
+            };
+
+        } else {
+
+            newCfg.data = {
+                plain: newData,
+            };
+
+        }
+        
+        self.updateDataConfig(newCfg);
+        self.update(self.dataTarget);
+    }
+    /*=====  End of User's Functions  ======*/
+    
     
     
 }

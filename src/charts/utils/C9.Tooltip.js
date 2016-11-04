@@ -10,15 +10,6 @@ export default class Tooltip {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             fontColor: '#fff',
             fontSize: '11px',
-            // format: {
-            //     title: function(d) {
-            //         return 'Title ' + d;
-            //     },
-            //     detail: function(d) {
-            //         return 'Detail ' + d;
-            //     }
-            // }
-            // format: null
         };
 
         self._show              = options.show || config.show;
@@ -253,12 +244,12 @@ export default class Tooltip {
         // if (Helper.isEmpty(data)) { console.log(data);return false;}
         var self = this;
 
-        let chartType = chart.body.type, format;
+        let chartType = chart.chartType, format;
 
         switch(chartType) {
             case 'bar':
                 format = function(data) {
-                    return '<strong>' + data.name + '</strong>' + '<br><span>' + chart.retrieveValue(data.y0, data.y1) + '</span>'
+                    return '<strong>' + data.name + '</strong>' + '<br><span>' + data.value + '</span>'
                 };
                 break;
             case 'pie':
@@ -282,7 +273,7 @@ export default class Tooltip {
                 break;
             case 'timeline':
                 format = function(data) {
-                    return '<strong>' + data.name + '</strong>' + '<br><span>' + data.start, data.end + '</span>' 
+                    return '<strong>' + data.name + '</strong>' + '<br><span> Start at: ' + data.start + '</span><br><span> End at: ' + data.end + '</span>' 
                 };
                 break;
         }

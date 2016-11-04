@@ -1,7 +1,7 @@
 import Helper from '../../helper/C9.Helper';
 
 export default class Legend {
-    constructor(options, body, data) {
+    constructor(options, chart, data) {
         var config = {
             show      : false,
             position  : "top",
@@ -25,9 +25,11 @@ export default class Legend {
         // self._legendStyle        = options.legendStyle      || config.legendStyle;
 
         self._options   = options;
-        self._body      = body;
-        self._maxWidth  = d3.select(body[0][0].parentNode).attr('width');
-        self._maxHeight  = d3.select(body[0][0].parentNode).attr('height');
+        self._chart      = chart;
+        // self._maxWidth  = d3.select(body[0][0].parentNode).attr('width');
+        // self._maxHeight  = d3.select(body[0][0].parentNode).attr('height');
+        self._maxWidth  = chart.width;
+        self._maxHeight  = chart.height;
         // self._color     = color;
         self._data      = data;
 
@@ -40,8 +42,8 @@ export default class Legend {
         return this._data;
     }
 
-    get body() {
-        return this._body;
+    get chart() {
+        return this._chart;
     }
 
     get color() {
@@ -160,12 +162,13 @@ export default class Legend {
             // TODO: Remove these conditional checks by getData for general purposes
             var domain = [];
 
-            if (self._body.type == "bar") {
+            if (self.chart.chartType == "bar") {
                 self.data = self.data[self.data.reduce((p, c, i, a) => a[p].length > c.length ? p : i, 0)];
             }
 
             // Legend will be appended in main SVG container
-            var container = d3.select(self._body[0][0].parentNode)
+            // var container = d3.select(self._body[0][0].parentNode)
+            var container = self.chart.svg
                 .append("g")
                 .attr("class", "c9-custom-legend c9-custom-legend-container");
             
@@ -201,7 +204,7 @@ export default class Legend {
                 .attr('y', self.size)
                 .style('font-size', self.textSize)
                 // .attr('text-anchor', 'middle')
-                .text(function(d) { return self._body.type == "bar" ? d.group : d.name || d.key; });
+                .text(function(d) { return self.chart.chartType == "bar" ? d.group : d.name || d.key; });
 
             //caculate position for legend
             var getSize = function(item) { return item.getBoundingClientRect() };
@@ -412,10 +415,10 @@ export default class Legend {
 
         var chartType = chart.chartType;
 
-        var chartInnerBefore    = chartType == 'pie' ?  0 : chart.innerRadius,
-            chartOuterBefore    = chartType == 'pie' ?  chart.radius : chart.outerRadius,
-            chartInnerAfter     = chartType == 'pie' ?  0 : chart.innerRadius,
-            chartOuterAfter     = chartType == 'pie' ?  chart.radius * 1.2 : chart.outerRadius * 1.2;
+        var chartInnerBefore    = chartType == 'pie' ?  0 : chart.options.innerRadius,
+            chartOuterBefore    = chartType == 'pie' ?  chart.options.radius : chart.options.outerRadius,
+            chartInnerAfter     = chartType == 'pie' ?  0 : chart.options.innerRadius,
+            chartOuterAfter     = chartType == 'pie' ?  chart.options.radius * 1.2 : chart.options.outerRadius * 1.2;
 
         self.itemEventFactory = {
 

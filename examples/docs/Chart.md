@@ -193,10 +193,14 @@ option of that object
 1. Chart:
 
 - Chung:
-	+ [DONE]Thêm table tương ứng (các cột như total, ...) cho các chart còn lại (Huy)
+	+ [DONE] Thêm table tương ứng (các cột như total, ...) cho các chart còn lại (Huy)
+
 	+ Tạo hiệu ứng màu sáng hơn khi tương tác (Cong)
-	+ Tách riêng hàm vẽ chart (updateChart) thay vì vẽ trực tiếp trong updateConfig(), để dùng về sau updateData thì updateChart (Huy)
-	+ Thêm hàm updateData(newData [, newDataOption]): Hàm này sẽ tự vẽ lại chart (gọi updateChart) ở trên (Cong)
+
+	+ Thêm hàm update cho Table, Legend, Axis
+
+	+ [DONE] Tách riêng hàm vẽ chart (updateChart) thay vì vẽ trực tiếp trong updateConfig(), để dùng về sau updateData thì updateChart (Huy)
+	+ [DONE] Thêm hàm updateData(newData [, newDataOption]): Hàm này sẽ tự vẽ lại chart (gọi updateChart) ở trên (Cong)
 	
 - [DONE] Timeline: 
 	+ Thêm sub-chart (Cong)
