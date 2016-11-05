@@ -89,7 +89,7 @@
 							// show: false,
 							rotate: -60
 							// padding: 10
-						}
+						},
 					},
 					y: {
 						show: false,
@@ -119,8 +119,6 @@
 					}
 				},
 				colorRange: ['steelblue', 'red'],
-				// gridYShow: true,
-				// gridXShow: true,
 				legend: {
 					show: false
 				}
@@ -128,9 +126,17 @@
 			var lineChart = new C9.LineChart(options1);
 			lineChart.setOption('subchart.show', true);
 			lineChart.draw();
+
 			setTimeout(function() {
 				lineChart.updateData(data2);
+				setTimeout(function() {
+					lineChart.updateData(data1);
+						setTimeout(function() {
+							lineChart.updateData(data2);
+						}, 2000);
+				}, 2000);
 			}, 2000);
+
 		</script>
 		
 	</body>

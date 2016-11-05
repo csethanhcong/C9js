@@ -153,9 +153,8 @@ Bar Chart (Group of bar chart)
 
 15. Separate `Event Listener` onto invidual functions
 
-#### TODO:
 
-[IN PROGRESS] 1. `setOption`: After construct a new instance from defined class, we could change individual
+1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
 
 
@@ -183,6 +182,7 @@ option of that object
 	}
 
 8. Load `real-time data`, re-draw chart (setTimeOut)
+#### TODO:
 
 9. `Convert to d3.v4`:
 

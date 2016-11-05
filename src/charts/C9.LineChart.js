@@ -785,12 +785,18 @@ export default class LineChart extends Chart {
 
         var self = this;
 
-        var axis    = new Axis(self.options.axis, self, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
+        var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
         var title   = new Title(self.options, self, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self, self.dataTarget);
         var table  = new Table(self.options.table, self, self.dataTarget);
 
         self.axis = axis;
+        self.title = title;
+        self.legend = legend;
+        self.table = table;
+
+        // Draw axis
+        self.axis.draw();
 
         self.update(self.dataTarget);
         self.updateSubChart(self.dataTarget);
@@ -799,11 +805,11 @@ export default class LineChart extends Chart {
         self.updateInteraction();
 
         // Draw legend
-        legend.draw();
-        legend.updateInteractionForLineChart(self);
+        self.legend.draw();
+        self.legend.updateInteractionForLineChart(self);
 
         // Draw table
-        table.draw();
+        self.table.draw();
     }
     
     /**
@@ -846,9 +852,14 @@ export default class LineChart extends Chart {
 
         }
         
+        // Update chart
         self.updateDataConfig(newCfg);
         self.update(self.dataTarget);
         self.updateSubChart(self.dataTarget);
+
+        // Update Axis
+        self.axis.update(self.x, self.y, 100);
+
     }
     /*=====  End of User's Functions  ======*/
     

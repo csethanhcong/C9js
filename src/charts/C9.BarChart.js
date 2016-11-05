@@ -73,6 +73,12 @@ export default class BarChart extends Chart {
             this._groupNames = arg;
         }
     }
+
+    set isGroup(arg) {
+        if (arg) {
+            this._isGroup = arg;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
@@ -424,14 +430,18 @@ export default class BarChart extends Chart {
 
         var self = this;
 
-        var axis    = new Axis(self.options.axis, self, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
+        var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
         var title   = new Title(self.options, self, self.width, self.height, self.margin);
         var legend  = new Legend(self.options.legend, self, self.dataTarget);
         var table   = new Table(self.options.table, self, self.dataTarget);
 
         self.axis = axis;
+        self.title = title;
         self.table = table;
         self.legend = legend;
+
+        // Draw axis
+        self.axis.draw();
 
         // Update Chart based on dataTarget
         self.update(self.dataTarget);
@@ -488,6 +498,9 @@ export default class BarChart extends Chart {
         
         self.updateDataConfig(newCfg);
         self.update(self.dataTarget);
+
+        // Update Axis
+        self.axis.update(self.x, self.y, 100);
     }
     /*=====  End of User's Functions  ======*/
     

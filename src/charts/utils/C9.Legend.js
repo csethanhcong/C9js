@@ -694,14 +694,14 @@ export default class Legend {
     }
     
 
-    setYLocation (height, margin) {
-        if (this.position === 'top') {
-            return (margin.top / 2);
-        } else if (this.position === 'bottom') {
-            return (height - margin.bottom / 2);
-        }
+    // setYLocation (height, margin) {
+    //     if (this.position === 'top') {
+    //         return (margin.top / 2);
+    //     } else if (this.position === 'bottom') {
+    //         return (height - margin.bottom / 2);
+    //     }
     
-    }
+    // }
     /*=====  End of Main Functions  ======*/
     
 }

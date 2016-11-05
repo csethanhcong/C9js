@@ -1,10 +1,10 @@
 /*----------  AXIS  ----------*/
-.axis {
+.c9-axis {
     font: 10px sans-serif;
   }
 
-.axis path,
-.axis line {
+.c9-axis path,
+.c9-axis line {
 	fill: none;
 	stroke: black;
 	shape-rendering: crispEdges;

@@ -114,6 +114,8 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 - http://gs.statcounter.com/#desktop+mobile+tablet-social_media-ww-monthly-201610-201610-map
 
+- https://www.facebook.com/cnn/videos/10155554527471509/
+
 3. Mock Data Server:
 
 - https://www.sitepoint.com/mock-rest-apis-using-json-server/
