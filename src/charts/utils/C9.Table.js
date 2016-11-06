@@ -1,7 +1,9 @@
 import Helper from '../../helper/C9.Helper';
 
 export default class Table {
-    constructor(options, chart, data) {
+    constructor(options, chart) {
+        var self = this;
+
         var config = {
             container: "body",
             show: false,
@@ -18,34 +20,11 @@ export default class Table {
             }
         };
 
-        var self = this;
 
-        self._container = options.container || config.container;
-        self._show = options.show ? options.show : config.show;
-        self._headings = options.headings || config.headings;
-        self._style = options.style || config.style;
-        self._serial = options.serial || config.serial;
-        self._hover = Helper.merge(options.hover, config.hover);
-        self._click = Helper.merge(options.click, config.click);
+        self._options   = options;
+        self._chart     = chart;
 
-        if (chart.chartType == "bar" || chart.chartType == "line") {
-            //headings
-            if (self._headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) 
-                self._headings.push("Group");
-
-            //data
-            self._data = [];
-            data.forEach(function(d) {
-                (Helper.isArray(d) ? d : d.value).forEach(function(b) {
-                    self._data.push(b);
-                })
-            });
-        }
-        else 
-            self._data = data;
-
-        self._chart = chart;
-
+        self.updateConfig(config);
     }
 
     /*==============================
@@ -59,34 +38,9 @@ export default class Table {
         return this._chart;
     }
 
-    get container() {
-        return this._container;
+    get options() {
+        return this._options;
     }
-
-    get show() {
-        return this._show;
-    }
-
-    get headings() {
-        return this._headings;
-    }
-
-    get style() {
-        return this._style;
-    }
-
-    get serial() {
-        return this._serial;
-    }
-
-    get hover() {
-        return this._hover;
-    }
-
-    get click() {
-        return this._click;
-    }
-
     /*=====  End of Getter  ======*/
 
     /*==============================
@@ -98,66 +52,61 @@ export default class Table {
         }
     }
 
-    set container(arg) {
+    set chart(arg) {
         if (arg) {
-            this._container = arg;
+            this._chart = arg;
         }
     }
 
-    set show(arg) {
+    set options(arg) {
         if (arg) {
-            this._show = arg;
+            this._options = arg;
         }
     }
-
-    set headings(arg) {
-        if (arg) {
-            this._headings = arg;
-        }
-    }
-
-    set style(arg) {
-        if (arg) {
-            this._style = arg;
-        }
-    }
-
-    set serial(arg) {
-        if (arg) {
-            this._serial = arg;
-        }
-    }
-
-    set hover(arg) {
-        if (arg) {
-            this._hover = arg;
-        }
-    }
-
-    set click(arg) {
-        if (arg) {
-            this._click = arg;
-        }
-    }
-
     /*=====  End of Setter  ======*/
 
     /*======================================
     =            Main Functions            =
     ======================================*/
-    draw() {
+    updateConfig(config) {
         var self = this;
 
-        if (self.show) {
+        self.options = Helper.mergeDeep(config, self.options);
+    }
 
-            var headTbl = d3.select(self.container).append("table").attr('class', 'c9-table c9-table-header'),
+    update(data) {
+        var self = this;
+
+        if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
+            //headings
+            if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) 
+                self.options.headings.push("Group");
+
+            //data
+            self.data = [];
+            data.forEach(function(d) {
+                (Helper.isArray(d) ? d : d.value).forEach(function(b) {
+                    self.data.push(b);
+                })
+            });
+        } else {
+            self.data = data;
+        }
+
+        if (self.options.show) {
+            d3.selectAll('.c9-table').remove();
+            d3.selectAll('.c9-table-container').remove();
+
+            var headTbl = d3.select(self.options.container)
+                            .append("table")
+                                .attr('class', 'c9-table c9-table-header'),
                 thead = headTbl.append("thead"),
-
-                bodyTbl = d3.select(self.container)
-                                .append("div").attr('class', 'c9-table-container')
-                                    .append("table").attr('class', function() {
-                                        if (self.style === 'default') return 'c9-table c9-table-body';
-                                        else if (self.style === 'stripe') return 'c9-table c9-table-body c9-stripe';
+                bodyTbl = d3.select(self.options.container)
+                                .append("div")
+                                .attr('class', 'c9-table-container')
+                                    .append("table")
+                                    .attr('class', function() {
+                                        return self.getTableStyle();
                                     }),
                 tbody = bodyTbl.append("tbody");
 
@@ -166,21 +115,18 @@ export default class Table {
             // Show serial no.
             var hRows = thead.append("tr");
 
-            if (self.serial) {
+            if (self.options.serial) {
                 hRows.append("th")
                     .text("#");
             }
 
             hRows.selectAll("thead")
-                .data(self.headings)
+                .data(self.options.headings)
                 .enter()
                 .append("th")
                     .text(function(d) {
                         return d;
                     });
-
-            
-
 
             // Bind each statistic to a line of the table
             // Show serial no.
@@ -191,20 +137,18 @@ export default class Table {
                         .append("tr")
                         .attr("data-ref", function (d){ return d["data-ref"] });
 
-            if (self.serial) {
+            if (self.options.serial) {
                 bRows.append("td")
                     .text(function(d, i) {
                         return i + 1;
                     });
             }
 
-
             // Add statistic names to each row
             bRows.append("td")
                     .text(function(d) {
                         return d.name;
                     });
-
 
             // Add values to each row
             bRows.append("td")
@@ -220,7 +164,12 @@ export default class Table {
                         });
 
         }
+    }
 
+    draw() {
+        var self = this;
+
+        self.update(self.chart.dataTarget);
     }
 
     updateInteractionForBarChart(chart) {
@@ -262,9 +211,8 @@ export default class Table {
             }
         
         };
-        if (self.show)
+        if (self.options.show)
             self.selectAllRow().on(self.itemEventFactory);
-
     }
 
     updateInteractionForDonutPieChart(chart) {
@@ -358,11 +306,22 @@ export default class Table {
         
         };
 
-        if (self.show)
+        if (self.options.show)
             self.selectAllRow().on(self.itemEventFactory);
     }
-    /*=====  End of Main Functions  ======*/
+
     selectAllRow(){
         return d3.selectAll(".c9-table tr");
     }
+
+    getTableStyle() {
+        var self = this;
+
+        if (self.options.style === 'default') {
+            return 'c9-table c9-table-body';
+        } else if (self.options.style === 'stripe') {
+            return 'c9-table c9-table-body c9-stripe';
+        }
+    }
+    /*=====  End of Main Functions  ======*/
 }

@@ -153,9 +153,8 @@ Bar Chart (Group of bar chart)
 
 15. Separate `Event Listener` onto invidual functions
 
-#### TODO:
 
-[IN PROGRESS] 1. `setOption`: After construct a new instance from defined class, we could change individual
+1. `setOption`: After construct a new instance from defined class, we could change individual
 option of that object
 
 
@@ -183,26 +182,36 @@ option of that object
 	}
 
 8. Load `real-time data`, re-draw chart (setTimeOut)
+#### TODO:
 
 9. `Convert to d3.v4`:
 
 - REF: https://github.com/d3/d3/blob/master/CHANGES.md
 
+10. Bar Chart:
+- stacks: Stacked Bar Chart
+- groups:
+	- 1 phần tử: Single Bar Chart
+	- > 1 phần tử: Group Bar Chart
+
 #### Important remaining tasks:
 
-1. Chart:
+1. Chart: [DONE]
 
 - Chung:
-	+ [DONE] Thêm table tương ứng (các cột như total, ...) cho các chart còn lại (Huy)
+
+	+ Thêm table tương ứng (các cột như total, ...) cho các chart còn lại (Huy)
 
 	+ Tạo hiệu ứng màu sáng hơn khi tương tác (Cong)
 
 	+ Thêm hàm update cho Table, Legend, Axis
 
-	+ [DONE] Tách riêng hàm vẽ chart (updateChart) thay vì vẽ trực tiếp trong updateConfig(), để dùng về sau updateData thì updateChart (Huy)
-	+ [DONE] Thêm hàm updateData(newData [, newDataOption]): Hàm này sẽ tự vẽ lại chart (gọi updateChart) ở trên (Cong)
+	+ Tách riêng hàm vẽ chart (updateChart) thay vì vẽ trực tiếp trong updateConfig(), để dùng về sau updateData thì updateChart (Huy)
+
+	+ Thêm hàm updateData(newData [, newDataOption]): Hàm này sẽ tự vẽ lại chart (gọi updateChart) ở trên (Cong)
 	
-- [DONE] Timeline: 
+- Timeline: 
+
 	+ Thêm sub-chart (Cong)
 
 2. Map:

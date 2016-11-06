@@ -49,7 +49,7 @@ export default class Chart {
 
             // legend
             legend: {
-                show      : false,
+                show      : true,
                 position  : "top",
                 size      : 10,
                 textSize  : "12px",
@@ -71,7 +71,7 @@ export default class Chart {
                 container: "body",
                 show: false,
                 headings: ["Name", "Value"],
-                style: "default", // "strip", "border"
+                style: "stripe", // "strip", "border"
                 serial: true,
                 hover: {
                     enable: true,
@@ -255,6 +255,10 @@ export default class Chart {
         return this._chartType;
     }
 
+    get title() {
+        return this._title;
+    }
+
     get axis() {
         return this._axis;
     }
@@ -393,6 +397,12 @@ export default class Chart {
     set chartType(arg) {
         if (arg) {
             this._chartType = arg;
+        }
+    }
+
+    set title(arg) {
+        if (arg) {
+            this._title = arg;
         }
     }
 

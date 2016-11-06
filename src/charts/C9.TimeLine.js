@@ -606,11 +606,16 @@ export default class TimeLine extends Chart {
 
         var self = this;
         
-        var axis    = new Axis(self.options.axis, self, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack, null, null);
+        var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
         var title   = new Title(self.options, self, self.width, self.height, self.margin);    
         var legend  = new Legend(self.options.legend, self, self.colorRange, self.dataTarget);
 
         self.axis = axis;
+        self.title = title;
+        self.legend = legend;
+
+        // Draw axis
+        self.axis.draw();
 
         self.update(self.dataTarget);
         self.updateSubChart(self.dataTarget);
@@ -657,9 +662,13 @@ export default class TimeLine extends Chart {
 
         }
         
+        // Update chart
         self.updateDataConfig(newCfg);
         self.update(self.dataTarget);
         self.updateSubChart(self.dataTarget);
+
+        // Update Axis
+        self.axis.update(self.x, self.y, 100);
     }
     /*=====  End of User's Functions  ======*/
     

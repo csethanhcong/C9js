@@ -2,7 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Group Bar Chart</title>
+		<title>Examples - Line Chart With Table</title>
 		<!-- ICON -->
 		<link rel="icon" href="../../images/icon.ico">
 		<!-- CSS -->
@@ -52,22 +52,17 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Single Bar Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Line Chart With Table</h3>
 		</div>
-		<div id="demo1"></div>
+		<div class="row">
+			<div id="demo1" class="col-md-8"></div>
+			<div id="table" class="col-md-4"></div>
+		</div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: "A", v:	[-.0245, 0.05, 0.1]},
-					{name: "B",	v:  [.01492, .02782, 0.05, 0.1]},
-					{name: "C", v:	[.02782, .02782, 0.05, 0.1]},
-					{name: "D", v:	[.04253, .02782, 0.05, 0.1]},
-					{name: "E", v:	[-1, .02782, 0.05, 0.1]},
-					{name: "F", v:	[.02288, .02782, 0.05, 0.1]},
-					{name: "G", v:	[.02015, .02782, 0.05, 0.1]},
-					{name: "H", v:	[.06094, .02782, 0.05, 0.1]},
-					{name: "I", v:	[.5, .02782, 0.05, 0.1]},
-				];
-
+						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
+						 {"name": "DEF", "valueY": [150, 210, 269, -696]},
+						];
 			var options1 = {
 				id: "#demo1", 
 				width: 750, 
@@ -77,44 +72,69 @@
 					left: 50, 
 					right: 50, 
 					bottom:100
-				},
+				}, 
 				data: {
 					plain: data1,
 					keys: {
-						value: "v"
+						y: 'valueY'
 					},
-					groups: ["Group 1", "Group 2", "Group 3", "Group 4"]
+					// timeFormat: '%Y-%m',
 				}, 
 				axis: {
 					x: {
 						show: true,
+						text: " ",
 						tick: {
-							format: function(d, i) {
-								var stacks = ["HAHA", "HEHE", "OOOO", "HIHI"];
-								return d + " " + stacks[i%stacks.length]
-							}
+							// show: false,
+							rotate: -45
+							// padding: 10
 						}
 					},
 					y: {
-						show: true,
+						show: false,
+						text: "Sale",
 						tick: {
-							format: d3.format("$,")
-						}
+							rotate: -45
+							// show: false
+						},
+						grid: true
 					}
 				},
-				legend: {
+				titleText: 'Line Chart',
+				interpolate: 'linear',
+				point: {
 					show: true,
+					radius: 2,
+					fill: 'white',
+					stroke: '#444',
+					'stroke-width': 1
 				},
 				tooltip: {
 					format: function(data) {
-						return data.value;
+						var r = '';
+						data.forEach(function(_data) {
+							r += 'At moment: ' +_data.valueX + ', <strong>' +_data.name + '</strong>' + ' consist of: ' +_data.valueY + '<br>';
+						});
+						return r;
 					}
 				},
-				barColor: "category20",
-				isLogaric: false,
+				subchart: {
+					show: true
+				},
+				table: {
+					show: true,
+					container: '#table'
+				},
+				legend: {
+					show: true
+				},
+				colorRange: ['steelblue', 'red'],
+				legend: {
+					show: true
+				}
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
+			var lineChart = new C9.LineChart(options1);
+			lineChart.draw();
 		</script>
 		
 	</body>

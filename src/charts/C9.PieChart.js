@@ -335,21 +335,21 @@ export default class PieChart extends Chart {
         var legend  = new Legend(self.options.legend, self, self.dataTarget);
         var table   = new Table(self.options.table, self, self.dataTarget);
 
+        self.title = title;
+        self.legend = legend;
+        self.table = table;
 
         // Update interaction of this own chart
         self.update(self.dataTarget);
         self.updateInteraction();
-
-        self.legend = legend;
-        self.table = table;
         
         // Draw legend
-        legend.draw();
-        legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
+        self.legend.draw();
+        self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
         
         // Draw table
-        table.draw();
-        table.updateInteractionForDonutPieChart(self);
+        self.table.draw();
+        self.table.updateInteractionForDonutPieChart(self);
     }
     
     /**
@@ -392,8 +392,16 @@ export default class PieChart extends Chart {
 
         }
         
+        // Update Chart
         self.updateDataConfig(newCfg);
         self.update(self.dataTarget);
+
+        // Update Legend
+        self.legend.update(self.dataTarget);
+        self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
+    
+        // Update Table
+        self.table.update(self.dataTarget);
     }
     /*=====  End of User's Functions  ======*/
     

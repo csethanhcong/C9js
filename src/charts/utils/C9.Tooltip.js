@@ -216,7 +216,6 @@ export default class Tooltip {
             }
 
         }
-
     }
 
     getTriangleClass() {
@@ -281,7 +280,6 @@ export default class Tooltip {
         // Update format for tooltip based on chart type
         self.format     = self.options.format || format;
         // console.log(self.format);
-
     }
 
     getCoordinate() {
