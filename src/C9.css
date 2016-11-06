@@ -244,3 +244,12 @@
 	opacity: 0.2;
 }
 
+/*---------- MAP ---------*/
+.ol-viewport .ol-overlay-container {
+	margin-bottom: 50px;
+}
+
+.c9-map-tooltip-container {
+	background-color: rgba(0, 0, 0, 0.8);
+	color: #fff;
+}

@@ -21,15 +21,12 @@ export default class Map {
                 lon: 0,
                 zoom: 2
             },
-            data: null
+            data: null,
+            format: null
         };
 
-        self._id        = options.id        || config.id;
-        self._dataSource      = Helper.merge(options.data, config.data);
-        self._view      = Helper.merge(options.view, config.view);
-        self._markers   = options.markers   || [];
-        self._options   = options;
-        self._layers    = Helper.merge(options.layers, config.layers);
+        self._options = Helper.mergeDeep(config, options);
+        self._dataSource      = self._options.data;
         self.initMapConfig();
     }
 
@@ -37,29 +34,29 @@ export default class Map {
     =            Getter            =
     ==============================*/
 
-    get id() {
-        return this._id;
-    }
+    // get id() {
+    //     return this._options.id;
+    // }
 
-    get height() {
-        return this._height;
-    }
+    // get height() {
+    //     return this._height;
+    // }
 
-    get width() {
-        return this._width;
-    }
+    // get width() {
+    //     return this._width;
+    // }
 
-    get view() {
-        return this._view;
-    }
+    // get view() {
+    //     return this._view;
+    // }
 
-    get markers() {
-        return this._markers;
-    }
+    // get markers() {
+    //     return this._markers;
+    // }
 
-    get layers() {
-        return this._layers;
-    }
+    // get layers() {
+    //     return this._layers;
+    // }
 
     get dataSource() {
         return this._dataSource;
@@ -68,6 +65,10 @@ export default class Map {
     get data() {
         return this._data;
     }
+
+    get options() {
+        return this._options;
+    }
     /*=====  End of Getter  ======*/
     
     
@@ -75,41 +76,41 @@ export default class Map {
     =            Setter            =
     ==============================*/
 
-    set id(newId) {
-        if (newId) {
-            this._id = newId;
-        }
-    }
+    // set id(newId) {
+    //     if (newId) {
+    //         this._options.id = newId;
+    //     }
+    // }
 
-    set height(newHeight) {
-        if (newHeight) {
-            this._height = newHeight;    
-        }
-    }
+    // set height(newHeight) {
+    //     if (newHeight) {
+    //         this._height = newHeight;    
+    //     }
+    // }
 
-    set width(newWidth) {
-        if (newWidth) {
-            this._width = newWidth;
-        }
-    }
+    // set width(newWidth) {
+    //     if (newWidth) {
+    //         this._width = newWidth;
+    //     }
+    // }
 
-    set view(newView) {
-        if (newView) {
-            this._view = newView;
-        }
-    }
+    // set view(newView) {
+    //     if (newView) {
+    //         this._view = newView;
+    //     }
+    // }
 
-    set markers(newMarkers) {
-        if (newMarkers) {
-            this._markers = newMarkers;
-        }
-    }
+    // set markers(newMarkers) {
+    //     if (newMarkers) {
+    //         this._markers = newMarkers;
+    //     }
+    // }
 
-    set layers(newLayers) {
-        if (newLayers) {
-            this._layers = newLayers;
-        }
-    }
+    // set layers(newLayers) {
+    //     if (newLayers) {
+    //         this._layers = newLayers;
+    //     }
+    // }
 
     set dataSource(newData) {
         if (newData) {
@@ -159,16 +160,19 @@ export default class Map {
 
     draw() {
         var self = this;
+        var view = self.options.view,
+            id   = self.options.id;
+
         self.c9View = new ol.View({
-            center: ol.proj.fromLonLat([self.view.lon, self.view.lat]),
-            zoom: self.view.zoom > 2 ? self.view.zoom : 2,
+            center: ol.proj.fromLonLat([view.lon, view.lat]),
+            zoom: view.zoom > 2 ? view.zoom : 2,
             minZoom: 2,
         });
         self.c9Map = new ol.Map({
-            target: self.id,
+            target: id,
             layers: self.c9Layers,
             view: self.c9View,
-            interactions : ol.interaction.defaults({doubleClickZoom :false})
+            interactions : ol.interaction.defaults({doubleClickZoom: false})
         });
 
         //create popup overlay
@@ -177,8 +181,10 @@ export default class Map {
             element: document.getElementById('c9MapPopup')
         });
 
+        //add overlay to contain popup
         self.c9Map.addOverlay(self.c9Popup);
 
+        //adapt data to obj
         self.update(self.dataSource);
 
         self.updateInteraction();
@@ -203,7 +209,7 @@ export default class Map {
      */
     initLayer() {
         var self = this;
-        var layers = self.layers;
+        var layers = self.options.layers;
 
         if (layers instanceof Array) {
             layers.forEach(function(l, i) {
@@ -278,72 +284,76 @@ export default class Map {
         return source;
     }
 
-    /**
-     * Create marker's flash effect
-     * @param  {ol.Feature}
-     */
-    createMarkerEffect(feature){
-        var self = this;
-        var duration = 3000;
-        var start = new Date().getTime();
-        var listenerKey;
-
-        function animate(event) {
-            var vectorContext = event.vectorContext;
-            var frameState = event.frameState;
-            var flashGeom = feature.getGeometry().clone();
-            var elapsed = frameState.time - start;
-            var elapsedRatio = elapsed / duration;
-            // radius will be 5 at start and 30 at end.
-            var radius = ol.easing.easeOut(elapsedRatio) * 25 + 5;
-            var opacity = ol.easing.easeOut(1 - elapsedRatio);
-
-            var style = new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: radius,
-                    snapToPixel: false,
-                    stroke: new ol.style.Stroke({
-                        color: 'rgba(255, 0, 0, ' + opacity + ')',
-                        width: 0.25 + opacity
-                    })
-                })
-            });
-
-            vectorContext.setStyle(style);
-            vectorContext.drawGeometry(flashGeom);
-            if (elapsed > duration) {
-                ol.Observable.unByKey(listenerKey);
-                return;
-            }
-            // tell OL3 to continue postcompose animation
-            self.c9Map.render();
-        }
-        listenerKey = self.c9Map.on('postcompose', animate);
-    }
+    
 
     updateInteraction(){
         var self = this;
-        const LEFT_KEY = 37, RIGHT_KEY = 39, DURATION = 1000, LOAD_MAP_DELAY = 500;
+        const LEFT_KEY = 37, RIGHT_KEY = 39, DEL_KEY = 46, DURATION = 1000, LOAD_MAP_DELAY = 500;
 
-        var getCoordinatesLonLat = function(f) {
-            return ol.proj.transform(f.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
+        /******************* SOME HELPER FUNCTION ********************/
+        var getCenterLonLat = function(f) {
+            return ol.proj.transform(getCenter(f), 'EPSG:3857', 'EPSG:4326');
         }
-        var getCoordinates = function(f) {
-            return f.getGeometry().getCoordinates();
+        var getCenter = function(f) {
+            return ol.extent.getCenter(f.getGeometry().getExtent());
         }
         var transformCoordinates = function(c) {
             return ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
         }
-        var panAnimation = function(f){
+        /**
+         * Create pan animation on object
+         * @param  {ol.Feature}
+         */
+        var panAnimation = function(feature){
+            if (self.c9View.getCenter()[0] == getCenter(feature)[0] && self.c9View.getCenter()[1] == getCenter(feature)[1]) return;
+
             var pan = ol.animation.pan({
                 duration: DURATION,
                 source: (self.c9View.getCenter())
             });
             self.c9Map.beforeRender(pan);
-            self.c9View.setCenter(getCoordinates(f));
+            self.c9View.setCenter(getCenter(feature));
         }
-        var formatPopup = function(d){
-            
+        /**
+         * Create marker's flash effect
+         * @param  {ol.Feature}
+         */
+        var createMarkerEffect = function(feature){
+            var duration = 3000;
+            var start = new Date().getTime();
+            var listenerKey;
+
+            function animate(event) {
+                var vectorContext = event.vectorContext;
+                var frameState = event.frameState;
+                var flashGeom = feature.getGeometry().clone();
+                var elapsed = frameState.time - start;
+                var elapsedRatio = elapsed / duration;
+                // radius will be 5 at start and 30 at end.
+                var radius = ol.easing.easeOut(elapsedRatio) * 25 + 5;
+                var opacity = ol.easing.easeOut(1 - elapsedRatio);
+
+                var style = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: radius,
+                        snapToPixel: false,
+                        stroke: new ol.style.Stroke({
+                            color: 'rgba(255, 0, 0, ' + opacity + ')',
+                            width: 0.25 + opacity
+                        })
+                    })
+                });
+
+                vectorContext.setStyle(style);
+                vectorContext.drawGeometry(flashGeom);
+                if (elapsed > duration) {
+                    ol.Observable.unByKey(listenerKey);
+                    return;
+                }
+                // tell OL3 to continue postcompose animation
+                self.c9Map.render();
+            }
+            listenerKey = self.c9Map.on('postcompose', animate);
         }
         /**
          * Caculate distance between marker and center view, plus direction compare with center
@@ -352,12 +362,53 @@ export default class Map {
          */
         var distanceAndDirection = function(f) {
             var center = transformCoordinates(self.c9View.getCenter());
-            var fCoordinates = getCoordinatesLonLat(f);
+            var fCoordinates = getCenterLonLat(f);
             return [Math.sqrt(Math.pow(fCoordinates[0] - center[0], 2) + Math.pow(fCoordinates[1] - center[1], 2)), (fCoordinates[0] - center[0]) <= 0];
         }
+        var formatPopup = function(data) {
+            var capitalizeFirstLetter = function(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
+            var strongSpan = function(strong, span) { if (span == '' || Helper.isEmpty(span)) return ""; return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>"; };
+            var result = strongSpan("Name", data.name) + strongSpan("Lon", data.coor.lon) + strongSpan("Lat", data.coor.lat), v;
+
+            for (var i in v = data.value) {
+                result += strongSpan(i, v[i]);
+            }
+            return result;
+        }
+        /*************************************************************/
+        
         //register pointer move event to show cursor as pointer if user hover on markers
         self.c9Map.on('pointermove', function(evt) {
-            self.c9Map.getTargetElement().style.cursor = self.c9Map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
+            var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
+                return feature;
+            });
+            self.c9Map.getTargetElement().style.cursor = f ? 'pointer' : '';
+            if (f) {
+                // self.createMarkerEffect(f);
+                self.c9Popup.getElement().style.display = 'none';
+
+                // panAnimation(f);
+                
+                try {
+                    if (self.options.format) self.options.format(f.get('data'));
+                }
+                catch(err) {
+                    throw "Check data format again";
+                    return;
+                }
+
+                var content = self.options.format ? self.options.format(f.get('data')) : formatPopup(f.get('data'));
+                if (Helper.isEmpty(content) || content.toString().trim() == "") return;
+
+                self.c9Popup.getElement().style.display = 'block';
+                self.c9Popup.getElement().innerHTML = content;
+                self.c9Popup.setPosition(getCenter(f));
+
+                // var stop = new CustomEvent("click", {detail: {message: "stop"}});
+                // self.c9Map.dispatchEvent(stop);
+            }
+            if (!f)
+                self.c9Popup.getElement().style.display = 'none';
         });
 
         //register map first render's event to show marker's effect
@@ -365,31 +416,49 @@ export default class Map {
             setTimeout(function(){
                 self.c9Objs.getFeatures().forEach(function(f, i){
                     if (f.get('type') == 'c9-marker')
-                        self.createMarkerEffect(f);
+                        createMarkerEffect(f);
                 })
             }, LOAD_MAP_DELAY);
         });
 
         //register click event to show effect on markers
         self.c9Map.on('click', function(evt){
+
+            // if (evt instanceof CustomEvent) return;
             var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
+                self.lastSelectedObj = feature;
                 return feature;
             });
-            if (f && f.get('type') == 'c9-marker') {
+            if (f) {
                 // self.createMarkerEffect(f);
-                //test
-                panAnimation(f);
-        
-                self.c9Popup.getElement().style.display = 'block';
-
                 // self.c9Popup.getElement().style.display = 'none';
-                self.c9Popup.getElement().innerHTML = "<strong>Name:" + f.get('data').name + "</strong></br><strong>" ;
-                self.c9Popup.setPosition(getCoordinates(f));
+
+                panAnimation(f);
+                
+                // try {
+                //     if (self.options.format) self.options.format(f.get('data'));
+                // }
+                // catch(err) {
+                //     throw "Check data format again";
+                //     return;
+                // }
+
+                // var content = self.options.format ? self.options.format(f.get('data')) : formatPopup(f.get('data'));
+                // if (Helper.isEmpty(content) || content.toString().trim() == "") return;
+
+                // self.c9Popup.getElement().style.display = 'block';
+                // self.c9Popup.getElement().innerHTML = content;
+                // self.c9Popup.setPosition(getCenter(f));
+
+                // // var stop = new CustomEvent("click", {detail: {message: "stop"}});
+                // // self.c9Map.dispatchEvent(stop);
             }
+            if (!f)
+                self.c9Popup.getElement().style.display = 'none';
         });
 
         //register keydown event to change center view
-        document.getElementById(self.id).addEventListener('keydown', function(e) {
+        document.addEventListener('keydown', function(e) {
             var keydownAnimate = function(k) {
                 var selectedFeature = undefined;
                 var minDistance = Infinity;
@@ -404,7 +473,7 @@ export default class Map {
                     }
                 });
                 if (selectedFeature) {
-                    setTimeout(self.createMarkerEffect(selectedFeature), LOAD_MAP_DELAY);
+                    setTimeout(createMarkerEffect(selectedFeature), LOAD_MAP_DELAY);
                     panAnimation(selectedFeature);
                 }
             }
@@ -414,6 +483,9 @@ export default class Map {
                     break;
                 case RIGHT_KEY:
                     keydownAnimate(RIGHT_KEY);
+                    break;
+                case DEL_KEY:
+                    if (!Helper.isEmpty(self.lastSelectedObj)) self.c9Objs.removeFeature(self.lastSelectedObj);
                     break;
             }
         })
@@ -526,6 +598,10 @@ export default class Map {
         //     })
         // }
 
+        var strokeWidth = options ? options.strokeWidth : 2;
+        var strokeColor = options ? options.strokeColor : "steelblue";
+        var fillColor   = options ? options.fillColor   : "rgba(0, 0, 255, 0.2)";
+
         var obj = new ol.Feature({
             'data-ref': '',
             type: "c9-" + coorAndType.type,
@@ -545,11 +621,11 @@ export default class Map {
         var createObjStyle = function(strokeWidth, strokeColor, fillColor){
             return new ol.style.Style({
                 stroke: new ol.style.Stroke({
-                    width: strokeWidth || 2,
-                    color: strokeColor || "steelblue"
+                    width: strokeWidth,
+                    color: strokeColor                
                 }),
                 fill: new ol.style.Fill({
-                    color: fillColor || "rgba(0, 0, 255, 0.2)"
+                    color: fillColor
                 })
             });
         }
@@ -563,16 +639,22 @@ export default class Map {
     //x - lon, y - lat
     normalizeCoordinate(coor){
         var normCoor = [], type;
-        if (Helper.isObject(coor)) {
+        if ((Helper.isObject(coor) && coor.length == undefined) || (Helper.isArray(coor) && coor.length == 2 && !isNaN(coor[0]) && !isNaN(coor[1]))) {
             //is marker
             type = "marker";
-            if (Helper.isEmpty(coor.lat) || Helper.isEmpty(coor.lon))
-                return;
-            normCoor = [coor.lon, coor. lat];
+            if (coor.length == undefined) {
+                if (Helper.isEmpty(coor.lat) || Helper.isEmpty(coor.lon))
+                    return;
+                normCoor = [coor.lon, coor. lat];
+            }
+            else {
+                normCoor = coor;
+            }
+            
         } else if (Helper.isArray(coor)) {
             coor.forEach(function(c) {
                 //if data error, skip that data
-                if (Helper.isObject(c)) {
+                if (Helper.isObject(c) && c.length == undefined) {
                     if (!Helper.isEmpty(c.lat) && !Helper.isEmpty(c.lon))
                         normCoor.push([c.lon, c.lat]);
                 }
@@ -610,5 +692,38 @@ export default class Map {
 
     getObjs(){
         return this.c9Objs.getFeatures();
+    }
+
+    /**
+     * Custom Event Listener
+     * @param  {[type]}   eventType [description]
+     * @param  {Function} callback  [description]
+     */
+    on(eventType, callback) {
+        var self = this;
+        // Update Event Factory
+        let eventFactoryViewport = {
+            'click': function(evt) {
+                var f = self.c9Map.forEachFeatureAtPixel(self.c9Map.getEventPixel(evt), function(feature, layer){
+                    return feature;
+                });
+                if (Helper.isFunction(callback) && f) {
+                    callback.call(this, f.get('data'));
+                }
+            },
+            'pointermove': function(evt) {
+                var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
+                    return feature;
+                });
+                if (Helper.isFunction(callback) && f) {
+                    callback.call(this, f.get('data'));
+                }
+            }
+        }
+
+        if (eventType == "click")
+            self.c9Map.getViewport().addEventListener(eventType, eventFactoryViewport[eventType]);
+        else
+            self.c9Map.on(eventType, eventFactoryViewport[eventType]);
     }
 }
