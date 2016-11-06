@@ -1,43 +1,34 @@
 import Helper from '../../helper/C9.Helper';
 
 export default class Legend {
-    constructor(options, chart, data) {
+    constructor(options, chart) {
+        var self = this;
+
         var config = {
-            show      : false,
+            show      : true,
             position  : "top",
-            box : false,
             size      : 10,
             textSize  : "12px",
             margin    : [5, 5, 5, 5],
             space     : 10,
+            box       : false,
             // legendStyle     : "rect" // TODO: Allow user to choose type of legend (circle, rect, etc.)
         };
 
-        var self = this;
-
-        self._show         = options.show ? options.show : config.show;
-        self._textSize     = options.textSize   || config.textSize;
-        self._position     = options.position   || config.position;
-        self._size         = options.size       || config.size;
-        self._box          = options.box        || config.box;
-        self._margin       = options.margin     || config.margin;
-        self._space        = options.space      || config.space;
-        // self._legendStyle        = options.legendStyle      || config.legendStyle;
-
+        
         self._options   = options;
-        self._chart      = chart;
-        // self._maxWidth  = d3.select(body[0][0].parentNode).attr('width');
-        // self._maxHeight  = d3.select(body[0][0].parentNode).attr('height');
-        self._maxWidth  = chart.width;
-        self._maxHeight  = chart.height;
-        // self._color     = color;
-        self._data      = data;
+        self._chart     = chart;
 
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
+    get options() {
+        return this._options;
+    }
+
     get data() {
         return this._data;
     }
@@ -46,120 +37,92 @@ export default class Legend {
         return this._chart;
     }
 
-    get color() {
-        return this._color;
-    }
-    
-    get show() {
-        return this._show;
-    }
-
-    get text() {
-        return this._text ;
-    }
-
-    get position() {
-        return this._position;
-    }
-
-    get size() {
-        return this._size;
-    }
-
-    get margin() {
-        return this._margin;
-    }
-
-    get space() {
-        return this._space;
-    }
-
-    get textSize() {
-        return this._textSize;
-    }
-
     get item() {
         return this._item;
-    }
-
-    get domain() {
-        return this._domain;
     }
 
     get itemEventFactory() {
         return this._itemEventFactory;
     }
     
+    get maxWidth() {
+        return this._maxWidth;
+    }
+
+    get maxHeight() {
+        return this._maxHeight;
+    }
     /*=====  End of Getter  ======*/
 
     /*==============================
     =            Setter            =
     ==============================*/
+    set options(arg) {
+        if (arg) {
+            this._options = arg;
+        }
+    }
+
     set data(arg) {
         if (arg) {
             this._data = arg;
         }
     }
 
-    set text(newText) {
-        if (newText) {
-            this._text = newText;
-        }
-    }
-
-    set position(newPosition) {
-        if (newPosition) {
-            this._position = newPosition;
-        }
-    }
-
-    set size(newSize) {
-        if (newSize) {
-            this._size = newSize;
-        }
-    }
-
-    set margin(arg) {
+    set chart(arg) {
         if (arg) {
-            this._margin = arg;
+            this._chart = arg;
         }
     }
 
-    set space(arg) {
+    set item(arg) {
         if (arg) {
-            this._space = arg;
+            this._item = arg;
         }
     }
 
-    set item(newItem) {
-        if (newItem) {
-            this._item = newItem;
-        }
-    }
-
-    set domain(newDomain) {
-        if (newDomain) {
-            this._domain = newDomain;
-        }
-    }
-
-    set itemEventFactory(newItemEventFactory) {
-        if (newItemEventFactory) {
-            this._itemEventFactory = newItemEventFactory;
+    set itemEventFactory(arg) {
+        if (arg) {
+            this._itemEventFactory = arg;
         }
     }
     
+    set maxWidth(arg) {
+        if (arg) {
+            this._maxWidth = arg;
+        }
+    }
+
+    set maxHeight(arg) {
+        if (arg) {
+            this._maxHeight = arg;
+        }
+    }
     /*=====  End of Setter  ======*/
     
     /*======================================
     =            Main Functions            =
     ======================================*/
-    draw () {
+    updateConfig(config) {
         var self = this;
 
-        if (self.show) {
+        self.options = Helper.mergeDeep(config, self.options);
+
+        self.maxWidth   = self.chart.width;
+        self.maxHeight  = self.chart.height;
+        self.data       = self.chart.dataTarget;
+    }
+
+    update(data) {
+        var self = this;
+
+        self.data = data;
+
+        if (self.options.show) {
+            // Remove current legend
+            self.chart.svg.selectAll('.c9-custom-legend.c9-custom-legend-container').remove();
+
             // var color = self.color;
-            // TODO: Remove these conditional checks by getData for general purposes
             var domain = [];
 
             if (self.chart.chartType == "bar") {
@@ -185,35 +148,46 @@ export default class Legend {
 
             self.item.append('rect')
                 .attr('class', 'c9-custom-legend c9-custom-legend-rect')
-                .attr('width', self.size)
-                .attr('height', self.size)
-                .attr('r', self.size)
-                .attr('fill', function(d){ return d.color || d.values[0].color; })
-                .attr('stroke', function(d){ return d.color || d.values[0].color; });
+                .attr('width', self.options.size)
+                .attr('height', self.options.size)
+                .attr('r', self.options.size)
+                .attr('fill', function(d){ return d.color || d[0].color; })
+                .attr('stroke', function(d){ return d.color || d[0].color; });
 
             self.item.append('rect')
                 .attr('width', 5)
-                .attr('height', self.size)
-                .attr('x', self.size)
+                .attr('height', self.options.size)
+                .attr('x', self.options.size)
                 .attr('y', 0)
                 .attr('opacity', 0);
 
             self.item.append('text')
                 .attr('class', 'c9-custom-legend c9-custom-legend-text')
-                .attr('x', self.size + 5)
-                .attr('y', self.size)
-                .style('font-size', self.textSize)
+                .attr('x', self.options.size + 5)
+                .attr('y', self.options.size)
+                .style('font-size', self.options.textSize)
                 // .attr('text-anchor', 'middle')
-                .text(function(d) { return self.chart.chartType == "bar" ? d.group : d.name || d.key; });
+                .text(function(d) { return self.chart.chartType == "bar" ? d.group : d.name; });
 
             //caculate position for legend
-            var getSize = function(item) { return item.getBoundingClientRect() };
-            var getXY = function(item) { var xy = d3.select(item).attr('transform').split(','); return {x: parseFloat(xy[0].replace('translate(', '')), y: parseFloat(xy[1].replace(')', ''))}; };
+            var getSize = function(item) { 
+                return item.getBoundingClientRect() 
+            };
+            var getXY = function(item) { 
+                var xy = d3.select(item).attr('transform').split(','); 
+                return {
+                    x: parseFloat(xy[0].replace('translate(', '')), 
+                    y: parseFloat(xy[1].replace(')', ''))
+                }; 
+            };
+
             var r = 0; // current row
             var items = d3.selectAll(".c9-custom-legend-item")[0];
             var itemHeight = getSize(items[0]).height;
-            var numItemsCol = Math.floor((self._maxHeight - self.margin[0] - self.margin[2]) / (itemHeight + self.space));
-            if (self.space > itemHeight) numItemsCol++;
+            var numItemsCol = Math.floor((self.maxHeight - self.options.margin[0] - self.options.margin[2]) / (itemHeight + self.options.space));
+            
+            if (self.options.space > itemHeight) numItemsCol++;
+            
             var maxWidthCol = new Array(Math.floor(items.length / numItemsCol));
 
             items.forEach(function (i, n) {
@@ -222,21 +196,19 @@ export default class Legend {
                 if (maxWidthCol[pos] == undefined || width > maxWidthCol[pos]) maxWidthCol[pos] = width;
             });
 
-            if  (self.position == "bottom"){
-                /************ BOTTOM ***************/
+            if  (self.options.position == "bottom"){
                 self.item.attr("transform", function(d, i) {
                     if (i > 0) {
                         var item  = items[i];
                         var preItem  = items[i - 1];
-                        var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.space + getSize(item).width + self.margin[1]) / self._maxWidth);
+                        var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
                         if (newR > 0) r++;
-                        return "translate(" + (newR > 0 ? self.margin[3] : getXY(preItem).x + getSize(preItem).width + self.space) + "," + (self._maxHeight - self.margin[0] - itemHeight - r * (itemHeight + self.space)) + ")";
+                        return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.maxHeight - self.options.margin[0] - itemHeight - r * (itemHeight + self.options.space)) + ")";
+                    } else {
+                        return "translate(" + self.options.margin[3] + "," + (self.maxHeight - self.options.margin[0] - itemHeight) + ")";
                     }
-                    else
-                        return "translate(" + self.margin[3] + "," + (self._maxHeight - self.margin[0] - itemHeight) + ")";
                 });
-            } else if (self.position == "left") {
-                /************ LEFT ***************/
+            } else if (self.options.position == "left") {
                 self.item.attr("transform", function(d, i) {
                     var pos = Math.floor(i / numItemsCol);
 
@@ -244,36 +216,34 @@ export default class Legend {
                         var prePos = Math.floor((i - 1) / numItemsCol);
                         var item  = items[i];
                         var preItem  = items[i - 1];
-                        return "translate(" + (pos > prePos ? (maxWidthCol[pos] + self.space + getXY(preItem).x) : getXY(preItem).x) + "," + (pos > prePos ? self.margin[0] : getXY(preItem).y + getSize(preItem).height + self.space) + ")";
+                        return "translate(" + (pos > prePos ? (maxWidthCol[pos] + self.options.space + getXY(preItem).x) : getXY(preItem).x) + "," + (pos > prePos ? self.options.margin[0] : getXY(preItem).y + getSize(preItem).height + self.options.space) + ")";
                     }
                     else
-                        return "translate(" + self.margin[3] + "," + self.margin[0] + ")";
+                        return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
                 });
-            } else if (self.position == "right") {
-                /************ RIGHT ***************/
+            } else if (self.options.position == "right") {
                 self.item.attr("transform", function(d, i) {
                     var pos = Math.floor(i / numItemsCol);
                     if (i > 0) {
                         var prePos = Math.floor((i - 1) / numItemsCol);
                         var item  = items[i];
                         var preItem  = items[i - 1];
-                        return "translate(" + (pos > prePos ? (getXY(preItem).x - self.space - maxWidthCol[pos]) : getXY(preItem).x) + "," + (pos > prePos ? self.margin[0] : getXY(preItem).y + getSize(preItem).height + self.space) + ")";
+                        return "translate(" + (pos > prePos ? (getXY(preItem).x - self.options.space - maxWidthCol[pos]) : getXY(preItem).x) + "," + (pos > prePos ? self.options.margin[0] : getXY(preItem).y + getSize(preItem).height + self.options.space) + ")";
                     }
                     else
-                        return "translate(" + (self._maxWidth - self.margin[3] - maxWidthCol[pos]) + "," + self.margin[0] + ")";
+                        return "translate(" + (self.maxWidth - self.options.margin[3] - maxWidthCol[pos]) + "," + self.options.margin[0] + ")";
                 });
             } else {
-                /************ TOP ***************/
                 self.item.attr("transform", function(d, i) {
                     if (i > 0) {
                         var item  = items[i];
                         var preItem  = items[i - 1];
-                        var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.space + getSize(item).width + self.margin[1]) / self._maxWidth);
+                        var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
                         if (newR > 0) r++;
-                        return "translate(" + (newR > 0 ? self.margin[3] : getXY(preItem).x + getSize(preItem).width + self.space) + "," + (self.margin[0] + r * (itemHeight + self.space)) + ")";
+                        return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
                     }
                     else
-                        return "translate(" + self.margin[3] + "," + self.margin[0] + ")";
+                        return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
                 });
             }
             
@@ -288,7 +258,12 @@ export default class Legend {
             //         .style("stroke", color);
             // }
         }
-        
+    }
+
+    draw() {
+        var self = this;
+
+        self.update(self.chart.dataTarget);
     }
 
     /**
@@ -344,32 +319,15 @@ export default class Legend {
                 chart.updateDomain(newData);
                 chart.axis.update(chart.x, chart.y, 750);
                 chart.update(newData);
-                // update subchart
-                var subChartHeight = chart.options.subchart.height,
-                    subChartMargin = {
-                        'top': chart.actualHeight + 100,
-                        'left': chart.margin.left
-                    };
 
+                // Update subchart
                 chart.subChartX.domain(chart.x.domain());
                 chart.subChartY.domain(chart.y.domain());
-
-                var subChartAreaGen = d3.svg.area()
-                        .x(function(d) { return chart.subChartX(d.valueX) })
-                        .y0(function(d) { return chart.subChartY(d.valueY) })
-                        .y1(subChartHeight);
-
-                // chart.
                 chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
-
-                chart.updateSubChart(subChartHeight, subChartMargin, subChartAreaGen, chart.subChartXAxis, chart.brush, newData)
-                
-                
-
+                chart.updateSubChart(newData);
             },
 
             'mouseover': function(item) {
-                console.log(item)
                 if (Helper.isFunction(onMouseOverCallback)) {
                     onMouseOverCallback.call(this, item);
                 }
@@ -395,7 +353,7 @@ export default class Legend {
         
         };
 
-        if (self.show)
+        if (self.options.show)
             self.item.on(self.itemEventFactory);
     }
 
@@ -570,7 +528,7 @@ export default class Legend {
         
         };
 
-        if (self.show)
+        if (self.options.show)
             self.item.on(self.itemEventFactory);
     }
 
@@ -688,20 +646,8 @@ export default class Legend {
             }
         
         };
-        if (self.show)
+        if (self.options.show)
             self.item.on(self.itemEventFactory);
-
     }
-    
-
-    // setYLocation (height, margin) {
-    //     if (this.position === 'top') {
-    //         return (margin.top / 2);
-    //     } else if (this.position === 'bottom') {
-    //         return (height - margin.bottom / 2);
-    //     }
-    
-    // }
     /*=====  End of Main Functions  ======*/
-    
 }

@@ -49,7 +49,7 @@ export default class Chart {
 
             // legend
             legend: {
-                show      : false,
+                show      : true,
                 position  : "top",
                 size      : 10,
                 textSize  : "12px",
@@ -71,7 +71,7 @@ export default class Chart {
                 container: "body",
                 show: false,
                 headings: ["Name", "Value"],
-                style: "default", // "strip", "border"
+                style: "stripe", // "strip", "border"
                 serial: true,
                 hover: {
                     enable: true,

@@ -448,12 +448,12 @@ export default class BarChart extends Chart {
         self.updateInteraction();
 
         // Draw legend
-        legend.draw();
-        legend.updateInteractionForBarChart(self);
+        self.legend.draw();
+        self.legend.updateInteractionForBarChart(self);
 
         // Draw table
-        table.draw();
-        table.updateInteractionForBarChart(self);
+        self.table.draw();
+        self.table.updateInteractionForBarChart(self);
     }
 
     /**
@@ -495,12 +495,20 @@ export default class BarChart extends Chart {
             };
 
         }
-        
+
+        // Update Chart
         self.updateDataConfig(newCfg);
         self.update(self.dataTarget);
 
         // Update Axis
         self.axis.update(self.x, self.y, 100);
+
+        // Update Legend
+        self.legend.update(self.dataTarget);
+        self.legend.updateInteractionForBarChart(self);
+
+        // Update Table
+        self.table.update(self.dataTarget);
     }
     /*=====  End of User's Functions  ======*/
     

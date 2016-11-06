@@ -54,6 +54,10 @@
 		<div class="page-header">
 		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Update Data Line Chart</h3>
 		</div>
+		<div class="row">
+			<div class="col-md-8" id="demo1"></div>
+			<div class="col-md-4" id="table"></div>
+		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
@@ -120,7 +124,11 @@
 				},
 				colorRange: ['steelblue', 'red'],
 				legend: {
-					show: false
+					show: true
+				},
+				table: {
+					show: true,
+					container: '#table'
 				}
 			};
 			var lineChart = new C9.LineChart(options1);

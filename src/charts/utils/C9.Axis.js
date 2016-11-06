@@ -47,7 +47,7 @@ export default class Axis {
         self._options   = options;
         self._chart     = chart;
         self._width     = width;
-        self._height     = height;
+        self._height    = height;
 
         self.updateConfig(config);
             
@@ -324,6 +324,5 @@ export default class Axis {
 
         self.update(self.x, self.y, 100);
     }
-    /*=====  End of Main Functions  ======*/
-    
+    /*=====  End of Main Functions  ======*/  
 }

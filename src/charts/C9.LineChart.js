@@ -328,9 +328,10 @@ export default class LineChart extends Chart {
         }
 
         var xDomain = self.x.domain(), paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01;
-            // var yDomain = y.domain(), paddingY = (y.domain()[1] - y.domain()[0]) * 0.05;
-            self.x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
-            // y.domain([yDomain[0] - paddingY, yDomain[1] + paddingY]);
+        var yDomain = self.y.domain(), paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
+            
+        self.x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
+        self.y.domain([yDomain[0], yDomain[1] + paddingY]);
     }
 
     /**
@@ -435,6 +436,12 @@ export default class LineChart extends Chart {
             });
         }
 
+        /*----------  Set actual size for chart after initialization  ----------*/
+        var chartBox = self.body.node().getBBox();
+        self.actualWidth = chartBox.width - 4 * self.options.point.radius;
+        self.actualHeight = chartBox.height;
+        /*----------  End of Set actual size for chart after initialization  ----------*/
+
         self.updateInteraction();
     }  
 
@@ -448,19 +455,15 @@ export default class LineChart extends Chart {
             var width   = self.width - self.margin.left - self.margin.right,
                 height  = self.height - self.margin.top - self.margin.bottom;
 
-            /*----------  Set actual size for chart after initialization  ----------*/
-            var chartBox = self.body.node().getBBox();
-            self.actualWidth = chartBox.width - 4 * self.options.point.radius;
-            self.actualHeight = chartBox.height;
-            /*----------  End of Set actual size for chart after initialization  ----------*/
-
             /*----------  Sub Chart  ----------*/
             self.subChartWidth = width,
             self.subChartHeight = self.options.subchart.height;
-            self.subChartMargin = {
-                'top': self.actualHeight + 100,
-                'left': self.margin.left
-            };
+            if (Helper.isEmpty(self.subChartMargin)) {
+                self.subChartMargin = {
+                    'top': self.actualHeight + 100,
+                    'left': self.margin.left
+                }
+            }
 
             self.subChartX = (self._isTimeDomain) ? d3.time.scale().range([0, self.subChartWidth]) : d3.scale.linear().range([0, self.subChartWidth]),
             self.subChartY = d3.scale.linear().range([self.subChartHeight, 0]);
@@ -497,7 +500,8 @@ export default class LineChart extends Chart {
             self.subChartAreaGen = d3.svg.area()
                             .x(function(d) { return self.subChartX(d.valueX) })
                             .y0(function(d) { return self.subChartY(d.valueY) })
-                            .y1(self.subChartHeight);
+                            .y1(self.subChartHeight)
+                            .interpolate(self.options.interpolate);
 
             self.svg.attr('height', self.height + self.subChartHeight);
 
@@ -787,7 +791,7 @@ export default class LineChart extends Chart {
 
         var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
         var title   = new Title(self.options, self, self.width, self.height, self.margin);
-        var legend  = new Legend(self.options.legend, self, self.dataTarget);
+        var legend  = new Legend(self.options.legend, self);
         var table  = new Table(self.options.table, self, self.dataTarget);
 
         self.axis = axis;
@@ -860,6 +864,12 @@ export default class LineChart extends Chart {
         // Update Axis
         self.axis.update(self.x, self.y, 100);
 
+        // Update Legend
+        self.legend.update(self.dataTarget);
+        self.legend.updateInteractionForLineChart(self);
+
+        // Update Table
+        self.table.update(self.dataTarget);
     }
     /*=====  End of User's Functions  ======*/
     
