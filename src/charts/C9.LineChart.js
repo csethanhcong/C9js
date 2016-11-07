@@ -790,7 +790,7 @@ export default class LineChart extends Chart {
         var self = this;
 
         var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
-        var title   = new Title(self.options, self, self.width, self.height, self.margin);
+        var title   = new Title(self.options.title, self);
         var legend  = new Legend(self.options.legend, self);
         var table  = new Table(self.options.table, self, self.dataTarget);
 
@@ -798,6 +798,9 @@ export default class LineChart extends Chart {
         self.title = title;
         self.legend = legend;
         self.table = table;
+
+        // Draw title
+        self.title.draw();
 
         // Draw axis
         self.axis.draw();

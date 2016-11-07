@@ -47,12 +47,22 @@ export default class Chart {
                 },
             },
 
+            // title
+            title: {
+                show      : true,
+                text      : "Sample Chart",
+                position  : 'top',
+                fontSize  : "14px"
+            },
+
             // legend
             legend: {
                 show      : true,
                 position  : "top",
                 size      : 10,
-                textSize  : "12px",
+                fontSize  : "12px",
+                fontColor : "#999",
+                fontWeight: 'bold',
                 margin    : [5, 5, 5, 5],
                 space     : 10,
             },
@@ -63,6 +73,7 @@ export default class Chart {
                 position: 'left', // [top, right, bottom, left]
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 fontColor: '#fff',
+                fontSize: '11px',
                 format: null
             },
 
@@ -497,9 +508,15 @@ export default class Chart {
         self.body = self.svg
                     .append("g")
                     .attr('class', 'c9-chart c9-custom-container')
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");               
+    }
 
-                  
+    /**
+     * Get lightening color to create effect when interacting
+     * @param  {[type]} color [description]
+     */
+    getLightenColor(color) {
+        return Helper.shadeColor(0.5, color);
     }
 
     /*=====  End of Main Functions  ======*/

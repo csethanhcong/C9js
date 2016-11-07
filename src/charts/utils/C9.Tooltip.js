@@ -10,41 +10,17 @@ export default class Tooltip {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             fontColor: '#fff',
             fontSize: '11px',
+            format: null
         };
 
-        self._show              = options.show || config.show;
-        self._position          = options.position || config.position;
-        self._backgroundColor   = options.backgroundColor || config.backgroundColor;
-        self._fontColor         = options.fontColor || config.fontColor;
-        self._fontSize          = options.fontSize || config.fontSize;
+        self._options           = options;
 
-        self._options            = options;
-
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-    get show() {
-        return this._show;
-    }
-
-    get position() {
-        return this._position;
-    }
-
-    get backgroundColor() {
-        return this._backgroundColor;
-    }
-
-    get fontColor() {
-        return this._fontColor;
-    }
-
-    get fontSize() {
-        return this._fontSize;
-    }
-
     get format() {
         return this._format;
     }
@@ -56,43 +32,11 @@ export default class Tooltip {
     get options() {
         return this._options;
     }
-
-
     /*=====  End of Getter  ======*/
 
     /*==============================
     =            Setter            =
     ==============================*/
-    set show(arg) {
-        if (arg) {
-            this._show = arg;
-        }
-    }
-
-    set position(arg) {
-        if (arg) {
-            this._position = arg;
-        }
-    }
-
-    set backgroundColor(arg) {
-        if (arg) {
-            this._backgroundColor = arg;
-        }
-    }
-
-    set fontColor(arg) {
-        if (arg) {
-            this._fontColor = arg;
-        }
-    }
-
-    set fontSize(arg) {
-        if (arg) {
-            this._fontSize = arg;
-        }
-    }
-
     set format(arg) {
         if (arg) {
             this._format = arg;
@@ -110,17 +54,19 @@ export default class Tooltip {
             this._options = arg;
         }
     }
-
-
     /*=====  End of Setter  ======*/
 
     /*======================================
     =            Main Functions            =
     ======================================*/
+    updateConfig(config) {
+        var self = this;
+
+        self.options = Helper.mergeDeep(config, self.options);
+    }
 
     /**
-     * [draw description]
-     * @return {[type]} [description]
+     * Draw Tooltip
      */
     draw(data, chart, eventType) {
         var self = this;
@@ -142,9 +88,9 @@ export default class Tooltip {
                             .style('display', 'none')
                             .style('position', 'absolute')
                             .style('pointer-events', 'all')
-                            .style('background-color', self.backgroundColor)
-                            .style('color', self.fontColor)
-                            .style('font-size', self.fontSize);
+                            .style('background-color', self.options.backgroundColor)
+                            .style('color', self.options.fontColor)
+                            .style('font-size', self.options.fontSize);
                             // .style('width', '100px')
                             // .style('height', '50px')
                             // .html(function() {
@@ -201,7 +147,7 @@ export default class Tooltip {
 
         };
 
-        if (self.show) {
+        if (self.options.show) {
 
             switch(eventType) {
                 case 'mouseover':
@@ -222,7 +168,7 @@ export default class Tooltip {
         var self = this;
         let r ;
 
-        switch(self.position) {
+        switch(self.options.position) {
             case 'top':
                 r = 'c9-tooltip-top';
                 break;
@@ -286,7 +232,7 @@ export default class Tooltip {
         var self = this;
         let r ;
 
-        switch(self.position) {
+        switch(self.options.position) {
             case 'top':
                 r = {
                     'left': (d3.event.pageX - 50) + 'px',
@@ -324,8 +270,6 @@ export default class Tooltip {
 
         return r;
     }
-
-
     /*=====  End of Main Functions  ======*/
 
 }

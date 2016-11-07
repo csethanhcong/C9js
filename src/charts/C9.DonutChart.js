@@ -217,7 +217,7 @@ export default class DonutChart extends Chart {
                         );
 
                 // For legend
-                if (self.legend.show)
+                if (self.options.legend.show)
                     self.legend.item.each(function() {
                         if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
                             d3.select(this).attr('opacity', '0.3');
@@ -225,7 +225,7 @@ export default class DonutChart extends Chart {
                     });
 
                 // For Table
-                if (self.table.show) {
+                if (self.options.table.show) {
                     var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
                     tr.filter(function(i) { return i['data-ref'] != d.data['data-ref'] }).selectAll('td').style('opacity', '0.5');
                     var selectedItem = tr.filter(function(i) { return i['data-ref'] == d.data['data-ref'] });
@@ -262,7 +262,7 @@ export default class DonutChart extends Chart {
                         );
 
                 // For legend
-                if (self.legend.show)
+                if (self.options.legend.show)
                 self.legend.item.each(function() {
                     if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
                         d3.select(this).attr('opacity', '1.0');
@@ -270,7 +270,7 @@ export default class DonutChart extends Chart {
                 });
 
                 // For Table
-                if (self.table.show)
+                if (self.options.table.show)
                     d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
                 
                 // For Chart
@@ -338,13 +338,16 @@ export default class DonutChart extends Chart {
 
         var self = this;
         
-        var title   = new Title(self.options, self, self.width, self.height, self.margin);
+        var title   = new Title(self.options.title, self);
         var legend  = new Legend(self.options.legend, self, self.dataTarget);
         var table   = new Table(self.options.table, self, self.dataTarget);
 
         self.title = title;
         self.legend = legend;
         self.table = table;
+
+        // Draw title
+        self.title.draw();
 
         // Update interaction of this own chart
         self.update(self.dataTarget);

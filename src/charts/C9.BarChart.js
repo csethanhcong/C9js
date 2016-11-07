@@ -350,7 +350,7 @@ export default class BarChart extends Chart {
                 }
 
                 // For table
-                if (self.table.show) {
+                if (self.options.table.show) {
                     var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
                     tr.filter(function(i) { return i['data-ref'] != d['data-ref'] }).selectAll('td').style('opacity', '0.5');
                     var selectedItem = tr.filter(function(i) { return i['data-ref'] == d['data-ref'] });
@@ -358,6 +358,8 @@ export default class BarChart extends Chart {
                     selectedItem.selectAll('td').style('opacity', '1');
                     Helper.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
                 }
+
+                d3.select(this).style("fill", function (d, i) { return self.getLightenColor(d.color || color(i)); });
 
                 tooltip.draw(d, self, 'mouseover');
             },
@@ -369,8 +371,10 @@ export default class BarChart extends Chart {
                 }
 
                 // For Table
-                if (self.table.show)
+                if (self.options.table.show)
                     d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
+
+                d3.select(this).style("fill", function (d, i) { return d.color || color(i); });
 
                 tooltip.draw(d, self, 'mouseout');
             }
@@ -431,7 +435,7 @@ export default class BarChart extends Chart {
         var self = this;
 
         var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
-        var title   = new Title(self.options, self, self.width, self.height, self.margin);
+        var title   = new Title(self.options.title, self);
         var legend  = new Legend(self.options.legend, self, self.dataTarget);
         var table   = new Table(self.options.table, self, self.dataTarget);
 
@@ -440,8 +444,12 @@ export default class BarChart extends Chart {
         self.table = table;
         self.legend = legend;
 
+        
         // Draw axis
         self.axis.draw();
+        
+        // Draw title
+        self.title.draw();
 
         // Update Chart based on dataTarget
         self.update(self.dataTarget);

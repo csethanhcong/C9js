@@ -8,7 +8,9 @@ export default class Legend {
             show      : true,
             position  : "top",
             size      : 10,
-            textSize  : "12px",
+            fontSize  : "12px",
+            fontColor : "#999",
+            fontWeight: 'bold',
             margin    : [5, 5, 5, 5],
             space     : 10,
             box       : false,
@@ -138,7 +140,6 @@ export default class Legend {
             // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
             self.item = container.selectAll("g.c9-custom-legend.c9-custom-legend-item")
-                // .data(color.domain())
                 .data(self.data)
                 .enter().append("g")
                 .attr("class", "c9-custom-legend c9-custom-legend-item")
@@ -152,20 +153,25 @@ export default class Legend {
                 .attr('height', self.options.size)
                 .attr('r', self.options.size)
                 .attr('fill', function(d){ return d.color || d[0].color; })
-                .attr('stroke', function(d){ return d.color || d[0].color; });
+                // .attr('stroke', function(d){ return d.color || d[0].color; })
+                .style('cursor', 'pointer');
 
             self.item.append('rect')
                 .attr('width', 5)
                 .attr('height', self.options.size)
                 .attr('x', self.options.size)
                 .attr('y', 0)
-                .attr('opacity', 0);
+                .attr('opacity', 0)
+                .style('cursor', 'pointer');
 
             self.item.append('text')
                 .attr('class', 'c9-custom-legend c9-custom-legend-text')
                 .attr('x', self.options.size + 5)
                 .attr('y', self.options.size)
-                .style('font-size', self.options.textSize)
+                .style('font-size', self.options.fontSize)
+                .style('font-weight', self.options.fontWeight)
+                .style('fill', self.options.fontColor)
+                .style('cursor', 'pointer')
                 // .attr('text-anchor', 'middle')
                 .text(function(d) { return self.chart.chartType == "bar" ? d.group : d.name; });
 
@@ -295,7 +301,7 @@ export default class Legend {
                 }));
 
                 // Add pointer to cursor
-                selector.style('cursor', 'pointer');
+                // selector.style('cursor', 'pointer');
 
                 // If current selector is disabled, then turn it on back
                 // Else, set enable to false
@@ -321,10 +327,12 @@ export default class Legend {
                 chart.update(newData);
 
                 // Update subchart
-                chart.subChartX.domain(chart.x.domain());
-                chart.subChartY.domain(chart.y.domain());
-                chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
-                chart.updateSubChart(newData);
+                if (chart.options.subchart.show) {
+                    chart.subChartX.domain(chart.x.domain());
+                    chart.subChartY.domain(chart.y.domain());
+                    chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
+                    chart.updateSubChart(newData);
+                }
             },
 
             'mouseover': function(item) {
@@ -333,9 +341,10 @@ export default class Legend {
                 }
 
                 var legendSelector = d3.select(this);
-                // Add pointer to cursor
-                legendSelector.style('cursor', 'pointer');
 
+                // Add pointer to cursor and make it lighten
+                // legendSelector.style('cursor', 'pointer');
+                self.lightenLegendItem(legendSelector);
             },
 
             'mouseout': function(item) {
@@ -344,17 +353,17 @@ export default class Legend {
                 }
 
                 var legendSelector = d3.select(this);
+
                 // Add pointer to cursor
-                legendSelector.style('cursor', 'pointer');
-
-                var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
-
+                // legendSelector.style('cursor', 'pointer');
+                self.normalizeLegendItem(legendSelector);
             }
         
         };
 
-        if (self.options.show)
+        if (self.options.show) {
             self.item.on(self.itemEventFactory);
+        }
     }
 
     /**
@@ -393,7 +402,7 @@ export default class Legend {
                 }));
 
                 // Add pointer to cursor
-                selector.style('cursor', 'pointer');
+                // selector.style('cursor', 'pointer');
 
                 // If current selector is disabled, then turn it on back
                 // Else, set enable to false
@@ -453,12 +462,13 @@ export default class Legend {
 
                 var legendSelector = d3.select(this);
                 // Add pointer to cursor
-                legendSelector.style('cursor', 'pointer');
+                // legendSelector.style('cursor', 'pointer');
+                self.lightenLegendItem(legendSelector);
 
-                if (legendSelector.attr('data-enable') == 'true') {
+                if (legendSelector.attr('data-enable')) {
                     // For Legend
                     self.item.each(function() {
-                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable')) {
                             d3.select(this).attr('opacity', '0.3');
                         }
                     });
@@ -493,12 +503,13 @@ export default class Legend {
 
                 var legendSelector = d3.select(this);
                 // Add pointer to cursor
-                legendSelector.style('cursor', 'pointer');
+                // legendSelector.style('cursor', 'pointer');
+                self.normalizeLegendItem(legendSelector);
 
                 // if (legendSelector.attr('data-enable') == 'true') {
                     // For Legend
                     self.item.each(function() {
-                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable')) {
                             d3.select(this).attr('opacity', '1.0');
                         }
                     });
@@ -521,8 +532,6 @@ export default class Legend {
                                 .outerRadius(chartOuterBefore)
                             );
                 // }
-
-                
 
             }
         
@@ -566,7 +575,7 @@ export default class Legend {
                 var enableSetOld = [];
                 var data = [];
                 // Add pointer to cursor
-                selector.style('cursor', 'pointer');
+                // selector.style('cursor', 'pointer');
 
                 // If current selector is disabled, then turn it on back
                 // Else, set enable to false
@@ -631,7 +640,9 @@ export default class Legend {
 
             'mouseover': function(item) {
                 var selector = d3.select(this);
-                selector.style('cursor', 'pointer');
+                // selector.style('cursor', 'pointer');
+                self.lightenLegendItem(selector);
+
                 if (selector.attr('data-enable') == 'true')
                     d3.selectAll('.c9-custom-bar>.c9-custom-rect')
                         .filter(function (d){ return d['group-ref'] != item['group-ref']; })
@@ -639,7 +650,10 @@ export default class Legend {
             },
 
             'mouseout': function(item) {
-                d3.select(this).style('cursor', 'pointer');
+                var selector = d3.select(this);
+                // selector.style('cursor', 'pointer');
+                self.normalizeLegendItem(selector);
+
                 d3.selectAll('.c9-custom-bar>.c9-custom-rect')
                     .filter(function (d){ return d['group-ref'] != item['group-ref']; })
                     .attr('opacity', 1);
@@ -648,6 +662,20 @@ export default class Legend {
         };
         if (self.options.show)
             self.item.on(self.itemEventFactory);
+    }
+
+    lightenLegendItem(item) {
+        var self = this;
+
+        item.select('.c9-custom-legend-rect').attr('fill', function(d){ return Helper.shadeColor(0.5, d.color || d[0].color); });
+        item.select('.c9-custom-legend-text').style('fill', function(d){ return Helper.shadeColor(-0.5, self.options.fontColor); });
+    }
+
+    normalizeLegendItem(item) {
+        var self = this;
+
+        item.select('.c9-custom-legend-rect').attr('fill', function(d){ return d.color || d[0].color; });
+        item.select('.c9-custom-legend-text').style('fill', function(d){ return self.options.fontColor; });
     }
     /*=====  End of Main Functions  ======*/
 }

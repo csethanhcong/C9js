@@ -22,8 +22,8 @@ export default class TimeLine extends Chart {
             ending: 0,
             stack: true,
             itemHeight: 25,
-            itemMargin: 20,
-            labelMargin: 20,
+            itemMargin: 15,
+            labelMargin: 50,
             striped: null
         };
 
@@ -433,6 +433,7 @@ export default class TimeLine extends Chart {
 
             var subChart = self.svg.append("g")
                             .attr("class", "c9-subchart-custom")
+                            // .attr("clip-path", "url(#clip)")
                             .attr("transform", "translate(" + self.subChartMargin.left + "," + self.subChartMargin.top + ")");
 
             var itemContainer = subChart.append('g')
@@ -523,6 +524,8 @@ export default class TimeLine extends Chart {
                     onMouseOverCallback.call(this, d);
                 }
 
+                d3.select(this).style("fill", function (d, i) { return self.getLightenColor(d.color || color(i)); });
+
                 tooltip.draw(d, self, 'mouseover');
             },
             
@@ -532,6 +535,8 @@ export default class TimeLine extends Chart {
                 if (Helper.isFunction(onMouseOutCallback)) {
                     onMouseOutCallback.call(this, d);
                 }
+
+                d3.select(this).style("fill", function (d, i) { return d.color || color(i); });
 
                 tooltip.draw(d, self, 'mouseout');
             }
@@ -607,12 +612,15 @@ export default class TimeLine extends Chart {
         var self = this;
         
         var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
-        var title   = new Title(self.options, self, self.width, self.height, self.margin);    
+        var title   = new Title(self.options.title, self);  
         var legend  = new Legend(self.options.legend, self, self.colorRange, self.dataTarget);
 
         self.axis = axis;
         self.title = title;
         self.legend = legend;
+
+        // Draw title
+        self.title.draw();
 
         // Draw axis
         self.axis.draw();
