@@ -1,7 +1,6 @@
 /** To make fixed top header smoothly **/
-body { 
+/*body { 
 	padding-top:70px; 
-  /*background-color: #D8E6E7;*/
 }
 
 pre {
@@ -12,11 +11,16 @@ pre {
 .page-header {
   margin-top: 10px;
   margin-bottom: 10px;
-}
+}*/
 
 /*--------------------Header-----------------*/
-header .navbar{
+/*header .navbar{
   background-color: #011638;
   border-color: #4FB0C6;
   color: white;
+}*/
+
+hr.footer-hr {
+    border-color: rgba(34, 34, 34, 0.05);
+    max-width: 100%;
 }

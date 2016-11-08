@@ -414,3 +414,9 @@ img::-moz-selection {
 body {
   webkit-tap-highlight-color: #222222;
 }
+
+hr.footer-hr {
+    border-color: rgba(34, 34, 34, 0.05);
+    max-width: 100%;
+    margin: 5px 0px;
+}
