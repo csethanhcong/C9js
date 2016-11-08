@@ -380,11 +380,34 @@ export default class Map {
         //register pointer move event to show cursor as pointer if user hover on markers
         self.c9Map.on('pointermove', function(evt) {
             var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
+                self.lastHoveredObj = feature;
                 return feature;
             });
             self.c9Map.getTargetElement().style.cursor = f ? 'pointer' : '';
             if (f) {
                 // self.createMarkerEffect(f);
+                /************* LIGHTEN COLOR ***********/
+                if (f.get('type') != 'c9-marker'){
+                    var fStyle = f.getStyle();
+                    var defaultStyle = f.get('c9-style');
+
+                    if (!(fStyle.getStroke().getWidth() != defaultStyle.strokeWidth 
+                        && fStyle.getStroke().getColor() != defaultStyle.strokeColor 
+                        && fStyle.getFill().getColor() != defaultStyle.fillColor))
+                        f.setStyle(new ol.style.Style({
+                            stroke: new ol.style.Stroke({
+                                width: fStyle.getStroke().getWidth() + 2,
+                                color: self.getLightenColor(fStyle.getStroke().getColor())
+                            }),
+                            fill: new ol.style.Fill({
+                                color: self.getLightenColor(fStyle.getFill().getColor())
+                            })
+                        }));
+                }
+
+                /****************************************/
+
+                /************** SHOW POPUP *************/
                 self.c9Popup.getElement().style.display = 'none';
 
                 // panAnimation(f);
@@ -403,12 +426,27 @@ export default class Map {
                 self.c9Popup.getElement().style.display = 'block';
                 self.c9Popup.getElement().innerHTML = content;
                 self.c9Popup.setPosition(getCenter(f));
-
+                /****************************************/
                 // var stop = new CustomEvent("click", {detail: {message: "stop"}});
                 // self.c9Map.dispatchEvent(stop);
             }
-            if (!f)
+            if (!f) {
                 self.c9Popup.getElement().style.display = 'none';
+
+                //remove last obj style
+                if (!Helper.isEmpty(self.lastHoveredObj) && self.lastHoveredObj.get('type') != 'c9-marker') {
+                    var defaultStyle = self.lastHoveredObj.get('c9-style');
+                    self.lastHoveredObj.setStyle(new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            width: defaultStyle.strokeWidth,
+                            color: defaultStyle.strokeColor
+                        }),
+                        fill: new ol.style.Fill({
+                            color: defaultStyle.fillColor
+                        })
+                    }));
+                }   
+            }
         });
 
         //register map first render's event to show marker's effect
@@ -606,6 +644,11 @@ export default class Map {
             'data-ref': '',
             type: "c9-" + coorAndType.type,
             data: data,
+            'c9-style': {
+                strokeWidth: strokeWidth,
+                strokeColor: strokeColor,
+                fillColor  : fillColor
+            },
             geometry: coorAndType.type == "polygon" ? new ol.geom.Polygon([coorAndType.coor]) : new ol.geom.LineString(coorAndType.coor)
         });
 
@@ -725,5 +768,22 @@ export default class Map {
             self.c9Map.getViewport().addEventListener(eventType, eventFactoryViewport[eventType]);
         else
             self.c9Map.on(eventType, eventFactoryViewport[eventType]);
+    }
+
+    getLightenColor(color) {
+        if (color.includes('rgba')) {
+            var alpha = color.split(',')[color.split(',').length - 1].replace(')', '');
+            var currentColor = color.replace(',' + alpha, '').replace('a', '');
+            var newColor = Helper.shadeColor(-0.2, currentColor);
+            return 'rgba(' + newColor.split('(')[1].split(')')[0] + ',' + alpha.trim() + ')';
+        }
+        else
+            return Helper.shadeColor(-0.2, color);
+    }
+
+    //TODO - add set obj style function
+    setObjStyle(){
+
+
     }
 }
