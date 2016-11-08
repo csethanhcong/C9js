@@ -420,3 +420,179 @@ hr.footer-hr {
     max-width: 100%;
     margin: 5px 0px;
 }
+
+hr.sample-hr {
+    border-color: rgba(34, 34, 34, 0.05);
+    max-width: 100%;
+    margin: 5px 0px;
+}
+
+body.body-nomain {
+  /*background-color: #e3e3e3;*/
+    margin-top: 60px;
+}
+
+.navbar-default.nomain {
+  background-color: #1F2124;
+  margin-bottom: 0px;
+}
+
+/*----------  ANIMATED ARROW  ----------*/
+
+a.animate-arrow {
+  text-decoration: none;
+  transition: all 0.5s;
+}
+
+a.animate-arrow span {
+  position: relative;
+  display: inline-block;
+  transition: 0.5s;
+}
+
+a.animate-arrow span:after {
+  content: '»';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+a.animate-arrow:hover span {
+  padding-right: 25px;
+}
+
+a.animate-arrow:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+/*----------  TEST  ----------*/
+body {
+  /*background: lightblue;*/
+  position: relative;
+  line-height: 1.5;
+  /*font-family: 'Raleway', sans-serif;*/
+}
+
+h1, h2 {
+  font-weight: 700;
+}
+
+h3 span {
+  /*color: #286090;*/
+}
+.content >section:first-child{
+  padding: 0px 0px 20px;
+}
+section {
+  padding: 60px 0 20px;
+  border-bottom: 1px solid #c1e1ec;
+}
+section h2{
+  margin-top: 0px;
+}
+#web-development,
+#mobile-development {
+  padding-bottom: 0;
+}
+
+section:last-child {
+  border-bottom: none;
+}
+
+.nav {
+  /*background: #4baac8;*/
+}
+
+.nav.nav-padding {
+  margin: 50px 0px;
+  border-right: solid 1px #F05F40;
+}
+
+.nav a {
+  /*color: black;*/
+  /*font-style: italic;*/
+}
+
+.nav li a:hover,
+.nav li a:focus {
+  /*background: #86c5da;*/
+}
+
+.nav .active {
+  font-weight: bold;
+  /*background: #72bcd4;*/
+}
+
+.nav .nav {
+  display: none;
+}
+
+.nav .active .nav {
+  display: block;
+}
+
+.nav .nav a {
+  font-weight: normal;
+  font-size: .85em;
+}
+
+.nav .nav span {
+  margin: 0 5px 0 2px;
+}
+
+.nav .nav .active a,
+.nav .nav .active:hover a,
+.nav .nav .active:focus a {
+  font-weight: bold;
+  padding-left: 30px;
+  border-left: 5px solid black;
+}
+
+.nav .nav .active span,
+.nav .nav .active:hover span,
+.nav .nav .active:focus span {
+  display: none;
+}
+
+.application {
+  /*border-top: 1px solid #c1e1ec;*/
+}
+
+.affix-top {
+  position: relative;
+}
+
+.affix {
+  top: 20px;
+}
+
+.affix, 
+.affix-bottom {
+    width: 213px;
+}
+
+.affix-bottom {
+  position: absolute;
+}
+
+.div-separator {
+    border-color: rgba(34, 34, 34, 0.05);
+    max-height: 100%;
+    margin-left: 5px;
+}
+
+.wrapper{
+  position: relative;
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+@media (min-width:1200px) {
+  .affix, 
+  .affix-bottom {
+    width: 263px;
+  }
+}

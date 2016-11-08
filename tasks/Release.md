@@ -118,6 +118,8 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 - https://www.facebook.com/cnn/videos/10155554527471509/
 
+- http://tuoitre.vn/tin/interactive/20161101/truc-tuyen-ket-qua-bau-cu-tong-thong-my/1210954.html
+
 3. Mock Data Server:
 
 - https://www.sitepoint.com/mock-rest-apis-using-json-server/
