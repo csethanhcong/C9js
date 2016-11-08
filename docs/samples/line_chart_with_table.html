@@ -2,20 +2,20 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Multi Line Chart</title>
+		<title>Examples - Line Chart With Table</title>
 		<!-- ICON -->
-		<link rel="icon" href="../../images/icon.ico">
+		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
-		<link rel="stylesheet" href="../../libs/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../../css/main.css">
+		<link rel="stylesheet" href="../libs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/main.css">
 		<!-- JS -->
 		<!-- <script src="./libs/c9/libs/jquery.min.js"></script> -->
 
 	    <!-- D3 & OL3 & C9 -->
-	    <script src="../../libs/d3/d3.min.js"></script>
-	    <script src="../../../../dist/C9.js"></script>
-	    <link rel="stylesheet" href="../../../../dist/C9.min.css" />
-	    <link rel="stylesheet" href="../../libs/ol3/ol.css" />
+	    <script src="../libs/d3/d3.min.js"></script>
+	    <script src="../../dist/C9.js"></script>
+	    <link rel="stylesheet" href="../../dist/C9.min.css" />
+	    <link rel="stylesheet" href="../libs/ol3/ol.css" />
 		<!-- End of D3 & OL3 & C9 -->
 	</head>
 	<body>
@@ -32,7 +32,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="">
-						<img src="../../images/icon.ico" height="25px" />
+						<img src="../images/icon.ico" height="25px" />
 					</a> 
 					<a class="navbar-brand" href="">c9js</a>
 				</div>
@@ -52,13 +52,16 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Multi Line Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Line Chart With Table</h3>
 		</div>
-		<div id="demo1"></div>
+		<div class="row">
+			<div id="demo1" class="col-md-8"></div>
+			<div id="table" class="col-md-4"></div>
+		</div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320], "valueX": [10, 20, 50, 70 , 100]},
-						 {"name": "DEF", "valueY": [150, 210, 269, -696, 969], "valueX": [10, 20, 50, 70 , 100]},
+						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
+						 {"name": "DEF", "valueY": [150, 210, 269, -696]},
 						];
 			var options1 = {
 				id: "#demo1", 
@@ -73,17 +76,17 @@
 				data: {
 					plain: data1,
 					keys: {
-						y: 'valueY',
-						x: 'valueX'
+						y: 'valueY'
 					},
+					// timeFormat: '%Y-%m',
 				}, 
 				axis: {
 					x: {
 						show: true,
-						text: "Time",
+						text: " ",
 						tick: {
 							// show: false,
-							rotate: -90
+							rotate: -45
 							// padding: 10
 						}
 					},
@@ -91,25 +94,42 @@
 						show: false,
 						text: "Sale",
 						tick: {
+							rotate: -45
 							// show: false
 						},
 						grid: true
 					}
 				},
 				titleText: 'Line Chart',
-				interpolate: 'monotone',
+				interpolate: 'linear',
 				point: {
 					show: true,
-					radius: 5,
+					radius: 2,
 					fill: 'white',
-					stroke: 'steelblue',
-					'stroke-width': 2
+					stroke: '#444',
+					'stroke-width': 1
 				},
-				colorRange: ['steelblue', 'red'],
+				tooltip: {
+					format: function(data) {
+						var r = '';
+						data.forEach(function(_data) {
+							r += 'At moment: ' +_data.valueX + ', <strong>' +_data.name + '</strong>' + ' consist of: ' +_data.valueY + '<br>';
+						});
+						return r;
+					}
+				},
+				subchart: {
+					show: true
+				},
+				table: {
+					show: true,
+					container: '#table'
+				},
 				legend: {
 					show: true
 				},
-				subchart: {
+				colorRange: ['steelblue', 'red'],
+				legend: {
 					show: true
 				}
 			};

@@ -2,20 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Examples - Timeline Chart With Subchart</title>
+    <title>Examples - Timeline Chart</title>
     <!-- ICON -->
-    <link rel="icon" href="../../images/icon.ico">
+    <link rel="icon" href="../images/icon.ico">
     <!-- CSS -->
-    <link rel="stylesheet" href="../../libs/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../libs/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/main.css">
     <!-- JS -->
     <!-- <script src="./libs/c9/libs/jquery.min.js"></script> -->
 
       <!-- D3 & OL3 & C9 -->
-      <script src="../../libs/d3/d3.min.js"></script>
-      <script src="../../../../dist/C9.js"></script>
-      <link rel="stylesheet" href="../../../../dist/C9.min.css" />
-      <link rel="stylesheet" href="../../libs/ol3/ol.css" />
+      <script src="../libs/d3/d3.min.js"></script>
+      <script src="../../dist/C9.js"></script>
+      <link rel="stylesheet" href="../../dist/C9.min.css" />
+      <link rel="stylesheet" href="../libs/ol3/ol.css" />
     <!-- End of D3 & OL3 & C9 -->
   </head>
   <body>
@@ -32,7 +32,7 @@
             <span class="icon-bar"></span>
           </button>
           <a class="navbar-brand" href="">
-            <img src="../../images/icon.ico" height="25px" />
+            <img src="../images/icon.ico" height="25px" />
           </a> 
           <a class="navbar-brand" href="">c9js</a>
         </div>
@@ -52,12 +52,12 @@
   <div class="container">
     <!-- Ex1: Bar Chart -->
     <div class="page-header">
-      <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Timeline Chart With Subchart</h3>
+      <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Timeline Chart</h3>
     </div>
     <div id="demo1"></div>
       <script type="text/javascript" charset="utf-8">
       var data3 = [
-              {name: "test", icon: "../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
+              {name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
               {icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
               {icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
             ];
@@ -80,20 +80,20 @@
             text: "Time",
             tick: {
               interval: 5
-            },
+            }
           }
         },
-        subchart: {
-          show: true
-        },
+        title_text: 'Timeline Chart',
         stack: true,
         // backgroundColor: ["yellow", "red"],
         // colorRange: ["red", "green", "blue"],
+        labelMargin: 0,
         rowSeparator: null,
         // itemMargin: 30,
         striped: true,
       };
       var timelineChart = new C9.TimeLine(options7);
+      timelineChart.setOption('labelMargin', 10);
       timelineChart.draw();
     </script>
     

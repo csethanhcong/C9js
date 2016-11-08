@@ -2,20 +2,20 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Pie Chart</title>
+		<title>Examples - Update Data Pie Chart</title>
 		<!-- ICON -->
-		<link rel="icon" href="../../images/icon.ico">
+		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
-		<link rel="stylesheet" href="../../libs/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../../css/main.css">
+		<link rel="stylesheet" href="../libs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/main.css">
 		<!-- JS -->
 		<!-- <script src="./libs/c9/libs/jquery.min.js"></script> -->
 
 	    <!-- D3 & OL3 & C9 -->
-	    <script src="../../libs/d3/d3.min.js"></script>
-	    <script src="../../../../dist/C9.js"></script>
-	    <link rel="stylesheet" href="../../../../dist/C9.min.css" />
-	    <link rel="stylesheet" href="../../libs/ol3/ol.css" />
+	    <script src="../libs/d3/d3.min.js"></script>
+	    <script src="../../dist/C9.js"></script>
+	    <link rel="stylesheet" href="../../dist/C9.min.css" />
+	    <link rel="stylesheet" href="../libs/ol3/ol.css" />
 		<!-- End of D3 & OL3 & C9 -->
 	</head>
 	<body>
@@ -32,7 +32,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="">
-						<img src="../../images/icon.ico" height="25px" />
+						<img src="../images/icon.ico" height="25px" />
 					</a> 
 					<a class="navbar-brand" href="">c9js</a>
 				</div>
@@ -52,7 +52,7 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Pie Chart</h3>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Update Data Pie Chart</h3>
 		</div>
 		<div id="chart"></div>
 		<div id="table"></div>
@@ -64,6 +64,12 @@
 					{name: "Female2",	value:  25},
 					{name: "Female3",	value:  25},
 				];
+
+			var data2 = [
+					{name: "Male", value:	10},
+					{name: "LGBT", value:	50}
+				];
+
 			var options = {  
 			   id:"#chart",
 			   width:750,
@@ -94,6 +100,9 @@
 			};
 			var pieChart = new C9.PieChart(options);
 			pieChart.draw();
+			setTimeout(function() {
+				pieChart.updateData(data2);
+			}, 2000);
 		</script>
 		
 	</body>

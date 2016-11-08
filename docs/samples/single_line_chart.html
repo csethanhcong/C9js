@@ -2,20 +2,20 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Examples - Update Data Line Chart</title>
+		<title>Examples - Single Line Chart</title>
 		<!-- ICON -->
-		<link rel="icon" href="../../images/icon.ico">
+		<link rel="icon" href="../images/icon.ico">
 		<!-- CSS -->
-		<link rel="stylesheet" href="../../libs/bootstrap/dist/css/bootstrap.min.css">
-		<link rel="stylesheet" href="../../css/main.css">
+		<link rel="stylesheet" href="../libs/bootstrap/dist/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/main.css">
 		<!-- JS -->
 		<!-- <script src="./libs/c9/libs/jquery.min.js"></script> -->
 
 	    <!-- D3 & OL3 & C9 -->
-	    <script src="../../libs/d3/d3.min.js"></script>
-	    <script src="../../../../dist/C9.js"></script>
-	    <link rel="stylesheet" href="../../../../dist/C9.min.css" />
-	    <link rel="stylesheet" href="../../libs/ol3/ol.css" />
+	    <script src="../libs/d3/d3.min.js"></script>
+	    <script src="../../dist/C9.js"></script>
+	    <link rel="stylesheet" href="../../dist/C9.min.css" />
+	    <link rel="stylesheet" href="../libs/ol3/ol.css" />
 		<!-- End of D3 & OL3 & C9 -->
 	</head>
 	<body>
@@ -32,7 +32,7 @@
 						<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="">
-						<img src="../../images/icon.ico" height="25px" />
+						<img src="../images/icon.ico" height="25px" />
 					</a> 
 					<a class="navbar-brand" href="">c9js</a>
 				</div>
@@ -52,21 +52,17 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Update Data Line Chart</h3>
-		</div>
-		<div class="row">
-			<div class="col-md-8" id="demo1"></div>
-			<div class="col-md-4" id="table"></div>
+		  <h3>&nbsp;<span class="glyphicon glyphicon-tag"></span>&nbsp;&nbsp;Single Line Chart</h3>
 		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
 						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]}
 						];
-			var data2 = [
-						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
-						 {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
-						];
+			// var data1 = [
+			// 			 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
+			// 			 // {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
+			// 			];
 			var options1 = {
 				id: "#demo1", 
 				width: 750, 
@@ -83,6 +79,7 @@
 						// x: 'valueX',
 						y: 'valueY'
 					},
+					// timeFormat: '%Y-%m',
 				}, 
 				axis: {
 					x: {
@@ -93,7 +90,7 @@
 							// show: false,
 							rotate: -60
 							// padding: 10
-						},
+						}
 					},
 					y: {
 						show: false,
@@ -115,36 +112,18 @@
 				},
 				tooltip: {
 					format: function(data) {
-						var res = '';
-						data.forEach(function(_data) {
-							res += 'At moment: ' + _data.valueX + ', <strong>' + _data.name + '</strong>' + ' has ' + _data.valueY + '<br>';
-						});
-						return res;
+						return 'At moment: ' + data[0].valueX + '<strong>' + data[0].name + '</strong>' + 'has ' + data[0].valueY;
 					}
 				},
 				colorRange: ['steelblue', 'red'],
+				// gridYShow: true,
+				// gridXShow: true,
 				legend: {
-					show: true
-				},
-				table: {
-					show: true,
-					container: '#table'
+					show: false
 				}
 			};
 			var lineChart = new C9.LineChart(options1);
-			lineChart.setOption('subchart.show', true);
 			lineChart.draw();
-
-			setTimeout(function() {
-				lineChart.updateData(data2);
-				setTimeout(function() {
-					lineChart.updateData(data1);
-						setTimeout(function() {
-							lineChart.updateData(data2);
-						}, 2000);
-				}, 2000);
-			}, 2000);
-
 		</script>
 		
 	</body>
