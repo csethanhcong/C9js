@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>C9js - Getting Started</title>
+    <title>C9js - Examples</title>
     <link rel="shortcut icon" href="./images/icon.ico">
 
     <!-- Bootstrap Core CSS -->
@@ -27,7 +27,7 @@
 
     <!-- Plugin CSS -->
     <link href="./libs/magnific-popup/magnific-popup.css" rel="stylesheet">
-  
+
     <!-- Theme CSS -->
     <link href="./css/creative.css" rel="stylesheet">
 
@@ -37,11 +37,6 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
-    <!-- D3 & OL3 & C9 -->
-    <script src="./libs/d3/d3.min.js"></script>
-    <script src="../dist/C9.js"></script>
-    <link rel="stylesheet" href="../dist/C9.min.css" />
 
 </head>
   <body id="page-top" class="body-nomain" data-spy="scroll" data-target=".scrollspy">
@@ -81,7 +76,13 @@
           <div class="col-md-3 scrollspy">
             <ul id="nav" class="nav nav-padding hidden-xs hidden-sm" data-spy="affix">
               <li><a href="#setup">Setup</a></li>
-              <li><a href="#generate-first-c9">Generate First C9 Chart</a></li>
+              <li><a href="#generate-first-c9">Generate First C9 Chart</a>
+                <ul class="nav">
+                  <li><a href="#ruby"><span class="fa fa-angle-double-right"></span>Ruby</a></li>
+                  <li><a href="#python"><span class="fa fa-angle-double-right"></span>Python</a></li>
+                  <li><a href="#php"><span class="fa fa-angle-double-right"></span>PHP</a></li>
+                </ul>
+              </li>
               <li><a href="#marketing">Marketing</a></li>
               <li><a href="#graphic-design">Graphic Design</a></li>
               <li><a href="#logistics">Logistics</a></li>
@@ -159,60 +160,37 @@
 <span class="kw">var</span> barChart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">BarChart</span>(option)<span class="op">;</span>
 <span class="va">barChart</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
 <p>Above sample will generate the Bar Chart like this:</p>
+              </section><!--end of #ruby-->
 
-            <!-- Demo -->
-            <div id="demo1"></div>
-      <script type="text/javascript" charset="utf-8">
-      var data1 = [
-          {name: "A", v:  .0245},
-          {name: "B", v:  .01492},
-          {name: "C", v:  .02782},
-          {name: "D", v:  .04253},
-          {name: "E", v:  1},
-          {name: "F", v:  .02288},
-          {name: "G", v:  .02015},
-          {name: "H", v:  .06094},
-          {name: "I", v:  .5},
-        ];
+              <section id="python">
+                <h3>Python</h3>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <button type="button" class="btn btn-primary">Learn More</button>
+              </section><!--end of #python-->
 
-      var options1 = {
-        id: "#demo1", 
-        width: 750, 
-        height: 500, 
-        margin: {
-          top: 100, 
-          left: 50, 
-          right: 50, 
-          bottom:100
-        },
-        data: {
-          plain: data1,
-          keys: {
-            value: "v"
-          },
-        }, 
-        axis: {
-          x: {
-            show: true,
-          },
-          y: {
-            show: false,
-            tick: {
-              count: 5
-            },
-            grid: true
-          }
-        },
-        colorRange: "red",
-        isLogaric: true,
-        legend: {
-          show: true,
-        },
-      };
-      var barChart = new C9.BarChart(options1);
-      barChart.draw();
-    </script> <!-- End of Demo -->
-
+              <section id="php">
+                <h3>PHP</h3>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <button type="button" class="btn btn-primary">Learn More</button>
+              </section><!--end of #php-->
             </section><!--end of #web-devlopment-->
 
             <section id="marketing">

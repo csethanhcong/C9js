@@ -488,12 +488,12 @@ body.body-nomain .content >section:first-child{
 }
 body.body-nomain section {
   padding: 60px 0 20px;
-  border-bottom: 1px solid #c1e1ec;
+  /*border-bottom: 1px solid #c1e1ec;*/
 }
 body.body-nomain section h2{
   margin-top: 0px;
 }
-#web-development,
+#generate-first-c9,
 #mobile-development {
   padding-bottom: 0;
 }
