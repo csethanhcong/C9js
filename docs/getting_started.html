@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>C9js - Getting Started</title>
+    <link rel="shortcut icon" href="./images/icon.ico">
+
+    <!-- Bootstrap Core CSS -->
+    <link href="./libs/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <!-- Latest compiled and minified CSS -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+
+    <!-- Optional theme -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
+
+    <!-- Custom Fonts -->
+    <link href="./libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+    <!-- Plugin CSS -->
+    <link href="./libs/magnific-popup/magnific-popup.css" rel="stylesheet">
+  
+    <!-- Theme CSS -->
+    <link href="./css/creative.css" rel="stylesheet">
+
+    <!-- Load C9.css -->
+    <link rel="stylesheet" href="./libs/C9js/C9.min.css" />
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- D3 & OL3 & C9 -->
+    <script src="./libs/d3/d3.min.js"></script>
+    <script src="./libs/C9js/C9.js"></script>
+
+</head>
+  <body id="page-top" class="body-nomain" data-spy="scroll" data-target=".scrollspy">
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top nomain">
+          <div class="container">
+              <!-- Brand and toggle get grouped for better mobile display -->
+              <div class="navbar-header">
+                  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                      <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                  </button>
+                  <a class="navbar-brand page-scroll" href="http://c9js.me">C9js</a>
+              </div>
+
+              <!-- Collect the nav links, forms, and other content for toggling -->
+              <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                  <ul class="nav navbar-nav navbar-right">
+                      <li>
+                          <a class="page-scroll" href="./getting_started.html">Getting Started</a>
+                      </li>
+                      <li>
+                          <a class="page-scroll" href="./examples.html">Examples</a>
+                      </li>
+                      <li>
+                          <a class="page-scroll" href="https://github.com/csethanhcong/C9js">Source</a>
+                      </li>
+                  </ul>
+              </div>
+              <!-- /.navbar-collapse -->
+          </div>
+          <!-- /.container-fluid -->
+    </nav>
+
+    <div class="wrapper">
+      <div class="container">
+        <div class="row">
+      
+          <div class="col-md-3 scrollspy">
+            <ul id="nav" class="nav nav-padding hidden-xs hidden-sm" data-spy="affix">
+              <li><a href="#setup">Setup</a></li>
+              <li><a href="#generate-first-c9">Generate First C9 Chart</a></li>
+              <li><a href="#generate-first-c9-map">Generate First C9 Map</a></li>
+              <li><a href="#customize-chartmap-option">Customize C9 Options</a></li>
+              <li><a href="#logistics">Logistics</a></li>
+              <li><a href="#social">Social</a></li>
+              <li><a href="#management">Management</a></li>
+              <li><a href="#chemistry">Chemistry</a></li>
+              <li><a href="#mobile-development">Mobile Development</a>
+                <ul class="nav">
+                  <li><a href="#android"><span class="fa fa-angle-double-right"></span>Android</a></li>
+                  <li><a href="#iOS"><span class="fa fa-angle-double-right"></span>iOS</a></li>
+                </ul>
+              </li>
+              <li><a href="#mathematics">Mathematics</a></li>
+            </ul>
+          </div>
+
+          <div class="col-md-9 content">
+            <section>
+              <h2><span class="fa fa-edit"></span> Getting Started</h2>
+              <hr class="sample-hr">
+              <p>Take your first look at C9js.
+              </p>
+            </section>
+
+            <section id="setup">
+              <h2><span class="fa fa-edit"></span> Setup</h2>
+              <hr class="sample-hr">
+              <h3 id="download">Download:</h3>
+<ol>
+<li><p>Direct downloads:</p>
+<ul>
+<li><p>From <a href="https://github.com/csethanhcong/C9js/releases">GitHub</a></p></li>
+<li><p>From <a href="https://unpkg.com/C9js">unpkg</a></p></li>
+</ul></li>
+<li><p>Via Package Manager:</p>
+<ul>
+<li><p><code>npm: npm install C9js</code></p></li>
+<li><p><code>bower: bower install C9js</code></p></li>
+</ul></li>
+</ol>
+<h3 id="usage">Usage:</h3>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;!--</span> Load <span class="va">C9</span>.<span class="at">css</span> <span class="op">--&gt;</span>
+<span class="op">&lt;</span>link href<span class="op">=</span><span class="st">&quot;/path/to/C9.css&quot;</span> rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span><span class="op">&gt;</span>
+
+<span class="op">&lt;!--</span> Load <span class="va">d3</span>.<span class="at">js</span> <span class="at">and</span> <span class="va">C9</span>.<span class="at">js</span> <span class="op">--&gt;</span>
+<span class="op">&lt;</span>script src<span class="op">=</span><span class="st">&quot;/path/to/d3.v3.min.js&quot;</span> charset<span class="op">=</span><span class="st">&quot;utf-8&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/script&gt;</span>
+<span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code></pre></div>
+<p>C9js is built on d3, so please load d3 before load C9js</p>
+<blockquote>
+<p>Note: If you want to generate Map, please load OpenLayers 3 also</p>
+</blockquote>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> href<span class="op">=</span><span class="st">&quot;https://openlayers.org/en/v3.19.1/css/ol.css&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span>script src<span class="op">=</span><span class="st">&quot;https://openlayers.org/en/v3.19.1/build/ol.js&quot;</span> type<span class="op">=</span><span class="st">&quot;text/javascript&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/script&gt;</span>
+<span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code></pre></div>
+            </section><!--end of #setup-->
+
+            <section id="generate-first-c9">
+              <h2><span class="fa fa-edit"></span> Generate First C9 Chart</h2>
+              <hr class="sample-hr">
+<p>Built on top with discipline that always make it clear and easy to use. Use ES6’s new features, so C9 is basically <code>Object</code> constructed from <code>Class</code></p>
+<p>Firstly, create a container for C9 to <em>occupy</em> ;)</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;chart&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code></pre></div>
+<p>Then contruct your own C9 chart, and call <code>draw</code> function</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#chart&quot;</span><span class="op">,</span>
+    <span class="dt">data</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">plain</span><span class="op">:</span> [
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">10</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">20</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;C&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">50</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;D&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">30</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;E&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">70</span><span class="op">},</span>
+        ]<span class="op">,</span>
+    <span class="op">},</span> 
+<span class="op">};</span>
+<span class="kw">var</span> barChart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">BarChart</span>(option)<span class="op">;</span>
+<span class="va">barChart</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
+<p>Above sample will generate the Bar Chart like this:</p>
+
+            <!-- Demo -->
+            <div id="chart"></div>
+      <script type="text/javascript" charset="utf-8">
+      var options1 = {
+        id: "#chart", 
+        width: 750, 
+        height: 500, 
+        margin: {
+          top: 100, 
+          left: 50, 
+          right: 50, 
+          bottom:100
+        },
+        data: {
+          plain: [
+            {name: "A", value:  10},
+            {name: "B", value:  20},
+            {name: "C", value:  50},
+            {name: "D", value:  30},
+            {name: "E", value:  70},
+          ]
+        }, 
+        axis: {
+          x: {
+            show: true,
+          },
+          y: {
+            show: true,
+            tick: {
+              count: 5
+            },
+            grid: true
+          }
+        },
+        colorRange: "red",
+        legend: {
+          show: true,
+        },
+      };
+      var barChart = new C9.BarChart(options1);
+      barChart.draw();
+    </script> <!-- End of Demo -->
+    <p>C9js currently supports many types of chart, you can see some <a href="http://c9js.me/examples.html">examples</a> available.</p>
+
+            </section><!--end of #web-devlopment-->
+
+            <section id="generate-first-c9-map">
+              <h2><span class="fa fa-edit"></span> Generate First C9 Map</h2>
+              <hr class="sample-hr">
+<p>Like Chart, firstly, you need a container</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;map&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code></pre></div>
+<p>Then contruct your own C9 map, and call <code>draw</code> function</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#map&quot;</span><span class="op">,</span>
+<span class="op">};</span>
+<span class="kw">var</span> map <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">Map</span>(option)<span class="op">;</span>
+<span class="va">map</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
+            </section><!--end of #generate-first-c9-map-->
+
+            <section id="customize-chartmap-option">
+              <h2><span class="fa fa-edit"></span> Customize Chart/Map Option</h2>
+              <hr class="sample-hr">
+<p>We have a stand-alone function call <code>setOption</code> to set option (of course!) if you don’t want to bring a bunch of config at the constructing time</p>
+<p>Before <code>draw</code> Chart/Map, you can change simply options like below:</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// ... bunch of code</span>
+<span class="va">chart</span>.<span class="at">setOption</span>(<span class="st">&#39;grid.x.show&#39;</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></code></pre></div>
+<blockquote>
+<p>Remember the <em>dot</em> sign (.) to dig into deep object config, e.g</p>
+</blockquote>
+<pre><code>
+grid: {
+    x: {
+        show: true
+    }
+}
+~ equal to
+chart.setOption(&#39;grid.x.show&#39;, true);
+</code></pre>
+            </section><!--end of #customize-chartmap-option-->
+
+            <section id="logistics">
+              <h2><span class="fa fa-edit"></span> Logistics</h2>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
+                Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
+                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <button type="button" class="btn btn-primary">Learn More</button>
+            </section><!--end of #logistics-->
+
+            <section id="social">
+              <h2><span class="fa fa-edit"></span> Social</h2>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
+                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
+                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
+              </p>
+              <p>Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
+                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris
+                sit amet nibh. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <button type="button" class="btn btn-primary">Learn More</button>
+            </section><!--end of #social-->
+
+            <section id="management">
+              <h2><span class="fa fa-edit"></span> Management</h2>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in,
+                viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum.
+                Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
+                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
+                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
+                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
+                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
+              </p>
+              <button type="button" class="btn btn-primary">Learn More</button>
+            </section><!--end of #management-->
+
+            <section id="chemistry">
+              <h2><span class="fa fa-edit"></span> Chemistry</h2>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
+                Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
+                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <button type="button" class="btn btn-primary">Learn More</button>
+            </section><!--end of #chemistry-->
+
+            <section id="mobile-development">
+              <h2><span class="fa fa-edit"></span> Mobile Development</h2>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc. Etiam ultricies nisi vel augue.
+                Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
+                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
+                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
+                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
+              </p>
+
+              <section id="android">
+                <h3>Android Development</h3>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <button type="button" class="btn btn-primary">Learn More</button>
+              </section><!--end of #android-->
+
+              <section id="iOS">
+                <h3>iOS Development</h3>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
+                  luctus pulvinar, hendrerit id, lorem.
+                </p>
+                <button type="button" class="btn btn-primary">Learn More</button>
+              </section><!--end of #iOS-->
+            </section><!--end of #mobile-development-->
+            
+            <section id="mathematics">
+              <h2><span class="fa fa-edit"></span> Mathematics</h2>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc. Etiam ultricies nisi vel augue.
+                Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
+                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
+                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
+                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
+                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+              </p>
+              <button type="button" class="btn btn-primary">Learn More</button>
+            </section><!--end of #mathematics-->
+          </div>
+
+        </div>
+      
+      </div><!--end of .row-->
+    </div><!--end of .container-->
+  
+  <!-- <section class="application">
+    <div class="container">
+      <h2>Come and Join Us</h2>
+      <div class="row">
+        <div class="col-sm-6">
+          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
+          Nullam quis ante.
+          </p>
+          <img class="img-responsive  " src="http://placehold.it/500x250/5fb3ce/000000">
+        </div>
+        <div class="col-sm-6">
+          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+          Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+          Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+          </p>
+          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+          Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+          Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+          </p>
+          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
+          Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
+          Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+          </p>
+          <button type="button" class="btn btn-primary">Apply Now</button>
+        </div>
+      </div><!--end of .row-->
+    </div><!--end of .container-->
+  </section>
+
+  <!-- jQuery -->
+  <script src="./libs/jquery/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+
+  <!-- Latest compiled and minified JavaScript -->
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
+  <!-- Plugin JavaScript -->
+  <script src="./js/affix.js"></script>
+</body>
+</html>

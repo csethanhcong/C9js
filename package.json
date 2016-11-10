@@ -1,7 +1,7 @@
 {
   "name": "C9js",
   "version": "0.0.0-semantically-released",
-  "main": "dist/C9.js",
+  "main": "dist/C9.min.js",
   "keywords": [
     "api",
     "js",
@@ -79,5 +79,5 @@
   "bugs": {
     "url": "https://github.com/csethanhcong/C9js/issues"
   },
-  "homepage": "https://github.com/csethanhcong/C9js#readme"
+  "homepage": "http://c9js.me/"
 }

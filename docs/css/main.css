@@ -1,0 +1,26 @@
+/** To make fixed top header smoothly **/
+/*body { 
+	padding-top:70px; 
+}
+
+pre {
+  background-color: #272822;
+  color: white;
+}
+
+.page-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}*/
+
+/*--------------------Header-----------------*/
+/*header .navbar{
+  background-color: #011638;
+  border-color: #4FB0C6;
+  color: white;
+}*/
+
+hr.footer-hr {
+    border-color: rgba(34, 34, 34, 0.05);
+    max-width: 100%;
+}
