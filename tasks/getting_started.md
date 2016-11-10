@@ -51,12 +51,14 @@ Then contruct your own C9 chart, and call `draw` function
 
 ```js
 var option = {
-	id: "#demo1",
+	id: "#chart",
 	data: {
 		plain: [
-			{name: "A", value:	.0245},
-			{name: "B",	value:  .01492},
-			{name: "C", value:	.02782}
+			{name: "A", value:	10},
+			{name: "B",	value:  20},
+			{name: "C", value:	50},
+			{name: "D", value:	30},
+			{name: "E", value:	70},
 		],
 	}, 
 };
@@ -65,4 +67,65 @@ barChart.draw();
 ```
 
 Above sample will generate the Bar Chart like this:
+
+C9js currently supports many types of chart, you can see some [examples](http://c9js.me/examples.html) available.
+
+## Generate First C9 Map
+---
+
+Like Chart, firstly, you need a container
+
+```js
+<div id="map"></div>
+```
+
+Then contruct your own C9 map, and call `draw` function
+
+```js
+var option = {
+	id: "#map",
+};
+var map = new C9.Map(option);
+map.draw();
+```
+
+## Customize Chart/Map Option
+---
+### setOption
+
+
+We have a stand-alone function call `setOption` to set option (of course!) if you don't want to bring a bunch of config
+at the constructing time
+
+Before `draw` Chart/Map, you can change simply options like below:
+
+```js
+// ... bunch of code
+chart.setOption('grid.x.show', true);
+```
+
+> Remember the *dot* sign (.) to dig into deep object config, e.g 
+
+	grid: {
+		x: {
+			show: true
+		}
+	}
+	~ equal to
+	chart.setOption('grid.x.show', true);
+
+C9 has a lot of options to make your chart/map more colorful, more attractive and more useful
+
+### Axis Format
+
+Hide axis x, show axis y, format label on axis y:
+
+```js
+
+```
+
+### Tooltip Format
+
+## and [more...](http://c9js.me/examples.html)
+
 

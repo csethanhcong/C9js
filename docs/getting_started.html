@@ -13,9 +13,9 @@
     <link rel="shortcut icon" href="./images/icon.ico">
 
     <!-- Bootstrap Core CSS -->
-    <!-- <link href="./libs/bootstrap/dist/css/bootstrap.css" rel="stylesheet" type="text/css"> -->
+    <link href="./libs/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
 
     <!-- Optional theme -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
@@ -31,6 +31,8 @@
     <!-- Theme CSS -->
     <link href="./css/creative.css" rel="stylesheet">
 
+    <!-- Load C9.css -->
+    <link rel="stylesheet" href="./libs/C9js/C9.min.css" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -40,8 +42,7 @@
 
     <!-- D3 & OL3 & C9 -->
     <script src="./libs/d3/d3.min.js"></script>
-    <script src="../dist/C9.js"></script>
-    <link rel="stylesheet" href="../dist/C9.min.css" />
+    <script src="./libs/C9js/C9.js"></script>
 
 </head>
   <body id="page-top" class="body-nomain" data-spy="scroll" data-target=".scrollspy">
@@ -82,8 +83,8 @@
             <ul id="nav" class="nav nav-padding hidden-xs hidden-sm" data-spy="affix">
               <li><a href="#setup">Setup</a></li>
               <li><a href="#generate-first-c9">Generate First C9 Chart</a></li>
-              <li><a href="#marketing">Marketing</a></li>
-              <li><a href="#graphic-design">Graphic Design</a></li>
+              <li><a href="#generate-first-c9-map">Generate First C9 Map</a></li>
+              <li><a href="#customize-chartmap-option">Customize C9 Options</a></li>
               <li><a href="#logistics">Logistics</a></li>
               <li><a href="#social">Social</a></li>
               <li><a href="#management">Management</a></li>
@@ -147,12 +148,14 @@
 <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;chart&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code></pre></div>
 <p>Then contruct your own C9 chart, and call <code>draw</code> function</p>
 <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
-    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#demo1&quot;</span><span class="op">,</span>
+    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#chart&quot;</span><span class="op">,</span>
     <span class="dt">data</span><span class="op">:</span> <span class="op">{</span>
         <span class="dt">plain</span><span class="op">:</span> [
-            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  .<span class="dv">0245</span><span class="op">},</span>
-            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  .<span class="dv">01492</span><span class="op">},</span>
-            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;C&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  .<span class="dv">02782</span><span class="op">}</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">10</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">20</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;C&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">50</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;D&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">30</span><span class="op">},</span>
+            <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;E&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">70</span><span class="op">},</span>
         ]<span class="op">,</span>
     <span class="op">},</span> 
 <span class="op">};</span>
@@ -161,22 +164,10 @@
 <p>Above sample will generate the Bar Chart like this:</p>
 
             <!-- Demo -->
-            <div id="demo1"></div>
+            <div id="chart"></div>
       <script type="text/javascript" charset="utf-8">
-      var data1 = [
-          {name: "A", v:  .0245},
-          {name: "B", v:  .01492},
-          {name: "C", v:  .02782},
-          {name: "D", v:  .04253},
-          {name: "E", v:  1},
-          {name: "F", v:  .02288},
-          {name: "G", v:  .02015},
-          {name: "H", v:  .06094},
-          {name: "I", v:  .5},
-        ];
-
       var options1 = {
-        id: "#demo1", 
+        id: "#chart", 
         width: 750, 
         height: 500, 
         margin: {
@@ -186,17 +177,20 @@
           bottom:100
         },
         data: {
-          plain: data1,
-          keys: {
-            value: "v"
-          },
+          plain: [
+            {name: "A", value:  10},
+            {name: "B", value:  20},
+            {name: "C", value:  50},
+            {name: "D", value:  30},
+            {name: "E", value:  70},
+          ]
         }, 
         axis: {
           x: {
             show: true,
           },
           y: {
-            show: false,
+            show: true,
             tick: {
               count: 5
             },
@@ -204,7 +198,6 @@
           }
         },
         colorRange: "red",
-        isLogaric: true,
         legend: {
           show: true,
         },
@@ -212,47 +205,43 @@
       var barChart = new C9.BarChart(options1);
       barChart.draw();
     </script> <!-- End of Demo -->
+    <p>C9js currently supports many types of chart, you can see some <a href="http://c9js.me/examples.html">examples</a> available.</p>
 
             </section><!--end of #web-devlopment-->
 
-            <section id="marketing">
-              <h2><span class="fa fa-edit"></span> Marketing</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
-              </p>
-              <p>Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in,
-                viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum.
-                Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
-                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
-                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #marketing-->
+            <section id="generate-first-c9-map">
+              <h2><span class="fa fa-edit"></span> Generate First C9 Map</h2>
+              <hr class="sample-hr">
+<p>Like Chart, firstly, you need a container</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;map&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code></pre></div>
+<p>Then contruct your own C9 map, and call <code>draw</code> function</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#map&quot;</span><span class="op">,</span>
+<span class="op">};</span>
+<span class="kw">var</span> map <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">Map</span>(option)<span class="op">;</span>
+<span class="va">map</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
+            </section><!--end of #generate-first-c9-map-->
 
-            <section id="graphic-design">
-              <h2><span class="fa fa-edit"></span> Graphic Design</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc. Etiam ultricies nisi vel augue.
-                Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
-                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #graphic-design-->
+            <section id="customize-chartmap-option">
+              <h2><span class="fa fa-edit"></span> Customize Chart/Map Option</h2>
+              <hr class="sample-hr">
+<p>We have a stand-alone function call <code>setOption</code> to set option (of course!) if you don’t want to bring a bunch of config at the constructing time</p>
+<p>Before <code>draw</code> Chart/Map, you can change simply options like below:</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// ... bunch of code</span>
+<span class="va">chart</span>.<span class="at">setOption</span>(<span class="st">&#39;grid.x.show&#39;</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></code></pre></div>
+<blockquote>
+<p>Remember the <em>dot</em> sign (.) to dig into deep object config, e.g</p>
+</blockquote>
+<pre><code>
+grid: {
+    x: {
+        show: true
+    }
+}
+~ equal to
+chart.setOption(&#39;grid.x.show&#39;, true);
+</code></pre>
+            </section><!--end of #customize-chartmap-option-->
 
             <section id="logistics">
               <h2><span class="fa fa-edit"></span> Logistics</h2>
@@ -464,8 +453,12 @@
 
   <!-- jQuery -->
   <script src="./libs/jquery/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+
   <!-- Latest compiled and minified JavaScript -->
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->
   <!-- Plugin JavaScript -->
   <script src="./js/affix.js"></script>
 </body>
