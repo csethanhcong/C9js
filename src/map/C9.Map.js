@@ -148,14 +148,13 @@ export default class Map {
         // self.initMarker();
 
         //object
-        self.initObj();
+        // self.initObj();
 
         //init popup
         var popup = document.createElement('div');
         popup.id = 'c9MapPopup';
         popup.className = 'c9-map-tooltip-container c9-custom-tooltip-container c9-tooltip-top';
         document.body.appendChild(popup);
-
     }
 
     draw() {
@@ -175,7 +174,14 @@ export default class Map {
             interactions : ol.interaction.defaults({doubleClickZoom: false})
         });
 
-        //create popup overlay
+        /******************** ADD C9 OBJECTS ********************/
+        self.c9ObjsLayer = new ol.layer.Vector({ 
+            source: self.c9Objs,
+            map: self.c9Map
+        });
+        /********************************************************/
+
+        /********************* ADD C9 POPUP *********************/
         self.c9Popup = new ol.Overlay({
             positioning: 'bottom-center',
             element: document.getElementById('c9MapPopup')
@@ -183,10 +189,26 @@ export default class Map {
 
         //add overlay to contain popup
         self.c9Map.addOverlay(self.c9Popup);
+        /********************************************************/
 
+        /********************* HOVER STYLE **********************/
+        self.c9CustomHover = new ol.layer.Vector({
+            source: new ol.source.Vector(),
+            map: self.c9Map,
+            style: new ol.style.Style({
+                stroke: new ol.style.Stroke({
+                    color: 'rgb(0, 153, 255)',
+                    width: 3
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0.6)'
+                })
+            })
+        });
+        /********************************************************/
         //adapt data to obj
         self.update(self.dataSource);
-
+        //define interaction
         self.updateInteraction();
 
     }
@@ -197,10 +219,85 @@ export default class Map {
      * @param  {String} type of layer
      * @param  {source} source data defined by C9
      */
-    createLayer(type, source = undefined){
+    createLayer(options){
         var self = this;
+        if (Helper.isEmpty(options)) return;
+        
+        var type = options.type || 'Tile',
+            source = options.source || {name: 'OSM'};
+            // style = options.style;
+
         var layer = new ol.layer[type];
         layer.setSource(self.setupSource(source));
+        // if (!Helper.isEmpty(style)) layer.setStyle(style);
+
+        //adapt source data to c9obj
+        //support maximum 2 source level
+        var containFeature = true, s;
+        try {
+            s = layer.getSource();
+            s.getFeatures();
+        }
+        catch (err) {
+            try {
+                s = layer.getSource().getSource();
+                s.getFeatures();
+            }
+            catch (err) {
+                containFeature = false;    
+            }
+        }
+        if (containFeature) {
+            var readFormat = function(feature) {
+                var result = {};
+                feature.getKeys().forEach(function(k) {
+                    result[k] = feature.getProperties()[k];
+                });
+                return result;
+            }
+            
+            //register layer loaded event to set data for obj
+            s.once('change', function(e) {
+                if (s.getState() == 'ready') {
+                    var objs = s.getFeatures();
+                    // self.c9Objs.addFeatures(objs);
+
+                    objs.forEach(function(o) {
+                        //set data & some attrs
+                        var type = o.getGeometry().getType();
+                        o.set('data', readFormat(o));
+                        // o.set('type', 'c9-' + (type == 'point' ? 'marker' : type.toLowerCase()));
+                        // if (type.toLowerCase() == 'polygon' || type.toLowerCase() == 'multipolygon' || type.toLowerCase() == 'line') {
+                        //     o.set('c9-style', {
+                        //         strokeWidth: 2,
+                        //         strokeColor: 'steelblue',
+                        //         fillColor: 'rgba(0, 0, 255, 0.1)'
+                        //     });
+                            // set style
+                            // o.setStyle(new ol.style.Style({
+                            //     stroke: new ol.style.Stroke({
+                            //         width: 2,
+                            //         color: 'steelblue'
+                            //     }),
+                            //     fill: new ol.style.Fill({
+                            //         color: 'rgba(0, 0, 255, 0.1)'
+                            //     })
+                            // }))    
+                        // } 
+                        // else if (type.toLowerCase() == 'point') {
+                        //     o.setStyle(new ol.style.Style({
+                        //         image: new ol.style.Icon({
+                        //             anchor: [0.5, 1], //middle-width and bottom-height of image
+                        //             src: 'http://s21.postimg.org/blklb8scn/marker_icon.png',
+                        //             scale: 1
+                        //         })
+                        //     }))
+                        // }
+                    });
+                }
+            })
+        }
+
         self.c9Layers.push(layer);
     }
 
@@ -213,18 +310,13 @@ export default class Map {
 
         if (layers instanceof Array) {
             layers.forEach(function(l, i) {
-                self.createLayer(l.type, l.source);
+                self.createLayer({type: l.type, source: l.source, style: l.style});
             })
         }
         else {
-            self.createLayer(layers.type, layers.source);
+            self.createLayer({type: layers.type, source: layers.source, style: layers.style});
         }
     }
-
-    
-
-    
-
 
     /**
      * Setup source for layer
@@ -281,14 +373,25 @@ export default class Map {
                 break;
 
         }
+
         return source;
     }
 
-    
-
+    /**
+     * define some interactions
+     */
     updateInteraction(){
         var self = this;
         const LEFT_KEY = 37, RIGHT_KEY = 39, DEL_KEY = 46, DURATION = 1000, LOAD_MAP_DELAY = 500;
+
+        // add default interaction of ol3
+        // self.c9Map.addInteraction(self.c9DefaultHoverStyle = new ol.interaction.Select({
+        //     condition: ol.events.condition.pointerMove
+        // }));
+
+        //normal: stroke 'rgb(49, 159, 211)' width: 1
+        //        fill '#fff'
+        
 
         /******************* SOME HELPER FUNCTION ********************/
         var getCenterLonLat = function(f) {
@@ -366,9 +469,11 @@ export default class Map {
             return [Math.sqrt(Math.pow(fCoordinates[0] - center[0], 2) + Math.pow(fCoordinates[1] - center[1], 2)), (fCoordinates[0] - center[0]) <= 0];
         }
         var formatPopup = function(data) {
+            if (Helper.isEmpty(data)) return;
             var capitalizeFirstLetter = function(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
             var strongSpan = function(strong, span) { if (span == '' || Helper.isEmpty(span)) return ""; return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>"; };
-            var result = strongSpan("Name", data.name) + strongSpan("Lon", data.coor.lon) + strongSpan("Lat", data.coor.lat), v;
+            var result = strongSpan("Name", data.name), v;
+            if (!Helper.isEmpty(data.coor)) result += (strongSpan("Lon", data.coor.lon) + strongSpan("Lat", data.coor.lat));
 
             for (var i in v = data.value) {
                 result += strongSpan(i, v[i]);
@@ -380,30 +485,71 @@ export default class Map {
         //register pointer move event to show cursor as pointer if user hover on markers
         self.c9Map.on('pointermove', function(evt) {
             var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function(feature, layer){
-                self.lastHoveredObj = feature;
                 return feature;
             });
-            self.c9Map.getTargetElement().style.cursor = f ? 'pointer' : '';
+
+            // new hover style
+            if (f !== self.lastHoveredObj) {
+                if (self.lastHoveredObj) {
+                    if (self.lastHoveredObj.get('type')) 
+                        self.lastHoveredObj.setStyle(self.lastHoveredObj.get('c9-type'));
+                    else
+                        self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
+                }
+                if (f) {
+                    var fStyle = f.get('c9-style'), strokeColor = 'rgb(0, 153, 255)', strokeWidth = 3, fillColor = 'rgba(255, 255, 255, 0.6)';
+                    if (fStyle) {
+                        strokeColor = fStyle.getStroke().getColor() == '#319FD3' ? 'rgb(0, 153, 255)' : self.getLightenColor(fStyle.getStroke().getColor());
+                        strokeWidth = fStyle.getStroke().getWidth() + 2;
+                        fillColor   = fStyle.getFill().getColor() == 'rgba(255, 255, 255, 0.6)' ? 'rgba(255, 255, 255, 0.6)' : self.getLightenColor(fStyle.getFill().getColor());
+                    }
+                    var newStyle = new ol.style.Style({
+                        stroke: new ol.style.Stroke({
+                            color: strokeColor,
+                            width: strokeWidth
+                        }),
+                        fill: new ol.style.Fill({
+                            color: fillColor
+                        })
+                    });
+                    if (fStyle) 
+                        f.setStyle(newStyle);
+                    else {
+                        self.c9CustomHover.setStyle(newStyle);
+                        self.c9CustomHover.getSource().addFeature(f);    
+                    }
+                }
+                self.lastHoveredObj = f;
+            }
             if (f) {
+                self.c9Map.getTargetElement().style.cursor = 'pointer';
                 // self.createMarkerEffect(f);
                 /************* LIGHTEN COLOR ***********/
-                if (f.get('type') != 'c9-marker'){
-                    var fStyle = f.getStyle();
-                    var defaultStyle = f.get('c9-style');
+                // if (f.get('type') == 'c9-line' || f.get('type') == 'c9-polygon' || f.get('type') == 'c9-multipolygon'){
+                //     var fStyle = f.getStyle();
+                //     var defaultStyle = f.get('c9-style');
 
-                    if (!(fStyle.getStroke().getWidth() != defaultStyle.strokeWidth 
-                        && fStyle.getStroke().getColor() != defaultStyle.strokeColor 
-                        && fStyle.getFill().getColor() != defaultStyle.fillColor))
-                        f.setStyle(new ol.style.Style({
-                            stroke: new ol.style.Stroke({
-                                width: fStyle.getStroke().getWidth() + 2,
-                                color: self.getLightenColor(fStyle.getStroke().getColor())
-                            }),
-                            fill: new ol.style.Fill({
-                                color: self.getLightenColor(fStyle.getFill().getColor())
-                            })
-                        }));
-                }
+                //     if (fStyle.getStroke().getWidth() == defaultStyle.strokeWidth)
+                //         f.setStyle(new ol.style.Style({
+                //             stroke: new ol.style.Stroke({
+                //                 width: fStyle.getStroke().getWidth() + 2,
+                //                 color: self.getLightenColor(fStyle.getStroke().getColor())
+                //             }),
+                //             fill: new ol.style.Fill({
+                //                 color: self.getLightenColor(fStyle.getFill().getColor())
+                //             })
+                //         }));
+                // }
+
+                // if (f !== self.lastHoveredObj) {
+                //     if (self.lastHoveredObj) {
+                //         self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
+                //     }
+                //     if (f) {
+                //         self.c9CustomHover.getSource().addFeature(f);
+                //     }
+                //     self.lastHoveredObj = f;
+                // }
 
                 /****************************************/
 
@@ -425,27 +571,21 @@ export default class Map {
 
                 self.c9Popup.getElement().style.display = 'block';
                 self.c9Popup.getElement().innerHTML = content;
-                self.c9Popup.setPosition(getCenter(f));
+                // self.c9Popup.setPosition(getCenter(f));
+                self.c9Popup.setPosition(evt.coordinate);
                 /****************************************/
                 // var stop = new CustomEvent("click", {detail: {message: "stop"}});
                 // self.c9Map.dispatchEvent(stop);
             }
             if (!f) {
+                self.c9Map.getTargetElement().style.cursor = '';
                 self.c9Popup.getElement().style.display = 'none';
 
                 //remove last obj style
-                if (!Helper.isEmpty(self.lastHoveredObj) && self.lastHoveredObj.get('type') != 'c9-marker') {
-                    var defaultStyle = self.lastHoveredObj.get('c9-style');
-                    self.lastHoveredObj.setStyle(new ol.style.Style({
-                        stroke: new ol.style.Stroke({
-                            width: defaultStyle.strokeWidth,
-                            color: defaultStyle.strokeColor
-                        }),
-                        fill: new ol.style.Fill({
-                            color: defaultStyle.fillColor
-                        })
-                    }));
-                }   
+                // if (!Helper.isEmpty(self.lastHoveredObj) && (self.lastHoveredObj.get('type') == 'c9-line' || self.lastHoveredObj.get('type') == 'c9-polygon' || self.lastHoveredObj.get('type') == 'c9-multipolygon')) {
+                //     var defaultStyle = self.lastHoveredObj.get('c9-style');
+                //     self.lastHoveredObj.setStyle(defaultStyle);
+                // }   
             }
         });
 
@@ -523,7 +663,7 @@ export default class Map {
                     keydownAnimate(RIGHT_KEY);
                     break;
                 case DEL_KEY:
-                    if (!Helper.isEmpty(self.lastSelectedObj)) self.c9Objs.removeFeature(self.lastSelectedObj);
+                    if (!Helper.isEmpty(self.lastSelectedObj) && !Helper.isEmpty(self.lastSelectedObj.get('type'))) self.c9Objs.removeFeature(self.lastSelectedObj);
                     break;
             }
         })
@@ -555,19 +695,19 @@ export default class Map {
     /**
      * obj first set up
      */
-    initObj() {
-        var self = this;
+    // initObj() {
+    //     var self = this;
 
-        //add layer Vector to layer list (c9Layers)
-        self.c9Layers.push(new ol.layer.Vector({
-            source: self.c9Objs
-        }));
-    }
+    //     //add layer Vector to layer list (c9Layers)
+    //     self.c9Layers.push(new ol.layer.Vector({
+    //         source: self.c9Objs
+    //     }));
+    // }
 
     /**
-     * [createObj description]
-     * @param  {Object} coordinate
-     * @param  {Object} some options: strokeWidth,strokeColor,fillColor,imgSrc,scale
+     * create c9 obj
+     * @data  {Object} coordinate
+     * @options  {Object} some options: strokeWidth,strokeColor,fillColor,imgSrc,scale
      * @return {}
      */
     createObj(data, options){
@@ -615,13 +755,16 @@ export default class Map {
                 });
             }
 
-            marker.setStyle(createMarkerStyle(imgSrc, scale));
+            var markerStyle = createMarkerStyle(imgSrc, scale);
+            marker.set('c9-style', markerStyle);
+            marker.setStyle(markerStyle);
 
             //add this marker to marker list (c9Objs)
             self.c9Objs.addFeature(marker);
         }
 
         var coorAndType = self.normalizeCoordinate(data.coor);
+        if (coorAndType.coor == null) return;
 
         //marker
         if (coorAndType.type == "marker") {
@@ -636,20 +779,15 @@ export default class Map {
         //     })
         // }
 
-        var strokeWidth = options ? options.strokeWidth : 2;
-        var strokeColor = options ? options.strokeColor : "steelblue";
-        var fillColor   = options ? options.fillColor   : "rgba(0, 0, 255, 0.2)";
+        var strokeWidth = options ? options.strokeWidth : 1;
+        var strokeColor = options ? options.strokeColor : "#319FD3";
+        var fillColor   = options ? options.fillColor   : "rgba(255, 255, 255, 0.6)";
 
         var obj = new ol.Feature({
             'data-ref': '',
             type: "c9-" + coorAndType.type,
             data: data,
-            'c9-style': {
-                strokeWidth: strokeWidth,
-                strokeColor: strokeColor,
-                fillColor  : fillColor
-            },
-            geometry: coorAndType.type == "polygon" ? new ol.geom.Polygon([coorAndType.coor]) : new ol.geom.LineString(coorAndType.coor)
+            geometry: coorAndType.type == "polygon" ? new ol.geom.Polygon(coorAndType.coor) : coorAndType.type == "line" ? new ol.geom.LineString(coorAndType.coor) : new ol.geom.MultiPolygon(coorAndType.coor)
         });
 
         obj.getGeometry().transform('EPSG:4326', 'EPSG:3857');
@@ -673,21 +811,28 @@ export default class Map {
             });
         }
 
-        obj.setStyle(createObjStyle(strokeWidth, strokeColor, fillColor));
+        var objStyle = createObjStyle(strokeWidth, strokeColor, fillColor);
+        obj.set('c9-style', objStyle);
+        obj.setStyle(objStyle);
 
         //add this marker to marker list (c9Objs)
         self.c9Objs.addFeature(obj);
     }
 
-    //x - lon, y - lat
+    /**
+     * normalize coordinate
+     * currently only support marker, linestring, polygon and multipolygon
+     * @coor  {Array} coordinate of object
+     * @return {Array} coordinate was normalized
+     */
     normalizeCoordinate(coor){
-        var normCoor = [], type;
+        var normCoor = [], type, error = {coor: null, type: null};
         if ((Helper.isObject(coor) && coor.length == undefined) || (Helper.isArray(coor) && coor.length == 2 && !isNaN(coor[0]) && !isNaN(coor[1]))) {
-            //is marker
+            // marker - [] - {}
             type = "marker";
             if (coor.length == undefined) {
                 if (Helper.isEmpty(coor.lat) || Helper.isEmpty(coor.lon))
-                    return;
+                    return error;
                 normCoor = [coor.lon, coor. lat];
             }
             else {
@@ -695,21 +840,55 @@ export default class Map {
             }
             
         } else if (Helper.isArray(coor)) {
-            coor.forEach(function(c) {
-                //if data error, skip that data
-                if (Helper.isObject(c) && c.length == undefined) {
-                    if (!Helper.isEmpty(c.lat) && !Helper.isEmpty(c.lon))
-                        normCoor.push([c.lon, c.lat]);
+            // linestring - [{},{}] - [[],[]] - [{},[]] - [[],{}]
+            var isArrayOrObject = function(obj) {
+                var result = {};
+                if (Helper.isObject(obj) && obj.length == undefined) {
+                    result['check'] = !Helper.isEmpty(obj.lat) && !Helper.isEmpty(obj.lon);
+                    if (result['check']) result['coor'] = [obj.lon, obj.lat];
                 }
-                else if (Helper.isArray(c) && c.length == 2 && !isNaN(c[0]) && !isNaN(c[1])) {
-                    normCoor.push(c);
+                else {
+                    result['check'] = Helper.isArray(obj) && obj.length == 2 && !isNaN(obj[0]) && !isNaN(obj[1]);
+                    if (result['check']) result['coor'] = obj;
                 }
-            })
-        }
-        if (Helper.isEmpty(type)) {
-            if (normCoor.length == 2)
+                return result;
+            }
+
+            // check data inside to eliminate case: multipolygon contains 2 polygons
+            if (coor.length == 2 && isArrayOrObject(coor[0]).check && isArrayOrObject(coor[1]).check) {
                 type = "line";
-            else type = "polygon";
+                normCoor.push(isArrayOrObject(coor[0]).coor);
+                normCoor.push(isArrayOrObject(coor[1]).coor);
+            }
+            // multipolygon [[[[] || {}, ...]], [[[] || {}, ...]], ...]
+            else if (coor.length >= 2){
+                type = "multipolygon";
+                coor.forEach(function(pc, i) {
+                    if (Helper.isArray(pc) && pc.length == 1) {
+                        normCoor.push([[]]);
+                        pc[0].forEach(function(c) {
+                            // data - [] || {}
+                            var obj = isArrayOrObject(c);
+                            if (obj.check) normCoor[i][0].push(obj.coor);
+                        })
+                        // cannot create polygon with the number of points is less than 2
+                        if (normCoor[i][0].length <= 2) return error; 
+                    }
+                    else return error; // because data format is not true
+                })
+            }
+            // polygon [[[] || {}, ...]]
+            else if (coor.length == 1) {
+                type = "polygon";
+                normCoor.push([]);
+                coor[0].forEach(function(c) {
+                    // data - [] || {}
+                    var obj = isArrayOrObject(c);
+                    if (obj.check) normCoor[0].push(obj.coor);
+                })
+                if (normCoor[0].length <= 2) return error;
+            }
+            else return error;
         }
         return {
             coor: normCoor,
@@ -717,7 +896,12 @@ export default class Map {
         };
     }
 
+    /**
+     * create obj base on user data
+     * @data  {Object} data structure: {coor: [], name: , value: }
+     */
     update(data){
+        if (Helper.isEmpty(data)) return;
         var self = this;
 
         var da = new DataAdapter(data);
@@ -735,6 +919,10 @@ export default class Map {
 
     getObjs(){
         return this.c9Objs.getFeatures();
+    }
+
+    getLayers() {
+        return this.c9Layers;
     }
 
     /**
@@ -781,9 +969,13 @@ export default class Map {
             return Helper.shadeColor(-0.2, color);
     }
 
-    //TODO - add set obj style function
-    setObjStyle(){
-
-
+    /**
+     * set style: consist of layer, source and obj
+     * @obj   {ol.layer || ol.source || ol.Feature}
+     * @style {function || ol.style} style function || ol.style
+     */
+    setStyle(obj, style){
+        if (Helper.isEmpty(obj) || Helper.isEmpty(style)) return;
+        obj.setStyle(style);
     }
 }
