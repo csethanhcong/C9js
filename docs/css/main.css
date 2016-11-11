@@ -24,3 +24,31 @@ hr.footer-hr {
     border-color: rgba(34, 34, 34, 0.05);
     max-width: 100%;
 }
+
+.section.example {
+  margin-top: 50px;
+}
+
+.section.example section {
+  padding-top: 0px;
+  position: relative;
+}
+
+.section.example section pre {
+  padding: 0px;
+}
+
+.section.example section pre code {
+  background-color: #f5f5f5;
+}
+
+.example-edit {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  font-size: 15px;
+}
+
+.example-edit a {
+  color: #2aa198;
+}
