@@ -22,7 +22,9 @@ export default class Map {
                 zoom: 2
             },
             data: null,
-            format: null
+            tooltip: {
+                format: null
+            }
         };
 
         self._options = Helper.mergeDeep(config, options);
@@ -365,7 +367,17 @@ export default class Map {
                 break;
             case 'ImageVector':
                 source = new ol.source.ImageVector({
-                    source: this.setupSource(s.source)
+                    source: this.setupSource(s.source),
+                    // default style
+                    style: new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#319FD3',
+                            width: 1
+                        })
+                    })
                 });
                 break;
             default: 
@@ -559,14 +571,14 @@ export default class Map {
                 // panAnimation(f);
                 
                 try {
-                    if (self.options.format) self.options.format(f.get('data'));
+                    if (self.options.tooltip.format) self.options.tooltip.format(f.get('data'));
                 }
                 catch(err) {
                     throw "Check data format again";
                     return;
                 }
 
-                var content = self.options.format ? self.options.format(f.get('data')) : formatPopup(f.get('data'));
+                var content = self.options.tooltip.format ? self.options.tooltip.format(f.get('data')) : formatPopup(f.get('data'));
                 if (Helper.isEmpty(content) || content.toString().trim() == "") return;
 
                 self.c9Popup.getElement().style.display = 'block';

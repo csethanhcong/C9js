@@ -68,7 +68,7 @@
 					{name: "Female3",	value:  25},
 				];
 			var options = {  
-			   id:"map",
+			   	id:"map",
 			 //   data: {
 				// 	plain: {
 				// 		name: "UK",
@@ -78,10 +78,10 @@
 				// 	keys: {value: ['value.population', 'value.area']}
 				// },
 				layers: 
-				// [
-					// {
-					// 	type: 'Tile',
-					// },
+				// // [
+				// 	// {
+				// 	// 	type: 'Tile',
+				// 	// },
 					{
 						// type: "Vector",
 						// source: {
@@ -98,9 +98,11 @@
 								format: 'GeoJSON'	
 							}
 						}
-					}
-				// ]
-				// format: function(data) {return data.value.area}
+					},
+				// // ]
+				// tooltip: {
+				// 	format: function(data) {return data.name}
+				// }
 			};
 			var options2 = {  
 			   id:"#chart",
