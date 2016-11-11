@@ -480,6 +480,10 @@ body.body-nomain h1, h2 {
   font-weight: 700;
 }
 
+body.body-nomain h3 {
+  font-weight: 600;
+}
+
 body.body-nomain h3 span {
   /*color: #286090;*/
 }

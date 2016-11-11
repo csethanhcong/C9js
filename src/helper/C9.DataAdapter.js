@@ -255,7 +255,7 @@ export default class DataAdapter {
                         "group": groups[0] || 'data' + (1),
                         "data-ref": Helper.guid(),
                         "enable" : true,
-                        "color": color(index),
+                        "color": color(0),
                     }];
                     self.dataTarget.push(_data);
                 });

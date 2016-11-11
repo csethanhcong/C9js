@@ -365,7 +365,17 @@ export default class Map {
                 break;
             case 'ImageVector':
                 source = new ol.source.ImageVector({
-                    source: this.setupSource(s.source)
+                    source: this.setupSource(s.source),
+                    // default style
+                    style: new ol.style.Style({
+                        fill: new ol.style.Fill({
+                            color: 'rgba(255, 255, 255, 0.6)'
+                        }),
+                        stroke: new ol.style.Stroke({
+                            color: '#319FD3',
+                            width: 1
+                        })
+                    })
                 });
                 break;
             default: 
