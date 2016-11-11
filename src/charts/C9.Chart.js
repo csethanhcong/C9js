@@ -491,6 +491,7 @@ export default class Chart {
         self.container.selectAll(".c9-svg").data([]).exit().remove();
 
         self.svg = d3.select(id)
+            .style('position', 'relative')
             .append("svg")
             .attr('class', 'c9-svg')
             .attr("width", self.width)

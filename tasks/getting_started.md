@@ -66,9 +66,11 @@ var barChart = new C9.BarChart(option);
 barChart.draw();
 ```
 
+> Note: All constructors of C9 begin with namespace 'C9', please make sure you don't miss it
+
 Above sample will generate the Bar Chart like this:
 
-C9js currently supports many types of chart, you can see some [examples](http://c9js.me/examples.html) available.
+C9js currently supports many types of chart (`Bar Chart`, `Line Chart`, `Timeline`, `Pie Chart`, `Donut Chart`), you can see some [examples](http://c9js.me/examples.html) available.
 
 ## Generate First C9 Map
 ---
@@ -89,10 +91,51 @@ var map = new C9.Map(option);
 map.draw();
 ```
 
+## Data Adapter
+---
+
+C9js supports various formats of data (`csv`, `tsv`, `json`, `text`, `xml`) and `xhr` also
+
+But it's not all. Data Adapter make your data `adaptive` literally. For example, you have an object like: 
+
+```js
+[
+	{
+		username: 'Adam',
+		property: {
+			salary: 1000,
+			age: 28,
+		},
+		...
+	},
+...
+]
+```
+
+So, you just need point out which data you want to present on C9 Chart
+
+```js
+var option = {
+	data: {
+		file: {
+			url: '/data/data1.json',
+			type: 'json'
+		},
+		// Your own defined-keys go here
+		keys: {
+			'name': 'username',
+			'value': 'property.salary'
+		}
+	}
+}
+
+var chart = new C9.BarChart(option);
+chart.draw();
+```
+
 ## Customize Chart/Map Option
 ---
 ### setOption
-
 
 We have a stand-alone function call `setOption` to set option (of course!) if you don't want to bring a bunch of config
 at the constructing time
@@ -118,14 +161,175 @@ C9 has a lot of options to make your chart/map more colorful, more attractive an
 
 ### Axis Format
 
-Hide axis x, show axis y, format label on axis y:
+Hide grid on axis x, rotate tick on axis x 45 degree, show axis y, format tick label on axis y:
 
 ```js
+var option = {
+	axis: {
+		x: {
+			show: true,
+			grid: false,
+			tick: {
+				rotate: 45
+			}
+		},
+		y: {
+			show: true,
+			tick: {
+				format: function(data, index) {
+					return '-' + data + '-';
+				}
+			}
+		},
+	}
+};
+
+var chart = new C9.LineChart(option);
+chart.draw();
 
 ```
+You can see some examples on axis option [here](http://c9js.me/)
 
 ### Tooltip Format
 
+```js
+var option = {
+	tooltip: {
+		tooltip: {
+			format: function(data, index) {
+				format: function(data, index) {
+		            return '<strong>' + data.name + '</strong>' + '<br>' + 'Start at hour: ' + data.start.getHours() + '<br>' + 'End at hour: ' + data.end.getHours();
+		        }
+			}
+		},
+	}
+};
+
+var chart = new C9.Timeline(option);
+chart.draw();
+```
+
+In Timeline, data will be normalized and return with format
+
+```js
+{
+	name: String,
+	start: DateObject,
+	end: DateObject,
+}
+```
+> Tooltip will be render with format in type of Plain String or HTML, so you can put HTML tag on format return function
+
+Display tooltip on top of data
+
+```js
+var option = {
+	tooltip: {
+		position: 'top'
+	}
+};
+
+var chart = new C9.DonutChart(option);
+chart.draw();
+```
+
+C9js supports 4 positions on Tooltip: `top`, `right`, `bottom`, `left`
+
+Some examples on Tooltip go [here](http://c9js.me/)
+
+### Table 
+
+C9js also brings to you `Table` to have an overview through your data
+
+
+```js
+var option = {
+	table: {
+		show: 'true'
+	}
+};
+
+var chart = new C9.DonutChart(option);
+chart.draw();
+```
+
+> Try to hover on each row and see what happens ;)
+
+## Customize Styles
+---
+
+### Via option constructor
+
+Change color range used to color chart
+
+```js
+var option = {
+	colorRange: ['red', 'green', 'blue']
+};
+
+var chart = new C9.DonutChart(option);
+chart.draw();
+```
+
+### Via CSS Selector
+
+Each C9js components has its own `CSS Class` to help you simply overwrite its style via CSS Selector
+
+```js
+// Your css customize file
+.c9-chart-bar.c9-custom-rect {
+    opacity: 0.5;
+}
+```
+
+## Update Chart
+---
+
+You can load Chart continuously with `updateData`
+
+```js
+// ... chart drawn already
+var chart = new C9.DonutChart(option);
+chart.draw();
+
+// Then, update it
+setTimeout(function(){
+	chart.updateData([
+		{name: "Male", value:	45},
+		{name: "Female", value:	55},
+	]);
+}, 5000);
+```
+
+You can also re-define which keys you want to update
+
+```js
+// ... chart drawn already
+var chart = new C9.DonutChart(option);
+chart.draw();
+
+// Then, update it
+setTimeout(function(){
+	chart.updateData([
+		{
+			name: "Male", 
+			property: {
+				age: 28,
+				salary: 5000
+			}
+		},
+		{
+			name: "Female", 
+			property: {
+				age: 30,
+				salary: 4500
+			}
+		},
+	], {
+		// new keys go here
+		value: 'property.salary'
+	});
+}, 5000);
+```
+
 ## and [more...](http://c9js.me/examples.html)
-
-
