@@ -107,11 +107,11 @@ export default class Tooltip {
                     .transition()
                     // .style('left', function() {return d3.mouse(this)[0] + 'px';})
                     .style('left', function() {
-                        return self.getCoordinate()['left'];
+                        return self.getCoordinate(chart)['left'];
                     })
                     // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
                     .style('top', function() {
-                        return self.getCoordinate()['top'];
+                        return self.getCoordinate(chart)['top'];
                     })
                     .duration(200)
                     .style("display", 'block')
@@ -126,11 +126,11 @@ export default class Tooltip {
                     .transition()
                     // .style('left', function() {return d3.mouse(this)[0] + 'px';})
                     .style('left', function() {
-                        return self.getCoordinate()['left'];
+                        return self.getCoordinate(chart)['left'];
                     })
                     // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
                     .style('top', function() {
-                        return self.getCoordinate()['top'];
+                        return self.getCoordinate(chart)['top'];
                     })
                     .duration(200)
                     .style("display", 'block')
@@ -228,37 +228,53 @@ export default class Tooltip {
         // console.log(self.format);
     }
 
-    getCoordinate() {
+    getCoordinate(chart) {
         var self = this;
         let r ;
+
+        var offset = self.getOffset(d3.select(chart.id)[0][0]);
 
         switch(self.options.position) {
             case 'top':
                 r = {
-                    'left': (d3.event.pageX - 50) + 'px',
-                    'top': (d3.event.pageY - 50) + 'px'
+                    'left': (d3.event.pageX - offset.left - 50) + 'px',
+                    'top': (d3.event.pageY - offset.top - 50) + 'px'
                 };
                 break;
             case 'right':
                 r = {
-                    'left': (d3.event.pageX - 50) + 'px',
-                    'top': (d3.event.pageY - 50) + 'px'
+                    'left': (d3.event.pageX - offset.left - 50) + 'px',
+                    'top': (d3.event.pageY - offset.top - 50) + 'px'
                 };
                 break;
             case 'bottom':
                 r = {
-                    'left': (d3.event.pageX - 50) + 'px',
-                    'top': (d3.event.pageY + 50) + 'px'
+                    'left': (d3.event.pageX - offset.left - 50) + 'px',
+                    'top': (d3.event.pageY - offset.top + 50) + 'px'
                 };
                 break;
             case 'left':
                 r = {
-                    'left': (d3.event.pageX + 50) + 'px',
-                    'top': (d3.event.pageY - 50) + 'px'
+                    'left': (d3.event.pageX - offset.left + 50) + 'px',
+                    'top': (d3.event.pageY - offset.top - 50) + 'px'
                 };
                 break;
         }
         return r;
+    }
+
+    getOffset(elem) {
+        var box = { top: 0, left: 0 };
+
+        // BlackBerry 5, iOS 3 (original iPhone)
+        if ( typeof elem.getBoundingClientRect !== undefined ) {
+          box = elem.getBoundingClientRect();
+        }
+
+        return {
+          top: box.top  + ( window.pageYOffset || elem.scrollTop )  - ( elem.clientTop  || 0 ),
+          left: box.left + ( window.pageXOffset || elem.scrollLeft ) - ( elem.clientLeft || 0 )
+        };
     }
 
     getFormatByChartType(chart, data) {

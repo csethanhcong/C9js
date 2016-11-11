@@ -523,7 +523,7 @@ body.body-nomain .nav li a:focus {
 
 body.body-nomain .nav .active {
   font-weight: bold;
-  /*background: #72bcd4;*/
+  background: #eee;
 }
 
 body.body-nomain .nav .nav {

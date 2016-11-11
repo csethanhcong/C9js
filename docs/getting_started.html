@@ -81,7 +81,12 @@
       
           <div class="col-md-3 scrollspy">
             <ul id="nav" class="nav nav-padding hidden-xs hidden-sm" data-spy="affix">
-              <li><a href="#setup">Setup</a></li>
+              <li><a href="#setup">Setup</a>
+                <ul class="nav">
+                  <li><a href="#download"><span class="fa fa-angle-double-right"></span>Download</a></li>
+                  <li><a href="#usage"><span class="fa fa-angle-double-right"></span>Usage</a></li>
+                </ul>
+              </li>
               <li><a href="#generate-first-c9">Generate First C9 Chart</a></li>
               <li><a href="#generate-first-c9-map">Generate First C9 Map</a></li>
               <li><a href="#customize-chartmap-option">Customize C9 Options</a></li>
@@ -110,7 +115,8 @@
             <section id="setup">
               <h2><span class="fa fa-edit"></span> Setup</h2>
               <hr class="sample-hr">
-              <h3 id="download">Download:</h3>
+              <section id="download">
+                <h3>Download:</h3>
 <ol>
 <li><p>Direct downloads:</p>
 <ul>
@@ -123,7 +129,9 @@
 <li><p><code>bower: bower install C9js</code></p></li>
 </ul></li>
 </ol>
-<h3 id="usage">Usage:</h3>
+              </section> <!-- end of section download -->
+              <section id="usage">
+                <h3>Usage:</h3>
 <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;!--</span> Load <span class="va">C9</span>.<span class="at">css</span> <span class="op">--&gt;</span>
 <span class="op">&lt;</span>link href<span class="op">=</span><span class="st">&quot;/path/to/C9.css&quot;</span> rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span><span class="op">&gt;</span>
 
@@ -138,6 +146,8 @@
 
 <span class="op">&lt;</span>script src<span class="op">=</span><span class="st">&quot;https://openlayers.org/en/v3.19.1/build/ol.js&quot;</span> type<span class="op">=</span><span class="st">&quot;text/javascript&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/script&gt;</span>
 <span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code></pre></div>
+              </section> <!-- end of section usage -->
+
             </section><!--end of #setup-->
 
             <section id="generate-first-c9">

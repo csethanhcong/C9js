@@ -110,6 +110,8 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 - http://edition.cnn.com/2016/11/07/asia/india-new-delhi-smog-pollution/index.html?sr=fbCNN110716india-new-delhi-smog-pollution0930AMStoryLink&linkId=30872508
 
+- https://twitter.com/MikeQuindazzi/status/796925182526881793/photo/1
+
 2. Map: 
 
 - https://www.weforum.org/agenda/2016/10/this-map-shows-where-the-world-s-most-generous-people-live
