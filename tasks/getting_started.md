@@ -75,6 +75,7 @@ C9js currently supports many types of chart (`Bar Chart`, `Line Chart`, `Timelin
 ## Generate First C9 Map
 ---
 
+### Simple Map
 Like Chart, firstly, you need a container
 
 ```js
@@ -85,7 +86,29 @@ Then contruct your own C9 map, and call `draw` function
 
 ```js
 var option = {
-	id: "#map",
+	id: "map",
+};
+var map = new C9.Map(option);
+map.draw();
+```
+
+### Adding Data
+Load sample data from [OpenLayers](https://openlayers.org/)
+
+```js
+var options = {  
+   	id:"map",
+	layers: {
+		type: "Image",
+		source: {
+			name: "ImageVector",
+			source: {
+				name: 'Vector',
+				url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson',
+				format: 'GeoJSON'	
+			}
+		}
+	},
 };
 var map = new C9.Map(option);
 map.draw();

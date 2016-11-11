@@ -5,44 +5,44 @@ export default class Axis {
         var self = this;
 
         var config = {
-            x: {
-                tick: {
-                    rotate: 0,
-                    count: 10,
-                    size: 6,
-                    padding: 3,
-                    format: undefined,
-                    values: [],
-                    //the following use for timeline chart
-                    type: d3.time.hours,
-                    interval: 1
+                x: {
+                    tick: {
+                        rotate: 0,
+                        count: 10,
+                        size: 6,
+                        padding: 3,
+                        format: undefined,
+                        values: [],
+                        //the following use for timeline chart
+                        type: d3.time.hours,
+                        interval: 1
+                    },
+                    label: {
+                        text: "Name",
+                        position: "default"
+                    },
+                    show: true,
+                    grid: false,
+                    type: ""
                 },
-                label: {
-                    text: "Name",
-                    position: "default"
-                },
-                show: true,
-                grid: false,
-                type: ""
-            },
-            y: {
-                tick: {
-                    rotate: 0,
-                    count: 10,
-                    size: 6,
-                    padding: 3,
-                    format: undefined,
-                    values: []
-                },
-                label: {
-                    text: "Value",
-                    position: "default"
-                },
-                show: false,
-                grid: false,
-                type: ""
-            }
-        };
+                y: {
+                    tick: {
+                        rotate: 0,
+                        count: 10,
+                        size: 6,
+                        padding: 3,
+                        format: undefined,
+                        values: []
+                    },
+                    label: {
+                        text: "Value",
+                        position: "default"
+                    },
+                    show: true,
+                    grid: true,
+                    type: ""
+                }
+            };
 
         self._options   = options;
         self._chart     = chart;

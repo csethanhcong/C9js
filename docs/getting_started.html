@@ -6,8 +6,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+    <meta name="author" content="Cong Pham, Huy Do">
+    <meta name="title" content="C9js - Getting Started">
 
     <title>C9js - Getting Started</title>
     <link rel="shortcut icon" href="./images/icon.ico">
@@ -32,6 +33,7 @@
     <link href="./css/creative.css" rel="stylesheet">
 
     <!-- Load C9.css -->
+    <link rel="stylesheet" href="./libs/ol3/ol.css" />
     <link rel="stylesheet" href="./libs/C9js/C9.min.css" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,6 +44,7 @@
 
     <!-- D3 & OL3 & C9 -->
     <script src="./libs/d3/d3.min.js"></script>
+    <script src="./libs/ol3/ol.js"></script>
     <script src="./libs/C9js/C9.js"></script>
 
 </head>
@@ -87,20 +90,30 @@
                   <li><a href="#usage"><span class="fa fa-angle-double-right"></span>Usage</a></li>
                 </ul>
               </li>
-              <li><a href="#generate-first-c9">Generate First C9 Chart</a></li>
-              <li><a href="#generate-first-c9-map">Generate First C9 Map</a></li>
-              <li><a href="#customize-chartmap-option">Customize C9 Options</a></li>
-              <li><a href="#logistics">Logistics</a></li>
-              <li><a href="#social">Social</a></li>
-              <li><a href="#management">Management</a></li>
-              <li><a href="#chemistry">Chemistry</a></li>
-              <li><a href="#mobile-development">Mobile Development</a>
+              <li><a href="#generate-first-c9-chart">Generate First C9 Chart</a></li>
+              <li><a href="#generate-first-c9-map">Generate First C9 Map</a>
                 <ul class="nav">
-                  <li><a href="#android"><span class="fa fa-angle-double-right"></span>Android</a></li>
-                  <li><a href="#iOS"><span class="fa fa-angle-double-right"></span>iOS</a></li>
+                  <li><a href="#simple-map"><span class="fa fa-angle-double-right"></span>Simple Map</a></li>
+                  <li><a href="#adding-data"><span class="fa fa-angle-double-right"></span>Adding Data</a></li>
                 </ul>
               </li>
-              <li><a href="#mathematics">Mathematics</a></li>
+              <li><a href="#data-adapter">Data Adapter</a></li>
+              <li><a href="#customize-chartmap-option">Customize Chart/Map Option</a>
+                <ul class="nav">
+                  <li><a href="#setoption"><span class="fa fa-angle-double-right"></span>Set Option</a></li>
+                  <li><a href="#axis-format"><span class="fa fa-angle-double-right"></span>Axis Format</a></li>
+                  <li><a href="#tooltip-format"><span class="fa fa-angle-double-right"></span>Tooltip Format</a></li>
+                  <li><a href="#table"><span class="fa fa-angle-double-right"></span>Table</a></li>
+                </ul>
+              </li>
+              <li><a href="#customize-styles">Customize Styles</a>
+                <ul class="nav">
+                  <li><a href="#via-option-constructor"><span class="fa fa-angle-double-right"></span>Via option constructor</a></li>
+                  <li><a href="#via-css-selector"><span class="fa fa-angle-double-right"></span>Via CSS Selector</a></li>
+                </ul>
+              </li>
+              <li><a href="#update-chart">Update Chart</a></li>
+              <li><a href="#and-more">More</a></li>
             </ul>
           </div>
 
@@ -115,50 +128,59 @@
             <section id="setup">
               <h2><span class="fa fa-edit"></span> Setup</h2>
               <hr class="sample-hr">
+
               <section id="download">
                 <h3>Download:</h3>
-<ol>
-<li><p>Direct downloads:</p>
-<ul>
-<li><p>From <a href="https://github.com/csethanhcong/C9js/releases">GitHub</a></p></li>
-<li><p>From <a href="https://unpkg.com/C9js">unpkg</a></p></li>
-</ul></li>
-<li><p>Via Package Manager:</p>
-<ul>
-<li><p><code>npm: npm install C9js</code></p></li>
-<li><p><code>bower: bower install C9js</code></p></li>
-</ul></li>
-</ol>
-              </section> <!-- end of section download -->
+                <ol>
+                  <li><p>Direct downloads:</p>
+                  <ul>
+                    <li><p>From <a href="https://github.com/csethanhcong/C9js/releases">GitHub</a></p></li>
+                    <li><p>From <a href="https://unpkg.com/C9js">unpkg</a></p></li>
+                  </ul></li>
+                  <li><p>Via Package Manager:</p>
+                  <ul>
+                    <li><p><code>npm: npm install C9js</code></p></li>
+                    <li><p><code>bower: bower install C9js</code></p></li>
+                  </ul></li>
+                </ol>
+              </section> <!-- end of #download -->
+              
               <section id="usage">
                 <h3>Usage:</h3>
-<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;!--</span> Load <span class="va">C9</span>.<span class="at">css</span> <span class="op">--&gt;</span>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;!--</span> Load <span class="va">C9</span>.<span class="at">css</span> <span class="op">--&gt;</span>
 <span class="op">&lt;</span>link href<span class="op">=</span><span class="st">&quot;/path/to/C9.css&quot;</span> rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span><span class="op">&gt;</span>
-
 <span class="op">&lt;!--</span> Load <span class="va">d3</span>.<span class="at">js</span> <span class="at">and</span> <span class="va">C9</span>.<span class="at">js</span> <span class="op">--&gt;</span>
 <span class="op">&lt;</span>script src<span class="op">=</span><span class="st">&quot;/path/to/d3.v3.min.js&quot;</span> charset<span class="op">=</span><span class="st">&quot;utf-8&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/script&gt;</span>
-<span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code></pre></div>
-<p>C9js is built on d3, so please load d3 before load C9js</p>
-<blockquote>
-<p>Note: If you want to generate Map, please load OpenLayers 3 also</p>
-</blockquote>
-<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> href<span class="op">=</span><span class="st">&quot;https://openlayers.org/en/v3.19.1/css/ol.css&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span><span class="op">&gt;</span>
-
+<span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code>
+</pre>
+                </div>
+                <p>C9js is built on d3, so please load d3 before load C9js</p>
+                <blockquote>
+                  <p>Note: If you want to generate Map, please load OpenLayers 3 also</p>
+                </blockquote>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>link rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> href<span class="op">=</span><span class="st">&quot;https://openlayers.org/en/v3.19.1/css/ol.css&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span><span class="op">&gt;</span>
 <span class="op">&lt;</span>script src<span class="op">=</span><span class="st">&quot;https://openlayers.org/en/v3.19.1/build/ol.js&quot;</span> type<span class="op">=</span><span class="st">&quot;text/javascript&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/script&gt;</span>
-<span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code></pre></div>
-              </section> <!-- end of section usage -->
-
+<span class="ss">&lt;script src=&quot;/path/to/C9</span>.<span class="va">min</span>.<span class="at">js</span><span class="st">&quot;&gt;&lt;/script&gt;</span></code>
+</pre>
+                </div>
+              </section> <!-- end of usage -->
             </section><!--end of #setup-->
 
-            <section id="generate-first-c9">
+            <section id="generate-first-c9-chart">
               <h2><span class="fa fa-edit"></span> Generate First C9 Chart</h2>
               <hr class="sample-hr">
-<p>Built on top with discipline that always make it clear and easy to use. Use ES6’s new features, so C9 is basically <code>Object</code> constructed from <code>Class</code></p>
-<p>Firstly, create a container for C9 to <em>occupy</em> ;)</p>
-<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;chart&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code></pre></div>
-<p>Then contruct your own C9 chart, and call <code>draw</code> function</p>
-<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
-    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#chart&quot;</span><span class="op">,</span>
+              <p>Built on top with discipline that always make it clear and easy to use. Use <a href="http://es6-features.org/">ES6’s new features</a>, so C9 is basically <code>Object</code> constructed from <code>Class</code></p>
+              <p>Firstly, create a container for C9 to <em>occupy</em> ;)</p>
+              <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;chart&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code>
+              </pre>
+              </div>
+              <p>Then contruct your own C9 chart, and call <code>draw</code> function</p>
+              <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;chart&quot;</span><span class="op">,</span>
     <span class="dt">data</span><span class="op">:</span> <span class="op">{</span>
         <span class="dt">plain</span><span class="op">:</span> [
             <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>  <span class="dv">10</span><span class="op">},</span>
@@ -170,302 +192,358 @@
     <span class="op">},</span> 
 <span class="op">};</span>
 <span class="kw">var</span> barChart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">BarChart</span>(option)<span class="op">;</span>
-<span class="va">barChart</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
-<p>Above sample will generate the Bar Chart like this:</p>
-
-            <!-- Demo -->
-            <div id="chart"></div>
-      <script type="text/javascript" charset="utf-8">
-      var options1 = {
-        id: "#chart", 
-        width: 750, 
-        height: 500, 
-        margin: {
-          top: 100, 
-          left: 50, 
-          right: 50, 
-          bottom:100
-        },
-        data: {
-          plain: [
-            {name: "A", value:  10},
-            {name: "B", value:  20},
-            {name: "C", value:  50},
-            {name: "D", value:  30},
-            {name: "E", value:  70},
-          ]
-        }, 
-        axis: {
-          x: {
-            show: true,
-          },
-          y: {
-            show: true,
-            tick: {
-              count: 5
-            },
-            grid: true
-          }
-        },
-        colorRange: "red",
-        legend: {
-          show: true,
-        },
-      };
-      var barChart = new C9.BarChart(options1);
-      barChart.draw();
-    </script> <!-- End of Demo -->
-    <p>C9js currently supports many types of chart, you can see some <a href="http://c9js.me/examples.html">examples</a> available.</p>
-
-            </section><!--end of #web-devlopment-->
+<span class="va">barChart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+              </div>
+              <blockquote>
+                <p>Note: All constructors of C9 begin with namespace ‘C9’, please make sure you don’t miss it</p>
+              </blockquote>
+              <p>Above sample will generate the Bar Chart like this:</p>
+              <!-- Demo -->
+              <div id="chart"></div>
+              <script type="text/javascript" charset="utf-8">
+              var options1 = {
+              id: "chart",
+              data: {
+                plain: [
+                {name: "A", value:  10},
+                {name: "B", value:  20},
+                {name: "C", value:  50},
+                {name: "D", value:  30},
+                {name: "E", value:  70},
+                ]
+              },
+              };
+              var barChart = new C9.BarChart(options1);
+              barChart.draw();
+              </script> <!-- End of Demo -->
+              <p>C9js currently supports many types of chart (<code>Bar Chart</code>, <code>Line Chart</code>, <code>Timeline</code>, <code>Pie Chart</code>, <code>Donut Chart</code>), you can see some <a href="http://c9js.me/examples.html">examples</a> available.</p>
+            </section><!--end of #generate-first-c9-chart-->
 
             <section id="generate-first-c9-map">
               <h2><span class="fa fa-edit"></span> Generate First C9 Map</h2>
-              <hr class="sample-hr">
+
+              <section id="simple-map">
+                <h3>Simple Map</h3>
 <p>Like Chart, firstly, you need a container</p>
 <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>div id<span class="op">=</span><span class="st">&quot;map&quot;</span><span class="op">&gt;&lt;</span><span class="ss">/div&gt;</span></code></pre></div>
 <p>Then contruct your own C9 map, and call <code>draw</code> function</p>
 <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
-    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;#map&quot;</span><span class="op">,</span>
+    <span class="dt">id</span><span class="op">:</span> <span class="st">&quot;map&quot;</span><span class="op">,</span>
 <span class="op">};</span>
 <span class="kw">var</span> map <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">Map</span>(option)<span class="op">;</span>
 <span class="va">map</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
+
+                <!-- Demo -->
+                <div id="map_1"></div>
+                <script type="text/javascript" charset="utf-8">
+                var options = {
+                  id: "map_1"
+                };
+                var map = new C9.Map(options);
+                map.draw();
+                </script> <!-- End of Demo -->
+              </section> <!-- end of #simple-map -->
+  
+              <section id="adding-data">
+                <h3>Adding Data</h3>
+<p>Load sample data from <a href="https://openlayers.org/">OpenLayers</a></p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> options <span class="op">=</span> <span class="op">{</span>  
+    <span class="dt">id</span><span class="op">:</span><span class="st">&quot;map&quot;</span><span class="op">,</span>
+    <span class="dt">layers</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">type</span><span class="op">:</span> <span class="st">&quot;Image&quot;</span><span class="op">,</span>
+        <span class="dt">source</span><span class="op">:</span> <span class="op">{</span>
+            <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;ImageVector&quot;</span><span class="op">,</span>
+            <span class="dt">source</span><span class="op">:</span> <span class="op">{</span>
+                <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;Vector&#39;</span><span class="op">,</span>
+                <span class="dt">url</span><span class="op">:</span> <span class="st">&#39;https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson&#39;</span><span class="op">,</span>
+                <span class="dt">format</span><span class="op">:</span> <span class="st">&#39;GeoJSON&#39;</span>   
+            <span class="op">}</span>
+        <span class="op">}</span>
+    <span class="op">},</span>
+<span class="op">};</span>
+<span class="kw">var</span> map <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">Map</span>(option)<span class="op">;</span>
+<span class="va">map</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre></div>
+
+                <!-- Demo -->
+                <div id="map_2"></div>
+                <script type="text/javascript" charset="utf-8">
+                var option = {  
+                    id:"map_2",
+                  layers: {
+                    type: "Image",
+                    source: {
+                      name: "ImageVector",
+                      source: {
+                        name: 'Vector',
+                        url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson',
+                        format: 'GeoJSON' 
+                      }
+                    }
+                  },
+                };
+                var map = new C9.Map(option);
+                map.draw();
+                </script> <!-- End of Demo -->
+              </section> <!-- end of #adding-data -->
+
+              <!-- </div> -->
             </section><!--end of #generate-first-c9-map-->
+
+            <section id="data-adapter">
+              <h2><span class="fa fa-edit"></span> Data Adapter</h2>
+              <hr class="sample-hr">
+              <p>C9js supports various formats of data (<code>csv</code>, <code>tsv</code>, <code>json</code>, <code>text</code>, <code>xml</code>) and <code>xhr</code> also</p>
+              <p>But it’s not all. Data Adapter make your data <code>adaptive</code> literally. For example, you have an object like:</p>
+              <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript">[
+      <span class="op">{</span>
+          <span class="dt">username</span><span class="op">:</span> <span class="st">&#39;Adam&#39;</span><span class="op">,</span>
+          <span class="dt">property</span><span class="op">:</span> <span class="op">{</span>
+              <span class="dt">salary</span><span class="op">:</span> <span class="dv">1000</span><span class="op">,</span>
+              <span class="dt">age</span><span class="op">:</span> <span class="dv">28</span><span class="op">,</span>
+          <span class="op">},</span>
+          ...
+      <span class="op">},</span>
+  ...
+]</code>
+</pre>
+              </div>
+              <p>So, you just need point out which data you want to present on C9 Chart</p>
+              <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">data</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">file</span><span class="op">:</span> <span class="op">{</span>
+            <span class="dt">url</span><span class="op">:</span> <span class="st">&#39;/data/data1.json&#39;</span><span class="op">,</span>
+            <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;json&#39;</span>
+        <span class="op">},</span>
+        <span class="co">// Your own defined-keys go here</span>
+        <span class="dt">keys</span><span class="op">:</span> <span class="op">{</span>
+            <span class="st">&#39;name&#39;</span><span class="op">:</span> <span class="st">&#39;username&#39;</span><span class="op">,</span>
+            <span class="st">&#39;value&#39;</span><span class="op">:</span> <span class="st">&#39;property.salary&#39;</span>
+        <span class="op">}</span>
+    <span class="op">}</span>
+<span class="op">}</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">BarChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+              </div>
+            </section><!--end of #data-adapter-->
 
             <section id="customize-chartmap-option">
               <h2><span class="fa fa-edit"></span> Customize Chart/Map Option</h2>
               <hr class="sample-hr">
-<p>We have a stand-alone function call <code>setOption</code> to set option (of course!) if you don’t want to bring a bunch of config at the constructing time</p>
-<p>Before <code>draw</code> Chart/Map, you can change simply options like below:</p>
-<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// ... bunch of code</span>
-<span class="va">chart</span>.<span class="at">setOption</span>(<span class="st">&#39;grid.x.show&#39;</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></code></pre></div>
-<blockquote>
-<p>Remember the <em>dot</em> sign (.) to dig into deep object config, e.g</p>
-</blockquote>
-<pre><code>
-grid: {
-    x: {
-        show: true
+
+              <section id="setoption">
+                <h3>setOption</h3>
+                <p>We have a stand-alone function call <code>setOption</code> to set option (of course!) if you don’t want to bring a bunch of config<br />
+                at the constructing time</p>
+                <p>Before <code>draw</code> Chart/Map, you can change simply options like below:</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// ... bunch of code</span>
+<span class="va">chart</span>.<span class="at">setOption</span>(<span class="st">&#39;grid.x.show&#39;</span><span class="op">,</span> <span class="kw">true</span>)<span class="op">;</span></code>
+</pre>
+                </div>
+                <blockquote>
+                  <p>Remember the <em>dot</em> sign (.) to dig into deep object config, e.g</p>
+                </blockquote>
+<pre><code>grid: {
+        x: {
+            show: true
+        }
     }
-}
-~ equal to
-chart.setOption(&#39;grid.x.show&#39;, true);
-</code></pre>
+    ~ equal to
+chart.setOption(&#39;grid.x.show&#39;, true);</code>
+</pre>
+                <p>C9 has a lot of options to make your chart/map more colorful, more attractive and more useful</p>
+              </section> <!-- end of #setOption -->
+              
+              <section id="axis-format">
+                <h3>Axis Format</h3>
+                <p>Hide grid on axis x, rotate tick on axis x 45 degree, show axis y, format tick label on axis y:</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">axis</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">x</span><span class="op">:</span> <span class="op">{</span>
+            <span class="dt">show</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>
+            <span class="dt">grid</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span>
+            <span class="dt">tick</span><span class="op">:</span> <span class="op">{</span>
+                <span class="dt">rotate</span><span class="op">:</span> <span class="dv">45</span>
+            <span class="op">}</span>
+        <span class="op">},</span>
+        <span class="dt">y</span><span class="op">:</span> <span class="op">{</span>
+            <span class="dt">show</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span>
+            <span class="dt">tick</span><span class="op">:</span> <span class="op">{</span>
+                <span class="dt">format</span><span class="op">:</span> <span class="kw">function</span>(data<span class="op">,</span> index) <span class="op">{</span>
+                    <span class="cf">return</span> <span class="st">&#39;-&#39;</span> <span class="op">+</span> data <span class="op">+</span> <span class="st">&#39;-&#39;</span><span class="op">;</span>
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">},</span>
+    <span class="op">}</span>
+<span class="op">};</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">LineChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+                </div>
+                <p>You can see some examples on axis option <a href="http://c9js.me/">here</a></p>
+              </section> <!-- end of #axis-format -->
+              
+              <section id="tooltip-format">
+                <h3>Tooltip Format</h3>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">tooltip</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">tooltip</span><span class="op">:</span> <span class="op">{</span>
+            <span class="dt">format</span><span class="op">:</span> <span class="kw">function</span>(data<span class="op">,</span> index) <span class="op">{</span>
+                <span class="dt">format</span><span class="op">:</span> <span class="kw">function</span>(data<span class="op">,</span> index) <span class="op">{</span>
+                    <span class="cf">return</span> <span class="st">&#39;&lt;strong&gt;&#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="at">name</span> <span class="op">+</span> <span class="st">&#39;&lt;/strong&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;&lt;br&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;Start at hour: &#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="va">start</span>.<span class="at">getHours</span>() <span class="op">+</span> <span class="st">&#39;&lt;br&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;End at hour: &#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="va">end</span>.<span class="at">getHours</span>()<span class="op">;</span>
+                <span class="op">}</span>
+            <span class="op">}</span>
+        <span class="op">},</span>
+    <span class="op">}</span>
+<span class="op">};</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">Timeline</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+                </div>
+                <p>In Timeline, data will be normalized and return with format</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">{</span>
+    <span class="dt">name</span><span class="op">:</span> String<span class="op">,</span>
+    <span class="dt">start</span><span class="op">:</span> DateObject<span class="op">,</span>
+    <span class="dt">end</span><span class="op">:</span> DateObject<span class="op">,</span>
+<span class="op">}</span></code>
+</pre>
+                </div>
+                <blockquote>
+                  <p>Tooltip will be render with format in type of Plain String or HTML, so you can put HTML tag on format return function</p>
+                </blockquote>
+                <p>Display tooltip on top of data</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">tooltip</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">position</span><span class="op">:</span> <span class="st">&#39;top&#39;</span>
+    <span class="op">}</span>
+<span class="op">};</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+                </div>
+                <p>C9js supports 4 positions on Tooltip: <code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code></p>
+                <p>Some examples on Tooltip go <a href="http://c9js.me/">here</a></p>
+              </section> <!-- end of tooltip-format -->
+              
+              <section id="table">
+                <h3>Table</h3>
+                <p>C9js also brings to you <code>Table</code> to have an overview through your data</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">table</span><span class="op">:</span> <span class="op">{</span>
+        <span class="dt">show</span><span class="op">:</span> <span class="st">&#39;true&#39;</span>
+    <span class="op">}</span>
+<span class="op">};</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+                </div>
+                <blockquote>
+                  <p>Try to hover on each row and see what happens ;)</p>
+                </blockquote>
+              </section> <!-- end of #table -->
             </section><!--end of #customize-chartmap-option-->
 
-            <section id="logistics">
-              <h2><span class="fa fa-edit"></span> Logistics</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-                Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
-                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #logistics-->
+            <section id="customize-styles">
+              <h2><span class="fa fa-edit"></span> Customize Styles</h2>
+              <hr class="sample-hr">
 
-            <section id="social">
-              <h2><span class="fa fa-edit"></span> Social</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
-              </p>
-              <p>Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
-                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris
-                sit amet nibh. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #social-->
+              <section id="via-option-constructor">
+                <h3>Via option constructor</h3>
+                <p>Change color range used to color chart</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">colorRange</span><span class="op">:</span> [<span class="st">&#39;red&#39;</span><span class="op">,</span> <span class="st">&#39;green&#39;</span><span class="op">,</span> <span class="st">&#39;blue&#39;</span>]
+<span class="op">};</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
+</pre>
+                </div>
+              </section> <!-- end of #via-option-constructor -->
+              
+              <section id="via-css-selector">
+                <h3 id="">Via CSS Selector</h3>
+                <p>Each C9js components has its own <code>CSS Class</code> to help you simply overwrite its style via CSS Selector</p>
+                <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// Your css customize file</span>
+.<span class="at">c9</span><span class="op">-</span>chart<span class="op">-</span><span class="va">bar</span>.<span class="at">c9</span><span class="op">-</span>custom<span class="op">-</span>rect <span class="op">{</span>
+    <span class="dt">opacity</span><span class="op">:</span> <span class="fl">0.5</span><span class="op">;</span>
+<span class="op">}</span></code>
+</pre>
+                </div>
+              </section> <!-- end of #via-css-selector -->
+            </section><!--end of #customize-styles-->
 
-            <section id="management">
-              <h2><span class="fa fa-edit"></span> Management</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Aenean leo ligula, porttitor eu, consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in,
-                viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus varius laoreet. Quisque rutrum.
-                Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui.
-                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
-                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #management-->
+            <section id="update-chart">
+              <h2><span class="fa fa-edit"></span> Update Chart</h2>
+              <hr class="sample-hr">
+              <p>You can load Chart continuously with <code>updateData</code></p>
+              <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// ... chart drawn already</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span>
+<span class="co">// Then, update it</span>
+<span class="at">setTimeout</span>(<span class="kw">function</span>()<span class="op">{</span>
+    <span class="va">chart</span>.<span class="at">updateData</span>([
+        <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;Male&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span>   <span class="dv">45</span><span class="op">},</span>
+        <span class="op">{</span><span class="dt">name</span><span class="op">:</span> <span class="st">&quot;Female&quot;</span><span class="op">,</span> <span class="dt">value</span><span class="op">:</span> <span class="dv">55</span><span class="op">},</span>
+    ])<span class="op">;</span>
+<span class="op">},</span> <span class="dv">5000</span>)<span class="op">;</span></code>
+</pre>
+              </div>
+              <p>You can also re-define which keys you want to update</p>
+              <div class="sourceCode">
+<pre class="sourceCode js"><code class="sourceCode javascript"><span class="co">// ... chart drawn already</span>
+<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span>
+<span class="co">// Then, update it</span>
+<span class="at">setTimeout</span>(<span class="kw">function</span>()<span class="op">{</span>
+    <span class="va">chart</span>.<span class="at">updateData</span>([
+        <span class="op">{</span>
+            <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;Male&quot;</span><span class="op">,</span> 
+            <span class="dt">property</span><span class="op">:</span> <span class="op">{</span>
+                <span class="dt">age</span><span class="op">:</span> <span class="dv">28</span><span class="op">,</span>
+                <span class="dt">salary</span><span class="op">:</span> <span class="dv">5000</span>
+            <span class="op">}</span>
+        <span class="op">},</span>
+        <span class="op">{</span>
+            <span class="dt">name</span><span class="op">:</span> <span class="st">&quot;Female&quot;</span><span class="op">,</span> 
+            <span class="dt">property</span><span class="op">:</span> <span class="op">{</span>
+                <span class="dt">age</span><span class="op">:</span> <span class="dv">30</span><span class="op">,</span>
+                <span class="dt">salary</span><span class="op">:</span> <span class="dv">4500</span>
+            <span class="op">}</span>
+        <span class="op">},</span>
+    ]<span class="op">,</span> <span class="op">{</span>
+        <span class="co">// new keys go here</span>
+        <span class="dt">value</span><span class="op">:</span> <span class="st">&#39;property.salary&#39;</span>
+    <span class="op">}</span>)<span class="op">;</span>
+<span class="op">},</span> <span class="dv">5000</span>)<span class="op">;</span></code>
+</pre>
+              </div>
+            </section><!--end of #update-chart-->
 
-            <section id="chemistry">
-              <h2><span class="fa fa-edit"></span> Chemistry</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc.
-                Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
-                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #chemistry-->
-
-            <section id="mobile-development">
-              <h2><span class="fa fa-edit"></span> Mobile Development</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc. Etiam ultricies nisi vel augue.
-                Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
-                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem. Maecenas nec odio et ante
-                tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
-              </p>
-
-              <section id="android">
-                <h3>Android Development</h3>
-                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
-                luctus pulvinar, hendrerit id, lorem.
-                </p>
-                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
-                  luctus pulvinar, hendrerit id, lorem.
-                </p>
-                <button type="button" class="btn btn-primary">Learn More</button>
-              </section><!--end of #android-->
-
-              <section id="iOS">
-                <h3>iOS Development</h3>
-                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
-                  luctus pulvinar, hendrerit id, lorem.
-                </p>
-                <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                  Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh. Nam quam nunc, blandit vel,
-                  luctus pulvinar, hendrerit id, lorem.
-                </p>
-                <button type="button" class="btn btn-primary">Learn More</button>
-              </section><!--end of #iOS-->
-            </section><!--end of #mobile-development-->
-            
-            <section id="mathematics">
-              <h2><span class="fa fa-edit"></span> Mathematics</h2>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Donec sodales sagittis magna. Sed consequat, leo eget bibendum sodales, augue velit cursus nunc. Etiam ultricies nisi vel augue.
-                Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus. Maecenas tempus,
-                tellus eget condimentum rhoncus, sem quam semper libero, sit amet adipiscing sem neque sed ipsum.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean
-                massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec
-                quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim.
-                Donec pede justo, fringilla vel, aliquet nec, vulputate eget, arcu.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-                Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-                Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-              </p>
-              <button type="button" class="btn btn-primary">Learn More</button>
-            </section><!--end of #mathematics-->
+            <section id="and-more">
+              <h2>and <a href="http://c9js.me/examples.html">more…</a></h2>
+            </section><!--end of #and-more-->
           </div>
 
-        </div>
-      
-      </div><!--end of .row-->
-    </div><!--end of .container-->
-  
-  <!-- <section class="application">
-    <div class="container">
-      <h2>Come and Join Us</h2>
-      <div class="row">
-        <div class="col-sm-6">
-          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus.
-          Nullam quis ante.
-          </p>
-          <img class="img-responsive  " src="http://placehold.it/500x250/5fb3ce/000000">
-        </div>
-        <div class="col-sm-6">
-          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-          Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-          Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-          </p>
-          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-          Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-          Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-          </p>
-          <p>Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante.
-          Etiam sit amet orci eget eros faucibus tincidunt. Duis leo. Sed fringilla mauris sit amet nibh.
-          Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-          </p>
-          <button type="button" class="btn btn-primary">Apply Now</button>
-        </div>
-      </div><!--end of .row-->
-    </div><!--end of .container-->
-  </section>
+        </div><!--end of .row-->
+      </div><!--end of .container-->
+    </div><!--end of .wrapper-->
 
   <!-- jQuery -->
   <script src="./libs/jquery/jquery.min.js"></script>
 
   <!-- Bootstrap Core JavaScript -->
-    <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
+  <script src="./libs/bootstrap/js/bootstrap.min.js"></script>
 
   <!-- Latest compiled and minified JavaScript -->
   <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script> -->

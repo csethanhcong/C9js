@@ -7,13 +7,13 @@ export default class Chart {
             // container
             id: "body",
             // size (width, height), margin, padding
-            width: 960,
-            height: 480,
+            width: 750,
+            height: 500,
             margin: {
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
+                top: 100,
+                left: 50,
+                right: 50,
+                bottom:100
             },
 
             // interaction in chart
@@ -131,7 +131,7 @@ export default class Chart {
                         text: "Name",
                         position: "default"
                     },
-                    show: false,
+                    show: true,
                     grid: false,
                     type: ""
                 },
@@ -148,8 +148,8 @@ export default class Chart {
                         text: "Value",
                         position: "default"
                     },
-                    show: false,
-                    grid: false,
+                    show: true,
+                    grid: true,
                     type: ""
                 }
             },
@@ -174,6 +174,9 @@ export default class Chart {
     }
     
     get id() {
+        if (this._id !== 'body') {
+            return '#' + this._id;
+        }
         return this._id;
     }
 
