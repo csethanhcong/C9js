@@ -223,8 +223,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var barChartType = da.getDataTypeForBarChart();
 	            if (barChartType != "single") {
-	                self.groupNames = da.groups || da.stacks; //define group names use for showing legend
-	                self.isGroup = barChartType == "group";
+	                self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+	                self._isGroup = barChartType == "group";
 	            }
 	
 	            var width = self.width - self.margin.left - self.margin.right,
@@ -278,7 +278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var barChartType = da.getDataTypeForBarChart();
 	            if (barChartType != "single") {
-	                self.groupNames = da.groups || da.stacks; //define group names use for showing legend
+	                self.groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
 	                self.isGroup = barChartType == "group";
 	            }
 	
@@ -763,7 +763,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                top: 100,
 	                left: 50,
 	                right: 50,
-	                bottom: 100
+	                bottom: 50
 	            },
 	
 	            // interaction in chart
@@ -1693,6 +1693,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self.y = self.chart.y;
 	
 	            self.data = self.chart.dataTarget;
+	            self.isLogaricVariant = self.chart.options.isLogaric;
 	
 	            if (self.chart.chartType == "timeline") {
 	                var xScale = d3.time.scale().domain([self.chart.options.starting, self.chart.options.ending]).range([0, self.width]);
@@ -1709,7 +1710,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // must be filter with tickFormat instead
 	                // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
 	                if (self.isLogaricVariant) {
-	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || "%Y-%m-%d" : self.options.y.tick.format ? self.options.y.tick.format : undefined).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
+	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
 	                } else {
 	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined).tickFormat(self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined);
 	                }
@@ -1745,7 +1746,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //draw tick
 	            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
 	            //draw label
-	            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.text);
+	            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
 	
 	            //hide x axis
 	            if (!self.options.x.show) {
@@ -1756,7 +1757,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (self.chart.chartType != "timeline") {
 	                self.chart.body.append("g").attr("class", "c9-axis c9-axis-y").call(self.yAxis);
 	
-	                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.text);
+	                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.label.text);
 	
 	                if (!self.options.y.show) {
 	                    d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
@@ -2796,9 +2797,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                d3.selectAll('.c9-table').remove();
 	                d3.selectAll('.c9-table-container').remove();
 	
-	                var headTbl = d3.select(self.options.container).append("table").attr('class', 'c9-table c9-table-header'),
+	                var headTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body').append("table").attr('class', 'c9-table c9-table-header'),
 	                    thead = headTbl.append("thead"),
-	                    bodyTbl = d3.select(self.options.container).append("div").attr('class', 'c9-table-container').append("table").attr('class', function () {
+	                    bodyTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body').append("div").attr('class', 'c9-table-container').append("table").attr('class', function () {
 	                    return self.getTableStyle();
 	                }),
 	                    tbody = bodyTbl.append("tbody");
@@ -3488,6 +3489,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
 	                return "stack";
 	            }
+	            // default grouped bar if user do not defined groups for array value
+	            for (var i = self.dataSource.length - 1; i >= 0; i--) {
+	                if (_C2.default.isArray(_C2.default.get(self.keys.value, self.dataSource[i]))) return "group";
+	            }
 	
 	            return "single";
 	        }
@@ -3605,11 +3610,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            if (_C2.default.isArray(_dsArray)) {
 	                                _dsArray.forEach(function (d, i) {
 	                                    if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+	                                    if (_C2.default.isEmpty(groups[i])) groups.push('data' + (i + 1));
 	                                    _stackItem = {
 	                                        "color": color(i),
 	                                        "y0": d,
 	                                        "y1": d > 0 ? d : 0,
-	                                        "group": groups[i] || 'data' + (i + 1),
+	                                        "group": groups[i],
 	                                        "name": _C2.default.get(self.keys.name, data),
 	                                        "value": d,
 	                                        "data-ref": _C2.default.guid(),
@@ -3620,11 +3626,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                });
 	                            } else {
 	                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+	                                if (_C2.default.isEmpty(groups[0])) groups.push('data1');
 	                                _stackItem = {
 	                                    "color": color(0),
 	                                    "y0": _dsArray,
 	                                    "y1": _dsArray > 0 ? _dsArray : 0,
-	                                    "group": groups[0] || 'data' + 1,
+	                                    "group": groups[0],
 	                                    "name": _C2.default.get(self.keys.name, data),
 	                                    "value": _dsArray,
 	                                    "data-ref": _C2.default.guid(),
@@ -3637,6 +3644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            self.dataTarget.push(_stack);
 	                        });
 	
+	                        self.groups = groups;
 	                        return {
 	                            v: self.dataTarget
 	                        };
@@ -3669,11 +3677,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    var _posBase = 0;
 	                                    _dsArray.forEach(function (d, i) {
 	                                        if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+	                                        if (_C2.default.isEmpty(stacks[i])) stacks.push('data' + (i + 1));
 	                                        _stackItem = {
 	                                            "color": color(i),
 	                                            "y0": d,
 	                                            "y1": d > 0 ? d + _posBase : _negBase,
-	                                            "group": stacks[i] || 'data' + (i + 1),
+	                                            "group": stacks[i],
 	                                            "name": _C2.default.get(self.keys.name, data),
 	                                            "value": d,
 	                                            "data-ref": _C2.default.guid(),
@@ -3686,11 +3695,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                })();
 	                            } else {
 	                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+	                                if (_C2.default.isEmpty(stacks[0])) stacks.push('data1');
 	                                _stackItem = {
 	                                    "color": color(0),
 	                                    "y0": _dsArray,
 	                                    "y1": _dsArray > 0 ? _dsArray : 0,
-	                                    "group": stacks[0] || 'data' + 1,
+	                                    "group": stacks[0],
 	                                    "name": _C2.default.get(self.keys.name, data),
 	                                    "value": _dsArray,
 	                                    "data-ref": _C2.default.guid(),
@@ -3703,6 +3713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            self.dataTarget.push(_stack);
 	                        });
 	
+	                        self.stacks = stacks;
 	                        return {
 	                            v: self.dataTarget
 	                        };
@@ -5968,6 +5979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            // Update Table
 	            self.table.update(self.dataTarget);
+	            self.table.updateInteractionForDonutPieChart(self);
 	        }
 	        /*=====  End of User's Functions  ======*/
 	
@@ -6755,7 +6767,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                zoom: 2
 	            },
 	            data: null,
-	            format: null
+	            tooltip: {
+	                format: null
+	            }
 	        };
 	
 	        self._options = _C2.default.mergeDeep(config, options);
@@ -7256,13 +7270,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // panAnimation(f);
 	
 	                    try {
-	                        if (self.options.format) self.options.format(f.get('data'));
+	                        if (self.options.tooltip.format) self.options.tooltip.format(f.get('data'));
 	                    } catch (err) {
 	                        throw "Check data format again";
 	                        return;
 	                    }
 	
-	                    var content = self.options.format ? self.options.format(f.get('data')) : formatPopup(f.get('data'));
+	                    var content = self.options.tooltip.format ? self.options.tooltip.format(f.get('data')) : formatPopup(f.get('data'));
 	                    if (_C2.default.isEmpty(content) || content.toString().trim() == "") return;
 	
 	                    self.c9Popup.getElement().style.display = 'block';
