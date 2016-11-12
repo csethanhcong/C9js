@@ -8,7 +8,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 
-	    <title>Single Bar Chart</title>
+	    <title>Simple Pie Chart</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,12 +83,12 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Simple Pie Chart</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>simple_pie_chart.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
@@ -125,7 +125,7 @@
 var options1 = {
     id: "demo1",
     width: 1100, 
-    height: 500,
+    height: 600,
     data: {
         plain: data1,
     },
@@ -134,8 +134,8 @@ var options1 = {
     }
 };
 
-var barChart = new C9.BarChart(options1);
-barChart.draw();</code></pre>
+var pieChart = new C9.PieChart(options1);
+pieChart.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
@@ -172,7 +172,7 @@ barChart.draw();</code></pre>
 			var options1 = {
 				id: "demo1", 
 				width: 1100, 
-				height: 500,
+				height: 600,
 				data: {
 					plain: data1,
 				},
@@ -180,8 +180,8 @@ barChart.draw();</code></pre>
 					text: "Frequency of English Letters"
 				}
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
+			var pieChart = new C9.PieChart(options1);
+			pieChart.draw();
 		</script>
 		
 	</body>

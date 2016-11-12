@@ -407,6 +407,7 @@ export default class PieChart extends Chart {
     
         // Update Table
         self.table.update(self.dataTarget);
+        self.table.updateInteractionForDonutPieChart(self);
     }
     /*=====  End of User's Functions  ======*/
     

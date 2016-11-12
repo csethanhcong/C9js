@@ -97,11 +97,11 @@ export default class Table {
             d3.selectAll('.c9-table').remove();
             d3.selectAll('.c9-table-container').remove();
 
-            var headTbl = d3.select(self.options.container)
+            var headTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body')
                             .append("table")
                                 .attr('class', 'c9-table c9-table-header'),
                 thead = headTbl.append("thead"),
-                bodyTbl = d3.select(self.options.container)
+                bodyTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body')
                                 .append("div")
                                 .attr('class', 'c9-table-container')
                                     .append("table")
@@ -162,7 +162,6 @@ export default class Table {
                         .text(function(d) {
                             return d.group;
                         });
-
         }
     }
 

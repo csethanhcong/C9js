@@ -105,8 +105,8 @@ export default class BarChart extends Chart {
 
         var barChartType = da.getDataTypeForBarChart();
         if (barChartType != "single") {
-            self.groupNames    = da.groups || da.stacks;  //define group names use for showing legend
-            self.isGroup       = barChartType == "group";
+            self._groupNames    = da.groups.length > 0 ? da.groups : da.stacks;  //define group names use for showing legend
+            self._isGroup       = barChartType == "group";
         }
 
         var width        = self.width - self.margin.left - self.margin.right,
@@ -136,7 +136,6 @@ export default class BarChart extends Chart {
         // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
         self.x              = x;
         self.y              = y;
-        
     }
 
     /**
@@ -158,7 +157,7 @@ export default class BarChart extends Chart {
 
         var barChartType = da.getDataTypeForBarChart();
         if (barChartType != "single") {
-            self.groupNames    = da.groups || da.stacks;  //define group names use for showing legend
+            self.groupNames    = da.groups.length > 0 ? da.groups : da.stacks;  //define group names use for showing legend
             self.isGroup       = barChartType == "group";
         }
 

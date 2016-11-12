@@ -167,6 +167,7 @@ export default class Axis {
         self.y = self.chart.y;
 
         self.data       = self.chart.dataTarget;
+        self.isLogaricVariant = self.chart.options.isLogaric;
 
         if (self.chart.chartType == "timeline") {
             var xScale = d3.time.scale()
@@ -197,7 +198,7 @@ export default class Axis {
                 self.yAxis = d3.svg.axis()
                     .scale(self.y)
                     .orient("left")
-                    .ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || "%Y-%m-%d" : self.options.y.tick.format ? self.options.y.tick.format : undefined)
+                    .ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined)
                     .tickPadding(self.options.y.tick.padding)
                     .tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
             } else {

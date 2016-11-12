@@ -8,7 +8,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 
-	    <title>Single Bar Chart</title>
+	    <title>Change Chart's Default Color</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,55 +83,36 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Change Chart's Default Color</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>change_chart_default_color.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
-    {name: 'A', value: .08167},
-    {name: 'B', value: .01492},
-    {name: 'C', value: .02782},
-    {name: 'D', value: .04253},
-    {name: 'E', value: .12702},
-    {name: 'F', value: .02288},
-    {name: 'G', value: .02015},
-    {name: 'H', value: .06094},
-    {name: 'I', value: .06966},
-    {name: 'J', value: .00153},
-    {name: 'K', value: .00772},
-    {name: 'L', value: .04025},
-    {name: 'M', value: .02406},
-    {name: 'N', value: .06749},
-    {name: 'O', value: .07507},
-    {name: 'P', value: .01929},
-    {name: 'Q', value: .00095},
-    {name: 'R', value: .05987},
-    {name: 'S', value: .06327},
-    {name: 'T', value: .09056},
-    {name: 'U', value: .02758},
-    {name: 'V', value: .00978},
-    {name: 'W', value: .02360},
-    {name: 'X', value: .00150},
-    {name: 'Y', value: .01974},
-    {name: 'Z', value: .00074},
+    {name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+    {name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+    {name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+    {name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+    {name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+    {name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
 ];
 
 var options1 = {
-    id: "demo1",
+    id: "demo1", 
     width: 1100, 
     height: 500,
     data: {
         plain: data1,
     },
     title: {
-        text: "Frequency of English Letters"
-    }
+        text: "The Populations of different States in America by age group"
+    },
+    colorRange: ['#008F95', '#EB6E80', '#DF744A', '#DCB239', '#4ABDAC', '#FC4A1A', '#F7B733']
 };
 
 var barChart = new C9.BarChart(options1);
@@ -141,45 +122,27 @@ barChart.draw();</code></pre>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-					{name: 'A', value: .08167},
-					{name: 'B', value: .01492},
-					{name: 'C', value: .02782},
-					{name: 'D', value: .04253},
-					{name: 'E', value: .12702},
-					{name: 'F', value: .02288},
-					{name: 'G', value: .02015},
-					{name: 'H', value: .06094},
-					{name: 'I', value: .06966},
-					{name: 'J', value: .00153},
-					{name: 'K', value: .00772},
-					{name: 'L', value: .04025},
-					{name: 'M', value: .02406},
-					{name: 'N', value: .06749},
-					{name: 'O', value: .07507},
-					{name: 'P', value: .01929},
-					{name: 'Q', value: .00095},
-					{name: 'R', value: .05987},
-					{name: 'S', value: .06327},
-					{name: 'T', value: .09056},
-					{name: 'U', value: .02758},
-					{name: 'V', value: .00978},
-					{name: 'W', value: .02360},
-					{name: 'X', value: .00150},
-					{name: 'Y', value: .01974},
-					{name: 'Z', value: .00074},
+					{name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+					{name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+					{name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+					{name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+					{name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+					{name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
 				];
 
 			var options1 = {
-				id: "demo1", 
-				width: 1100, 
+				id: "demo1",
+				width: 1100,
 				height: 500,
 				data: {
 					plain: data1,
 				},
 				title: {
-					text: "Frequency of English Letters"
-				}
+					text: "The Populations of different States in America by age group"
+				},
+				colorRange: ['#008F95', '#EB6E80', '#DF744A', '#DCB239', '#4ABDAC', '#FC4A1A', '#F7B733']
 			};
+
 			var barChart = new C9.BarChart(options1);
 			barChart.draw();
 		</script>

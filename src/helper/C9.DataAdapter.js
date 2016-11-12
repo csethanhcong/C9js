@@ -185,6 +185,11 @@ export default class DataAdapter {
         } else if (!Helper.isEmpty(self.stacks) && Helper.isArray(self.stacks)) {
             return "stack";
         }
+        // default grouped bar if user do not defined groups for array value
+        for (var i = self.dataSource.length - 1; i >= 0; i--) {
+            if (Helper.isArray(Helper.get(self.keys.value, self.dataSource[i])))
+                return "group";
+        }
 
         return "single";
     }
@@ -288,11 +293,13 @@ export default class DataAdapter {
                         _dsArray.forEach(function(d, i) {
                             if (groupRefs.length - 1 < i)
                                 groupRefs.push(Helper.guid());
+                            if (Helper.isEmpty(groups[i]))
+                                groups.push('data' + (i+1));
                             _stackItem = {
                                 "color": color(i),
                                 "y0": d,
                                 "y1": d > 0 ? d : 0,
-                                "group": groups[i] || 'data' + (i+1),
+                                "group": groups[i],
                                 "name": Helper.get(self.keys.name, data),
                                 "value": d,
                                 "data-ref": Helper.guid(),
@@ -304,11 +311,13 @@ export default class DataAdapter {
                     } else {
                         if (groupRefs.length == 0)
                             groupRefs.push(Helper.guid());
+                        if (Helper.isEmpty(groups[0]))
+                            groups.push('data1');
                         _stackItem = {
                             "color": color(0),
                             "y0": _dsArray,
                             "y1": _dsArray > 0 ? _dsArray : 0,
-                            "group": groups[0] || 'data' + (1),
+                            "group": groups[0],
                             "name": Helper.get(self.keys.name, data),
                             "value": _dsArray,
                             "data-ref": Helper.guid(),
@@ -321,6 +330,7 @@ export default class DataAdapter {
                     self.dataTarget.push(_stack);
                 });
 
+                self.groups = groups;
                 return self.dataTarget;
                 break;
 
@@ -350,11 +360,13 @@ export default class DataAdapter {
                         _dsArray.forEach(function(d, i) {
                             if (groupRefs.length - 1 < i)
                                 groupRefs.push(Helper.guid());
+                            if (Helper.isEmpty(stacks[i]))
+                                stacks.push('data' + (i+1));
                             _stackItem = {
                                 "color": color(i),
                                 "y0": d,
                                 "y1": d > 0 ? d + _posBase : _negBase,
-                                "group": stacks[i]  || 'data' + (i+1),
+                                "group": stacks[i],
                                 "name": Helper.get(self.keys.name, data),
                                 "value": d,
                                 "data-ref": Helper.guid(),
@@ -368,11 +380,13 @@ export default class DataAdapter {
                     } else {
                         if (groupRefs.length == 0)
                             groupRefs.push(Helper.guid());
+                        if (Helper.isEmpty(stacks[0]))
+                            stacks.push('data1');
                         _stackItem = {
                             "color": color(0),
                             "y0": _dsArray,
                             "y1": _dsArray > 0 ? _dsArray : 0,
-                            "group": stacks[0] || 'data' + (1),
+                            "group": stacks[0],
                             "name": Helper.get(self.keys.name, data),
                             "value": _dsArray,
                             "data-ref": Helper.guid(),
@@ -385,6 +399,7 @@ export default class DataAdapter {
                     self.dataTarget.push(_stack);
                 });
 
+                self.stacks = stacks;
                 return self.dataTarget;
                 break;
 

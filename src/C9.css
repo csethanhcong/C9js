@@ -148,6 +148,7 @@
     border-radius: 2px;
     font-size: 10px;
     box-shadow: 1px 1px 5px 0px rgba(50, 50, 50, 0.6);
+    z-index: 10;
 }
 
 .c9-custom-tooltip-container strong {

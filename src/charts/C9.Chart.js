@@ -13,7 +13,7 @@ export default class Chart {
                 top: 100,
                 left: 50,
                 right: 50,
-                bottom:100
+                bottom: 50
             },
 
             // interaction in chart

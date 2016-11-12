@@ -8,7 +8,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 
-	    <title>C9js - Examples</title>
+	    <title>Change Pie Chart Radius</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,83 +83,107 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Change Pie Chart Radius</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>change_pie_chart_radius.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
-    {name: "A", value: .0245},
-    {name: "B", value: .01492},
-    {name: "C", value: .02782},
-    {name: "D", value: .04253},
-    {name: "E", value: 1},
-    {name: "F", value: .02288},
-    {name: "G", value: .02015},
-    {name: "H", value: .06094},
-    {name: "I", value: .5},
+    {name: 'A', value: .08167},
+    {name: 'B', value: .01492},
+    {name: 'C', value: .02782},
+    {name: 'D', value: .04253},
+    {name: 'E', value: .12702},
+    {name: 'F', value: .02288},
+    {name: 'G', value: .02015},
+    {name: 'H', value: .06094},
+    {name: 'I', value: .06966},
+    {name: 'J', value: .00153},
+    {name: 'K', value: .00772},
+    {name: 'L', value: .04025},
+    {name: 'M', value: .02406},
+    {name: 'N', value: .06749},
+    {name: 'O', value: .07507},
+    {name: 'P', value: .01929},
+    {name: 'Q', value: .00095},
+    {name: 'R', value: .05987},
+    {name: 'S', value: .06327},
+    {name: 'T', value: .09056},
+    {name: 'U', value: .02758},
+    {name: 'V', value: .00978},
+    {name: 'W', value: .02360},
+    {name: 'X', value: .00150},
+    {name: 'Y', value: .01974},
+    {name: 'Z', value: .00074},
 ];
 
 var options1 = {
-    id: "#demo1",
-    width: 750, 
-    height: 300,
-    margin: {
-        top: 50
-    },
+    id: "demo1",
+    width: 1100, 
+    height: 400,
+    radius: 150,
     data: {
         plain: data1,
-    }, 
+    },
+    title: {
+        text: "Frequency of English Letters"
+    }
 };
 
-var barChart = new C9.BarChart(options1);
-barChart.draw();</code></pre>
+var pieChart = new C9.PieChart(options1);
+pieChart.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-
 			var data1 = [
-					{name: "A", value:	.0245},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
+					{name: 'A', value: .08167},
+					{name: 'B', value: .01492},
+					{name: 'C', value: .02782},
+					{name: 'D', value: .04253},
+					{name: 'E', value: .12702},
+					{name: 'F', value: .02288},
+					{name: 'G', value: .02015},
+					{name: 'H', value: .06094},
+					{name: 'I', value: .06966},
+					{name: 'J', value: .00153},
+					{name: 'K', value: .00772},
+					{name: 'L', value: .04025},
+					{name: 'M', value: .02406},
+					{name: 'N', value: .06749},
+					{name: 'O', value: .07507},
+					{name: 'P', value: .01929},
+					{name: 'Q', value: .00095},
+					{name: 'R', value: .05987},
+					{name: 'S', value: .06327},
+					{name: 'T', value: .09056},
+					{name: 'U', value: .02758},
+					{name: 'V', value: .00978},
+					{name: 'W', value: .02360},
+					{name: 'X', value: .00150},
+					{name: 'Y', value: .01974},
+					{name: 'Z', value: .00074},
 				];
 
 			var options1 = {
-				id: "#demo1", 
-				width: 750, 
-				height: 300,
-				margin: {
-					top: 50
-				},
+				id: "demo1", 
+				width: 1100, 
+				height: 400,
+				radius: 150,
 				data: {
 					plain: data1,
-				}, 
-				// axis: {
-				// 	x: {
-				// 		show: true,
-				// 	},
-				// 	y: {
-				// 		show: false,
-				// 	}
-				// },
-				legend: {
-					show: false,
 				},
+				title: {
+					text: "Frequency of English Letters"
+				}
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
+			var pieChart = new C9.PieChart(options1);
+			pieChart.draw();
 		</script>
 		
 	</body>

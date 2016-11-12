@@ -8,7 +8,7 @@
 	    <meta name="description" content="">
 	    <meta name="author" content="">
 
-	    <title>C9js - Examples</title>
+	    <title>Logarithmic Data Bar Chart</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,38 +83,47 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Display Logarithmic Data as Bar Chart</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>logarithmic_data_bar_chart.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
-    {name: "A", value: .0245},
-    {name: "B", value: .01492},
-    {name: "C", value: .02782},
-    {name: "D", value: .04253},
-    {name: "E", value: 1},
-    {name: "F", value: .02288},
-    {name: "G", value: .02015},
-    {name: "H", value: .06094},
-    {name: "I", value: .5},
+    {name: 'Monaco', value: 37863},
+    {name: 'Liechtenstein', value: 37776},
+    {name: 'San Marino', value: 31950},
+    {name: 'Greenland', value: 56196},
+    {name: 'Viet Nam', value: 94444200},
+    {name: 'Egypt', value: 93383574},
+    {name: 'Germany', value: 80682351},
+    {name: 'U.S.', value: 324118787},
+    {name: 'Brazil', value: 209567920},
+    {name: 'Palau', value: 21501},
 ];
 
 var options1 = {
-    id: "#demo1",
-    width: 750, 
-    height: 300,
-    margin: {
-        top: 50
-    },
+    id: "demo1",
+    width: 1100, 
+    height: 500,
     data: {
         plain: data1,
-    }, 
+    },
+    title: {
+        text: "The Populations in some Countries"
+    },
+    isLogaric: true,
+    axis: {
+        y: {
+            tick: {
+                format: d3.format(',.1s')
+            }
+        }
+    }
 };
 
 var barChart = new C9.BarChart(options1);
@@ -123,40 +132,37 @@ barChart.draw();</code></pre>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-
 			var data1 = [
-					{name: "A", value:	.0245},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
+					{name: 'Monaco', value: 37863},
+					{name: 'Liechtenstein', value: 37776},
+					{name: 'San Marino', value: 31950},
+					{name: 'Greenland', value: 56196},
+					{name: 'Viet Nam', value: 94444200},
+					{name: 'Egypt', value: 93383574},
+					{name: 'Germany', value: 80682351},
+					{name: 'U.S.', value: 324118787},
+					{name: 'Brazil', value: 209567920},
+					{name: 'Palau', value: 21501},
 				];
 
 			var options1 = {
-				id: "#demo1", 
-				width: 750, 
-				height: 300,
-				margin: {
-					top: 50
-				},
+				id: "demo1", 
+				width: 1100, 
+				height: 500,
 				data: {
 					plain: data1,
-				}, 
-				// axis: {
-				// 	x: {
-				// 		show: true,
-				// 	},
-				// 	y: {
-				// 		show: false,
-				// 	}
-				// },
-				legend: {
-					show: false,
 				},
+				title: {
+					text: "The Populations in some Countries"
+				},
+				isLogaric: true,
+				axis: {
+					y: {
+						tick: {
+							format: d3.format(',.1s')
+						}
+					}
+				}
 			};
 			var barChart = new C9.BarChart(options1);
 			barChart.draw();
