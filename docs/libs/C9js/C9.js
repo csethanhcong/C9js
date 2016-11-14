@@ -219,6 +219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var da = new _C16.default(dataOption);
 	            self.dataTarget = da.getDataTarget(self.chartType);
+	            console.log(self.dataTarget);
 	            self.dataSource = da.dataSource;
 	
 	            var barChartType = da.getDataTypeForBarChart();
@@ -3406,7 +3407,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._dataSource = null;
 	        self._dataTarget = []; // Initialize new Array to use Array methods
 	        self._dataRefs = [];
-	        self.initDataSource(options);
+	
+	        self._options = options;
+	
+	        self.updateConfig(config);
 	    }
 	
 	    /*==============================
@@ -3415,46 +3419,67 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(DataAdapter, [{
-	        key: "initDataSource",
+	        key: "updateConfig",
 	
 	        /*=====  End of Setter  ======*/
 	
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
-	        value: function initDataSource(options) {
+	        value: function updateConfig(config) {
 	            var self = this;
 	
-	            if (self.hasPlainData(options)) {
-	                self.executePlainData(options);
-	            } else if (self.hasFile(options)) {
-	                self.executeFile(options);
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            self.initDataSource();
+	        }
+	    }, {
+	        key: "initDataSource",
+	        value: function initDataSource() {
+	            var self = this;
+	
+	            var options = self.options;
+	
+	            if (self.hasPlainData()) {
+	                self.executePlainData();
+	            } else if (self.hasFile()) {
+	                self.executeFile();
 	            }
 	        }
 	    }, {
 	        key: "hasPlainData",
-	        value: function hasPlainData(options) {
+	        value: function hasPlainData() {
+	            var self = this;
+	
+	            var options = self.options;
+	
 	            // return options.plain && Helper.isArray(options.plain);
-	            return options.plain; // fix for map
+	            return !_C2.default.isEmpty(options.plain); // fix for map
 	        }
 	    }, {
 	        key: "hasFile",
-	        value: function hasFile(options) {
+	        value: function hasFile() {
+	            var self = this;
+	
+	            var options = self.options;
+	
 	            return options.file && _C2.default.isObject(options.file);
 	        }
 	    }, {
 	        key: "executePlainData",
-	        value: function executePlainData(options) {
+	        value: function executePlainData() {
 	            var self = this;
+	
+	            var options = self.options;
 	
 	            self._dataSource = options.plain;
 	        }
 	    }, {
 	        key: "executeFile",
-	        value: function executeFile(options) {
+	        value: function executeFile() {
 	            var self = this;
 	
-	            self._file = _C2.default.merge(options.file, config.file);
+	            self.file = self.options.file;
 	
 	            if (self._file && self._file.type) {
 	
@@ -4008,12 +4033,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "getCsv",
 	        value: function getCsv() {
-	
 	            var self = this;
 	
 	            d3.csv(self.file.url, function (err, data) {
 	                if (err) throw err;
-	
 	                return data;
 	            });
 	        }
@@ -4077,9 +4100,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*=====  End of Data Input From Files  ======*/
 	
 	    }, {
-	        key: "keys",
+	        key: "options",
 	        get: function get() {
-	            return this._keys;
+	            return this._options;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -4087,6 +4110,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
+	            }
+	        }
+	    }, {
+	        key: "file",
+	        get: function get() {
+	            return this._file;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._file = arg;
+	            }
+	        }
+	    }, {
+	        key: "keys",
+	        get: function get() {
+	            return this._keys;
+	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._keys = arg;
