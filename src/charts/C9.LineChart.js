@@ -19,8 +19,8 @@ export default class LineChart extends Chart {
             point: {
                 show: true,
                 fill: "steelblue",
-                stroke: "#d26b5f",
-                'stroke-width': 2,
+                stroke: "steelblue",
+                'stroke-width': 1,
                 opacity: 1.0,
                 radius: 5,
             },

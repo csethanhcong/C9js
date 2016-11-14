@@ -1627,8 +1627,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x: {
 	                tick: {
 	                    rotate: 0,
-	                    count: 10,
-	                    size: 6,
+	                    count: 10, // number of ticks to display
+	                    size: 6, // size of tick
 	                    padding: 3,
 	                    format: undefined,
 	                    values: [],
@@ -2737,7 +2737,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            container: "body",
 	            show: false,
 	            headings: ["Name", "Value"],
-	            style: "stripe", // || "stripe"
+	            style: "default", // || "stripe"
 	            serial: true,
 	            hover: {
 	                enable: true,
@@ -2840,7 +2840,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                });
 	
 	                // Add group if chart is bar chart
-	                if (self.chart.chartType == "bar") bRows.append("td").text(function (d) {
+	                if (self.chart.chartType == "bar" && self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) bRows.append("td").text(function (d) {
 	                    return d.group;
 	                });
 	            }
@@ -2860,7 +2860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var hoverOptions = chart.hover.options,
 	                hoverEnable = chart.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOverCallback = hoverOptions.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = chart.click.callback;
 	
@@ -2902,7 +2902,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var hoverOptions = chart.hover.options,
 	                hoverEnable = chart.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOverCallback = hoverOptions.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = chart.click.callback;
 	
@@ -4710,8 +4710,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            point: {
 	                show: true,
 	                fill: "steelblue",
-	                stroke: "#d26b5f",
-	                'stroke-width': 2,
+	                stroke: "steelblue",
+	                'stroke-width': 1,
 	                opacity: 1.0,
 	                radius: 5
 	            },

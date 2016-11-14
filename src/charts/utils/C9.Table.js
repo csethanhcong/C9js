@@ -8,7 +8,7 @@ export default class Table {
             container: "body",
             show: false,
             headings: ["Name", "Value"],
-            style: "stripe", // || "stripe"
+            style: "default", // || "stripe"
             serial: true,
             hover: {
                 enable: true,
@@ -157,7 +157,7 @@ export default class Table {
                     });
 
             // Add group if chart is bar chart
-            if (self.chart.chartType == "bar")
+            if (self.chart.chartType == "bar" && self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined)
                 bRows.append("td")
                         .text(function(d) {
                             return d.group;
@@ -177,7 +177,7 @@ export default class Table {
 
         var hoverOptions        = chart.hover.options,
             hoverEnable         = chart.hover.enable,
-            onMouseOverCallback = hoverOptions.onMouseOver.callback,
+            onMouseOverCallback = hoverOptions.callback,
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
             onClickCallback     = chart.click.callback;
 
@@ -220,7 +220,7 @@ export default class Table {
 
         var hoverOptions        = chart.hover.options,
             hoverEnable         = chart.hover.enable,
-            onMouseOverCallback = hoverOptions.onMouseOver.callback,
+            onMouseOverCallback = hoverOptions.callback,
             onMouseOutCallback  = hoverOptions.onMouseOut.callback,
             onClickCallback     = chart.click.callback;
 

@@ -7,9 +7,9 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
 	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Custom Event Listener">
+	    <meta name="title" content="C9js - Legend Position">
 
-	    <title>C9js - Custom Event Listener</title>
+	    <title>C9js - Legend Position</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -84,76 +84,69 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Custom Event Listener</h2>
-		</div>
-		<div class="row">
-			<div class="col-md-8" id="chart"></div>
-			<div class="col-md-4" style="border: solid 1px #f5f5f5; overflow-y: auto; max-height: 450px;">
-				<h3>User tracking log</h4>
-				<hr class="sample-hr">
-				<div id="expand"></div>
-			</div>
+		  <h2>Legend Position</h2>
 		</div>
 		<div id="chart"></div>
 		
 		<div class="section example">
-			<h3># <span>custom_event_listener.js</span></h3>
+			<h3># <span>legend_position.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
-				<pre><code class="javascript">var data1 = [
-    {name: "A", value:    .0245},
-    {name: "B",    value:  .01492},
-    {name: "C", value:    .02782},
-    {name: "D", value:    .04253},
-    {name: "E", value:    1},
-    {name: "F", value:    .02288},
-    {name: "G", value:    .02015},
-    {name: "H", value:    .06094},
-    {name: "I", value:    .5},
-    ];
+				<pre><code class="javascript">var data = [
+    {name: "A", value: .0245},
+    {name: "B", value: .01492},
+    {name: "C", value: .02782},
+    {name: "D", value: .04253},
+    {name: "E", value: .01},
+    {name: "F", value: .02288},
+    {name: "G", value: .02015},
+    {name: "H", value: .06094},
+    {name: "I", value: .5},
+];
 
-var options1 = {
+var options = {
     id: "chart",
     data: {
-        plain: data1,
+        plain: data,
     },
+    legend: {
+        position: 'right', // 'right', 'bottom', 'left'
+        margin: [10, 20, 10, 20]
+    }
 };
 
-var barChart = new C9.BarChart(options1);
-barChart.draw();
-barChart.on('mouseover', function(data) {
-	document.getElementById('expand').innerHTML += ' User just hover user ' + data.name + ' consisting of ' + data.value;
-});</code></pre>
+var barChart = new C9.BarChart(options);
+    barChart.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
 
-			var data1 = [
+			var data = [
 					{name: "A", value:	.0245},
 					{name: "B",	value:  .01492},
 					{name: "C", value:	.02782},
 					{name: "D", value:	.04253},
-					{name: "E", value:	1},
+					{name: "E", value:	.01},
 					{name: "F", value:	.02288},
 					{name: "G", value:	.02015},
 					{name: "H", value:	.06094},
 					{name: "I", value:	.5},
-				];
-
-			var options1 = {
+						];
+			var options = {
 				id: "chart",
 				data: {
-					plain: data1,
+					plain: data,
 				},
+				legend: {
+					position: 'right', // 'right', 'bottom', 'left'
+					margin: [10, 20, 10, 20]
+				}
 			};
-			var barChart = new C9.BarChart(options1);
+			var barChart = new C9.BarChart(options);
 			barChart.draw();
-			barChart.on('mouseover', function(data) {
-				document.getElementById('expand').innerHTML += '<p> User just hover user ' + data.name + ' consisting of ' + data.value + '</p>';
-			});
 		</script>
 		
 	</body>

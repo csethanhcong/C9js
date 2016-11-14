@@ -7,9 +7,9 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
       <meta name="author" content="Cong Pham, Huy Do">
-      <meta name="title" content="C9js - Tooltip Format">
+      <meta name="title" content="C9js - Tooltip Position">
 
-      <title>C9js - Tooltip Format</title>
+      <title>C9js - Tooltip Position</title>
       <link rel="shortcut icon" href="../../images/icon.ico">
 
       <!-- Bootstrap Core CSS -->
@@ -84,79 +84,72 @@
   <div class="container">
     <!-- Ex1: Bar Chart -->
     <div class="page-header">
-      <h2>Tooltip Format</h2>
+      <h2>Tooltip Position</h2>
     </div>
     <div id="chart"></div>
     
     <div class="section example">
-      <h3># <span>tooltip_format.js</span></h3>
+      <h3># <span>tooltip_position.js</span></h3>
       <section>
         <div class="example-edit">
           <a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
         </div>
         <pre><code class="javascript">var data = [
-  {name: "Adam", value: [{"start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
-  {name: "Eva", value: [{"start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
-  {name: "Jes", value: [{"start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
+  {"name": "Seldom", "value": 83}, 
+  {"name": "Weekly", "value": 89}, 
+  {"name": "Daily", "value": 95}, 
+  {"name": "Once", "value": 58}, 
+  {"name": "Monthly", "value": 82}, 
+  {"name": "Never", "value": 34}
 ];
 
-var options = {
-  id: "chart", 
-  margin: {
-    left: 100, 
-  }, 
-  data: {
-    plain: data 
-  },
-  tooltip: {
-    format: function(data, index) {
-      return data.name + 'Start at hour: ' + data.start.getHours() + 'End at hour: ' + data.end.getHours();
-    }
-  },
-  axis: {
-    x: {
-      label: {
-        text : 'Time'
-      }
-    }
-  },
-  striped: true,
+var options = {  
+   id:"chart",
+   data: {
+    plain: data
+   },
+   tooltip: {
+    position: 'right' // 'top', 'bottom', 'left'
+   }
 };
-var timelineChart = new C9.TimeLine(options);
-timelineChart.draw();</code></pre>
+
+var pieChart = new C9.PieChart(options);
+pieChart.draw();</code></pre>
       </section>
     </div>
     <script>hljs.initHighlightingOnLoad();</script>
     <script type="text/javascript" charset="utf-8">
-    var data = [
-            {name: "Adam", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
-            {name: "Eva", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
-            {name: "Jes", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
-          ];
-    var options = {
-      id: "chart", 
-      margin: {
-        left: 100, 
-      }, 
-      data: {
-        plain: data 
-      },
-      tooltip: {
-        format: function(data, index) {
-          return '<strong>' + data.name + '</strong>' + '<br>' + 'Start at hour: ' + data.start.getHours() + '<br>' + 'End at hour: ' + data.end.getHours();
-        }
-      },
-      axis: {
-        x: {
-          label: {
-            text : 'Time'
-          }
-        }
-      },
-      striped: true,
-    };
-    var timelineChart = new C9.TimeLine(options);
-    timelineChart.draw();
+    var data = [{
+  "name": "Seldom",
+  "value": 83
+}, {
+  "name": "Weekly",
+  "value": 89
+}, {
+  "name": "Daily",
+  "value": 95
+}, {
+  "name": "Once",
+  "value": 58
+}, {
+  "name": "Monthly",
+  "value": 82
+}, {
+  "name": "Never",
+  "value": 34
+}];
+      var options = {  
+         id:"chart",
+         data: {
+          plain: data
+         },
+         titleText:'Pie Chart',
+         tooltip: {
+          position: 'right'
+         }
+      };
+      var pieChart = new C9.PieChart(options);
+      pieChart.draw();
   </script>
     
   </body>
