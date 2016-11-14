@@ -6,7 +6,7 @@ export default class Tooltip {
 
         var config = {
             show: true,
-            position: 'left', // [top, right, bottom, left]
+            position: 'right', // [top, right, bottom, left]
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             fontColor: '#fff',
             fontSize: '11px',
@@ -243,8 +243,10 @@ export default class Tooltip {
                 break;
             case 'right':
                 r = {
-                    'left': (d3.event.pageX - offset.left - 50) + 'px',
-                    'top': (d3.event.pageY - offset.top - 50) + 'px'
+                    // 'left': (d3.event.pageX - offset.left - 50) + 'px',
+                    'left': (d3.event.pageX - offset.left) + 'px',
+                    // 'top': (d3.event.pageY - offset.top - 50) + 'px'
+                    'top': (d3.event.pageY - offset.top - 25) + 'px'
                 };
                 break;
             case 'bottom':
@@ -255,8 +257,10 @@ export default class Tooltip {
                 break;
             case 'left':
                 r = {
-                    'left': (d3.event.pageX - offset.left + 50) + 'px',
-                    'top': (d3.event.pageY - offset.top - 50) + 'px'
+                    // 'left': (d3.event.pageX - offset.left + 50) + 'px',
+                    'left': (d3.event.pageX - offset.left - 50) + 'px',
+                    // 'top': (d3.event.pageY - offset.top - 50) + 'px'
+                    'top': (d3.event.pageY - offset.top - 25) + 'px'
                 };
                 break;
         }

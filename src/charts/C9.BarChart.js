@@ -101,6 +101,7 @@ export default class BarChart extends Chart {
 
         var da = new DataAdapter(dataOption);
         self.dataTarget = da.getDataTarget(self.chartType);
+        console.log(self.dataTarget);
         self.dataSource = da.dataSource;
 
         var barChartType = da.getDataTypeForBarChart();

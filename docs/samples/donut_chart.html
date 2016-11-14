@@ -56,62 +56,21 @@
 		</div>
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
-			var data3 = [
-					{name: "Male", value:	10},
-					{name: "LGBT", value:	35},
-					{name: "Female1",	value:  25},
-					{name: "Female2",	value:  25},
-					{name: "Female3",	value:  25},
-				];
-			var options3 = {
-			   	id:"#demo1",
-			   	width:750,
-			   	height:600,
-			   	margin:{  
-					top:100,
-					left:100,
-					right:50,
-					bottom:100
-			   	},
-			   	data: {
-			   		plain: data3
-			   	},
-			   	hover: {
-	                options: {
-	                    onMouseOver: {
-	                        callback: function(data) {
-	                            console.log(data);
-	                        },
-	                    },
-	                    onMouseOut: {
-	                        callback: function(data) {
-	                            console.log(data);
-	                        },
-	                    },
-	                    onMouseMove: {
-	                        callback: function(data) {
-	                            // console.dir(data);
-	                        },
-	                    }
-	                }
-	            },
-	            legend: {
-	            	show:true
-	            },
-				titleText:'Donut Chart',
-				colorRange:"category20",
-				outerRadius:200,
-				innerRadius:100,
-				titlePosition:'bottom',
-				titleSize:'20px',
-				tooltip: {
-					format: function(d) {
-				   	return 'Name: ' + d.data.name + ' <strong>Value: ' + d.data.value + '</strong>';
-				   }
-				},
+			var options = {
+				id: "chart",
+				data: {
+					file: {
+						url: '/data/data_os.csv',
+						type: 'csv'
+					},
+					keys: {
+						name: 'OS',
+						value: 'Rate'
+					}
+				}
 			};
-			var donutChart = new C9.DonutChart(options3);
-			donutChart.draw();
+			var barChart = new C9.BarChart(options);
+			barChart.draw();
 		</script>
 		
 	</body>

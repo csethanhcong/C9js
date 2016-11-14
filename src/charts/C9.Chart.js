@@ -70,7 +70,7 @@ export default class Chart {
             // tooltip
             tooltip: {
                 show: true,
-                position: 'left', // [top, right, bottom, left]
+                position: 'right', // [top, right, bottom, left]
                 backgroundColor: 'rgba(0, 0, 0, 0.8)',
                 fontColor: '#fff',
                 fontSize: '11px',

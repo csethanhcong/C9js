@@ -33,14 +33,23 @@ export default class DataAdapter {
         self._dataSource = null;
         self._dataTarget = []; // Initialize new Array to use Array methods
         self._dataRefs = [];
-        self.initDataSource(options);
 
+        self._options = options;
 
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
+    get options() {
+        return this._options;
+    }
+
+    get file() {
+        return this._file;
+    }
+
     get keys() {
         return this._keys;
     }
@@ -73,6 +82,18 @@ export default class DataAdapter {
     /*==============================
     =            Setter            =
     ==============================*/
+    set options(arg) {
+        if (arg) {
+            this._options = arg;
+        }
+    }
+
+    set file(arg) {
+        if (arg) {
+            this._file = arg;
+        }
+    }
+
     set keys(arg) {
         if (arg) {
             this._keys = arg;
@@ -119,35 +140,55 @@ export default class DataAdapter {
     /*======================================
     =            Main Functions            =
     ======================================*/
-    initDataSource(options) {
+    updateConfig(config) {
         var self = this;
 
-        if (self.hasPlainData(options)) {
-            self.executePlainData(options);
-        } else if (self.hasFile(options)) {
-            self.executeFile(options);
+        self.options = Helper.mergeDeep(config, self.options);
+
+        self.initDataSource();
+    }
+
+    initDataSource() {
+        var self = this;
+
+        let options = self.options;
+
+        if (self.hasPlainData()) {
+            self.executePlainData();
+        } else if (self.hasFile()) {
+            self.executeFile();
         }
     }
 
-    hasPlainData(options) {
+    hasPlainData() {
+        var self = this;
+
+        let options = self.options;
+
         // return options.plain && Helper.isArray(options.plain);
-        return options.plain; // fix for map
+        return !Helper.isEmpty(options.plain); // fix for map
     }
 
-    hasFile(options) {
+    hasFile() {
+        var self = this;
+
+        let options = self.options;
+
         return options.file && Helper.isObject(options.file);
     }
 
-    executePlainData(options) {
+    executePlainData() {
         var self = this;
+
+        let options = self.options;
 
         self._dataSource = options.plain;
     }
 
-    executeFile(options) {
+    executeFile() {
         var self = this;
 
-        self._file  = Helper.merge(options.file, config.file);
+        self.file  = self.options.file;
 
         if (self._file && self._file.type) {
 
@@ -684,12 +725,10 @@ export default class DataAdapter {
     =============================================*/
     
     getCsv() {
-
         var self = this;
 
         d3.csv(self.file.url, function(err, data) {
             if (err) throw err;
-            
             return data;
         });
 

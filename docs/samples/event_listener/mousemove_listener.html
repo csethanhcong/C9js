@@ -7,9 +7,9 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
 	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Custom Event Listener">
+	    <meta name="title" content="C9js - Mouse Move Listener">
 
-	    <title>C9js - Custom Event Listener</title>
+	    <title>C9js - Mouse Move Listener</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -84,7 +84,7 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Custom Event Listener</h2>
+		  <h2>Mouse Move Listener</h2>
 		</div>
 		<div class="row">
 			<div class="col-md-8" id="chart"></div>
@@ -97,22 +97,14 @@
 		<div id="chart"></div>
 		
 		<div class="section example">
-			<h3># <span>custom_event_listener.js</span></h3>
+			<h3># <span>mousemove_listener.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
-    {name: "A", value:    .0245},
-    {name: "B",    value:  .01492},
-    {name: "C", value:    .02782},
-    {name: "D", value:    .04253},
-    {name: "E", value:    1},
-    {name: "F", value:    .02288},
-    {name: "G", value:    .02015},
-    {name: "H", value:    .06094},
-    {name: "I", value:    .5},
-    ];
+    {"name": "Jessie", "value": [100, 200, 300, 120, 320]}
+];
 
 var options1 = {
     id: "chart",
@@ -121,10 +113,10 @@ var options1 = {
     },
 };
 
-var barChart = new C9.BarChart(options1);
-barChart.draw();
-barChart.on('mouseover', function(data) {
-	document.getElementById('expand').innerHTML += ' User just hover user ' + data.name + ' consisting of ' + data.value;
+var lineChart = new C9.LineChart(options1);
+lineChart.draw();
+lineChart.on('mousemove', function(data) {
+    document.getElementById('expand').innerHTML += ' User just moved over user ' + data[0].name + ' consisting of ' + data[0].valueY;
 });</code></pre>
 			</section>
 		</div>
@@ -132,27 +124,19 @@ barChart.on('mouseover', function(data) {
 	    <script type="text/javascript" charset="utf-8">
 
 			var data1 = [
-					{name: "A", value:	.0245},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
+					{"name": "Jessie", "value": [100, 200, 300, 120, 320]}
 				];
 
 			var options1 = {
 				id: "chart",
 				data: {
-					plain: data1,
+					plain: data1
 				},
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
-			barChart.on('mouseover', function(data) {
-				document.getElementById('expand').innerHTML += '<p> User just hover user ' + data.name + ' consisting of ' + data.value + '</p>';
+			var lineChart = new C9.LineChart(options1);
+			lineChart.draw();
+			lineChart.on('mousemove', function(data) {
+				document.getElementById('expand').innerHTML += '<p> User just moved over user ' + data[0].name + ' consisting of ' + data[0].valueY + '</p>';
 			});
 		</script>
 		
