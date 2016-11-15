@@ -689,7 +689,7 @@ export default class LineChart extends Chart {
                 for (let i=0; i < sameTimeValueArr.length; i++) {
                     let circle = d3.select("circle[data-ref='" + sameTimeValueArr[i]['data-ref'] + "']");
                     circle
-                    .style('fill', 'steelblue')
+                    .style('fill', self.getLightenColor(self.options.point.fill))
                     .style('fill-opacity', 1);
                 }
 

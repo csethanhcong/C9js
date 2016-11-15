@@ -5399,7 +5399,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // Update circle style after mouse move
 	                    for (var i = 0; i < sameTimeValueArr.length; i++) {
 	                        var circle = d3.select("circle[data-ref='" + sameTimeValueArr[i]['data-ref'] + "']");
-	                        circle.style('fill', 'steelblue').style('fill-opacity', 1);
+	                        circle.style('fill', self.getLightenColor(self.options.point.fill)).style('fill-opacity', 1);
 	                    }
 	
 	                    // focus.select('#focusCircle')
