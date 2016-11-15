@@ -244,6 +244,7 @@ export default class Axis {
             .attr("class", "c9-axis c9-axis-x")
             .attr("transform", "translate(0," + (self.height) + ")")
             .call(self.xAxis);
+            
         //draw tick
         d3.select(".c9-axis.c9-axis-x").selectAll("text")
             .style("text-anchor", textAnchor(self.options.x.tick.rotate))

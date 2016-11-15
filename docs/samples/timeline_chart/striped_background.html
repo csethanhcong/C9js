@@ -9,7 +9,7 @@
 	    <meta name="author" content="Cong Pham, Huy Do">
 	    <meta name="title" content="C9js - Examples">
 
-	    <title>C9js - Simple Stacked Timeline</title>
+	    <title>C9js - Change Background to Striped Background</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -84,31 +84,31 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Simple Stacked Timeline</h2>
+		  <h2>Change Background to Striped Background</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>simple_stacked_timeline.js</span></h3>
+			<h3># <span>striped_background.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
     {
-        name: "person a", 
+        name: "Doctor 1", 
         value: [
-            {"start": 1355752800000, "end": 1355759900000},
-            {"start": 1355767900000, "end": 1355774400000}
+            {start: "December 17, 2012 21:00:00", end: "December 17, 2012 23:00:00"}, 
+            {start: "December 17, 2012 23:30:00", end: "December 18, 2012 11:00:00"}
         ]
     },
     {
-        name: "person b", 
-        value: {"start": 1355759910000, "end": 1355761900000}
+        name: "Doctor 2", 
+        value: {start: "December 17, 2012 23:00:00", end: "December 17, 2012 23:30:00"}
     },
     {
-        name: "person c", 
-        value: {"start": 1355761910000, "end": 1355763910000}
+        name: "Doctor 3", 
+        value: {start: "December 17, 2012 23:30:00", end: "December 18, 2012 00:05:00"}
     }
 ];
 
@@ -119,17 +119,18 @@ var options1 = {
     data: {
         plain: data1,
     },
+    labelMargin: -20,
     title: {
-        text: "Simple Stacked Timeline"
+        text: "Change Background to Striped Background"
     },
     axis: {
         x: {
-            tick: {
-                format: d3.time.format('%I:%M %p') //https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md
+            label: {
+                text: ""
             }
         }
     },
-    labelMargin: -20 // change margin of label
+    striped: true //default false
 };
 var timeline = new C9.TimeLine(options1);
 timeline.draw();</code></pre>
@@ -138,21 +139,21 @@ timeline.draw();</code></pre>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-	            {
-	            	name: "person a", 
-	            	value: [
-			          	{"start": 1355752800000, "end": 1355759900000},
-			          	{"start": 1355767900000, "end": 1355774400000}
-	              	]
-	          	},
-	            {
-	            	name: "person b", 
-	            	value: {"start": 1355759910000, "end": 1355761900000}
-	          	},
-	    		{
-	    			name: "person c", 
-	    			value: {"start": 1355761910000, "end": 1355763910000}
-	          	}
+            	{
+          			name: "Doctor 1", 
+          			value: [
+	          			{start: "December 17, 2012 21:00:00", end: "December 17, 2012 23:00:00"}, 
+	          			{start: "December 17, 2012 23:30:00", end: "December 18, 2012 11:00:00"}
+          			]
+          		},
+        		{
+        			name: "Doctor 2", 
+        			value: {start: "December 17, 2012 23:00:00", end: "December 17, 2012 23:30:00"}
+        		},
+            	{
+            		name: "Doctor 3", 
+            		value: {start: "December 17, 2012 23:30:00", end: "December 18, 2012 00:05:00"}
+            	}
             ];
 
 			var options1 = {
@@ -163,16 +164,17 @@ timeline.draw();</code></pre>
 					plain: data1,
 				},
 				title: {
-					text: "Simple Stacked Timeline"
+					text: "Change Background to Striped Background"
 				},
+				labelMargin: -20,
 				axis: {
 					x: {
-						tick: {
-							format: d3.time.format('%I:%M %p')
-						}
+						label: {
+							text: ""
+						}	
 					}
 				},
-				labelMargin: -20
+				striped: true //default false
 			};
 			var timeline = new C9.TimeLine(options1);
 			timeline.draw();

@@ -218,7 +218,7 @@ export default class Tooltip {
                 break;
             case 'timeline':
                 format = function(data) {
-                    return '<strong>' + data.name + '</strong>' + '<br><span> Start at: ' + data.start + '</span><br><span> End at: ' + data.end + '</span>' 
+                    return (data.name ? '<strong>' + data.name + '</strong>' : '<img src=' + data.icon + '" width="' + chart.options.itemHeight + '" height="' + chart.options.itemHeight + '">') + '<br><strong>Start at: </strong><span>' + data.start + '</span><br><strong>End at: </strong><span>' + data.end + '</span>' 
                 };
                 break;
         }

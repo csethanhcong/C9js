@@ -178,12 +178,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var config = {
+	        // var config = {
+	        //     // barWidth: undefined,
+	        //     isLogaric: false,
+	        // };
+	
+	        self.config = {
 	            // barWidth: undefined,
 	            isLogaric: false
 	        };
 	
-	        self.updateConfig(config);
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -205,7 +210,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Init Bar Chart Config
 	         */
-	        value: function updateConfig(config) {
+	        value: function updateConfig(config, callback) {
 	            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'updateConfig', this).call(this, config);
 	
 	            var self = this;
@@ -217,44 +222,88 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
-	            console.log(self.dataTarget);
-	            self.dataSource = da.dataSource;
+	            // TESTING
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
 	
-	            var barChartType = da.getDataTypeForBarChart();
-	            if (barChartType != "single") {
-	                self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
-	                self._isGroup = barChartType == "group";
-	            }
+	                var barChartType = da.getDataTypeForBarChart();
+	                if (barChartType != "single") {
+	                    self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+	                    self._isGroup = barChartType == "group";
+	                }
 	
-	            var width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-	            var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
-	                y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+	                // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+	                var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+	                    y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
 	
-	            var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+	                var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
 	
-	            x.domain(self.dataTarget.map(function (d) {
-	                return d[0].name;
-	            }));
+	                x.domain(self.dataTarget.map(function (d) {
+	                    return d[0].name;
+	                }));
 	
-	            y.domain([minMax.min, minMax.max]);
+	                y.domain([minMax.min, minMax.max]);
 	
-	            /******** Handle for grouped, stacked bar chart ********/
-	            if (self.groupNames) {
-	                self.xGroup = d3.scale.ordinal();
-	                self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
-	            }
+	                /******** Handle for grouped, stacked bar chart ********/
+	                if (self.groupNames) {
+	                    self.xGroup = d3.scale.ordinal();
+	                    self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+	                }
 	
-	            /**********************************************/
+	                /**********************************************/
 	
-	            // Make flexible width according to barWidth
-	            // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
-	            self.x = x;
-	            self.y = y;
+	                // Make flexible width according to barWidth
+	                // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+	                self.x = x;
+	                self.y = y;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	
+	            // var da = new DataAdapter(dataOption);
+	            // self.dataTarget = da.getDataTarget(self.chartType);
+	            // console.log(self.dataTarget);
+	            // self.dataSource = da.dataSource;
+	
+	            // var barChartType = da.getDataTypeForBarChart();
+	            // if (barChartType != "single") {
+	            //     self._groupNames    = da.groups.length > 0 ? da.groups : da.stacks;  //define group names use for showing legend
+	            //     self._isGroup       = barChartType == "group";
+	            // }
+	
+	            // var width        = self.width - self.margin.left - self.margin.right,
+	            //     height       = self.height - self.margin.top - self.margin.bottom;
+	
+	            // // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+	            // var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+	            //     y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+	
+	            // var minMax = Helper.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+	
+	            // x.domain(self.dataTarget.map(function(d) {
+	            //     return d[0].name;
+	            // }));
+	
+	            // y.domain([minMax.min, minMax.max]);
+	
+	            // /******** Handle for grouped, stacked bar chart ********/
+	            // if (self.groupNames) {
+	            //     self.xGroup = d3.scale.ordinal();
+	            //     self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+	            // }
+	
+	            // /**********************************************/
+	
+	            // // Make flexible width according to barWidth
+	            // // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+	            // self.x              = x;
+	            // self.y              = y;
 	        }
 	
 	        /**
@@ -265,7 +314,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    }, {
 	        key: 'updateDataConfig',
-	        value: function updateDataConfig(dataCfg) {
+	        value: function updateDataConfig(dataCfg, callback) {
 	            var self = this;
 	
 	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
@@ -273,43 +322,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
-	            self.dataSource = da.dataSource;
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
 	
-	            var barChartType = da.getDataTypeForBarChart();
-	            if (barChartType != "single") {
-	                self.groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
-	                self.isGroup = barChartType == "group";
-	            }
+	                var barChartType = da.getDataTypeForBarChart();
+	                if (barChartType != "single") {
+	                    self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+	                    self._isGroup = barChartType == "group";
+	                }
 	
-	            var width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-	            var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
-	                y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+	                // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+	                var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+	                    y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
 	
-	            var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+	                var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
 	
-	            x.domain(self.dataTarget.map(function (d) {
-	                return d[0].name;
-	            }));
+	                x.domain(self.dataTarget.map(function (d) {
+	                    return d[0].name;
+	                }));
 	
-	            y.domain([minMax.min, minMax.max]);
+	                y.domain([minMax.min, minMax.max]);
 	
-	            /******** Handle for grouped, stacked bar chart ********/
-	            if (self.groupNames) {
-	                self.xGroup = d3.scale.ordinal();
-	                self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
-	            }
+	                /******** Handle for grouped, stacked bar chart ********/
+	                if (self.groupNames) {
+	                    self.xGroup = d3.scale.ordinal();
+	                    self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+	                }
 	
-	            /**********************************************/
+	                /**********************************************/
 	
-	            // Make flexible width according to barWidth
-	            // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
-	            self.x = x;
-	            self.y = y;
+	                // Make flexible width according to barWidth
+	                // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+	                self.x = x;
+	                self.y = y;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	
 	        /**
@@ -579,33 +633,63 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var self = this;
 	
-	            var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
-	            var title = new _C6.default(self.options.title, self);
-	            var legend = new _C8.default(self.options.legend, self, self.dataTarget);
-	            var table = new _C10.default(self.options.table, self, self.dataTarget);
+	            // var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+	            // var title   = new Title(self.options.title, self);
+	            // var legend  = new Legend(self.options.legend, self, self.dataTarget);
+	            // var table   = new Table(self.options.table, self, self.dataTarget);
 	
-	            self.axis = axis;
-	            self.title = title;
-	            self.table = table;
-	            self.legend = legend;
+	            // self.axis = axis;
+	            // self.title = title;
+	            // self.table = table;
+	            // self.legend = legend;
 	
-	            // Draw axis
-	            self.axis.draw();
+	            // TESTING
+	            self.updateConfig(self.config, function (data) {
 	
-	            // Draw title
-	            self.title.draw();
+	                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+	                var table = new _C10.default(self.options.table, self, self.dataTarget);
+	                self.axis = axis;
+	                self.title = title;
+	                self.table = table;
+	                self.legend = legend;
 	
-	            // Update Chart based on dataTarget
-	            self.update(self.dataTarget);
-	            self.updateInteraction();
+	                // Draw axis
+	                self.axis.draw();
 	
-	            // Draw legend
-	            self.legend.draw();
-	            self.legend.updateInteractionForBarChart(self);
+	                // Draw title
+	                self.title.draw();
+	                // Update Chart based on dataTarget
+	                self.update(data);
+	                self.updateInteraction();
 	
-	            // Draw table
-	            self.table.draw();
-	            self.table.updateInteractionForBarChart(self);
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForBarChart(self);
+	
+	                // Draw table
+	                self.table.draw();
+	                self.table.updateInteractionForBarChart(self);
+	            });
+	
+	            // // Draw axis
+	            // self.axis.draw();
+	
+	            // // Draw title
+	            // self.title.draw();
+	
+	            // // Update Chart based on dataTarget
+	            // self.update(self.dataTarget);
+	            // self.updateInteraction();
+	
+	            // // Draw legend
+	            // self.legend.draw();
+	            // self.legend.updateInteractionForBarChart(self);
+	
+	            // // Draw table
+	            // self.table.draw();
+	            // self.table.updateInteractionForBarChart(self);
 	        }
 	
 	        /**
@@ -653,18 +737,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            // Update Chart
-	            self.updateDataConfig(newCfg);
-	            self.update(self.dataTarget);
+	            self.updateDataConfig(newCfg, function (data) {
+	                self.update(data);
 	
-	            // Update Axis
-	            self.axis.update(self.x, self.y, 100);
+	                // Update Axis
+	                self.axis.update(self.x, self.y, 100);
 	
-	            // Update Legend
-	            self.legend.update(self.dataTarget);
-	            self.legend.updateInteractionForBarChart(self);
+	                // Update Legend
+	                self.legend.update(data);
+	                self.legend.updateInteractionForBarChart(self);
 	
-	            // Update Table
-	            self.table.update(self.dataTarget);
+	                // Update Table
+	                self.table.update(data);
+	            });
 	        }
 	        /*=====  End of User's Functions  ======*/
 	
@@ -914,7 +999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        self._options = options;
 	
-	        self.updateConfig(config);
+	        self.initConfig(config);
 	    }
 	
 	    /*==============================
@@ -923,7 +1008,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(Chart, [{
-	        key: 'updateConfig',
+	        key: 'initConfig',
 	
 	        /*=====  End of Setter  ======*/
 	
@@ -931,8 +1016,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Main Functions            =
 	        ======================================*/
 	        /**
+	         * Init parent config
+	         * Only in BaseClass <Chart> to init config
+	         */
+	        value: function initConfig(config) {
+	            var self = this;
+	
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            var options = self.options;
+	
+	            self.id = options.id || config.id;
+	            self.width = options.width || config.width;
+	            self.height = options.height || config.height;
+	            self.colorRange = options.colorRange || config.colorRange;
+	
+	            self.margin = _C2.default.merge(options.margin, config.margin);
+	            self.hover = _C2.default.merge(options.hover, config.hover);
+	            self.click = _C2.default.merge(options.click, config.click);
+	
+	            self.dataOption = _C2.default.mergeDeep(config.data, options.data);
+	
+	            self.options.subchart = _C2.default.merge(options.subchart, config.subchart);
+	            self.options.table = _C2.default.merge(options.table, config.table);
+	            self.options.tooltip = _C2.default.merge(options.tooltip, config.tooltip);
+	            self.options.legend = _C2.default.merge(options.legend, config.legend);
+	            self.options.axis = _C2.default.mergeDeep(config.axis, options.axis);
+	        }
+	
+	        /**
 	         * Update parent config
 	         */
+	
+	    }, {
+	        key: 'updateConfig',
 	        value: function updateConfig(config) {
 	            var self = this;
 	
@@ -1462,15 +1579,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _temp = new Array();
 	        var _min = 0,
 	            _max = 0;
-	        if (type == "stack") data.forEach(function (d) {
-	            d.forEach(function (s) {
-	                if (s.y0 > 0) _temp.push(s.y1);else _temp.push(s.y1 + s.y0);
+	        if (type == "stack") {
+	            data.forEach(function (d) {
+	                d.forEach(function (s) {
+	                    if (s.y0 > 0) _temp.push(s.y1);else _temp.push(s.y1 + s.y0);
+	                });
 	            });
-	        });else data.forEach(function (d) {
-	            d.forEach(function (s) {
-	                _temp.push(s.y0);
+	        } else {
+	            data.forEach(function (d) {
+	                d.forEach(function (s) {
+	                    _temp.push(s.y0);
+	                });
 	            });
-	        });
+	        }
 	
 	        var _newMin = self.min(_temp);
 	        var _newMax = self.max(_temp);
@@ -1744,6 +1865,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            //draw x axis
 	            self.chart.body.append("g").attr("class", "c9-axis c9-axis-x").attr("transform", "translate(0," + self.height + ")").call(self.xAxis);
+	
 	            //draw tick
 	            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
 	            //draw label
@@ -1976,7 +2098,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var text = self.chart.svg.append("g").attr('class', 'c9-custom-title c9-custom-title-container').append("text").attr("class", "c9-custom-title c9-custom-title-text");
 	
 	                // Get title self.chart.width: text.node().getComputedTextLength()           
-	                text.attr("x", (self.chart.width - text.node().getComputedTextLength()) / 2).attr("y", self.setYLocation(self.chart.height, self.chart.margin)).attr("text-anchor", "middle").style("font-size", self.options.fontSize).text(self.options.text);
+	                // text.attr("x", (((self.chart.width - text.node().getComputedTextLength()) / 2)))           
+	                text.attr("x", (self.chart.width - 200) / 2).attr("y", self.setYLocation(self.chart.height, self.chart.margin)).attr("text-anchor", "middle").style("font-size", self.options.fontSize).text(self.options.text);
 	            }
 	        }
 	    }, {
@@ -3232,7 +3355,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	                case 'timeline':
 	                    format = function format(data) {
-	                        return '<strong>' + data.name + '</strong>' + '<br><span> Start at: ' + data.start + '</span><br><span> End at: ' + data.end + '</span>';
+	                        return (data.name ? '<strong>' + data.name + '</strong>' : '<img src=' + data.icon + '" width="' + chart.options.itemHeight + '" height="' + chart.options.itemHeight + '">') + '<br><strong>Start at: </strong><span>' + data.start + '</span><br><strong>End at: </strong><span>' + data.end + '</span>';
 	                    };
 	                    break;
 	            }
@@ -3375,7 +3498,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var DataAdapter = function () {
-	    function DataAdapter(options) {
+	    function DataAdapter(options, chartType, callback) {
 	        _classCallCheck(this, DataAdapter);
 	
 	        var self = this;
@@ -3387,7 +3510,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                value: "value",
 	                x: "value.x",
 	                y: "value",
-	                coor: "coor"
+	                coor: "coor",
+	                icon: "icon"
 	            },
 	            groups: [],
 	            stacks: [],
@@ -3404,11 +3528,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._timeFormat = options.timeFormat || config.timeFormat;
 	        self._colorRange = options.colorRange || config.colorRange;
 	
-	        self._dataSource = null;
+	        self._dataSource = [];
 	        self._dataTarget = []; // Initialize new Array to use Array methods
 	        self._dataRefs = [];
 	
 	        self._options = options;
+	        self._chartType = chartType;
+	        self._callback = callback;
 	
 	        self.updateConfig(config);
 	    }
@@ -3431,79 +3557,75 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            self.options = _C2.default.mergeDeep(config, self.options);
 	
-	            self.initDataSource();
+	            // self.initDataSource();
 	        }
-	    }, {
-	        key: "initDataSource",
-	        value: function initDataSource() {
-	            var self = this;
 	
-	            var options = self.options;
+	        // initDataSource() {
+	        //     var self = this;
 	
-	            if (self.hasPlainData()) {
-	                self.executePlainData();
-	            } else if (self.hasFile()) {
-	                self.executeFile();
-	            }
-	        }
+	        //     // if (self.hasPlainData()) {
+	        //     //     self.executePlainData();
+	        //     // }
+	        //     // TESTING
+	        //     //  else if (self.hasFile()) {
+	        //     //     self.executeFile();
+	        //     // }
+	        // }
+	
 	    }, {
 	        key: "hasPlainData",
 	        value: function hasPlainData() {
 	            var self = this;
 	
-	            var options = self.options;
-	
 	            // return options.plain && Helper.isArray(options.plain);
-	            return !_C2.default.isEmpty(options.plain); // fix for map
+	            return !_C2.default.isEmpty(self.options.plain); // fix for map
 	        }
 	    }, {
 	        key: "hasFile",
 	        value: function hasFile() {
 	            var self = this;
 	
-	            var options = self.options;
-	
-	            return options.file && _C2.default.isObject(options.file);
+	            return _C2.default.isObject(self.options.file) && !_C2.default.isEmpty(self.options.file.url) && !_C2.default.isEmpty(self.options.file.type);
 	        }
 	    }, {
 	        key: "executePlainData",
-	        value: function executePlainData() {
+	        value: function executePlainData(callback) {
 	            var self = this;
 	
-	            var options = self.options;
+	            self.dataSource = self.options.plain;
 	
-	            self._dataSource = options.plain;
+	            callback.call(self, self.dataSource);
 	        }
 	    }, {
 	        key: "executeFile",
-	        value: function executeFile() {
+	        value: function executeFile(callback) {
 	            var self = this;
 	
 	            self.file = self.options.file;
 	
-	            if (self._file && self._file.type) {
+	            if (!_C2.default.isEmpty(self.file)) {
 	
-	                switch (self._file.type) {
+	                switch (self.file.type) {
 	                    case "csv":
-	                        self._dataSource = self.getCsv();
+	                        self.getCsv(callback);
 	                        break;
 	                    case "tsv":
-	                        self._dataSource = self.getTsv();
+	                        self.getTsv(callback);
 	                        break;
 	                    case "text":
-	                        self._dataSource = self.getText();
+	                        self.getText(callback);
 	                        break;
 	                    case "json":
-	                        self._dataSource = self.getJson();
+	                        self.getJson(callback);
 	                        break;
 	                    case "xml":
-	                        self._dataSource = self.getXml();
+	                        self.getXml(callback);
 	                        break;
 	                    case "xhr":
-	                        self._dataSource = self.getJson();
+	                        self.getJson(callback);
 	                        break;
 	                    default:
-	                        self._dataSource = self.getJson();
+	                        self.getJson(callback);
 	                        break;
 	                }
 	            }
@@ -3518,6 +3640,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
 	                return "stack";
 	            }
+	
 	            // default grouped bar if user do not defined groups for array value
 	            for (var i = self.dataSource.length - 1; i >= 0; i--) {
 	                if (_C2.default.isArray(_C2.default.get(self.keys.value, self.dataSource[i]))) return "group";
@@ -3527,36 +3650,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }, {
 	        key: "getDataTarget",
-	        value: function getDataTarget(type) {
+	        value: function getDataTarget(type, callback) {
+	            var self = this;
+	
+	            // TESTING
+	            if (self.hasFile()) {
+	                self.executeFile(function (data) {
+	                    self.dataSource = data;
+	                    self.generateDataTarget(type);
+	                    callback.call(self, self.dataTarget);
+	                });
+	            } else if (self.hasPlainData()) {
+	                self.executePlainData(function (data) {
+	                    self.dataSource = data;
+	                    self.generateDataTarget(type);
+	                    callback.call(self, self.dataTarget);
+	                });
+	            }
+	        }
+	    }, {
+	        key: "generateDataTarget",
+	        value: function generateDataTarget(type) {
 	            var self = this;
 	
 	            switch (type) {
 	                case "bar":
-	                    return self.getDataTargetForBarChart();
+	                    self.getDataTargetForBarChart();
 	                    break;
 	
 	                case "line":
-	                    return self.getDataTargetForLineChart();
+	                    self.getDataTargetForLineChart();
 	                    break;
 	
 	                case "pie":
-	                    return self.getDataTargetForPieChart();
+	                    self.getDataTargetForPieChart();
 	                    break;
 	
 	                case "donut":
-	                    return self.getDataTargetForDonutChart();
+	                    self.getDataTargetForDonutChart();
 	                    break;
 	
 	                case "timeline":
-	                    return self.getDataTargetForTimelineChart();
+	                    self.getDataTargetForTimelineChart();
 	                    break;
 	
 	                case "map":
-	                    return self.getDataTargetForMap();
+	                    self.getDataTargetForMap();
 	                    break;
 	
 	                default:
-	                    return self.dataSource;
+	                    self.dataSource;
 	                    break;
 	            }
 	        }
@@ -3609,9 +3752,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            self.dataTarget.push(_data);
 	                        });
 	
-	                        return {
-	                            v: self.dataTarget
-	                        };
+	                        // return self.dataTarget;
 	                        break;
 	
 	                    case "group":
@@ -3808,7 +3949,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                var _data = {
 	                    // "color"     : color(index),
-	                    "icon": data.icon,
+	                    "icon": _C2.default.get(self.keys.icon, data),
 	                    "name": _C2.default.get(self.keys.name, data),
 	                    "value": [],
 	                    "data-ref": _C2.default.guid(),
@@ -3823,7 +3964,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    "end": null,
 	                    "color": "#fff",
 	                    "data-ref": null,
-	                    "enable": true
+	                    "enable": true,
+	                    "icon": null
 	                };
 	
 	                if (_C2.default.isArray(_dsArray)) {
@@ -3834,7 +3976,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            "end": new Date(d.end),
 	                            "color": color(index),
 	                            "data-ref": _C2.default.guid(),
-	                            "enable": true
+	                            "enable": true,
+	                            "icon": _C2.default.get(self.keys.icon, data)
 	                        };
 	                        _valueArray.push(_valueItem);
 	                    });
@@ -3845,7 +3988,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "end": new Date(_dsArray.end),
 	                        "color": color(index),
 	                        "data-ref": _C2.default.guid(),
-	                        "enable": true
+	                        "enable": true,
+	                        "icon": _C2.default.get(self.keys.icon, data)
 	                    };
 	                    _valueArray.push(_valueItem);
 	                }
@@ -4002,82 +4146,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        /*=====    End of Normalize Data For Map   ======*/
 	
-	        /*=============================
-	        =            Utils            =
-	        =============================*/
-	        // getBarColorForBarChart() {
-	        //     var self = this;
-	
-	        //     var color = self.colorRange;
-	        //     if (typeof color == 'string') {
-	        //         try {
-	        //             return d3.scale[color]();    
-	        //         }
-	        //         catch(err) {
-	        //             return function(i) {
-	        //                 return color;
-	        //             };
-	        //         }
-	        //     } else if (typeof color == 'object') {
-	        //         return d3.scale.ordinal().range(color);
-	        //     }
-	        // }
-	
-	
-	        /*=====  End of Utils  ======*/
-	
 	        /*=============================================
 	        =            Data Input From Files            =
 	        =============================================*/
 	
 	    }, {
 	        key: "getCsv",
-	        value: function getCsv() {
+	        value: function getCsv(callback) {
+	
 	            var self = this;
 	
 	            d3.csv(self.file.url, function (err, data) {
 	                if (err) throw err;
-	                return data;
+	
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getTsv",
-	        value: function getTsv() {
+	        value: function getTsv(callback) {
 	
 	            var self = this;
 	
 	            d3.tsv(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getText",
-	        value: function getText() {
+	        value: function getText(callback) {
 	
 	            var self = this;
 	
 	            d3.text(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return JSON.parse(data);
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getJson",
-	        value: function getJson() {
+	        value: function getJson(callback) {
+	
 	            var self = this;
 	
 	            d3.json(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getXml",
-	        value: function getXml() {
+	        value: function getXml(callback) {
+	
 	            var self = this;
 	
 	            d3.xml(self.file.url, function (err, data) {
@@ -4093,7 +4217,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    };
 	                });
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	
@@ -4114,6 +4238,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (arg) {
 	                this._options = arg;
 	            }
+	        }
+	    }, {
+	        key: "callback",
+	        get: function get() {
+	            return this._callback;
+	        }
+	    }, {
+	        key: "chartType",
+	        get: function get() {
+	            return this._chartType;
 	        }
 	    }, {
 	        key: "file",
@@ -4267,12 +4401,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var self = _this;
 	
 	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
-	        var config = {
+	        self.config = {
 	            outerRadius: R,
 	            innerRadius: R > 80 ? R - 80 : R - 40
 	        };
 	
-	        self.updateConfig(config);
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -4292,7 +4426,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Update Donut Chart Config
 	         */
-	        value: function updateConfig(config) {
+	        value: function updateConfig(config, callback) {
 	            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'updateConfig', this).call(this, config);
 	
 	            var self = this;
@@ -4304,8 +4438,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	
 	        /**
@@ -4314,7 +4454,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    }, {
 	        key: 'updateDataConfig',
-	        value: function updateDataConfig(dataCfg) {
+	        value: function updateDataConfig(dataCfg, callback) {
 	            var self = this;
 	
 	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
@@ -4324,8 +4464,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	
 	        /**
@@ -4561,31 +4707,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var self = this;
 	
-	            var title = new _C6.default(self.options.title, self);
-	            var legend = new _C8.default(self.options.legend, self, self.dataTarget);
-	            var table = new _C10.default(self.options.table, self, self.dataTarget);
+	            self.updateConfig(self.config, function (data) {
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+	                var table = new _C10.default(self.options.table, self, self.dataTarget);
 	
-	            self.title = title;
-	            self.legend = legend;
-	            self.table = table;
+	                self.title = title;
+	                self.legend = legend;
+	                self.table = table;
 	
-	            // Draw title
-	            self.title.draw();
+	                // Draw title
+	                self.title.draw();
 	
-	            // Update interaction of this own chart
-	            self.update(self.dataTarget);
-	            self.updateInteraction();
+	                // Update interaction of this own chart
+	                self.update(self.dataTarget);
+	                self.updateInteraction();
 	
-	            self.legend = legend;
-	            self.table = table;
+	                self.legend = legend;
+	                self.table = table;
 	
-	            // Draw legend
-	            self.legend.draw();
-	            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 	
-	            // Draw table
-	            self.table.draw();
-	            self.table.updateInteractionForDonutPieChart(self);
+	                // Draw table
+	                self.table.draw();
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
 	        }
 	
 	        /**
@@ -4632,16 +4780,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 	            }
 	
-	            // Update Chart
-	            self.updateDataConfig(newCfg);
-	            self.update(self.dataTarget);
+	            self.updateDataConfig(newCfg, function (data) {
+	                // Update Chart
+	                self.update(data);
 	
-	            // Update Legend
-	            self.legend.update(self.dataTarget);
-	            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	                // Update Legend
+	                self.legend.update(data);
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 	
-	            // Update Table
-	            self.table.update(self.dataTarget);
+	                // Update Table
+	                self.table.update(data);
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
 	        }
 	
 	        /*=====  End of User's Functions  ======*/
@@ -4753,7 +4903,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var config = {
+	        self.config = {
 	            point: {
 	                show: true,
 	                fill: "steelblue",
@@ -4771,8 +4921,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            interpolate: "linear" };
 	
-	        self.updateConfig(config);
-	
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -4793,7 +4942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Init Line Chart Config
 	         */
-	        value: function updateConfig(config) {
+	        value: function updateConfig(config, callback) {
 	            _get(LineChart.prototype.__proto__ || Object.getPrototypeOf(LineChart.prototype), 'updateConfig', this).call(this, config);
 	
 	            var self = this;
@@ -4808,28 +4957,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
-	            self.isTimeDomain = da.timeFormat;
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	                self.isTimeDomain = da.timeFormat;
 	
-	            var width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            self.x = self.isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]), self.y = d3.scale.linear().range([height, 0]);
+	                self.x = self.isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]), self.y = d3.scale.linear().range([height, 0]);
 	
-	            self.updateDomain(self.dataTarget);
+	                self.updateDomain(self.dataTarget);
 	
-	            self.lineGen = d3.svg.line().x(function (d) {
-	                return self.x(d.valueX);
-	            }).y(function (d) {
-	                return self.y(d.valueY);
-	            }).interpolate(self.options.interpolate);
+	                self.lineGen = d3.svg.line().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y(function (d) {
+	                    return self.y(d.valueY);
+	                }).interpolate(self.options.interpolate);
 	
-	            self.areaGen = d3.svg.area().x(function (d) {
-	                return self.x(d.valueX);
-	            }).y0(function (d) {
-	                return self.y(d.valueY);
-	            }).y1(height).interpolate(self.options.interpolate);
+	                self.areaGen = d3.svg.area().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y0(function (d) {
+	                    return self.y(d.valueY);
+	                }).y1(height).interpolate(self.options.interpolate);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	
 	        /**
@@ -4838,7 +4993,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    }, {
 	        key: 'updateDataConfig',
-	        value: function updateDataConfig(dataCfg) {
+	        value: function updateDataConfig(dataCfg, callback) {
 	            var self = this;
 	
 	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
@@ -4851,28 +5006,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
-	            self.isTimeDomain = da.timeFormat;
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	                self.isTimeDomain = da.timeFormat;
 	
-	            var width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            self.x = self.isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]), self.y = d3.scale.linear().range([height, 0]);
+	                self.x = self.isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]), self.y = d3.scale.linear().range([height, 0]);
 	
-	            self.updateDomain(self.dataTarget);
+	                self.updateDomain(self.dataTarget);
 	
-	            self.lineGen = d3.svg.line().x(function (d) {
-	                return self.x(d.valueX);
-	            }).y(function (d) {
-	                return self.y(d.valueY);
-	            }).interpolate(self.options.interpolate);
+	                self.lineGen = d3.svg.line().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y(function (d) {
+	                    return self.y(d.valueY);
+	                }).interpolate(self.options.interpolate);
 	
-	            self.areaGen = d3.svg.area().x(function (d) {
-	                return self.x(d.valueX);
-	            }).y0(function (d) {
-	                return self.y(d.valueY);
-	            }).y1(height).interpolate(self.options.interpolate);
+	                self.areaGen = d3.svg.area().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y0(function (d) {
+	                    return self.y(d.valueY);
+	                }).y1(height).interpolate(self.options.interpolate);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	    }, {
 	        key: 'updateOverlay',
@@ -5360,34 +5521,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var self = this;
 	
-	            var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
-	            var title = new _C6.default(self.options.title, self);
-	            var legend = new _C8.default(self.options.legend, self);
-	            var table = new _C10.default(self.options.table, self, self.dataTarget);
+	            self.updateConfig(self.config, function (data) {
+	                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self);
+	                var table = new _C10.default(self.options.table, self, data);
 	
-	            self.axis = axis;
-	            self.title = title;
-	            self.legend = legend;
-	            self.table = table;
+	                self.axis = axis;
+	                self.title = title;
+	                self.legend = legend;
+	                self.table = table;
 	
-	            // Draw title
-	            self.title.draw();
+	                // Draw title
+	                self.title.draw();
 	
-	            // Draw axis
-	            self.axis.draw();
+	                // Draw axis
+	                self.axis.draw();
 	
-	            self.update(self.dataTarget);
-	            self.updateSubChart(self.dataTarget);
-	            self.updateOverlay();
-	            self.updateHoverLine();
-	            self.updateInteraction();
+	                self.update(data);
+	                self.updateSubChart(data);
+	                self.updateOverlay();
+	                self.updateHoverLine();
+	                self.updateInteraction();
 	
-	            // Draw legend
-	            self.legend.draw();
-	            self.legend.updateInteractionForLineChart(self);
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForLineChart(self);
 	
-	            // Draw table
-	            self.table.draw();
+	                // Draw table
+	                self.table.draw();
+	            });
 	        }
 	
 	        /**
@@ -5434,20 +5597,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 	            }
 	
-	            // Update chart
-	            self.updateDataConfig(newCfg);
-	            self.update(self.dataTarget);
-	            self.updateSubChart(self.dataTarget);
+	            self.updateDataConfig(newCfg, function (data) {
+	                // Update Chart
+	                self.update(data);
+	                self.updateSubChart(data);
 	
-	            // Update Axis
-	            self.axis.update(self.x, self.y, 100);
+	                // Update Axis
+	                self.axis.update(self.x, self.y, 100);
 	
-	            // Update Legend
-	            self.legend.update(self.dataTarget);
-	            self.legend.updateInteractionForLineChart(self);
+	                // Update Legend
+	                self.legend.update(data);
+	                self.legend.updateInteractionForLineChart(self);
 	
-	            // Update Table
-	            self.table.update(self.dataTarget);
+	                // Update Table
+	                self.table.update(data);
+	            });
 	        }
 	        /*=====  End of User's Functions  ======*/
 	
@@ -5658,11 +5822,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var config = {
+	        self.config = {
 	            radius: Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2
 	        };
 	
-	        self.updateConfig(config);
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -5682,7 +5846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Update Donut Chart Config
 	         */
-	        value: function updateConfig(config) {
+	        value: function updateConfig(config, callback) {
 	            _get(PieChart.prototype.__proto__ || Object.getPrototypeOf(PieChart.prototype), 'updateConfig', this).call(this, config);
 	
 	            var self = this;
@@ -5694,8 +5858,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	
 	        /**
@@ -5704,7 +5874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    }, {
 	        key: 'updateDataConfig',
-	        value: function updateDataConfig(dataCfg) {
+	        value: function updateDataConfig(dataCfg, callback) {
 	            var self = this;
 	
 	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
@@ -5714,8 +5884,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
 	        }
 	
 	        /**
@@ -5742,7 +5918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self.body.selectAll(".c9-chart-pie.c9-custom-arc-container").data([]).exit().remove();
 	
 	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart-pie c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
+	            var arcs = self.body.append('g').attr('class', 'c9-chart-pie c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(data)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
 	
 	            // Append main path contains pie
 	            arcs.append('path').attr('class', 'c9-chart-pie c9-custom-path').attr('data-ref', function (d) {
@@ -5948,28 +6124,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var self = this;
 	
-	            var title = new _C6.default(self.options.title, self);
-	            var legend = new _C8.default(self.options.legend, self, self.dataTarget);
-	            var table = new _C10.default(self.options.table, self, self.dataTarget);
+	            self.updateConfig(self.config, function (data) {
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+	                var table = new _C10.default(self.options.table, self, self.dataTarget);
 	
-	            self.title = title;
-	            self.legend = legend;
-	            self.table = table;
+	                self.title = title;
+	                self.legend = legend;
+	                self.table = table;
 	
-	            // Draw title
-	            self.title.draw();
+	                // Draw title
+	                self.title.draw();
 	
-	            // Update interaction of this own chart
-	            self.update(self.dataTarget);
-	            self.updateInteraction();
+	                // Update interaction of this own chart
+	                self.update(data);
+	                self.updateInteraction();
 	
-	            // Draw legend
-	            self.legend.draw();
-	            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 	
-	            // Draw table
-	            self.table.draw();
-	            self.table.updateInteractionForDonutPieChart(self);
+	                // Draw table
+	                self.table.draw();
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
 	        }
 	
 	        /**
@@ -6016,17 +6194,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 	            }
 	
-	            // Update Chart
-	            self.updateDataConfig(newCfg);
-	            self.update(self.dataTarget);
+	            self.updateDataConfig(newCfg, function (data) {
+	                // Update Chart
+	                self.update(self.dataTarget);
 	
-	            // Update Legend
-	            self.legend.update(self.dataTarget);
-	            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	                // Update Legend
+	                self.legend.update(self.dataTarget);
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 	
-	            // Update Table
-	            self.table.update(self.dataTarget);
-	            self.table.updateInteractionForDonutPieChart(self);
+	                // Update Table
+	                self.table.update(self.dataTarget);
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
 	        }
 	        /*=====  End of User's Functions  ======*/
 	
@@ -6137,7 +6316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var config = {
+	        self.config = {
 	            separatorColor: "rgb(154, 154, 154)",
 	            backgroundColor: null,
 	            starting: 0,
@@ -6149,7 +6328,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            striped: null
 	        };
 	
-	        self.updateConfig(config);
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -6167,7 +6346,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Main Functions            =
 	        ======================================*/
 	
-	        value: function updateConfig(config) {
+	        value: function updateConfig(config, callback) {
 	            _get(TimeLine.prototype.__proto__ || Object.getPrototypeOf(TimeLine.prototype), 'updateConfig', this).call(this, config);
 	
 	            var self = this;
@@ -6181,49 +6360,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
 	
-	            var maxStack = 0,
-	                minTime = 0,
-	                maxTime = 0,
-	                width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	                var maxStack = 0,
+	                    minTime = 0,
+	                    maxTime = 0,
+	                    width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            // count number of stack and calculate min time, max time from data
-	            if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
+	                // count number of stack and calculate min time, max time from data
+	                if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
 	
-	                self.dataTarget.forEach(function (datum, index) {
+	                    self.dataTarget.forEach(function (datum, index) {
 	
-	                    if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
-	                        self.stackList[index] = maxStack;
-	                        maxStack++;
-	                    }
-	
-	                    datum.value.forEach(function (time, i) {
-	                        if (self.options.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
-	                        if (self.options.ending === 0) {
-	                            if (time.start > maxTime) maxTime = time.start;
-	                            if (time.end > maxTime) maxTime = time.end;
+	                        if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
+	                            self.stackList[index] = maxStack;
+	                            maxStack++;
 	                        }
+	
+	                        datum.value.forEach(function (time, i) {
+	                            if (self.options.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
+	                            if (self.options.ending === 0) {
+	                                if (time.start > maxTime) maxTime = time.start;
+	                                if (time.end > maxTime) maxTime = time.end;
+	                            }
+	                        });
 	                    });
-	                });
 	
-	                if (self.options.ending === 0) {
-	                    self.options.ending = maxTime;
+	                    if (self.options.ending === 0) {
+	                        self.options.ending = maxTime;
+	                    }
+	                    if (self.options.starting === 0) {
+	                        self.options.starting = minTime;
+	                    }
 	                }
-	                if (self.options.starting === 0) {
-	                    self.options.starting = minTime;
+	
+	                self.maxStack = maxStack;
+	
+	                self.x = d3.time.scale().domain([self.options.starting, self.options.ending]).range([0, self.width]);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
 	                }
-	            }
-	
-	            self.maxStack = maxStack;
-	
-	            self.x = d3.time.scale().domain([self.options.starting, self.options.ending]).range([0, self.width]);
+	            });
 	        }
 	    }, {
 	        key: 'updateDataConfig',
-	        value: function updateDataConfig(dataCfg) {
+	        value: function updateDataConfig(dataCfg, callback) {
 	
 	            var self = this;
 	
@@ -6236,45 +6421,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dataOption = self.dataOption;
 	            dataOption.colorRange = self.colorRange;
 	
-	            var da = new _C16.default(dataOption);
-	            self.dataTarget = da.getDataTarget(self.chartType);
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                var maxStack = 0,
+	                    minTime = 0,
+	                    maxTime = 0,
+	                    width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            var maxStack = 0,
-	                minTime = 0,
-	                maxTime = 0,
-	                width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	                // count number of stack and calculate min time, max time from data
+	                if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
 	
-	            // count number of stack and calculate min time, max time from data
-	            if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
+	                    self.dataTarget.forEach(function (datum, index) {
 	
-	                self.dataTarget.forEach(function (datum, index) {
-	
-	                    if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
-	                        self.stackList[index] = maxStack;
-	                        maxStack++;
-	                    }
-	
-	                    datum.value.forEach(function (time, i) {
-	                        if (self.options.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
-	                        if (self.options.ending === 0) {
-	                            if (time.start > maxTime) maxTime = time.start;
-	                            if (time.end > maxTime) maxTime = time.end;
+	                        if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
+	                            self.stackList[index] = maxStack;
+	                            maxStack++;
 	                        }
+	
+	                        datum.value.forEach(function (time, i) {
+	                            if (self.options.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
+	                            if (self.options.ending === 0) {
+	                                if (time.start > maxTime) maxTime = time.start;
+	                                if (time.end > maxTime) maxTime = time.end;
+	                            }
+	                        });
 	                    });
-	                });
 	
-	                if (self.options.ending === 0) {
-	                    self.options.ending = maxTime;
+	                    if (self.options.ending === 0) {
+	                        self.options.ending = maxTime;
+	                    }
+	                    if (self.options.starting === 0) {
+	                        self.options.starting = minTime;
+	                    }
 	                }
-	                if (self.options.starting === 0) {
-	                    self.options.starting = minTime;
+	
+	                self.maxStack = maxStack;
+	
+	                self.x = d3.time.scale().domain([self.options.starting, self.options.ending]).range([0, self.width]);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
 	                }
-	            }
-	
-	            self.maxStack = maxStack;
-	
-	            self.x = d3.time.scale().domain([self.options.starting, self.options.ending]).range([0, self.width]);
+	            });
 	        }
 	    }, {
 	        key: 'update',
@@ -6313,7 +6502,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.backgroundColor) {
 	                    var bgContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-background-container');
 	
-	                    bgContainer.selectAll(".c9-background-container").data(datum.value).enter().append("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", _C14.default.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % (self.maxStack - 1)] : self.options.backgroundColor);
+	                    bgContainer.selectAll(".c9-background-container").data(datum.value).enter().append("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", _C14.default.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % self.maxStack] : self.options.backgroundColor);
 	                }
 	
 	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.striped) {
@@ -6338,7 +6527,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return self.getXPos(d, i, scale);
 	                }).attr("r", self.options.itemHeight / 2).attr("height", self.options.itemHeight).style("fill", color(index));
 	
-	                if (self.options.separatorColor && index < self.maxStack - 1) {
+	                if (self.options.stack && self.options.separatorColor && index < self.maxStack - 1) {
 	                    var lineYAxis = self.options.itemHeight + self.options.itemMargin / 2 + (self.options.itemHeight + self.options.itemMargin) * stackList[index];
 	                    self.body.append("svg:line").attr("class", "c9-timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C14.default.isArray(self.options.separatorColor) ? self.options.separatorColor[index % (self.maxStack - 1)] : self.options.separatorColor);
 	                }
@@ -6599,23 +6788,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var self = this;
 	
-	            var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
-	            var title = new _C6.default(self.options.title, self);
-	            var legend = new _C8.default(self.options.legend, self, self.colorRange, self.dataTarget);
+	            self.updateConfig(self.config, function (data) {
+	                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.colorRange, data);
 	
-	            self.axis = axis;
-	            self.title = title;
-	            self.legend = legend;
+	                self.axis = axis;
+	                self.title = title;
+	                self.legend = legend;
 	
-	            // Draw title
-	            self.title.draw();
+	                // Draw title
+	                self.title.draw();
 	
-	            // Draw axis
-	            self.axis.draw();
+	                // Draw axis
+	                self.axis.draw();
 	
-	            self.update(self.dataTarget);
-	            self.updateSubChart(self.dataTarget);
-	            self.updateInteraction();
+	                self.update(data);
+	                self.updateSubChart(data);
+	                self.updateInteraction();
+	            });
 	        }
 	
 	        /**
@@ -6663,12 +6854,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	
 	            // Update chart
-	            self.updateDataConfig(newCfg);
-	            self.update(self.dataTarget);
-	            self.updateSubChart(self.dataTarget);
+	            self.updateDataConfig(newCfg, function (data) {
+	                self.update(self.dataTarget);
+	                self.updateSubChart(self.dataTarget);
 	
-	            // Update Axis
-	            self.axis.update(self.x, self.y, 100);
+	                // Update Axis
+	                self.axis.update(self.x, self.y, 100);
+	            });
 	        }
 	        /*=====  End of User's Functions  ======*/
 	

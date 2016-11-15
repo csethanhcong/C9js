@@ -306,7 +306,7 @@ export default class TimeLine extends Chart {
                     .attr("width", width)
                     .attr("y", barYAxis - self.options.itemMargin / 2)
                     .attr("height", self.options.itemHeight + self.options.itemMargin)
-                    .attr("fill", Helper.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % (self.maxStack - 1)] : self.options.backgroundColor);
+                    .attr("fill", Helper.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % self.maxStack] : self.options.backgroundColor);
             }
 
             if (((!self.options.stack && index == 0) || self.options.stack) && self.options.striped) { 
@@ -347,7 +347,7 @@ export default class TimeLine extends Chart {
                 .attr("height", self.options.itemHeight)
                 .style("fill", color(index));
 
-            if (self.options.separatorColor && index < self.maxStack - 1) {
+            if (self.options.stack && self.options.separatorColor && index < self.maxStack - 1) {
                 var lineYAxis = ( self.options.itemHeight + self.options.itemMargin / 2 + (self.options.itemHeight + self.options.itemMargin) * stackList[index]);
                 self.body.append("svg:line")
                   .attr("class", "c9-timeline-row-separator")

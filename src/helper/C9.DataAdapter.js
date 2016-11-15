@@ -13,7 +13,8 @@ export default class DataAdapter {
                 value: "value",
                 x: "value.x",
                 y: "value",
-                coor: "coor"
+                coor: "coor",
+                icon: "icon"
             },
             groups: [],
             stacks: [],
@@ -528,7 +529,7 @@ export default class DataAdapter {
 
             let _data = {
                 // "color"     : color(index),
-                "icon"      : data.icon,
+                "icon"      : Helper.get(self.keys.icon, data),
                 "name"      : Helper.get(self.keys.name, data),
                 "value"     : [],
                 "data-ref"  : Helper.guid(),
@@ -543,7 +544,8 @@ export default class DataAdapter {
                     "end": null ,
                     "color": "#fff",
                     "data-ref": null,
-                    "enable": true
+                    "enable": true,
+                    "icon": null
                 };
 
             if (Helper.isArray(_dsArray)) {
@@ -555,6 +557,7 @@ export default class DataAdapter {
                         "color": color(index),
                         "data-ref": Helper.guid(),
                         "enable": true,
+                        "icon": Helper.get(self.keys.icon, data)
                     };
                     _valueArray.push(_valueItem);
                 });
@@ -566,6 +569,7 @@ export default class DataAdapter {
                     "color": color(index),
                     "data-ref": Helper.guid(),
                     "enable": true,
+                    "icon": Helper.get(self.keys.icon, data)
                 };
                 _valueArray.push(_valueItem);
             }

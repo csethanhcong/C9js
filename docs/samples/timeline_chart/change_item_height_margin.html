@@ -9,7 +9,7 @@
 	    <meta name="author" content="Cong Pham, Huy Do">
 	    <meta name="title" content="C9js - Examples">
 
-	    <title>C9js - Change Label Margin</title>
+	    <title>C9js - Change Item's Height and Margin</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -84,31 +84,48 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Change Label Margin</h2>
+		  <h2>Change Item's Height and Margin</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>change_label_margin.js</span></h3>
+			<h3># <span>change_item_height_and_margin.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
     {
-        name: "person a", 
-        value: [
-            {"start": 1355752800000, "end": 1355759900000},
-            {"start": 1355767900000, "end": 1355774400000}
-        ]
-    },
-    {
-        name: "person b", 
-        value: {"start": 1355759910000, "end": 1355761900000}
-    },
-    {
-        name: "person c", 
-        value: {"start": 1355761910000, "end": 1355763910000}
+        value: {
+            start: "11/17/2015",
+            end: "11/29/2015",
+        },
+        icon: "https://robohash.org/illonihilfacilis.bmp?size=50x50&set=set1",
+        name: "Person 1" // if the value contain both icon and name, default tooltip will show the name value, you can change default tooltip, see Tooltip examples for more details
+    }, {
+        value: {
+            start: "11/16/2015",
+            end: "11/21/2015",
+        },
+        icon: "https://robohash.org/nequemaioresaut.jpg?size=50x50&set=set1"
+    }, {
+        value: {
+            start: "11/15/2015",
+            end: "11/19/2015",    
+        },
+        icon: "https://robohash.org/aperiamipsumnatus.bmp?size=50x50&set=set1"
+    }, {
+        value: {
+            start: "11/18/2015",
+            end: "11/26/2015",    
+        },
+        icon: "https://robohash.org/quoseligendivoluptatum.jpg?size=50x50&set=set1"
+    }, {
+        value: {
+            start: "11/17/2015",
+            end: "11/18/2015",    
+        },
+        icon: "https://robohash.org/voluptatesetmolestiae.png?size=50x50&set=set1"
     }
 ];
 
@@ -119,14 +136,19 @@ var options1 = {
     data: {
         plain: data1,
     },
-    labelMargin: -20 // change margin of label
+    labelMargin: 0,
+    itemHeight: 40, /* size of icon scale base on item's height */
+    itemMargin: 5,
     title: {
-        text: "Change Label Margin"
+        text: "Change Label to Icon"
     },
     axis: {
         x: {
+            label: {
+                text: ""
+            },
             tick: {
-                format: d3.time.format('%I:%M %p') //https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md
+                format: d3.time.format("%d-%m-%Y")
             }
         }
     },
@@ -139,40 +161,62 @@ timeline.draw();</code></pre>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
             	{
-          			name: "Doctor 1", 
-          			value: [
-	          			{"start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, 
-	          			{"start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}
-          			]
-          		},
-        		{
-        			name: "Doctor 2", 
-        			value: {"start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}
-        		},
-            	{
-            		name: "Doctor 3", 
-            		value: {"start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}
-            	}
+            		value: {
+            			start: "11/17/2015",
+					  	end: "11/29/2015",
+            		},
+				  	icon: "https://robohash.org/illonihilfacilis.bmp?size=50x50&set=set1",
+				  	name: "Person 1"
+				}, {
+					value: {
+						start: "11/16/2015",
+					  	end: "11/21/2015",
+					},
+				  	icon: "https://robohash.org/nequemaioresaut.jpg?size=50x50&set=set1"
+				}, {
+					value: {
+						start: "11/15/2015",
+				  		end: "11/19/2015",	
+					},
+				  	icon: "https://robohash.org/aperiamipsumnatus.bmp?size=50x50&set=set1"
+				}, {
+					value: {
+						start: "11/18/2015",
+				  		end: "11/26/2015",	
+					},
+				  	icon: "https://robohash.org/quoseligendivoluptatum.jpg?size=50x50&set=set1"
+				}, {
+					value: {
+						start: "11/17/2015",
+				  		end: "11/18/2015",	
+					},
+				  	icon: "https://robohash.org/voluptatesetmolestiae.png?size=50x50&set=set1"
+				}
             ];
 
 			var options1 = {
 				id: "demo1", 
 				width: 1100, 
-				height: 250,
+				height: 300,
 				data: {
 					plain: data1,
 				},
 				title: {
-					text: "Change Label Margin"
+					text: "Change Item's Height and Margin"
 				},
 				axis: {
 					x: {
+						label: {
+							text: ""
+						},
 						tick: {
-							format: d3.time.format('%I:%M %p')
+							format: d3.time.format("%d-%m-%Y")
 						}
 					}
 				},
-				labelMargin: -20
+				labelMargin: 0,
+				itemHeight: 40,
+				itemMargin: 5
 			};
 			var timeline = new C9.TimeLine(options1);
 			timeline.draw();
