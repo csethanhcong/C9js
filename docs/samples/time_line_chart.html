@@ -61,8 +61,17 @@
               {icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
               {icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
             ];
+            var data = [
+            {name: "person a", value: [
+              {"start": 1355752800000, "end": 1355759900000},
+              {"start": 1355767900000, "end": 1355774400000}]},
+            {name: "person b", value: [
+              {"start": 1355759910000, "end": 1355761900000}]},
+            {name: "person c", value: [
+              {"start": 1355761910000, "end": 1355763910000}]}
+            ];
       var options7 = {
-        id: "#demo1", 
+        id: "demo1", 
         width: 750, 
         height: 300, 
         margin: {
@@ -72,19 +81,21 @@
           bottom:100
         }, 
         data: {
-          plain: data3 
+          plain: data
         }, 
         axis: {
           x: {
             show: true,
             text: "Time",
             tick: {
-              interval: 5
+              interval: 1,
+              time: d3.time.hours,
+              format: d3.time.format('%I:%M %p')
             }
           }
         },
         title_text: 'Timeline Chart',
-        stack: true,
+        stack: false,
         // backgroundColor: ["yellow", "red"],
         // colorRange: ["red", "green", "blue"],
         labelMargin: 0,

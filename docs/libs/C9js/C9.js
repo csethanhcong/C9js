@@ -223,8 +223,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var barChartType = da.getDataTypeForBarChart();
 	            if (barChartType != "single") {
-	                self.groupNames = da.groups || da.stacks; //define group names use for showing legend
-	                self.isGroup = barChartType == "group";
+	                self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+	                self._isGroup = barChartType == "group";
 	            }
 	
 	            var width = self.width - self.margin.left - self.margin.right,
@@ -278,7 +278,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var barChartType = da.getDataTypeForBarChart();
 	            if (barChartType != "single") {
-	                self.groupNames = da.groups || da.stacks; //define group names use for showing legend
+	                self.groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
 	                self.isGroup = barChartType == "group";
 	            }
 	
@@ -763,7 +763,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                top: 100,
 	                left: 50,
 	                right: 50,
-	                bottom: 100
+	                bottom: 50
 	            },
 	
 	            // interaction in chart
@@ -1633,7 +1633,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    format: undefined,
 	                    values: [],
 	                    //the following use for timeline chart
-	                    type: d3.time.hours,
+	                    time: undefined,
 	                    interval: 1
 	                },
 	                label: {
@@ -1693,13 +1693,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self.y = self.chart.y;
 	
 	            self.data = self.chart.dataTarget;
+	            self.isLogaricVariant = self.chart.options.isLogaric;
 	
 	            if (self.chart.chartType == "timeline") {
 	                var xScale = d3.time.scale().domain([self.chart.options.starting, self.chart.options.ending]).range([0, self.width]);
 	
 	                self.xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(self.options.x.tick.format === undefined ? d3.time.format("%I %p") : self.options.x.tick.format)
 	                // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
-	                .ticks(self.options.x.tick.type, self.options.x.tick.interval);
+	                .ticks(self.options.x.tick.time || self.options.x.tick.count, self.options.x.tick.interval);
 	                // delete options.starting;
 	                // delete options.ending;
 	            } else {
@@ -1709,7 +1710,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // must be filter with tickFormat instead
 	                // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
 	                if (self.isLogaricVariant) {
-	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || "%Y-%m-%d" : self.options.y.tick.format ? self.options.y.tick.format : undefined).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
+	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
 	                } else {
 	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined).tickFormat(self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined);
 	                }
@@ -2796,9 +2797,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                d3.selectAll('.c9-table').remove();
 	                d3.selectAll('.c9-table-container').remove();
 	
-	                var headTbl = d3.select(self.options.container).append("table").attr('class', 'c9-table c9-table-header'),
+	                var headTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body').append("table").attr('class', 'c9-table c9-table-header'),
 	                    thead = headTbl.append("thead"),
-	                    bodyTbl = d3.select(self.options.container).append("div").attr('class', 'c9-table-container').append("table").attr('class', function () {
+	                    bodyTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body').append("div").attr('class', 'c9-table-container').append("table").attr('class', function () {
 	                    return self.getTableStyle();
 	                }),
 	                    tbody = bodyTbl.append("tbody");
@@ -3488,6 +3489,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
 	                return "stack";
 	            }
+	            // default grouped bar if user do not defined groups for array value
+	            for (var i = self.dataSource.length - 1; i >= 0; i--) {
+	                if (_C2.default.isArray(_C2.default.get(self.keys.value, self.dataSource[i]))) return "group";
+	            }
 	
 	            return "single";
 	        }
@@ -3605,11 +3610,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            if (_C2.default.isArray(_dsArray)) {
 	                                _dsArray.forEach(function (d, i) {
 	                                    if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+	                                    if (_C2.default.isEmpty(groups[i])) groups.push('data' + (i + 1));
 	                                    _stackItem = {
 	                                        "color": color(i),
 	                                        "y0": d,
 	                                        "y1": d > 0 ? d : 0,
-	                                        "group": groups[i] || 'data' + (i + 1),
+	                                        "group": groups[i],
 	                                        "name": _C2.default.get(self.keys.name, data),
 	                                        "value": d,
 	                                        "data-ref": _C2.default.guid(),
@@ -3620,11 +3626,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                });
 	                            } else {
 	                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+	                                if (_C2.default.isEmpty(groups[0])) groups.push('data1');
 	                                _stackItem = {
 	                                    "color": color(0),
 	                                    "y0": _dsArray,
 	                                    "y1": _dsArray > 0 ? _dsArray : 0,
-	                                    "group": groups[0] || 'data' + 1,
+	                                    "group": groups[0],
 	                                    "name": _C2.default.get(self.keys.name, data),
 	                                    "value": _dsArray,
 	                                    "data-ref": _C2.default.guid(),
@@ -3637,6 +3644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            self.dataTarget.push(_stack);
 	                        });
 	
+	                        self.groups = groups;
 	                        return {
 	                            v: self.dataTarget
 	                        };
@@ -3669,11 +3677,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                    var _posBase = 0;
 	                                    _dsArray.forEach(function (d, i) {
 	                                        if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+	                                        if (_C2.default.isEmpty(stacks[i])) stacks.push('data' + (i + 1));
 	                                        _stackItem = {
 	                                            "color": color(i),
 	                                            "y0": d,
 	                                            "y1": d > 0 ? d + _posBase : _negBase,
-	                                            "group": stacks[i] || 'data' + (i + 1),
+	                                            "group": stacks[i],
 	                                            "name": _C2.default.get(self.keys.name, data),
 	                                            "value": d,
 	                                            "data-ref": _C2.default.guid(),
@@ -3686,11 +3695,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                })();
 	                            } else {
 	                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+	                                if (_C2.default.isEmpty(stacks[0])) stacks.push('data1');
 	                                _stackItem = {
 	                                    "color": color(0),
 	                                    "y0": _dsArray,
 	                                    "y1": _dsArray > 0 ? _dsArray : 0,
-	                                    "group": stacks[0] || 'data' + 1,
+	                                    "group": stacks[0],
 	                                    "name": _C2.default.get(self.keys.name, data),
 	                                    "value": _dsArray,
 	                                    "data-ref": _C2.default.guid(),
@@ -3703,6 +3713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            self.dataTarget.push(_stack);
 	                        });
 	
+	                        self.stacks = stacks;
 	                        return {
 	                            v: self.dataTarget
 	                        };
@@ -3801,8 +3812,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                } else {
 	                    _valueItem = {
 	                        "name": _C2.default.get(self.keys.name, data),
-	                        "start": new Date(d.start),
-	                        "end": new Date(d.end),
+	                        "start": new Date(_dsArray.start),
+	                        "end": new Date(_dsArray.end),
 	                        "color": color(index),
 	                        "data-ref": _C2.default.guid(),
 	                        "enable": true
@@ -5968,6 +5979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            // Update Table
 	            self.table.update(self.dataTarget);
+	            self.table.updateInteractionForDonutPieChart(self);
 	        }
 	        /*=====  End of User's Functions  ======*/
 	
@@ -6242,20 +6254,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	            self.svg.select('#clip').select('rect').attr('height', (self.options.itemHeight + self.options.itemMargin) * data.length);
 	
 	            //draw border
-	            self.body.append("rect").attr("class", "c9-timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.options.itemMargin / 2).attr("height", (self.options.itemHeight + self.options.itemMargin) * data.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
+	            self.body.append("rect").attr("class", "c9-timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.options.itemMargin / 2).attr("height", (self.options.itemHeight + self.options.itemMargin) * (self.options.stack ? self.maxStack : 1)).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
 	
 	            var labelContainer = self.svg.append("g").attr('class', 'c9-timeline-chart c9-label-container');
 	
 	            data.forEach(function (datum, index) {
 	                var barYAxis = (self.options.itemHeight + self.options.itemMargin) * stackList[index];
+	                if (!self.options.stack) barYAxis = 0;
+	
 	                //draw background
-	                if (self.options.backgroundColor) {
+	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.backgroundColor) {
 	                    var bgContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-background-container');
 	
 	                    bgContainer.selectAll(".c9-background-container").data(datum.value).enter().append("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", _C14.default.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % (self.maxStack - 1)] : self.options.backgroundColor);
 	                }
 	
-	                if (self.options.striped) {
+	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.striped) {
 	                    var bgContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-stripe-background-container');
 	                    bgContainer.selectAll(".c9-stripe-background-container").data(datum.value).enter().insert("rect").attr("class", "c9-timeline-stripe-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
 	                }
@@ -6283,13 +6297,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	                //draw the label left side item
-	                if (!_C14.default.isEmpty(datum.name) && datum.name != "") {
+	                if (self.options.stack && !_C14.default.isEmpty(datum.name) && datum.name != "") {
 	                    var rowsDown = self.margin.top + (self.options.itemHeight + self.options.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.options.itemHeight * 0.75;
 	
 	                    labelContainer.append("text").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.options.labelMargin + "," + rowsDown + ")").text(datum.name);
 	                }
 	                //draw icon
-	                else if (!_C14.default.isEmpty(datum.icon) && datum.icon != "") {
+	                else if (self.options.stack && !_C14.default.isEmpty(datum.icon) && datum.icon != "") {
 	                        labelContainer.append("image").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.options.labelMargin + "," + (self.margin.top + (self.options.itemHeight + self.options.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.options.itemHeight).attr("height", self.options.itemHeight);
 	                    }
 	            });
@@ -6755,7 +6769,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                zoom: 2
 	            },
 	            data: null,
-	            format: null
+	            tooltip: {
+	                format: null
+	            }
 	        };
 	
 	        self._options = _C2.default.mergeDeep(config, options);
@@ -6809,6 +6825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // self.c9Markers = new ol.source.Vector({});
 	            //c9Objects contain all polygons, lines
 	            self.c9Objs = new ol.source.Vector({});
+	            self.c9GeojsonObjs = [];
 	            //init all thing relating to user's data
 	
 	            //layer
@@ -6872,7 +6889,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        width: 3
 	                    }),
 	                    fill: new ol.style.Fill({
-	                        color: 'rgba(255, 255, 255, 0.6)'
+	                        color: 'rgba(255, 255, 255, 0.2)'
 	                    })
 	                })
 	            });
@@ -6907,14 +6924,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //adapt source data to c9obj
 	            //support maximum 2 source level
 	            var containFeature = true,
-	                s;
+	                vs;
 	            try {
-	                s = layer.getSource();
-	                s.getFeatures();
+	                vs = layer.getSource();
+	                vs.getFeatures();
 	            } catch (err) {
 	                try {
-	                    s = layer.getSource().getSource();
-	                    s.getFeatures();
+	                    vs = layer.getSource().getSource();
+	                    vs.getFeatures();
 	                } catch (err) {
 	                    containFeature = false;
 	                }
@@ -6925,52 +6942,61 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    feature.getKeys().forEach(function (k) {
 	                        result[k] = feature.getProperties()[k];
 	                    });
+	                    result['id'] = feature.getId();
 	                    return result;
 	                };
-	
+	                if (!_C2.default.isEmpty(options.style)) {
+	                    try {
+	                        self.setStyle({ obj: layer.getSource(), style: options.style });
+	                    } catch (err) {
+	                        try {
+	                            self.setStyle({ obj: vs, style: options.style });
+	                        } catch (err) {
+	                            try {
+	                                self.setStyle({ obj: layer, style: options.style });
+	                            } catch (err) {
+	                                throw 'Cannot set style for this source';
+	                            }
+	                        }
+	                    }
+	                }
 	                //register layer loaded event to set data for obj
-	                s.once('change', function (e) {
-	                    if (s.getState() == 'ready') {
-	                        var objs = s.getFeatures();
+	                vs.once('change', function (e) {
+	                    if (vs.getState() == 'ready') {
+	                        var objs = vs.getFeatures();
+	                        self.c9GeojsonObjs.push(layer.getSource());
 	                        // self.c9Objs.addFeatures(objs);
 	
 	                        objs.forEach(function (o) {
-	                            //set data & some attrs
-	                            var type = o.getGeometry().getType();
 	                            o.set('data', readFormat(o));
-	                            // o.set('type', 'c9-' + (type == 'point' ? 'marker' : type.toLowerCase()));
-	                            // if (type.toLowerCase() == 'polygon' || type.toLowerCase() == 'multipolygon' || type.toLowerCase() == 'line') {
-	                            //     o.set('c9-style', {
-	                            //         strokeWidth: 2,
-	                            //         strokeColor: 'steelblue',
-	                            //         fillColor: 'rgba(0, 0, 255, 0.1)'
-	                            //     });
-	                            // set style
-	                            // o.setStyle(new ol.style.Style({
-	                            //     stroke: new ol.style.Stroke({
-	                            //         width: 2,
-	                            //         color: 'steelblue'
-	                            //     }),
-	                            //     fill: new ol.style.Fill({
-	                            //         color: 'rgba(0, 0, 255, 0.1)'
-	                            //     })
-	                            // }))    
-	                            // } 
-	                            // else if (type.toLowerCase() == 'point') {
-	                            //     o.setStyle(new ol.style.Style({
-	                            //         image: new ol.style.Icon({
-	                            //             anchor: [0.5, 1], //middle-width and bottom-height of image
-	                            //             src: 'http://s21.postimg.org/blklb8scn/marker_icon.png',
-	                            //             scale: 1
-	                            //         })
-	                            //     }))
-	                            // }
+	                            o.set('type', 'c9-geojson');
+	                            // o.set('c9-style', options.style);
+	                            if (_C2.default.isFunction(options.condition) && !_C2.default.isEmpty(options.data)) {
+	                                var data = options.data,
+	                                    condition = options.condition;
+	                                if (_C2.default.isArray(data)) {
+	                                    for (var i = 0; i < data.length; i++) {
+	                                        if (condition(o, data[i])) {
+	                                            for (var j in data[i]) {
+	                                                o.get('data')[j] = data[i][j];
+	                                            }
+	                                            break;
+	                                        }
+	                                    }
+	                                } else if (condition(o, data)) {
+	                                    for (var i in data) {
+	                                        o.get('data')[i] = data[i];
+	                                    }
+	                                }
+	                            }
 	                        });
 	                    }
 	                });
 	            }
 	
 	            self.c9Layers.push(layer);
+	
+	            return layer;
 	        }
 	
 	        /**
@@ -6985,10 +7011,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            if (layers instanceof Array) {
 	                layers.forEach(function (l, i) {
-	                    self.createLayer({ type: l.type, source: l.source, style: l.style });
+	                    self.createLayer({ type: l.type, source: l.source, style: l.style, condition: l.condition, data: l.data });
 	                });
 	            } else {
-	                self.createLayer({ type: layers.type, source: layers.source, style: layers.style });
+	                self.createLayer({ type: layers.type, source: layers.source, style: layers.style, condition: layers.condition, data: layers.data });
 	            }
 	        }
 	
@@ -7046,7 +7072,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        // default style
 	                        style: new ol.style.Style({
 	                            fill: new ol.style.Fill({
-	                                color: 'rgba(255, 255, 255, 0.6)'
+	                                color: 'rgba(255, 255, 255, 0.2)'
 	                            }),
 	                            stroke: new ol.style.Stroke({
 	                                color: '#319FD3',
@@ -7168,11 +7194,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return string.charAt(0).toUpperCase() + string.slice(1);
 	                };
 	                var strongSpan = function strongSpan(strong, span) {
-	                    if (span == '' || _C2.default.isEmpty(span)) return "";return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>";
+	                    if (span == '' || _C2.default.isEmpty(span) || _C2.default.isObject(span)) return "";return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>";
 	                };
 	                var result = strongSpan("Name", data.name),
 	                    v;
-	                if (!_C2.default.isEmpty(data.coor)) result += strongSpan("Lon", data.coor.lon) + strongSpan("Lat", data.coor.lat);
+	                if (!_C2.default.isEmpty(data.coor)) result += strongSpan("Lon", data.coor.lon || data.coor[0]) + strongSpan("Lat", data.coor.lat || data.coor[1]);
 	
 	                for (var i in v = data.value) {
 	                    result += strongSpan(i, v[i]);
@@ -7190,17 +7216,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // new hover style
 	                if (f !== self.lastHoveredObj) {
 	                    if (self.lastHoveredObj) {
-	                        if (self.lastHoveredObj.get('type')) self.lastHoveredObj.setStyle(self.lastHoveredObj.get('c9-type'));else self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
+	                        if (self.lastHoveredObj.get('type') != "c9-geojson" && self.lastHoveredObj.get('c9-style')) self.lastHoveredObj.setStyle(self.lastHoveredObj.get('c9-style'));else self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
 	                    }
 	                    if (f) {
 	                        var fStyle = f.get('c9-style'),
 	                            strokeColor = 'rgb(0, 153, 255)',
 	                            strokeWidth = 3,
-	                            fillColor = 'rgba(255, 255, 255, 0.6)';
+	                            fillColor = 'rgba(255, 255, 255, 0.2)';
 	                        if (fStyle) {
 	                            strokeColor = fStyle.getStroke().getColor() == '#319FD3' ? 'rgb(0, 153, 255)' : self.getLightenColor(fStyle.getStroke().getColor());
 	                            strokeWidth = fStyle.getStroke().getWidth() + 2;
-	                            fillColor = fStyle.getFill().getColor() == 'rgba(255, 255, 255, 0.6)' ? 'rgba(255, 255, 255, 0.6)' : self.getLightenColor(fStyle.getFill().getColor());
+	                            fillColor = fStyle.getFill().getColor() == 'rgba(255, 255, 255, 0.2)' ? 'rgba(255, 255, 255, 0.2)' : self.getLightenColor(fStyle.getFill().getColor());
 	                        }
 	                        var newStyle = new ol.style.Style({
 	                            stroke: new ol.style.Stroke({
@@ -7256,13 +7282,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // panAnimation(f);
 	
 	                    try {
-	                        if (self.options.format) self.options.format(f.get('data'));
+	                        if (self.options.tooltip.format) self.options.tooltip.format(f.get('data'));
 	                    } catch (err) {
 	                        throw "Check data format again";
 	                        return;
 	                    }
 	
-	                    var content = self.options.format ? self.options.format(f.get('data')) : formatPopup(f.get('data'));
+	                    var content = self.options.tooltip.format ? self.options.tooltip.format(f.get('data')) : formatPopup(f.get('data'));
 	                    if (_C2.default.isEmpty(content) || content.toString().trim() == "") return;
 	
 	                    self.c9Popup.getElement().style.display = 'block';
@@ -7357,7 +7383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        keydownAnimate(RIGHT_KEY);
 	                        break;
 	                    case DEL_KEY:
-	                        if (!_C2.default.isEmpty(self.lastSelectedObj) && !_C2.default.isEmpty(self.lastSelectedObj.get('type'))) self.c9Objs.removeFeature(self.lastSelectedObj);
+	                        // if (!Helper.isEmpty(self.lastSelectedObj) && (!Helper.isEmpty(self.lastSelectedObj.get('type')) || self.lastSelectedObj.get('type') != 'c9-geojson')) self.c9Objs.removeFeature(self.lastSelectedObj);
 	                        break;
 	                }
 	            });
@@ -7433,6 +7459,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    'data-ref': '',
 	                    type: 'c9-marker',
 	                    data: data,
+	                    // 'c9-id': ,
 	                    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
 	                });
 	
@@ -7451,10 +7478,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        })
 	                    });
 	                };
-	
-	                var markerStyle = createMarkerStyle(imgSrc, scale);
-	                marker.set('c9-style', markerStyle);
-	                marker.setStyle(markerStyle);
+	                // marker.set('c9-style', markerStyle);
+	                marker.setStyle(createMarkerStyle(imgSrc, scale));
 	
 	                //add this marker to marker list (c9Objs)
 	                self.c9Objs.addFeature(marker);
@@ -7476,9 +7501,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //     })
 	            // }
 	
-	            var strokeWidth = options ? options.strokeWidth : 1;
-	            var strokeColor = options ? options.strokeColor : "#319FD3";
-	            var fillColor = options ? options.fillColor : "rgba(255, 255, 255, 0.6)";
+	            var strokeWidth = options ? options.strokeWidth || 1 : 1,
+	                strokeColor = options ? options.strokeColor || "#319FD3" : "#319FD3",
+	                fillColor = options ? options.fillColor || "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.2)";
 	
 	            var obj = new ol.Feature({
 	                'data-ref': '',
@@ -7615,7 +7640,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'getObjs',
 	        value: function getObjs() {
-	            return this.c9Objs.getFeatures();
+	            var c9GeojsonObjs = [];
+	            this.c9GeojsonObjs.forEach(function (o) {
+	                c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());
+	            });
+	            return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
 	        }
 	    }, {
 	        key: 'getLayers',
@@ -7640,7 +7669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        return feature;
 	                    });
 	                    if (_C2.default.isFunction(callback) && f) {
-	                        callback.call(this, f.get('data'));
+	                        callback.call(this, f);
 	                    }
 	                },
 	                'pointermove': function pointermove(evt) {
@@ -7648,12 +7677,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        return feature;
 	                    });
 	                    if (_C2.default.isFunction(callback) && f) {
-	                        callback.call(this, f.get('data'));
+	                        callback.call(this, f);
+	                    }
+	                },
+	                'postrender': function postrender(evt) {
+	                    console.log(callback);
+	                    if (_C2.default.isFunction(callback)) {
+	                        callback.call(this, evt);
 	                    }
 	                }
 	            };
 	
-	            if (eventType == "click") self.c9Map.getViewport().addEventListener(eventType, eventFactoryViewport[eventType]);else self.c9Map.on(eventType, eventFactoryViewport[eventType]);
+	            if (eventType == "click") self.c9Map.getViewport().addEventListener(eventType, eventFactoryViewport[eventType]);else if (eventType == "pointermove") self.c9Map.on(eventType, eventFactoryViewport[eventType]);else if (eventType == "postrender") self.c9Map.once(eventType, eventFactoryViewport[eventType]);
 	        }
 	    }, {
 	        key: 'getLightenColor',
@@ -7674,9 +7709,90 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    }, {
 	        key: 'setStyle',
-	        value: function setStyle(obj, style) {
-	            if (_C2.default.isEmpty(obj) || _C2.default.isEmpty(style)) return;
-	            obj.setStyle(style);
+	        value: function setStyle(options) {
+	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.obj) || _C2.default.isEmpty(options.style)) return;
+	            //create style for obj
+	            if (_C2.default.isFunction(options.style) || style instanceof ol.style.Style) {
+	                options.obj.setStyle(options.style);
+	            } else {
+	                var DEFAULT_SRC = 'http://s21.postimg.org/blklb8scn/marker_icon.png';
+	                var DEFAULT_SCALE = 1;
+	
+	                var strokeColor = options.style.strokeColor ? options.style.strokeColor : '#319FD3',
+	                    strokeWidth = options.style.strokeWidth ? options.style.strokeColor : 1,
+	                    fillColor = options.style.fillColor ? options.style.fillColor : 'rgba(255, 255, 255, 0.2)',
+	                    imgSrc = options.style.type == 'marker' || options.style.type == 'c9-marker' ? options.style.imgSrc || DEFAULT_SRC : null,
+	                    scale = options.style.type == 'marker' || options.style.type == 'c9-marker' ? options.style.scale || DEFAULT_SCALE : null;
+	
+	                if (imgSrc != null) obj.setStyle(new ol.style.Style({
+	                    image: new ol.style.Icon({
+	                        anchor: [0.5, 1], //middle-width and bottom-height of image
+	                        src: imgSrc,
+	                        scale: scale
+	                    })
+	                }));else obj.setStyle(new ol.style.Style({
+	                    stroke: new ol.style.Stroke({
+	                        color: strokeColor,
+	                        width: strokeWidth
+	                    }),
+	                    fill: new ol.style.Fill({
+	                        color: fillColor
+	                    })
+	                }));
+	            }
+	        }
+	
+	        // TODO - set hover style
+	
+	        /**
+	         * create a layer from geojson file
+	         * @url  {String} url of geojson file
+	         */
+	
+	    }, {
+	        key: 'createLayerFromGeojson',
+	        value: function createLayerFromGeojson(options) {
+	            var self = this;
+	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.url)) return;
+	
+	            var layer = self.createLayer({
+	                type: "Image",
+	                source: {
+	                    name: "ImageVector",
+	                    source: {
+	                        name: 'Vector',
+	                        url: options.url,
+	                        format: 'GeoJSON'
+	                    }
+	                },
+	                condition: options.condition,
+	                data: options.data
+	            });
+	
+	            //create style
+	            self.setStyle({ obj: layer.getSource(), style: options.style });
+	            // if (!Helper.isEmpty(options.style)) {
+	            //     if (Helper.isFunction(style) || style instanceof ol.style.Style) {
+	            //         layer.getSource().setStyle(options.style);
+	            //     }
+	            //     else {
+	            //         var strokeColor = options.style.strokeColor ? options.style.strokeColor : '#319FD3',
+	            //             strokeWidth = options.style.strokeWidth ? options.style.strokeColor : 1,
+	            //             fillColor   = options.style.fillColor   ? options.style.fillColor   : 'rgba(255, 255, 255, 0.2)';
+	
+	            //         layer.getSource().setStyle(new ol.style.Style({
+	            //             stroke: new ol.style.Stroke({
+	            //                 color: strokeColor,
+	            //                 width: strokeWidth
+	            //             }),
+	            //             fill: new ol.style.Fill({
+	            //                 color: fillColor
+	            //             })
+	            //         }))
+	            //     }
+	            // }
+	
+	            return layer;
 	        }
 	    }, {
 	        key: 'dataSource',

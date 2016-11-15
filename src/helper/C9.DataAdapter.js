@@ -491,8 +491,8 @@ export default class DataAdapter {
             } else {
                 _valueItem = {
                     "name": Helper.get(self.keys.name, data),
-                    "start": new Date(d.start),
-                    "end": new Date(d.end) ,
+                    "start": new Date(_dsArray.start),
+                    "end": new Date(_dsArray.end) ,
                     "color": color(index),
                     "data-ref": Helper.guid(),
                     "enable": true,

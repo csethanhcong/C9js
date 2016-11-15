@@ -5,10 +5,11 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <meta name="description" content="">
-	    <meta name="author" content="">
+	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+	    <meta name="author" content="Cong Pham, Huy Do">
+	    <meta name="title" content="C9js - Examples">
 
-	    <title>C9js - Examples</title>
+	    <title>C9js - Change Label Margin</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,83 +84,98 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Change Label Margin</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>change_label_margin.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
-    {name: "A", value: .0245},
-    {name: "B", value: .01492},
-    {name: "C", value: .02782},
-    {name: "D", value: .04253},
-    {name: "E", value: 1},
-    {name: "F", value: .02288},
-    {name: "G", value: .02015},
-    {name: "H", value: .06094},
-    {name: "I", value: .5},
+    {
+        name: "person a", 
+        value: [
+            {"start": 1355752800000, "end": 1355759900000},
+            {"start": 1355767900000, "end": 1355774400000}
+        ]
+    },
+    {
+        name: "person b", 
+        value: {"start": 1355759910000, "end": 1355761900000}
+    },
+    {
+        name: "person c", 
+        value: {"start": 1355761910000, "end": 1355763910000}
+    }
 ];
 
 var options1 = {
-    id: "#demo1",
-    width: 750, 
-    height: 300,
-    margin: {
-        top: 50
-    },
+    id: "demo1", 
+    width: 1100, 
+    height: 250,
     data: {
         plain: data1,
-    }, 
+    },
+    labelMargin: -20 // change margin of label
+    title: {
+        text: "Change Label Margin"
+    },
+    axis: {
+        x: {
+            tick: {
+                format: d3.time.format('%I:%M %p') //https://github.com/d3/d3-3.x-api-reference/blob/master/Time-Formatting.md
+            }
+        }
+    },
 };
-
-var barChart = new C9.BarChart(options1);
-barChart.draw();</code></pre>
+var timeline = new C9.TimeLine(options1);
+timeline.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-
 			var data1 = [
-					{name: "A", value:	.0245},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
-				];
+            	{
+          			name: "Doctor 1", 
+          			value: [
+	          			{"start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, 
+	          			{"start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}
+          			]
+          		},
+        		{
+        			name: "Doctor 2", 
+        			value: {"start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}
+        		},
+            	{
+            		name: "Doctor 3", 
+            		value: {"start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}
+            	}
+            ];
 
 			var options1 = {
-				id: "#demo1", 
-				width: 750, 
-				height: 300,
-				margin: {
-					top: 50
-				},
+				id: "demo1", 
+				width: 1100, 
+				height: 250,
 				data: {
 					plain: data1,
-				}, 
-				// axis: {
-				// 	x: {
-				// 		show: true,
-				// 	},
-				// 	y: {
-				// 		show: false,
-				// 	}
-				// },
-				legend: {
-					show: false,
 				},
+				title: {
+					text: "Change Label Margin"
+				},
+				axis: {
+					x: {
+						tick: {
+							format: d3.time.format('%I:%M %p')
+						}
+					}
+				},
+				labelMargin: -20
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
+			var timeline = new C9.TimeLine(options1);
+			timeline.draw();
 		</script>
 		
 	</body>

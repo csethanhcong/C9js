@@ -141,6 +141,7 @@ export default class Map {
         // self.c9Markers = new ol.source.Vector({});
         //c9Objects contain all polygons, lines
         self.c9Objs = new ol.source.Vector({});
+        self.c9GeojsonObjs = [];
         //init all thing relating to user's data
 
         //layer
@@ -203,7 +204,7 @@ export default class Map {
                     width: 3
                 }),
                 fill: new ol.style.Fill({
-                    color: 'rgba(255, 255, 255, 0.6)'
+                    color: 'rgba(255, 255, 255, 0.2)'
                 })
             })
         });
@@ -235,15 +236,15 @@ export default class Map {
 
         //adapt source data to c9obj
         //support maximum 2 source level
-        var containFeature = true, s;
+        var containFeature = true, vs;
         try {
-            s = layer.getSource();
-            s.getFeatures();
+            vs = layer.getSource();
+            vs.getFeatures();
         }
         catch (err) {
             try {
-                s = layer.getSource().getSource();
-                s.getFeatures();
+                vs = layer.getSource().getSource();
+                vs.getFeatures();
             }
             catch (err) {
                 containFeature = false;    
@@ -255,52 +256,67 @@ export default class Map {
                 feature.getKeys().forEach(function(k) {
                     result[k] = feature.getProperties()[k];
                 });
+                result['id'] = feature.getId();
                 return result;
             }
-            
+            if (!Helper.isEmpty(options.style)) {
+                try {
+                    self.setStyle({obj: layer.getSource(), style: options.style});
+                }
+                catch (err) {
+                    try {
+                        self.setStyle({obj: vs, style: options.style});
+                    }
+                    catch (err) {
+                        try {
+                            self.setStyle({obj: layer, style: options.style});    
+                        }
+                        catch (err) {
+                            throw 'Cannot set style for this source';
+                        }
+                    }
+                    
+                }
+            }
             //register layer loaded event to set data for obj
-            s.once('change', function(e) {
-                if (s.getState() == 'ready') {
-                    var objs = s.getFeatures();
+            vs.once('change', function(e) {
+                if (vs.getState() == 'ready') {
+                    var objs = vs.getFeatures();
+                    self.c9GeojsonObjs.push(layer.getSource());
                     // self.c9Objs.addFeatures(objs);
 
                     objs.forEach(function(o) {
-                        //set data & some attrs
-                        var type = o.getGeometry().getType();
                         o.set('data', readFormat(o));
-                        // o.set('type', 'c9-' + (type == 'point' ? 'marker' : type.toLowerCase()));
-                        // if (type.toLowerCase() == 'polygon' || type.toLowerCase() == 'multipolygon' || type.toLowerCase() == 'line') {
-                        //     o.set('c9-style', {
-                        //         strokeWidth: 2,
-                        //         strokeColor: 'steelblue',
-                        //         fillColor: 'rgba(0, 0, 255, 0.1)'
-                        //     });
-                            // set style
-                            // o.setStyle(new ol.style.Style({
-                            //     stroke: new ol.style.Stroke({
-                            //         width: 2,
-                            //         color: 'steelblue'
-                            //     }),
-                            //     fill: new ol.style.Fill({
-                            //         color: 'rgba(0, 0, 255, 0.1)'
-                            //     })
-                            // }))    
-                        // } 
-                        // else if (type.toLowerCase() == 'point') {
-                        //     o.setStyle(new ol.style.Style({
-                        //         image: new ol.style.Icon({
-                        //             anchor: [0.5, 1], //middle-width and bottom-height of image
-                        //             src: 'http://s21.postimg.org/blklb8scn/marker_icon.png',
-                        //             scale: 1
-                        //         })
-                        //     }))
-                        // }
-                    });
+                        o.set('type', 'c9-geojson');
+                        // o.set('c9-style', options.style);
+                        if (Helper.isFunction(options.condition) && !Helper.isEmpty(options.data)) {
+                            var data      = options.data,
+                                condition = options.condition;
+                            if (Helper.isArray(data)) {
+                                for (var i = 0; i < data.length; i++) {
+                                    if (condition(o, data[i])) {
+                                        for (var j in data[i]) {
+                                            o.get('data')[j] = data[i][j];
+                                        }
+                                        break;
+                                    }
+                                }
+                            } 
+                            else 
+                                if (condition(o, data)) {
+                                    for (var i in data) {
+                                        o.get('data')[i] = data[i];
+                                    }
+                                }
+                        }
+                    })
                 }
             })
         }
 
         self.c9Layers.push(layer);
+
+        return layer;
     }
 
     /**
@@ -312,11 +328,11 @@ export default class Map {
 
         if (layers instanceof Array) {
             layers.forEach(function(l, i) {
-                self.createLayer({type: l.type, source: l.source, style: l.style});
+                self.createLayer({type: l.type, source: l.source, style: l.style, condition: l.condition, data: l.data});
             })
         }
         else {
-            self.createLayer({type: layers.type, source: layers.source, style: layers.style});
+            self.createLayer({type: layers.type, source: layers.source, style: layers.style, condition: layers.condition, data: layers.data});
         }
     }
 
@@ -371,7 +387,7 @@ export default class Map {
                     // default style
                     style: new ol.style.Style({
                         fill: new ol.style.Fill({
-                            color: 'rgba(255, 255, 255, 0.6)'
+                            color: 'rgba(255, 255, 255, 0.2)'
                         }),
                         stroke: new ol.style.Stroke({
                             color: '#319FD3',
@@ -483,9 +499,9 @@ export default class Map {
         var formatPopup = function(data) {
             if (Helper.isEmpty(data)) return;
             var capitalizeFirstLetter = function(string) { return string.charAt(0).toUpperCase() + string.slice(1); }
-            var strongSpan = function(strong, span) { if (span == '' || Helper.isEmpty(span)) return ""; return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>"; };
+            var strongSpan = function(strong, span) { if (span == '' || Helper.isEmpty(span) || Helper.isObject(span)) return ""; return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>"; };
             var result = strongSpan("Name", data.name), v;
-            if (!Helper.isEmpty(data.coor)) result += (strongSpan("Lon", data.coor.lon) + strongSpan("Lat", data.coor.lat));
+            if (!Helper.isEmpty(data.coor)) result += (strongSpan("Lon", data.coor.lon || data.coor[0]) + strongSpan("Lat", data.coor.lat || data.coor[1]));
 
             for (var i in v = data.value) {
                 result += strongSpan(i, v[i]);
@@ -503,17 +519,17 @@ export default class Map {
             // new hover style
             if (f !== self.lastHoveredObj) {
                 if (self.lastHoveredObj) {
-                    if (self.lastHoveredObj.get('type')) 
-                        self.lastHoveredObj.setStyle(self.lastHoveredObj.get('c9-type'));
+                    if (self.lastHoveredObj.get('type') != "c9-geojson" && self.lastHoveredObj.get('c9-style'))
+                        self.lastHoveredObj.setStyle(self.lastHoveredObj.get('c9-style'));
                     else
                         self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
                 }
                 if (f) {
-                    var fStyle = f.get('c9-style'), strokeColor = 'rgb(0, 153, 255)', strokeWidth = 3, fillColor = 'rgba(255, 255, 255, 0.6)';
+                    var fStyle = f.get('c9-style'), strokeColor = 'rgb(0, 153, 255)', strokeWidth = 3, fillColor = 'rgba(255, 255, 255, 0.2)';
                     if (fStyle) {
                         strokeColor = fStyle.getStroke().getColor() == '#319FD3' ? 'rgb(0, 153, 255)' : self.getLightenColor(fStyle.getStroke().getColor());
                         strokeWidth = fStyle.getStroke().getWidth() + 2;
-                        fillColor   = fStyle.getFill().getColor() == 'rgba(255, 255, 255, 0.6)' ? 'rgba(255, 255, 255, 0.6)' : self.getLightenColor(fStyle.getFill().getColor());
+                        fillColor   = fStyle.getFill().getColor() == 'rgba(255, 255, 255, 0.2)' ? 'rgba(255, 255, 255, 0.2)' : self.getLightenColor(fStyle.getFill().getColor());
                     }
                     var newStyle = new ol.style.Style({
                         stroke: new ol.style.Stroke({
@@ -675,7 +691,7 @@ export default class Map {
                     keydownAnimate(RIGHT_KEY);
                     break;
                 case DEL_KEY:
-                    if (!Helper.isEmpty(self.lastSelectedObj) && !Helper.isEmpty(self.lastSelectedObj.get('type'))) self.c9Objs.removeFeature(self.lastSelectedObj);
+                    // if (!Helper.isEmpty(self.lastSelectedObj) && (!Helper.isEmpty(self.lastSelectedObj.get('type')) || self.lastSelectedObj.get('type') != 'c9-geojson')) self.c9Objs.removeFeature(self.lastSelectedObj);
                     break;
             }
         })
@@ -748,6 +764,7 @@ export default class Map {
                 'data-ref': '',
                 type: 'c9-marker',
                 data: data,
+                // 'c9-id': ,
                 geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
             });
 
@@ -766,10 +783,8 @@ export default class Map {
                     })
                 });
             }
-
-            var markerStyle = createMarkerStyle(imgSrc, scale);
-            marker.set('c9-style', markerStyle);
-            marker.setStyle(markerStyle);
+            // marker.set('c9-style', markerStyle);
+            marker.setStyle(createMarkerStyle(imgSrc, scale));
 
             //add this marker to marker list (c9Objs)
             self.c9Objs.addFeature(marker);
@@ -791,9 +806,9 @@ export default class Map {
         //     })
         // }
 
-        var strokeWidth = options ? options.strokeWidth : 1;
-        var strokeColor = options ? options.strokeColor : "#319FD3";
-        var fillColor   = options ? options.fillColor   : "rgba(255, 255, 255, 0.6)";
+        var strokeWidth = options ? (options.strokeWidth || 1) : 1,
+            strokeColor = options ? (options.strokeColor || "#319FD3") : "#319FD3",
+            fillColor   = options ? (options.fillColor || "rgba(255, 255, 255, 0.2)") : "rgba(255, 255, 255, 0.2)";
 
         var obj = new ol.Feature({
             'data-ref': '',
@@ -930,7 +945,11 @@ export default class Map {
     }
 
     getObjs(){
-        return this.c9Objs.getFeatures();
+        var c9GeojsonObjs = [];
+        this.c9GeojsonObjs.forEach(function(o){
+            c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());
+        });
+        return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
     }
 
     getLayers() {
@@ -951,7 +970,7 @@ export default class Map {
                     return feature;
                 });
                 if (Helper.isFunction(callback) && f) {
-                    callback.call(this, f.get('data'));
+                    callback.call(this, f);
                 }
             },
             'pointermove': function(evt) {
@@ -959,15 +978,23 @@ export default class Map {
                     return feature;
                 });
                 if (Helper.isFunction(callback) && f) {
-                    callback.call(this, f.get('data'));
+                    callback.call(this, f);
+                }
+            },
+            'postrender': function(evt) {
+                console.log(callback)
+                if (Helper.isFunction(callback)) {
+                    callback.call(this, evt);
                 }
             }
         }
 
         if (eventType == "click")
             self.c9Map.getViewport().addEventListener(eventType, eventFactoryViewport[eventType]);
-        else
+        else if (eventType == "pointermove")
             self.c9Map.on(eventType, eventFactoryViewport[eventType]);
+        else if (eventType == "postrender")
+            self.c9Map.once(eventType, eventFactoryViewport[eventType]);
     }
 
     getLightenColor(color) {
@@ -986,8 +1013,90 @@ export default class Map {
      * @obj   {ol.layer || ol.source || ol.Feature}
      * @style {function || ol.style} style function || ol.style
      */
-    setStyle(obj, style){
-        if (Helper.isEmpty(obj) || Helper.isEmpty(style)) return;
-        obj.setStyle(style);
+    setStyle(options){
+        if (Helper.isEmpty(options) || Helper.isEmpty(options.obj) || Helper.isEmpty(options.style)) return;
+        //create style for obj
+        if (Helper.isFunction(options.style) || style instanceof ol.style.Style) {
+            options.obj.setStyle(options.style);
+        }
+        else {
+            const DEFAULT_SRC = 'http://s21.postimg.org/blklb8scn/marker_icon.png'
+            const DEFAULT_SCALE = 1;
+
+            var strokeColor = options.style.strokeColor ? options.style.strokeColor : '#319FD3',
+                strokeWidth = options.style.strokeWidth ? options.style.strokeColor : 1,
+                fillColor   = options.style.fillColor ? options.style.fillColor     : 'rgba(255, 255, 255, 0.2)',
+                imgSrc      = options.style.type == 'marker' || options.style.type == 'c9-marker' ? (options.style.imgSrc || DEFAULT_SRC)   : null,
+                scale       = options.style.type == 'marker' || options.style.type == 'c9-marker' ? (options.style.scale  || DEFAULT_SCALE) : null;
+
+            if (imgSrc != null)
+                obj.setStyle(new ol.style.Style({
+                    image: new ol.style.Icon({
+                        anchor: [0.5, 1], //middle-width and bottom-height of image
+                        src: imgSrc,
+                        scale: scale
+                    })
+                }))
+            else
+                obj.setStyle(new ol.style.Style({
+                    stroke: new ol.style.Stroke({
+                        color: strokeColor,
+                        width: strokeWidth
+                    }),
+                    fill: new ol.style.Fill({
+                        color: fillColor
+                    })
+                }))
+        }
+    }
+
+    // TODO - set hover style
+
+    /**
+     * create a layer from geojson file
+     * @url  {String} url of geojson file
+     */
+    createLayerFromGeojson(options) {
+        var self = this;
+        if (Helper.isEmpty(options) || Helper.isEmpty(options.url)) return;
+
+        var layer = self.createLayer({
+            type: "Image",
+            source: {
+                name: "ImageVector",
+                source: {
+                    name: 'Vector',
+                    url: options.url,
+                    format: 'GeoJSON'   
+                }
+            },
+            condition: options.condition,
+            data: options.data
+        });
+
+        //create style
+        self.setStyle({obj: layer.getSource(), style: options.style});
+        // if (!Helper.isEmpty(options.style)) {
+        //     if (Helper.isFunction(style) || style instanceof ol.style.Style) {
+        //         layer.getSource().setStyle(options.style);
+        //     }
+        //     else {
+        //         var strokeColor = options.style.strokeColor ? options.style.strokeColor : '#319FD3',
+        //             strokeWidth = options.style.strokeWidth ? options.style.strokeColor : 1,
+        //             fillColor   = options.style.fillColor   ? options.style.fillColor   : 'rgba(255, 255, 255, 0.2)';
+
+        //         layer.getSource().setStyle(new ol.style.Style({
+        //             stroke: new ol.style.Stroke({
+        //                 color: strokeColor,
+        //                 width: strokeWidth
+        //             }),
+        //             fill: new ol.style.Fill({
+        //                 color: fillColor
+        //             })
+        //         }))
+        //     }
+        // }
+
+        return layer;
     }
 }

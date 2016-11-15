@@ -9,7 +9,7 @@
 	    <meta name="author" content="Cong Pham, Huy Do">
 	    <meta name="title" content="C9js - Examples">
 
-	    <title>C9js - Change Pie Chart Radius</title>
+	    <title>C9js - Simple Map</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -44,6 +44,8 @@
 
 	    <!-- D3 & OL3 & C9 -->
 	    <script src="../../libs/d3/d3.min.js"></script>
+	    <script src="../../libs/ol3/ol.js"></script>
+	    <link rel="stylesheet" type="text/css" href="../../libs/ol3/ol.css">
 	    <script src="../../libs/C9js/C9.js"></script>
 	    <link rel="stylesheet" href="../../libs/C9js/C9.min.css"/>
 
@@ -84,107 +86,30 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Change Pie Chart Radius</h2>
+		  <h2>Simple Map</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>change_pie_chart_radius.js</span></h3>
+			<h3># <span>simple_map.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
-				<pre><code class="javascript">var data1 = [
-    {name: 'A', value: .08167},
-    {name: 'B', value: .01492},
-    {name: 'C', value: .02782},
-    {name: 'D', value: .04253},
-    {name: 'E', value: .12702},
-    {name: 'F', value: .02288},
-    {name: 'G', value: .02015},
-    {name: 'H', value: .06094},
-    {name: 'I', value: .06966},
-    {name: 'J', value: .00153},
-    {name: 'K', value: .00772},
-    {name: 'L', value: .04025},
-    {name: 'M', value: .02406},
-    {name: 'N', value: .06749},
-    {name: 'O', value: .07507},
-    {name: 'P', value: .01929},
-    {name: 'Q', value: .00095},
-    {name: 'R', value: .05987},
-    {name: 'S', value: .06327},
-    {name: 'T', value: .09056},
-    {name: 'U', value: .02758},
-    {name: 'V', value: .00978},
-    {name: 'W', value: .02360},
-    {name: 'X', value: .00150},
-    {name: 'Y', value: .01974},
-    {name: 'Z', value: .00074},
-];
-
-var options1 = {
-    id: "demo1",
-    width: 1100, 
-    height: 400,
-    radius: 150,
-    data: {
-        plain: data1,
-    },
-    title: {
-        text: "Frequency of English Letters"
-    }
+				<pre><code class="javascript">var options1 = {
+	id: "demo1"
 };
-
-var pieChart = new C9.PieChart(options1);
-pieChart.draw();</code></pre>
+var map = new C9.Map(options1);
+map.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-			var data1 = [
-					{name: 'A', value: .08167},
-					{name: 'B', value: .01492},
-					{name: 'C', value: .02782},
-					{name: 'D', value: .04253},
-					{name: 'E', value: .12702},
-					{name: 'F', value: .02288},
-					{name: 'G', value: .02015},
-					{name: 'H', value: .06094},
-					{name: 'I', value: .06966},
-					{name: 'J', value: .00153},
-					{name: 'K', value: .00772},
-					{name: 'L', value: .04025},
-					{name: 'M', value: .02406},
-					{name: 'N', value: .06749},
-					{name: 'O', value: .07507},
-					{name: 'P', value: .01929},
-					{name: 'Q', value: .00095},
-					{name: 'R', value: .05987},
-					{name: 'S', value: .06327},
-					{name: 'T', value: .09056},
-					{name: 'U', value: .02758},
-					{name: 'V', value: .00978},
-					{name: 'W', value: .02360},
-					{name: 'X', value: .00150},
-					{name: 'Y', value: .01974},
-					{name: 'Z', value: .00074},
-				];
-
 			var options1 = {
-				id: "demo1", 
-				width: 1100, 
-				height: 400,
-				radius: 150,
-				data: {
-					plain: data1,
-				},
-				title: {
-					text: "Frequency of English Letters"
-				}
+				id: "demo1"
 			};
-			var pieChart = new C9.PieChart(options1);
-			pieChart.draw();
+			var map = new C9.Map(options1);
+			map.draw();
 		</script>
 		
 	</body>

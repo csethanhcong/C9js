@@ -14,7 +14,7 @@ export default class Axis {
                         format: undefined,
                         values: [],
                         //the following use for timeline chart
-                        type: d3.time.hours,
+                        time: undefined,
                         interval: 1
                     },
                     label: {
@@ -179,7 +179,7 @@ export default class Axis {
                 .orient("bottom")
                 .tickFormat(self.options.x.tick.format === undefined ? d3.time.format("%I %p") : self.options.x.tick.format)
                 // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
-                .ticks(self.options.x.tick.type, self.options.x.tick.interval);
+                .ticks(self.options.x.tick.time || self.options.x.tick.count, self.options.x.tick.interval);
             // delete options.starting;
             // delete options.ending;
         } else {

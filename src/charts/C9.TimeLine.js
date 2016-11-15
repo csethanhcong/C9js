@@ -273,7 +273,7 @@ export default class TimeLine extends Chart {
             .attr("x", 0)
             .attr("width", width)
             .attr("y", 0 - self.options.itemMargin / 2)
-            .attr("height", (self.options.itemHeight + self.options.itemMargin) * data.length)
+            .attr("height", (self.options.itemHeight + self.options.itemMargin) * (self.options.stack ? self.maxStack : 1))
             .attr("stroke", "rgb(154, 154, 154)")
             .attr("stroke-width", 2)
             .attr("fill", "none");
@@ -283,8 +283,10 @@ export default class TimeLine extends Chart {
 
         data.forEach( function(datum, index) {
             var barYAxis = ((self.options.itemHeight + self.options.itemMargin) * stackList[index]);
+            if (!self.options.stack) barYAxis = 0;
+
             //draw background
-            if (self.options.backgroundColor) { 
+            if (((!self.options.stack && index == 0) || self.options.stack) && self.options.backgroundColor) { 
                 var bgContainer = self.body.append("g")
                                     .attr('class', 'c9-timeline-chart c9-background-container');
 
@@ -299,7 +301,7 @@ export default class TimeLine extends Chart {
                     .attr("fill", Helper.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % (self.maxStack - 1)] : self.options.backgroundColor);
             }
 
-            if (self.options.striped) { 
+            if (((!self.options.stack && index == 0) || self.options.stack) && self.options.striped) { 
                 var bgContainer = self.body.append("g")
                                     .attr('class', 'c9-timeline-chart c9-stripe-background-container');
                 bgContainer.selectAll(".c9-stripe-background-container")
@@ -350,7 +352,7 @@ export default class TimeLine extends Chart {
             }
 
             //draw the label left side item
-            if (!Helper.isEmpty(datum.name) && datum.name != "") { 
+            if (self.options.stack && !Helper.isEmpty(datum.name) && datum.name != "") { 
                 var rowsDown = self.margin.top + (self.options.itemHeight + self.options.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.options.itemHeight * 0.75;
 
                 labelContainer.append("text")
@@ -359,7 +361,7 @@ export default class TimeLine extends Chart {
                     .text(datum.name);
             }
             //draw icon
-            else if (!Helper.isEmpty(datum.icon) && datum.icon != "") {
+            else if (self.options.stack && !Helper.isEmpty(datum.icon) && datum.icon != "") {
                 labelContainer.append("image")
                     .attr("class", "c9-timeline-label")
                     .attr("transform", "translate("+ self.options.labelMargin +","+ (self.margin.top + (self.options.itemHeight + self.options.itemMargin) * stackList[index])+")")
