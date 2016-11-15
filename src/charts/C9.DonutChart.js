@@ -16,13 +16,13 @@ export default class DonutChart extends Chart {
         var self = this;
 
         var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
-        var config = {
+        self.config = {
             outerRadius: R,
             innerRadius: R > 80 ? R - 80 : R - 40,
             // showText: true // show/hide text on middle or each donut
         };
 
-        self.updateConfig(config);
+        // self.updateConfig(config);
     }
 
     /*==============================
@@ -69,7 +69,7 @@ export default class DonutChart extends Chart {
     /**
      * Update Donut Chart Config
      */
-    updateConfig(config) {
+    updateConfig(config, callback) {
         super.updateConfig(config);
 
         var self = this;
@@ -81,14 +81,20 @@ export default class DonutChart extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget(self.chartType);
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+            
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
+            }
+        });
     }
 
     /**
      * Update Donut Chart Config
      */
-    updateDataConfig(dataCfg) {
+    updateDataConfig(dataCfg, callback) {
         var self = this;
 
         self.options = Helper.mergeDeep(self.options, dataCfg);
@@ -98,8 +104,14 @@ export default class DonutChart extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget(self.chartType);
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+            
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
+            }
+        });
     }
 
     /**
@@ -338,31 +350,33 @@ export default class DonutChart extends Chart {
 
         var self = this;
         
-        var title   = new Title(self.options.title, self);
-        var legend  = new Legend(self.options.legend, self, self.dataTarget);
-        var table   = new Table(self.options.table, self, self.dataTarget);
+        self.updateConfig(self.config, function(data) {
+            var title   = new Title(self.options.title, self);
+            var legend  = new Legend(self.options.legend, self, self.dataTarget);
+            var table   = new Table(self.options.table, self, self.dataTarget);
 
-        self.title = title;
-        self.legend = legend;
-        self.table = table;
+            self.title = title;
+            self.legend = legend;
+            self.table = table;
 
-        // Draw title
-        self.title.draw();
+            // Draw title
+            self.title.draw();
 
-        // Update interaction of this own chart
-        self.update(self.dataTarget);
-        self.updateInteraction();
+            // Update interaction of this own chart
+            self.update(self.dataTarget);
+            self.updateInteraction();
 
-        self.legend = legend;
-        self.table = table;
+            self.legend = legend;
+            self.table = table;
 
-        // Draw legend
-        self.legend.draw();
-        self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+            // Draw legend
+            self.legend.draw();
+            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
 
-        // Draw table
-        self.table.draw();
-        self.table.updateInteractionForDonutPieChart(self);
+            // Draw table
+            self.table.draw();
+            self.table.updateInteractionForDonutPieChart(self);
+        });
     }
     
     /**
@@ -405,16 +419,18 @@ export default class DonutChart extends Chart {
 
         }
         
-        // Update Chart
-        self.updateDataConfig(newCfg);
-        self.update(self.dataTarget);
+        self.updateDataConfig(newCfg, function(data) {
+            // Update Chart
+            self.update(data);
 
-        // Update Legend
-        self.legend.update(self.dataTarget);
-        self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
-    
-        // Update Table
-        self.table.update(self.dataTarget);
+            // Update Legend
+            self.legend.update(data);
+            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
+        
+            // Update Table
+            self.table.update(data);
+            self.table.updateInteractionForDonutPieChart(self);
+        });
     }
     
     

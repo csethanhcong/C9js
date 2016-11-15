@@ -163,7 +163,7 @@ export default class Chart {
 
         self._options   = options;
 
-        self.updateConfig(config);
+        self.initConfig(config);
     }
 
     /*==============================
@@ -450,6 +450,35 @@ export default class Chart {
     =            Main Functions            =
     ======================================*/
     /**
+     * Init parent config
+     * Only in BaseClass <Chart> to init config
+     */
+    initConfig(config) {
+        var self = this;
+
+        self.options = Helper.mergeDeep(config, self.options);
+
+        var options = self.options;
+
+        self.id        = options.id        || config.id;
+        self.width     = options.width     || config.width;
+        self.height    = options.height    || config.height;
+        self.colorRange= options.colorRange|| config.colorRange;
+        
+        self.margin    = Helper.merge(options.margin, config.margin);
+        self.hover     = Helper.merge(options.hover, config.hover);
+        self.click     = Helper.merge(options.click, config.click);
+        
+        self.dataOption= Helper.mergeDeep(config.data, options.data);
+
+        self.options.subchart  = Helper.merge(options.subchart, config.subchart);
+        self.options.table     = Helper.merge(options.table, config.table);
+        self.options.tooltip   = Helper.merge(options.tooltip, config.tooltip);
+        self.options.legend    = Helper.merge(options.legend, config.legend);
+        self.options.axis      = Helper.mergeDeep(config.axis, options.axis);
+    }
+
+    /**
      * Update parent config
      */
     updateConfig(config) {
@@ -512,7 +541,8 @@ export default class Chart {
         self.body = self.svg
                     .append("g")
                     .attr('class', 'c9-chart c9-custom-container')
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");               
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");  
+
     }
 
     /**
