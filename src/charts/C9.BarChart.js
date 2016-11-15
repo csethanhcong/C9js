@@ -501,7 +501,6 @@ export default class BarChart extends Chart {
 
         // TESTING
         self.updateConfig(self.config, function(data) {
-
             var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
             var title   = new Title(self.options.title, self);
             var legend  = new Legend(self.options.legend, self, self.dataTarget);
@@ -512,7 +511,7 @@ export default class BarChart extends Chart {
             self.legend = legend;
 
             // Draw axis
-            self.axis.draw();
+            // self.axis.draw();
             
             // Draw title
             self.title.draw();

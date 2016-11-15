@@ -7,9 +7,9 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
 	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Load Data From CSV">
+	    <meta name="title" content="C9js - Load Data From External Url">
 
-	    <title>C9js - Load Data From CSV</title>
+	    <title>C9js - Load Data From External Url</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -84,58 +84,38 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Load Data From CSV</h2>
+		  <h2>Load Data From External Url</h2>
 		</div>
 		<div id="chart"></div>
 		
 		<div class="section example">
-			<h3># <span>load_data_from_csv.js</span></h3>
+			<h3># <span>load_data_from_url.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var options = {
     id: "chart",
-    axis: {
-        x: {
-            tick: {
-                rotate: -60
-            }
-        }
-    },
-    data: {
-        file: {
-            url: '../../data/data_os.csv',
-            type: 'csv'
-        },
-        keys: {
-            name: 'OS',
-            value: 'Rate'
-        }
-    }
+	axis: {
+		x: {
+			tick: {
+				rotate: -60
+			}
+		}
+	},
+	data: {
+		file: {
+			url: 'http://c9js.me/data/data_user.json',
+			type: 'json'
+		},
+		keys: {
+			name: 'user',
+			value: 'access_count'
+		}
+	}
 };
 var barChart = new C9.BarChart(options);
 barChart.draw();</code></pre>
-			</section>
-		</div>
-		<div class="section example">
-			<h3># <span>data_os.csv</span></h3>
-			<section>
-				<pre><code class="javascript">"OS","Rate"
-"Android",34.46
-"Win7",18.97
-"Win10",12.08
-"iOS",12.04
-"OS X",5.3
-"Unknown",4.57
-"Win8.1",4.05
-"Series 40",0.55
-"Chrome OS",0.34
-"BlackBerry OS",0.27
-"Samsung",0.26
-"SymbianOS",0.17
-"Other",0.03
-</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
@@ -151,12 +131,12 @@ barChart.draw();</code></pre>
 				},
 				data: {
 					file: {
-						url: '../../data/data_os.csv',
-						type: 'csv'
+						url: 'http://c9js.me/data/data_user.json',
+						type: 'json'
 					},
 					keys: {
-						name: 'OS',
-						value: 'Rate'
+						name: 'user',
+						value: 'access_count'
 					}
 				}
 			};

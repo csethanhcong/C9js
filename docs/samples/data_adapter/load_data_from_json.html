@@ -7,9 +7,9 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
 	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Load Data From CSV">
+	    <meta name="title" content="C9js - Load Data From JSON">
 
-	    <title>C9js - Load Data From CSV</title>
+	    <title>C9js - Load Data From JSON</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -84,12 +84,12 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Load Data From CSV</h2>
+		  <h2>Load Data From JSON</h2>
 		</div>
 		<div id="chart"></div>
 		
 		<div class="section example">
-			<h3># <span>load_data_from_csv.js</span></h3>
+			<h3># <span>load_data_from_json.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
@@ -105,12 +105,12 @@
     },
     data: {
         file: {
-            url: '../../data/data_os.csv',
-            type: 'csv'
+            url: '../../data/data_user.json',
+            type: 'json'
         },
         keys: {
-            name: 'OS',
-            value: 'Rate'
+            name: 'user',
+            value: 'access_count'
         }
     }
 };
@@ -119,22 +119,54 @@ barChart.draw();</code></pre>
 			</section>
 		</div>
 		<div class="section example">
-			<h3># <span>data_os.csv</span></h3>
+			<h3># <span>data_user.json</span></h3>
 			<section>
-				<pre><code class="javascript">"OS","Rate"
-"Android",34.46
-"Win7",18.97
-"Win10",12.08
-"iOS",12.04
-"OS X",5.3
-"Unknown",4.57
-"Win8.1",4.05
-"Series 40",0.55
-"Chrome OS",0.34
-"BlackBerry OS",0.27
-"Samsung",0.26
-"SymbianOS",0.17
-"Other",0.03
+				<pre><code class="javascript">[{
+  "user": "Christine",
+  "access_count": 54
+}, {
+  "user": "Christopher",
+  "access_count": 53
+}, {
+  "user": "Ryan",
+  "access_count": 76
+}, {
+  "user": "George",
+  "access_count": 76
+}, {
+  "user": "Mary",
+  "access_count": 24
+}, {
+  "user": "Carol",
+  "access_count": 27
+}, {
+  "user": "Melissa",
+  "access_count": 28
+}, {
+  "user": "Todd",
+  "access_count": 84
+}, {
+  "user": "Terry",
+  "access_count": 11
+}, {
+  "user": "Beverly",
+  "access_count": 38
+}, {
+  "user": "Roy",
+  "access_count": 94
+}, {
+  "user": "Brenda",
+  "access_count": 26
+}, {
+  "user": "Frank",
+  "access_count": 5
+}, {
+  "user": "Eugene",
+  "access_count": 54
+}, {
+  "user": "Joseph",
+  "access_count": 7
+}]
 </code></pre>
 			</section>
 		</div>
@@ -151,12 +183,12 @@ barChart.draw();</code></pre>
 				},
 				data: {
 					file: {
-						url: '../../data/data_os.csv',
-						type: 'csv'
+						url: '../../data/data_user.json',
+						type: 'json'
 					},
 					keys: {
-						name: 'OS',
-						value: 'Rate'
+						name: 'user',
+						value: 'access_count'
 					}
 				}
 			};

@@ -57,50 +57,36 @@
 		<div id="chart"></div>
 		<div id="table"></div>
 	    <script type="text/javascript" charset="utf-8">
-			// var options = {
-			// 	id: "chart",
-			// 	data: {
-			// 		file: {
-			// 			url: '../data/data_os.csv',
-			// 			type: 'csv'
-			// 		},
-			// 		keys: {
-			// 			name: 'OS',
-			// 			value: 'Rate'
-			// 		}
-			// 	}
-			// };
-			// var barChart = new C9.BarChart(options);
-			// barChart.draw();
-			var data = [
-            {name: "Adam", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
-            {name: "Eva", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
-            {name: "Jes", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
-          ];
-    var options = {
-      id: "chart", 
-      margin: {
-        left: 100, 
-      }, 
-      data: {
-        plain: data 
-      },
-      tooltip: {
-        format: function(data, index) {
-          return '<strong>' + data.name + '</strong>' + '<br>' + 'Start at hour: ' + data.start.getHours() + '<br>' + 'End at hour: ' + data.end.getHours();
-        }
-      },
-      axis: {
-        x: {
-          label: {
-            text : 'Time'
-          }
-        }
-      },
-      striped: true,
-    };
-    var timelineChart = new C9.TimeLine(options);
-    timelineChart.draw();
+			var data = [{
+  "name": "Philip",
+  "value": {"x" : [ '2013-01-01', '2013-05-01'], "y": [100, 200] }
+}, {
+  "name": "Brenda",
+  "value": {"x" : [ '2012-01-01', '2012-05-01'], "y": [100, 200] }
+}];			
+
+			var options = {
+				id: "chart",
+				data: {
+					plain: data,
+					keys: {
+						x: 'value.x',
+						y: 'value.y'
+					},
+					timeFormat: '%Y-%m-%d'
+				}, 
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							count: 5,
+							format: d3.time.format('%d-%m')
+						}
+					}
+				},
+			};
+			var lineChart = new C9.LineChart(options);
+			lineChart.draw();
 		</script>
 		
 	</body>

@@ -208,6 +208,8 @@ export default class LineChart extends Chart {
 
             self.updateDomain(self.dataTarget);
 
+            console.log(self.x.domain());
+
             self.lineGen = d3.svg.line()
                             .x(function(d) { return self.x(d.valueX); })
                             .y(function(d) { return self.y(d.valueY); })
@@ -338,11 +340,21 @@ export default class LineChart extends Chart {
             self.y.domain([self.y.domain()[0], 0]);
         }
 
-        var xDomain = self.x.domain(), paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01;
-        var yDomain = self.y.domain(), paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
-            
-        self.x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
-        self.y.domain([yDomain[0], yDomain[1] + paddingY]);
+        // Check if its is timeDomain then skip
+        if (!self.isTimeDomain) {
+            var xDomain = self.x.domain(), paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01;
+            var yDomain = self.y.domain(), paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
+                
+            self.x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
+            self.y.domain([yDomain[0], yDomain[1] + paddingY]);
+        }
+        // else {
+        //     var xDomain = self.x.domain(), paddingX = (self.x.domain()[1] - self.x.domain()[0]);
+        //     var yDomain = self.y.domain(), paddingY = (self.y.domain()[1] - self.y.domain()[0]);
+        //         console.log(xDomain[0]);
+        //     self.x.domain([xDomain[0] - new Date(paddingX), xDomain[1] + new Date(paddingX)]);
+        //     self.y.domain([yDomain[0], yDomain[1] + paddingY]);
+        // }
     }
 
     /**
