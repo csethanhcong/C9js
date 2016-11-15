@@ -7,9 +7,9 @@ export default class Axis {
         var config = {
                 x: {
                     tick: {
-                        rotate: 0,
-                        count: 10,
-                        size: 6,
+                        rotate: 0, 
+                        count: 10, // number of ticks to display
+                        size: 6, // size of tick
                         padding: 3,
                         format: undefined,
                         values: [],
@@ -261,7 +261,7 @@ export default class Axis {
             .attr("x", self.width + 20)
             .attr("y", 10)
             .style("text-anchor", "start")
-            .text(self.options.x.text);
+            .text(self.options.x.label.text);
 
         //hide x axis
         if (!self.options.x.show) {
@@ -280,7 +280,7 @@ export default class Axis {
                 .attr("y", -10)
                 .attr("dy", ".10")
                 .style("text-anchor", "end")
-                .text(self.options.y.text);
+                .text(self.options.y.label.text);
 
             if (!self.options.y.show) {
                 d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");

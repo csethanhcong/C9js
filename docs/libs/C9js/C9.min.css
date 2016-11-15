@@ -22,7 +22,6 @@
 /*----------  TABLE  ----------*/
 .c9-table.c9-table-header {
 	width: 100%;
-	text-transform: uppercase;
 	font-size: 14px;
 	font-weight: 400;
 	color: #fff;
@@ -68,7 +67,6 @@
 }
 
 .c9-table.c9-table-header thead th {
-	text-transform: uppercase;
 	font-size: 14px;
 	font-weight: 400;
 	color: #fff;
@@ -93,8 +91,9 @@
 .c9-table.c9-table-body tbody tr td {
 	font-family: 'Open Sans', sans-serif;
 	font-weight: 400;
-	color: #5f6062;
 	font-size: 12px;
+	text-align: center;
+	color: #5f6062;
 	padding: 10px 20px;
 	border-bottom: 1px solid #e0e0e0;
 }
@@ -155,7 +154,7 @@
 	color: red;
 }
 
-.c9-custom-tooltip-container.c9-tooltip-left::before {
+.c9-custom-tooltip-container.c9-tooltip-right::before {
     font-size: 10px;
     line-height: 1;
     color: rgba(0, 0, 0, 0.8);
@@ -173,7 +172,7 @@
     left: 0;*/
 }
 
-.c9-custom-tooltip-container.c9-tooltip-right::after {
+.c9-custom-tooltip-container.c9-tooltip-left::after {
     font-size: 10px;
     line-height: 1;
     color: rgba(0, 0, 0, 0.8);

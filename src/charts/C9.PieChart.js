@@ -15,12 +15,12 @@ export default class PieChart extends Chart {
 
         var self = this;
 
-        var config = {
+        self.config = {
             radius: Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2,
             // showText: true
         };
 
-        self.updateConfig(config);
+        // self.updateConfig(config);
     }
 
     /*==============================
@@ -67,7 +67,7 @@ export default class PieChart extends Chart {
     /**
      * Update Donut Chart Config
      */
-    updateConfig(config) {
+    updateConfig(config, callback) {
         super.updateConfig(config);
 
         var self = this;
@@ -79,14 +79,20 @@ export default class PieChart extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget(self.chartType);
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+            
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
+            }
+        });
     }
 
     /**
      * Update Donut Chart Config
      */
-    updateDataConfig(dataCfg) {
+    updateDataConfig(dataCfg, callback) {
         var self = this;
 
         self.options = Helper.mergeDeep(self.options, dataCfg);
@@ -96,8 +102,14 @@ export default class PieChart extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget(self.chartType);
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
+            }
+        });
     }
 
     /**
@@ -128,7 +140,7 @@ export default class PieChart extends Chart {
                         .attr('class', 'c9-chart-pie c9-custom-arc-container')
                         .attr('transform', 'translate(' + (width / 2) + ',' + (height / 2) + ')')
                         .selectAll('.c9-chart-pie.c9-custom-arc')
-                        .data(self.pie(self.dataTarget)).enter()
+                        .data(self.pie(data)).enter()
                         .append('g')
                             .attr('class', 'c9-chart-pie c9-custom-arc');
 
@@ -332,29 +344,31 @@ export default class PieChart extends Chart {
         super.draw();
 
         var self = this;
-        
-        var title   = new Title(self.options.title, self);
-        var legend  = new Legend(self.options.legend, self, self.dataTarget);
-        var table   = new Table(self.options.table, self, self.dataTarget);
 
-        self.title = title;
-        self.legend = legend;
-        self.table = table;
+        self.updateConfig(self.config, function(data) {
+            var title   = new Title(self.options.title, self);
+            var legend  = new Legend(self.options.legend, self, self.dataTarget);
+            var table   = new Table(self.options.table, self, self.dataTarget);
 
-        // Draw title
-        self.title.draw();
+            self.title = title;
+            self.legend = legend;
+            self.table = table;
 
-        // Update interaction of this own chart
-        self.update(self.dataTarget);
-        self.updateInteraction();
-        
-        // Draw legend
-        self.legend.draw();
-        self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
-        
-        // Draw table
-        self.table.draw();
-        self.table.updateInteractionForDonutPieChart(self);
+            // Draw title
+            self.title.draw();
+
+            // Update interaction of this own chart
+            self.update(data);
+            self.updateInteraction();
+            
+            // Draw legend
+            self.legend.draw();
+            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
+            
+            // Draw table
+            self.table.draw();
+            self.table.updateInteractionForDonutPieChart(self);
+        });
     }
     
     /**
@@ -396,18 +410,20 @@ export default class PieChart extends Chart {
             };
 
         }
-        
-        // Update Chart
-        self.updateDataConfig(newCfg);
-        self.update(self.dataTarget);
 
-        // Update Legend
-        self.legend.update(self.dataTarget);
-        self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
-    
-        // Update Table
-        self.table.update(self.dataTarget);
-        self.table.updateInteractionForDonutPieChart(self);
+        self.updateDataConfig(newCfg, function(data) {
+            // Update Chart
+            self.update(self.dataTarget);
+
+            // Update Legend
+            self.legend.update(self.dataTarget);
+            self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);    
+        
+            // Update Table
+            self.table.update(self.dataTarget);
+            self.table.updateInteractionForDonutPieChart(self);
+        });
+        
     }
     /*=====  End of User's Functions  ======*/
     

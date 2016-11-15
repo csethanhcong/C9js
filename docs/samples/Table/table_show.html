@@ -5,10 +5,11 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <meta name="description" content="">
-	    <meta name="author" content="">
+	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+	    <meta name="author" content="Cong Pham, Huy Do">
+	    <meta name="title" content="C9js - Table Show">
 
-	    <title>C9js - Examples</title>
+	    <title>C9js - Table Show</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,82 +84,69 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Table Show</h2>
 		</div>
-		<div id="demo1"></div>	
+		<div class="row">
+			<div class="col-md-8" id="chart"></div>
+			<div class="col-md-3 col-md-offset-1" id="table"></div>
+		</div>
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>table_show.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
-				<pre><code class="javascript">var data1 = [
+				<pre><code class="javascript">var data = [
     {name: "A", value: .0245},
     {name: "B", value: .01492},
     {name: "C", value: .02782},
     {name: "D", value: .04253},
-    {name: "E", value: 1},
+    {name: "E", value: .01},
     {name: "F", value: .02288},
     {name: "G", value: .02015},
     {name: "H", value: .06094},
     {name: "I", value: .5},
 ];
-
-var options1 = {
-    id: "#demo1",
-    width: 750, 
-    height: 300,
-    margin: {
-        top: 50
-    },
+var options = {
+    id: "chart",
     data: {
-        plain: data1,
-    }, 
+        plain: data,
+    },
+    table: {
+        container: 'table', // id of element contain table
+        show: true
+    }
 };
-
-var barChart = new C9.BarChart(options1);
+var barChart = new C9.BarChart(options);
 barChart.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
 
-			var data1 = [
+			var data = [
 					{name: "A", value:	.0245},
 					{name: "B",	value:  .01492},
 					{name: "C", value:	.02782},
 					{name: "D", value:	.04253},
-					{name: "E", value:	1},
+					{name: "E", value:	.01},
 					{name: "F", value:	.02288},
 					{name: "G", value:	.02015},
 					{name: "H", value:	.06094},
 					{name: "I", value:	.5},
-				];
-
-			var options1 = {
-				id: "#demo1", 
-				width: 750, 
-				height: 300,
-				margin: {
-					top: 50
-				},
+						];
+			var options = {
+				id: "chart",
 				data: {
-					plain: data1,
-				}, 
-				// axis: {
-				// 	x: {
-				// 		show: true,
-				// 	},
-				// 	y: {
-				// 		show: false,
-				// 	}
-				// },
-				legend: {
-					show: false,
+					plain: data,
 				},
+				table: {
+					container: 'table',
+					show: true
+				}
 			};
-			var barChart = new C9.BarChart(options1);
+			var barChart = new C9.BarChart(options);
 			barChart.draw();
 		</script>
 		

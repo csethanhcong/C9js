@@ -15,12 +15,12 @@ export default class LineChart extends Chart {
 
         var self    = this;
 
-        var config  = {
+        self.config  = {
             point: {
                 show: true,
                 fill: "steelblue",
-                stroke: "#d26b5f",
-                'stroke-width': 2,
+                stroke: "steelblue",
+                'stroke-width': 1,
                 opacity: 1.0,
                 radius: 5,
             },
@@ -34,8 +34,7 @@ export default class LineChart extends Chart {
             interpolate: "linear", // refer: https://www.dashingd3js.com/svg-paths-and-d3js
         };
 
-        self.updateConfig(config);
-
+        // self.updateConfig(config);
     }
 
     /*==============================
@@ -183,7 +182,7 @@ export default class LineChart extends Chart {
     /**
      * Init Line Chart Config
      */
-    updateConfig(config) {
+    updateConfig(config, callback) {
         super.updateConfig(config);
 
         var self = this;
@@ -196,34 +195,40 @@ export default class LineChart extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget(self.chartType);
-        self.isTimeDomain   = da.timeFormat;
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+            self.isTimeDomain   = da.timeFormat;
 
-        var width   = self.width - self.margin.left - self.margin.right,
-            height  = self.height - self.margin.top - self.margin.bottom;
+            var width   = self.width - self.margin.left - self.margin.right,
+                height  = self.height - self.margin.top - self.margin.bottom;
 
-        self.x = (self.isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
-        self.y = d3.scale.linear().range([height, 0]);
+            self.x = (self.isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+            self.y = d3.scale.linear().range([height, 0]);
 
-        self.updateDomain(self.dataTarget);
+            self.updateDomain(self.dataTarget);
 
-        self.lineGen = d3.svg.line()
-                        .x(function(d) { return self.x(d.valueX); })
-                        .y(function(d) { return self.y(d.valueY); })
-                        .interpolate(self.options.interpolate);
+            self.lineGen = d3.svg.line()
+                            .x(function(d) { return self.x(d.valueX); })
+                            .y(function(d) { return self.y(d.valueY); })
+                            .interpolate(self.options.interpolate);
 
-        self.areaGen = d3.svg.area()
-                        .x(function(d) { return self.x(d.valueX); })
-                        .y0(function(d) { return self.y(d.valueY); })
-                        .y1(height)
-                        .interpolate(self.options.interpolate);
+            self.areaGen = d3.svg.area()
+                            .x(function(d) { return self.x(d.valueX); })
+                            .y0(function(d) { return self.y(d.valueY); })
+                            .y1(height)
+                            .interpolate(self.options.interpolate);
+
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
+            }
+        });
     }
 
     /**
      * Update data config
      */
-    updateDataConfig(dataCfg) {
+    updateDataConfig(dataCfg, callback) {
         var self = this;
 
         self.options = Helper.mergeDeep(self.options, dataCfg);
@@ -234,28 +239,34 @@ export default class LineChart extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget     = da.getDataTarget(self.chartType);
-        self.isTimeDomain   = da.timeFormat;
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+            self.isTimeDomain   = da.timeFormat;
 
-        var width   = self.width - self.margin.left - self.margin.right,
-            height  = self.height - self.margin.top - self.margin.bottom;
+            var width   = self.width - self.margin.left - self.margin.right,
+                height  = self.height - self.margin.top - self.margin.bottom;
 
-        self.x = (self.isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
-        self.y = d3.scale.linear().range([height, 0]);
+            self.x = (self.isTimeDomain) ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
+            self.y = d3.scale.linear().range([height, 0]);
 
-        self.updateDomain(self.dataTarget);
+            self.updateDomain(self.dataTarget);
 
-        self.lineGen = d3.svg.line()
-                        .x(function(d) { return self.x(d.valueX); })
-                        .y(function(d) { return self.y(d.valueY); })
-                        .interpolate(self.options.interpolate);
+            self.lineGen = d3.svg.line()
+                            .x(function(d) { return self.x(d.valueX); })
+                            .y(function(d) { return self.y(d.valueY); })
+                            .interpolate(self.options.interpolate);
 
-        self.areaGen = d3.svg.area()
-                        .x(function(d) { return self.x(d.valueX); })
-                        .y0(function(d) { return self.y(d.valueY); })
-                        .y1(height)
-                        .interpolate(self.options.interpolate);
+            self.areaGen = d3.svg.area()
+                            .x(function(d) { return self.x(d.valueX); })
+                            .y0(function(d) { return self.y(d.valueY); })
+                            .y1(height)
+                            .interpolate(self.options.interpolate);
+
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
+            }
+        });
     }
 
     updateOverlay() {
@@ -789,34 +800,36 @@ export default class LineChart extends Chart {
 
         var self = this;
 
-        var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
-        var title   = new Title(self.options.title, self);
-        var legend  = new Legend(self.options.legend, self);
-        var table  = new Table(self.options.table, self, self.dataTarget);
+        self.updateConfig(self.config, function(data) {
+            var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+            var title   = new Title(self.options.title, self);
+            var legend  = new Legend(self.options.legend, self);
+            var table  = new Table(self.options.table, self, data);
 
-        self.axis = axis;
-        self.title = title;
-        self.legend = legend;
-        self.table = table;
+            self.axis = axis;
+            self.title = title;
+            self.legend = legend;
+            self.table = table;
 
-        // Draw title
-        self.title.draw();
+            // Draw title
+            self.title.draw();
 
-        // Draw axis
-        self.axis.draw();
+            // Draw axis
+            self.axis.draw();
 
-        self.update(self.dataTarget);
-        self.updateSubChart(self.dataTarget);
-        self.updateOverlay();
-        self.updateHoverLine();
-        self.updateInteraction();
+            self.update(data);
+            self.updateSubChart(data);
+            self.updateOverlay();
+            self.updateHoverLine();
+            self.updateInteraction();
 
-        // Draw legend
-        self.legend.draw();
-        self.legend.updateInteractionForLineChart(self);
+            // Draw legend
+            self.legend.draw();
+            self.legend.updateInteractionForLineChart(self);
 
-        // Draw table
-        self.table.draw();
+            // Draw table
+            self.table.draw();
+        });
     }
     
     /**
@@ -859,20 +872,21 @@ export default class LineChart extends Chart {
 
         }
         
-        // Update chart
-        self.updateDataConfig(newCfg);
-        self.update(self.dataTarget);
-        self.updateSubChart(self.dataTarget);
+        self.updateDataConfig(newCfg, function(data) {
+            // Update Chart
+            self.update(data);
+            self.updateSubChart(data);
 
-        // Update Axis
-        self.axis.update(self.x, self.y, 100);
+            // Update Axis
+            self.axis.update(self.x, self.y, 100);
 
-        // Update Legend
-        self.legend.update(self.dataTarget);
-        self.legend.updateInteractionForLineChart(self);
+            // Update Legend
+            self.legend.update(data);
+            self.legend.updateInteractionForLineChart(self);
 
-        // Update Table
-        self.table.update(self.dataTarget);
+            // Update Table
+            self.table.update(data);
+        });
     }
     /*=====  End of User's Functions  ======*/
     

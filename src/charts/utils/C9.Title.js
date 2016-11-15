@@ -66,7 +66,8 @@ export default class Title {
                                 .attr("class", "c9-custom-title c9-custom-title-text");
 
             // Get title self.chart.width: text.node().getComputedTextLength()           
-            text.attr("x", (((self.chart.width - text.node().getComputedTextLength()) / 2)))           
+            // text.attr("x", (((self.chart.width - text.node().getComputedTextLength()) / 2)))           
+            text.attr("x", (((self.chart.width - 200) / 2)))           
                 .attr("y", self.setYLocation(self.chart.height, self.chart.margin))
                 .attr("text-anchor", "middle")  
                 .style("font-size", self.options.fontSize)  

@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="en">
 	<head>
-
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <meta name="description" content="">
-	    <meta name="author" content="">
+	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+	    <meta name="author" content="Cong Pham, Huy Do">
+	    <meta name="title" content="C9js - Axis Tick Date Format">
 
-	    <title>C9js - Examples</title>
+	    <title>C9js - Axis Tick Date Format</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,40 +83,46 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Axis Tick Date Format</h2>
 		</div>
-		<div id="demo1"></div>	
+		<div id="chart"></div>	
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>axis_tick_date_format.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var data1 = [
-    {name: "A", value: .0245},
-    {name: "B", value: .01492},
-    {name: "C", value: .02782},
-    {name: "D", value: .04253},
-    {name: "E", value: 1},
-    {name: "F", value: .02288},
-    {name: "G", value: .02015},
-    {name: "H", value: .06094},
-    {name: "I", value: .5},
-];
+    {"name": "Jose", "value": 70},
+	{"name": "Ronald", "value": 97},
+	{"name": "Mark", "value": 36},
+	{"name": "Denise", "value": 99},
+	{"name": "Kelly", "value": 43},
+	{"name": "Annie", "value": 88},
+	{"name": "Pamela", "value": 50},
+	{"name": "Lois", "value": 80},
+	{"name": "Cheryl", "value": 43},
+	{"name": "Brian", "value": 42}
+];			
 
 var options1 = {
-    id: "#demo1",
-    width: 750, 
-    height: 300,
-    margin: {
-        top: 50
-    },
-    data: {
-        plain: data1,
-    }, 
+	id: "chart",
+	margin: {
+		top: 50
+	},
+	data: {
+		plain: data1,
+	}, 
+	axis: {
+		y: {
+			show: true,
+			tick: {
+				format: d3.format("$,")
+			}
+		}
+	},
 };
-
 var barChart = new C9.BarChart(options1);
 barChart.draw();</code></pre>
 			</section>
@@ -124,42 +130,58 @@ barChart.draw();</code></pre>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
 
-			var data1 = [
-					{name: "A", value:	.0245},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
-				];
+			var data1 = [{
+  "name": "Philip",
+  "value": "10/4/2016"
+}, {
+  "name": "Brenda",
+  "value": "12/26/2015"
+}, {
+  "name": "Jane",
+  "value": "10/29/2016"
+}, {
+  "name": "Russell",
+  "value": "6/22/2016"
+}, {
+  "name": "Sarah",
+  "value": "5/25/2016"
+}, {
+  "name": "Justin",
+  "value": "3/13/2016"
+}, {
+  "name": "Ryan",
+  "value": "6/10/2016"
+}, {
+  "name": "Helen",
+  "value": "7/3/2016"
+}, {
+  "name": "Mark",
+  "value": "9/7/2016"
+}, {
+  "name": "Keith",
+  "value": "8/18/2016"
+}];			
 
 			var options1 = {
-				id: "#demo1", 
-				width: 750, 
-				height: 300,
-				margin: {
-					top: 50
-				},
+				id: "chart",
 				data: {
 					plain: data1,
+					keys: {
+						y: 'value'
+					},
+					timeFormat: '%d/%m/%Y'
 				}, 
-				// axis: {
-				// 	x: {
-				// 		show: true,
-				// 	},
-				// 	y: {
-				// 		show: false,
-				// 	}
-				// },
-				legend: {
-					show: false,
+				axis: {
+					y: {
+						type: "timeseries",
+						tick: {
+							format: d3.time.format('%dd-%mm-%YY')
+						}
+					}
 				},
 			};
-			var barChart = new C9.BarChart(options1);
-			barChart.draw();
+			var lineChart = new C9.LineChart(options1);
+			lineChart.draw();
 		</script>
 		
 	</body>

@@ -118,7 +118,7 @@ var Helper = {
         var _temp = new Array();
         var _min  = 0,
             _max  = 0;
-        if (type == "stack")
+        if (type == "stack") {
             data.forEach(function (d){
                 d.forEach(function (s){
                     if (s.y0 > 0)
@@ -127,12 +127,13 @@ var Helper = {
                         _temp.push(s.y1 + s.y0);
                 })
             })
-        else
+        } else {
             data.forEach(function (d){
                 d.forEach(function (s){
                     _temp.push(s.y0);
                 })
             });
+        }
 
 
         var _newMin = self.min(_temp);

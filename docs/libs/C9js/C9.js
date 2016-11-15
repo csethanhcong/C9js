@@ -219,6 +219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var da = new _C16.default(dataOption);
 	            self.dataTarget = da.getDataTarget(self.chartType);
+	            console.log(self.dataTarget);
 	            self.dataSource = da.dataSource;
 	
 	            var barChartType = da.getDataTypeForBarChart();
@@ -820,7 +821,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // tooltip
 	            tooltip: {
 	                show: true,
-	                position: 'left', // [top, right, bottom, left]
+	                position: 'right', // [top, right, bottom, left]
 	                backgroundColor: 'rgba(0, 0, 0, 0.8)',
 	                fontColor: '#fff',
 	                fontSize: '11px',
@@ -1627,8 +1628,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x: {
 	                tick: {
 	                    rotate: 0,
-	                    count: 10,
-	                    size: 6,
+	                    count: 10, // number of ticks to display
+	                    size: 6, // size of tick
 	                    padding: 3,
 	                    format: undefined,
 	                    values: [],
@@ -1746,7 +1747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //draw tick
 	            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
 	            //draw label
-	            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.text);
+	            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
 	
 	            //hide x axis
 	            if (!self.options.x.show) {
@@ -1757,7 +1758,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (self.chart.chartType != "timeline") {
 	                self.chart.body.append("g").attr("class", "c9-axis c9-axis-y").call(self.yAxis);
 	
-	                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.text);
+	                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.label.text);
 	
 	                if (!self.options.y.show) {
 	                    d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
@@ -2737,7 +2738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            container: "body",
 	            show: false,
 	            headings: ["Name", "Value"],
-	            style: "stripe", // || "stripe"
+	            style: "default", // || "stripe"
 	            serial: true,
 	            hover: {
 	                enable: true,
@@ -2840,7 +2841,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                });
 	
 	                // Add group if chart is bar chart
-	                if (self.chart.chartType == "bar") bRows.append("td").text(function (d) {
+	                if (self.chart.chartType == "bar" && self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) bRows.append("td").text(function (d) {
 	                    return d.group;
 	                });
 	            }
@@ -2860,7 +2861,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var hoverOptions = chart.hover.options,
 	                hoverEnable = chart.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOverCallback = hoverOptions.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = chart.click.callback;
 	
@@ -2902,7 +2903,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var hoverOptions = chart.hover.options,
 	                hoverEnable = chart.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOverCallback = hoverOptions.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = chart.click.callback;
 	
@@ -3062,7 +3063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var config = {
 	            show: true,
-	            position: 'left', // [top, right, bottom, left]
+	            position: 'right', // [top, right, bottom, left]
 	            backgroundColor: 'rgba(0, 0, 0, 0.8)',
 	            fontColor: '#fff',
 	            fontSize: '11px',
@@ -3257,8 +3258,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	                case 'right':
 	                    r = {
-	                        'left': d3.event.pageX - offset.left - 50 + 'px',
-	                        'top': d3.event.pageY - offset.top - 50 + 'px'
+	                        // 'left': (d3.event.pageX - offset.left - 50) + 'px',
+	                        'left': d3.event.pageX - offset.left + 'px',
+	                        // 'top': (d3.event.pageY - offset.top - 50) + 'px'
+	                        'top': d3.event.pageY - offset.top - 25 + 'px'
 	                    };
 	                    break;
 	                case 'bottom':
@@ -3269,8 +3272,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	                case 'left':
 	                    r = {
-	                        'left': d3.event.pageX - offset.left + 50 + 'px',
-	                        'top': d3.event.pageY - offset.top - 50 + 'px'
+	                        // 'left': (d3.event.pageX - offset.left + 50) + 'px',
+	                        'left': d3.event.pageX - offset.left - 50 + 'px',
+	                        // 'top': (d3.event.pageY - offset.top - 50) + 'px'
+	                        'top': d3.event.pageY - offset.top - 25 + 'px'
 	                    };
 	                    break;
 	            }
@@ -3402,7 +3407,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._dataSource = null;
 	        self._dataTarget = []; // Initialize new Array to use Array methods
 	        self._dataRefs = [];
-	        self.initDataSource(options);
+	
+	        self._options = options;
+	
+	        self.updateConfig(config);
 	    }
 	
 	    /*==============================
@@ -3411,46 +3419,67 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(DataAdapter, [{
-	        key: "initDataSource",
+	        key: "updateConfig",
 	
 	        /*=====  End of Setter  ======*/
 	
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
-	        value: function initDataSource(options) {
+	        value: function updateConfig(config) {
 	            var self = this;
 	
-	            if (self.hasPlainData(options)) {
-	                self.executePlainData(options);
-	            } else if (self.hasFile(options)) {
-	                self.executeFile(options);
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            self.initDataSource();
+	        }
+	    }, {
+	        key: "initDataSource",
+	        value: function initDataSource() {
+	            var self = this;
+	
+	            var options = self.options;
+	
+	            if (self.hasPlainData()) {
+	                self.executePlainData();
+	            } else if (self.hasFile()) {
+	                self.executeFile();
 	            }
 	        }
 	    }, {
 	        key: "hasPlainData",
-	        value: function hasPlainData(options) {
+	        value: function hasPlainData() {
+	            var self = this;
+	
+	            var options = self.options;
+	
 	            // return options.plain && Helper.isArray(options.plain);
-	            return options.plain; // fix for map
+	            return !_C2.default.isEmpty(options.plain); // fix for map
 	        }
 	    }, {
 	        key: "hasFile",
-	        value: function hasFile(options) {
+	        value: function hasFile() {
+	            var self = this;
+	
+	            var options = self.options;
+	
 	            return options.file && _C2.default.isObject(options.file);
 	        }
 	    }, {
 	        key: "executePlainData",
-	        value: function executePlainData(options) {
+	        value: function executePlainData() {
 	            var self = this;
+	
+	            var options = self.options;
 	
 	            self._dataSource = options.plain;
 	        }
 	    }, {
 	        key: "executeFile",
-	        value: function executeFile(options) {
+	        value: function executeFile() {
 	            var self = this;
 	
-	            self._file = _C2.default.merge(options.file, config.file);
+	            self.file = self.options.file;
 	
 	            if (self._file && self._file.type) {
 	
@@ -4004,12 +4033,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: "getCsv",
 	        value: function getCsv() {
-	
 	            var self = this;
 	
 	            d3.csv(self.file.url, function (err, data) {
 	                if (err) throw err;
-	
 	                return data;
 	            });
 	        }
@@ -4073,9 +4100,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*=====  End of Data Input From Files  ======*/
 	
 	    }, {
-	        key: "keys",
+	        key: "options",
 	        get: function get() {
-	            return this._keys;
+	            return this._options;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -4083,6 +4110,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
+	            }
+	        }
+	    }, {
+	        key: "file",
+	        get: function get() {
+	            return this._file;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._file = arg;
+	            }
+	        }
+	    }, {
+	        key: "keys",
+	        get: function get() {
+	            return this._keys;
+	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._keys = arg;
@@ -4710,8 +4757,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            point: {
 	                show: true,
 	                fill: "steelblue",
-	                stroke: "#d26b5f",
-	                'stroke-width': 2,
+	                stroke: "steelblue",
+	                'stroke-width': 1,
 	                opacity: 1.0,
 	                radius: 5
 	            },

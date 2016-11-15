@@ -356,3 +356,39 @@ setTimeout(function(){
 ```
 
 ## and [more...](http://c9js.me/examples.html)
+
+
+```js
+var data1 = [
+	{"name": "Jose", "value": 70},
+	{"name": "Ronald", "value": 97},
+	{"name": "Mark", "value": 36},
+	{"name": "Denise", "value": 99},
+	{"name": "Kelly", "value": 43},
+	{"name": "Annie", "value": 88},
+	{"name": "Pamela", "value": 50},
+	{"name": "Lois", "value": 80},
+	{"name": "Cheryl", "value": 43},
+	{"name": "Brian", "value": 42}
+];			
+
+var options1 = {
+	id: "chart",
+	margin: {
+		top: 50
+	},
+	data: {
+		plain: data1,
+	}, 
+	axis: {
+		y: {
+			show: true,
+			tick: {
+				format: d3.format("$,")
+			}
+		}
+	},
+};
+var barChart = new C9.BarChart(options1);
+barChart.draw();
+```

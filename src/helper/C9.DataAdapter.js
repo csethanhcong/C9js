@@ -2,7 +2,7 @@ import Helper from './C9.Helper';
 
 export default class DataAdapter {
 
-    constructor(options) {
+    constructor(options, chartType, callback) {
 
         var self = this;
 
@@ -30,17 +30,36 @@ export default class DataAdapter {
         self._timeFormat    = options.timeFormat    || config.timeFormat;
         self._colorRange= options.colorRange|| config.colorRange;
 
-        self._dataSource = null;
+        self._dataSource = [];
         self._dataTarget = []; // Initialize new Array to use Array methods
         self._dataRefs = [];
-        self.initDataSource(options);
 
+        self._options = options;
+        self._chartType = chartType;
+        self._callback = callback;
 
+        self.updateConfig(config);
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
+    get options() {
+        return this._options;
+    }
+
+    get callback() {
+        return this._callback;
+    }
+
+    get chartType() {
+        return this._chartType;
+    }
+
+    get file() {
+        return this._file;
+    }
+
     get keys() {
         return this._keys;
     }
@@ -73,6 +92,18 @@ export default class DataAdapter {
     /*==============================
     =            Setter            =
     ==============================*/
+    set options(arg) {
+        if (arg) {
+            this._options = arg;
+        }
+    }
+
+    set file(arg) {
+        if (arg) {
+            this._file = arg;
+        }
+    }
+
     set keys(arg) {
         if (arg) {
             this._keys = arg;
@@ -119,59 +150,77 @@ export default class DataAdapter {
     /*======================================
     =            Main Functions            =
     ======================================*/
-    initDataSource(options) {
+    updateConfig(config) {
         var self = this;
 
-        if (self.hasPlainData(options)) {
-            self.executePlainData(options);
-        } else if (self.hasFile(options)) {
-            self.executeFile(options);
-        }
+        self.options = Helper.mergeDeep(config, self.options);
+
+        // self.initDataSource();
     }
 
-    hasPlainData(options) {
+    // initDataSource() {
+    //     var self = this;
+
+    //     // if (self.hasPlainData()) {
+    //     //     self.executePlainData();
+    //     // }
+    //     // TESTING
+    //     //  else if (self.hasFile()) {
+    //     //     self.executeFile();
+    //     // }
+    // }
+
+    hasPlainData() {
+        var self = this;
+
         // return options.plain && Helper.isArray(options.plain);
-        return options.plain; // fix for map
+        return !Helper.isEmpty(self.options.plain); // fix for map
     }
 
-    hasFile(options) {
-        return options.file && Helper.isObject(options.file);
-    }
-
-    executePlainData(options) {
+    hasFile() {
         var self = this;
 
-        self._dataSource = options.plain;
+        return Helper.isObject(self.options.file) 
+            && !Helper.isEmpty(self.options.file.url) 
+            && !Helper.isEmpty(self.options.file.type);
     }
 
-    executeFile(options) {
+    executePlainData(callback) {
         var self = this;
 
-        self._file  = Helper.merge(options.file, config.file);
+        self.dataSource = self.options.plain;
 
-        if (self._file && self._file.type) {
+        callback.call(self, self.dataSource);
+    }
 
-            switch(self._file.type) {
+    executeFile(callback) {
+        var self = this;
+
+        self.file  = self.options.file;
+
+        if (!Helper.isEmpty(self.file)) {
+
+            switch(self.file.type) {
                 case "csv":
-                    self._dataSource = self.getCsv();
+                    self.getCsv(callback);
                     break;
                 case "tsv":
-                    self._dataSource = self.getTsv();
+                    self.getTsv(callback);
                     break;
                 case "text":
-                    self._dataSource = self.getText();
+                    self.getText(callback);
                     break;
                 case "json":
-                    self._dataSource = self.getJson();
+                    self.getJson(callback);
                     break;
                 case "xml":
-                    self._dataSource = self.getXml();
+                    self.getXml(callback);
                     break;
                 case "xhr":
-                    self._dataSource = self.getJson();
+                    self.getJson(callback);
                     break;
                 default:
-                    self._dataSource = self.getJson();
+                    self.getJson(callback);
                     break;
             }
         }
@@ -185,6 +234,7 @@ export default class DataAdapter {
         } else if (!Helper.isEmpty(self.stacks) && Helper.isArray(self.stacks)) {
             return "stack";
         }
+
         // default grouped bar if user do not defined groups for array value
         for (var i = self.dataSource.length - 1; i >= 0; i--) {
             if (Helper.isArray(Helper.get(self.keys.value, self.dataSource[i])))
@@ -194,36 +244,56 @@ export default class DataAdapter {
         return "single";
     }
 
-    getDataTarget(type) {
+    getDataTarget(type, callback) {
+        var self = this;
+
+        // TESTING
+        if (self.hasFile()) {
+            self.executeFile(function(data) {
+                self.dataSource = data;
+                self.generateDataTarget(type);
+                callback.call(self, self.dataTarget);
+            });
+
+        } else if (self.hasPlainData()) {
+            self.executePlainData(function(data) {
+                self.dataSource = data;
+                self.generateDataTarget(type);
+                callback.call(self, self.dataTarget);
+            });
+        }
+    }
+
+    generateDataTarget(type) {
         var self = this;
 
         switch(type) {
             case "bar":
-                return self.getDataTargetForBarChart();
+                self.getDataTargetForBarChart();
                 break;
 
             case "line":
-                return self.getDataTargetForLineChart();
+               self.getDataTargetForLineChart();
                 break;
 
             case "pie":
-                return self.getDataTargetForPieChart();
+               self.getDataTargetForPieChart();
                 break;
 
             case "donut":
-                return self.getDataTargetForDonutChart();
+               self.getDataTargetForDonutChart();
                 break;
 
             case "timeline":
-                return self.getDataTargetForTimelineChart();
+               self.getDataTargetForTimelineChart();
                 break;
 
             case "map":
-                return self.getDataTargetForMap();
+               self.getDataTargetForMap();
                 break;
 
             default:
-                return self.dataSource;
+               self.dataSource;
                 break;
         }
     }
@@ -265,7 +335,7 @@ export default class DataAdapter {
                     self.dataTarget.push(_data);
                 });
 
-                return self.dataTarget;
+                // return self.dataTarget;
                 break;
 
             case "group":
@@ -652,84 +722,64 @@ export default class DataAdapter {
     }
 
     /*=====    End of Normalize Data For Map   ======*/
-
-
-    /*=============================
-    =            Utils            =
-    =============================*/
-    // getBarColorForBarChart() {
-    //     var self = this;
-
-    //     var color = self.colorRange;
-    //     if (typeof color == 'string') {
-    //         try {
-    //             return d3.scale[color]();    
-    //         }
-    //         catch(err) {
-    //             return function(i) {
-    //                 return color;
-    //             };
-    //         }
-    //     } else if (typeof color == 'object') {
-    //         return d3.scale.ordinal().range(color);
-    //     }
-    // }
-    
-    
-    /*=====  End of Utils  ======*/
     
 
     /*=============================================
     =            Data Input From Files            =
     =============================================*/
     
-    getCsv() {
+    getCsv(callback) {
 
         var self = this;
 
         d3.csv(self.file.url, function(err, data) {
             if (err) throw err;
-            
-            return data;
-        });
 
+            if (!Helper.isEmpty(callback) && Helper.isFunction(callback))
+                callback.call(self, data);
+        });
     }
 
-    getTsv() {
+    getTsv(callback) {
 
         var self = this;
 
         d3.tsv(self.file.url, function(err, data) {
             if (err) throw err;
             
-            return data;
+            if (!Helper.isEmpty(callback) && Helper.isFunction(callback))
+                callback.call(self, data);
         });
 
     }
 
-    getText() {
+    getText(callback) {
 
         var self = this;
 
         d3.text(self.file.url, function(err, data) {
             if (err) throw err;
             
-            return JSON.parse(data);
+            if (!Helper.isEmpty(callback) && Helper.isFunction(callback))
+                callback.call(self, data);
         });
 
     }
 
-    getJson() {
+    getJson(callback) {
+
         var self = this;
 
         d3.json(self.file.url, function(err, data) {
             if (err) throw err;
-            
-            return data;
+
+            if (!Helper.isEmpty(callback) && Helper.isFunction(callback))
+                callback.call(self, data);
         });
     }
 
-    getXml() {
+    getXml(callback) {
+
         var self = this;
 
         d3.xml(self.file.url, function(err, data) {
@@ -745,7 +795,8 @@ export default class DataAdapter {
                 };
             });
 
-            return data;
+            if (!Helper.isEmpty(callback) && Helper.isFunction(callback))
+                callback.call(self, data);
         });
     }
     

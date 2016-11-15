@@ -15,7 +15,7 @@ export default class TimeLine extends Chart {
 
         var self = this;
 
-        var config = {
+        self.config = {
             separatorColor: "rgb(154, 154, 154)",
             backgroundColor: null,
             starting: 0,
@@ -27,7 +27,7 @@ export default class TimeLine extends Chart {
             striped: null
         };
 
-        self.updateConfig(config);
+        // self.updateConfig(config);
     }
 
     /*==============================
@@ -122,7 +122,7 @@ export default class TimeLine extends Chart {
     =            Main Functions            =
     ======================================*/
 
-    updateConfig(config) {
+    updateConfig(config, callback) {
         super.updateConfig(config);
 
         var self = this;
@@ -136,55 +136,60 @@ export default class TimeLine extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget = da.getDataTarget(self.chartType);
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
 
-        var 
-            maxStack = 0,
-            minTime = 0,
-            maxTime = 0,
-            width = self.width - self.margin.left - self.margin.right,
-            height = self.height - self.margin.top - self.margin.bottom;
+            var maxStack = 0,
+                minTime = 0,
+                maxTime = 0,
+                width = self.width - self.margin.left - self.margin.right,
+                height = self.height - self.margin.top - self.margin.bottom;
 
-        // count number of stack and calculate min time, max time from data
-        if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
-            
-            self.dataTarget.forEach(function (datum, index) {
+            // count number of stack and calculate min time, max time from data
+            if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
+                
+                self.dataTarget.forEach(function (datum, index) {
 
-                if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
-                    self.stackList[index] = maxStack;
-                    maxStack++;
-                }
-
-                datum.value.forEach(function (time, i) {
-                    if(self.options.starting === 0)
-                        if (time.start < minTime || minTime === 0)
-                            minTime = time.start;
-                    if(self.options.ending === 0) {
-                        if (time.start > maxTime)
-                            maxTime = time.start;
-                        if (time.end > maxTime)
-                            maxTime = time.end;
+                    if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
+                        self.stackList[index] = maxStack;
+                        maxStack++;
                     }
+
+                    datum.value.forEach(function (time, i) {
+                        if(self.options.starting === 0)
+                            if (time.start < minTime || minTime === 0)
+                                minTime = time.start;
+                        if(self.options.ending === 0) {
+                            if (time.start > maxTime)
+                                maxTime = time.start;
+                            if (time.end > maxTime)
+                                maxTime = time.end;
+                        }
+                    });
                 });
-            });
 
-            if (self.options.ending === 0) {
-              self.options.ending = maxTime;
+                if (self.options.ending === 0) {
+                  self.options.ending = maxTime;
+                }
+                if (self.options.starting === 0) {
+                  self.options.starting = minTime;
+                }
             }
-            if (self.options.starting === 0) {
-              self.options.starting = minTime;
+
+            self.maxStack = maxStack;
+
+            self.x = d3.time.scale()
+                    .domain([self.options.starting, self.options.ending])
+                    .range([0, self.width]);
+
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
             }
-        }
-
-        self.maxStack = maxStack;
-
-        self.x = d3.time.scale()
-                .domain([self.options.starting, self.options.ending])
-                .range([0, self.width]);
+        });
     }
 
-    updateDataConfig(dataCfg) {
+    updateDataConfig(dataCfg, callback) {
 
         var self = this;
 
@@ -197,52 +202,55 @@ export default class TimeLine extends Chart {
         var dataOption          = self.dataOption;
         dataOption.colorRange   = self.colorRange;
 
-        var da = new DataAdapter(dataOption);
-        self.dataTarget = da.getDataTarget(self.chartType);
+        var da = new DataAdapter(dataOption, self.chartType, null);
+        da.getDataTarget(self.chartType, function(data) {
+            var maxStack = 0,
+                minTime = 0,
+                maxTime = 0,
+                width = self.width - self.margin.left - self.margin.right,
+                height = self.height - self.margin.top - self.margin.bottom;
 
-        var 
-            maxStack = 0,
-            minTime = 0,
-            maxTime = 0,
-            width = self.width - self.margin.left - self.margin.right,
-            height = self.height - self.margin.top - self.margin.bottom;
+            // count number of stack and calculate min time, max time from data
+            if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
+                
+                self.dataTarget.forEach(function (datum, index) {
 
-        // count number of stack and calculate min time, max time from data
-        if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
-            
-            self.dataTarget.forEach(function (datum, index) {
-
-                if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
-                    self.stackList[index] = maxStack;
-                    maxStack++;
-                }
-
-                datum.value.forEach(function (time, i) {
-                    if(self.options.starting === 0)
-                        if (time.start < minTime || minTime === 0)
-                            minTime = time.start;
-                    if(self.options.ending === 0) {
-                        if (time.start > maxTime)
-                            maxTime = time.start;
-                        if (time.end > maxTime)
-                            maxTime = time.end;
+                    if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
+                        self.stackList[index] = maxStack;
+                        maxStack++;
                     }
+
+                    datum.value.forEach(function (time, i) {
+                        if(self.options.starting === 0)
+                            if (time.start < minTime || minTime === 0)
+                                minTime = time.start;
+                        if(self.options.ending === 0) {
+                            if (time.start > maxTime)
+                                maxTime = time.start;
+                            if (time.end > maxTime)
+                                maxTime = time.end;
+                        }
+                    });
                 });
-            });
 
-            if (self.options.ending === 0) {
-              self.options.ending = maxTime;
+                if (self.options.ending === 0) {
+                  self.options.ending = maxTime;
+                }
+                if (self.options.starting === 0) {
+                  self.options.starting = minTime;
+                }
             }
-            if (self.options.starting === 0) {
-              self.options.starting = minTime;
+
+            self.maxStack = maxStack;
+
+            self.x = d3.time.scale()
+                    .domain([self.options.starting, self.options.ending])
+                    .range([0, self.width]);
+
+            if (Helper.isFunction(callback)) {
+                callback.call(self, self.dataTarget);
             }
-        }
-
-        self.maxStack = maxStack;
-
-        self.x = d3.time.scale()
-                .domain([self.options.starting, self.options.ending])
-                .range([0, self.width]);
+        });
     }
 
     update(data) {
@@ -613,23 +621,25 @@ export default class TimeLine extends Chart {
 
         var self = this;
         
-        var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
-        var title   = new Title(self.options.title, self);  
-        var legend  = new Legend(self.options.legend, self, self.colorRange, self.dataTarget);
+        self.updateConfig(self.config, function(data) {
+            var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
+            var title   = new Title(self.options.title, self);  
+            var legend  = new Legend(self.options.legend, self, self.colorRange, data);
 
-        self.axis = axis;
-        self.title = title;
-        self.legend = legend;
+            self.axis = axis;
+            self.title = title;
+            self.legend = legend;
 
-        // Draw title
-        self.title.draw();
+            // Draw title
+            self.title.draw();
 
-        // Draw axis
-        self.axis.draw();
+            // Draw axis
+            self.axis.draw();
 
-        self.update(self.dataTarget);
-        self.updateSubChart(self.dataTarget);
-        self.updateInteraction();
+            self.update(data);
+            self.updateSubChart(data);
+            self.updateInteraction();
+        });
     }
 
     /**
@@ -673,12 +683,13 @@ export default class TimeLine extends Chart {
         }
         
         // Update chart
-        self.updateDataConfig(newCfg);
-        self.update(self.dataTarget);
-        self.updateSubChart(self.dataTarget);
+        self.updateDataConfig(newCfg, function(data) {
+            self.update(self.dataTarget);
+            self.updateSubChart(self.dataTarget);
 
-        // Update Axis
-        self.axis.update(self.x, self.y, 100);
+            // Update Axis
+            self.axis.update(self.x, self.y, 100);
+        });
     }
     /*=====  End of User's Functions  ======*/
     

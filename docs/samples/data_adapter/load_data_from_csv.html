@@ -5,10 +5,11 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <meta name="description" content="">
-	    <meta name="author" content="">
+	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+	    <meta name="author" content="Cong Pham, Huy Do">
+	    <meta name="title" content="C9js - Load Data From CSV">
 
-	    <title>C9js - Examples</title>
+	    <title>C9js - Load Data From CSV</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,82 +84,87 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Single Bar Chart</h2>
+		  <h2>Load Data From CSV</h2>
 		</div>
-		<div id="demo1"></div>	
+		<div id="chart"></div>
 		
 		<div class="section example">
-			<h3># <span>single_bar_chart.js</span></h3>
+			<h3># <span>load_data_from_csv.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
-				<pre><code class="javascript">var data1 = [
-    {name: "A", value: .0245},
-    {name: "B", value: .01492},
-    {name: "C", value: .02782},
-    {name: "D", value: .04253},
-    {name: "E", value: 1},
-    {name: "F", value: .02288},
-    {name: "G", value: .02015},
-    {name: "H", value: .06094},
-    {name: "I", value: .5},
+				<pre><code class="javascript">var data = [
+    {"Type": "data1", "valueY": [100, 200, 300, 120, 320]},
+    {"Type": "data2", "valueY": [150, 210, 269, -500, 600]},
 ];
-
-var options1 = {
-    id: "#demo1",
-    width: 750, 
-    height: 300,
-    margin: {
-        top: 50
-    },
+var options = {
+    id: "chart",
     data: {
-        plain: data1,
-    }, 
+        plain: data,
+        keys: {
+            name: 'Type',
+            // Line Chart has two values (x, y) 
+            // you have to define y (x is optional)
+            y: 'valueY'
+        }
+    }
 };
-
-var barChart = new C9.BarChart(options1);
-barChart.draw();</code></pre>
+var lineChart = new C9.LineChart(options);
+lineChart.draw();</code></pre>
+			</section>
+		</div>
+		<div class="section example">
+			<h3># <span>data_os.csv</span></h3>
+			<section>
+				<pre><code class="javascript">"OS","Rate"
+"Android",34.46
+"Win7",18.97
+"Win10",12.08
+"iOS",12.04
+"OS X",5.3
+"Unknown",4.57
+"Win8.1",4.05
+"WinXP",2.44
+"Win8",1.16
+"Nokia Unknown",0.87
+"Linux",0.85
+"Windows Phone",0.68
+"WinVista",0.6
+"Series 40",0.55
+"Chrome OS",0.34
+"BlackBerry OS",0.27
+"Samsung",0.26
+"SymbianOS",0.17
+"Playstation",0.08
+"Tizen",0.07
+"Win2003",0.04
+"Xbox",0.03
+"Sony Ericsson",0.03
+"LG",0.02
+"Win8.1 RT",0.02
+"Win98",0.02
+"MeeGo",0.01
+"Other",0.03
+</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-
-			var data1 = [
-					{name: "A", value:	.0245},
-					{name: "B",	value:  .01492},
-					{name: "C", value:	.02782},
-					{name: "D", value:	.04253},
-					{name: "E", value:	1},
-					{name: "F", value:	.02288},
-					{name: "G", value:	.02015},
-					{name: "H", value:	.06094},
-					{name: "I", value:	.5},
-				];
-
-			var options1 = {
-				id: "#demo1", 
-				width: 750, 
-				height: 300,
-				margin: {
-					top: 50
-				},
+			var options = {
+				id: "chart",
 				data: {
-					plain: data1,
-				}, 
-				// axis: {
-				// 	x: {
-				// 		show: true,
-				// 	},
-				// 	y: {
-				// 		show: false,
-				// 	}
-				// },
-				legend: {
-					show: false,
-				},
+					file: {
+						url: '../../data/data_os.csv',
+						type: 'csv'
+					},
+					keys: {
+						name: 'OS',
+						value: 'Rate'
+					}
+				}
 			};
-			var barChart = new C9.BarChart(options1);
+			var barChart = new C9.BarChart(options);
 			barChart.draw();
 		</script>
 		
