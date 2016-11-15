@@ -1,14 +1,19 @@
 <!doctype html>
 <html lang="en">
 	<head>
+
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
 	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Axis Tick Date Format">
+	    <meta name="title" content="C9js - Load Data From TSV">
 
-	    <title>C9js - Axis Tick Date Format</title>
+<<<<<<< HEAD:docs/samples/LineChart/single_bar_chart.html
+	    <title>C9js - Single Bar Chart</title>
+=======
+	    <title>C9js - Load Data From TSV</title>
+>>>>>>> 52d9940cac00e9dafaf99b9939baea706fcce0a3:docs/samples/data_adapter/load_data_from_tsv.html
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -83,105 +88,156 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Axis Tick Date Format</h2>
+		  <h2>Load Data From TSV</h2>
 		</div>
-		<div id="chart"></div>	
+		<div id="chart"></div>
 		
 		<div class="section example">
-			<h3># <span>axis_tick_date_format.js</span></h3>
+			<h3># <span>load_data_from_tsv.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
+<<<<<<< HEAD:docs/samples/LineChart/single_bar_chart.html
 				<pre><code class="javascript">var data1 = [
-    {"name": "Jose", "value": 70},
-	{"name": "Ronald", "value": 97},
-	{"name": "Mark", "value": 36},
-	{"name": "Denise", "value": 99},
-	{"name": "Kelly", "value": 43},
-	{"name": "Annie", "value": 88},
-	{"name": "Pamela", "value": 50},
-	{"name": "Lois", "value": 80},
-	{"name": "Cheryl", "value": 43},
-	{"name": "Brian", "value": 42}
-];			
+    {name: 'A', value: .08167},
+    {name: 'B', value: .01492},
+    {name: 'C', value: .02782},
+    {name: 'D', value: .04253},
+    {name: 'E', value: .12702},
+    {name: 'F', value: .02288},
+    {name: 'G', value: .02015},
+    {name: 'H', value: .06094},
+    {name: 'I', value: .06966},
+    {name: 'J', value: .00153},
+    {name: 'K', value: .00772},
+    {name: 'L', value: .04025},
+    {name: 'M', value: .02406},
+    {name: 'N', value: .06749},
+    {name: 'O', value: .07507},
+    {name: 'P', value: .01929},
+    {name: 'Q', value: .00095},
+    {name: 'R', value: .05987},
+    {name: 'S', value: .06327},
+    {name: 'T', value: .09056},
+    {name: 'U', value: .02758},
+    {name: 'V', value: .00978},
+    {name: 'W', value: .02360},
+    {name: 'X', value: .00150},
+    {name: 'Y', value: .01974},
+    {name: 'Z', value: .00074},
+];
 
 var options1 = {
-	id: "chart",
-	margin: {
-		top: 50
-	},
-	data: {
-		plain: data1,
-	}, 
-	axis: {
-		y: {
-			show: true,
-			tick: {
-				format: d3.format("$,")
-			}
-		}
-	},
+    id: "demo1",
+    width: 1100, 
+    height: 500,
+    data: {
+        plain: data1,
+    },
+    title: {
+        text: "Frequency of English Letters"
+=======
+				<pre><code class="javascript">var options = {
+    id: "chart",
+    axis: {
+        x: {
+            tick: {
+                rotate: -60
+            }
+        }
+    },
+    data: {
+        file: {
+            url: '../../data/data_social_media.tsv',
+            type: 'tsv'
+        },
+        keys: {
+            name: 'Social Media',
+            value: 'Rate'
+        }
+>>>>>>> 52d9940cac00e9dafaf99b9939baea706fcce0a3:docs/samples/data_adapter/load_data_from_tsv.html
+    }
 };
-var barChart = new C9.BarChart(options1);
+var barChart = new C9.BarChart(options);
 barChart.draw();</code></pre>
+			</section>
+		</div>
+		<div class="section example">
+			<h3># <span>data_social_media.tsv</span></h3>
+			<section>
+				<pre><code class="javascript">Social Media	Rate
+Facebook	86.91
+Pinterest	6.43
+Twitter	3.2
+Tumblr	1.1
+VKontakte	0.61
+YouTube	0.59
+reddit	0.52
+StumbleUpon	0.3
+LinkedIn	0.1
+Google+	0.09
+Fark	0.07
+Instagram	0.07
+Other	0.01
+</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-
-			var data1 = [{
-  "name": "Philip",
-  "value": "10/4/2016"
-}, {
-  "name": "Brenda",
-  "value": "12/26/2015"
-}, {
-  "name": "Jane",
-  "value": "10/29/2016"
-}, {
-  "name": "Russell",
-  "value": "6/22/2016"
-}, {
-  "name": "Sarah",
-  "value": "5/25/2016"
-}, {
-  "name": "Justin",
-  "value": "3/13/2016"
-}, {
-  "name": "Ryan",
-  "value": "6/10/2016"
-}, {
-  "name": "Helen",
-  "value": "7/3/2016"
-}, {
-  "name": "Mark",
-  "value": "9/7/2016"
-}, {
-  "name": "Keith",
-  "value": "8/18/2016"
-}];			
+<<<<<<< HEAD:docs/samples/LineChart/single_bar_chart.html
+			var data1 = [
+					{name: '2013-01-01', value: .08167},
+					{name: '2013-01-02', value: .01492},
+					{name: '2013-01-03', value: .02782},
+					{name: '2013-01-04', value: .04253},
+					{name: '2013-01-05', value: .12702},
+				];
 
 			var options1 = {
-				id: "chart",
+				id: "demo1", 
+				width: 1100, 
+				height: 500,
 				data: {
 					plain: data1,
-					keys: {
-						y: 'value'
-					},
-					timeFormat: '%d/%m/%Y'
-				}, 
+				},
+				title: {
+					text: "Frequency of English Letters"
+				},
 				axis: {
-					y: {
-						type: "timeseries",
+					x: {
 						tick: {
-							format: d3.time.format('%dd-%mm-%YY')
+							format: d3.time.format('%Y-%m-%d')
+						}
+					},
+					type: 'timeseries',
+				}
+			};
+			var barChart = new C9.BarChart(options1);
+=======
+			var options = {
+				id: "chart",
+				axis: {
+					x: {
+						tick: {
+							rotate: -60
 						}
 					}
 				},
+				data: {
+					file: {
+						url: '../../data/data_social_media.tsv',
+						type: 'tsv'
+					},
+					keys: {
+						name: 'Social Media',
+						value: 'Rate'
+					}
+				}
 			};
-			var lineChart = new C9.LineChart(options1);
-			lineChart.draw();
+			var barChart = new C9.BarChart(options);
+>>>>>>> 52d9940cac00e9dafaf99b9939baea706fcce0a3:docs/samples/data_adapter/load_data_from_tsv.html
+			barChart.draw();
 		</script>
 		
 	</body>
