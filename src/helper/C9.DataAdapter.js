@@ -274,27 +274,27 @@ export default class DataAdapter {
                 break;
 
             case "line":
-               self.getDataTargetForLineChart();
+                self.getDataTargetForLineChart();
                 break;
 
             case "pie":
-               self.getDataTargetForPieChart();
+                self.getDataTargetForPieChart();
                 break;
 
             case "donut":
-               self.getDataTargetForDonutChart();
+                self.getDataTargetForDonutChart();
                 break;
 
             case "timeline":
-               self.getDataTargetForTimelineChart();
+                self.getDataTargetForTimelineChart();
                 break;
 
             case "map":
-               self.getDataTargetForMap();
+                self.getDataTargetForMap();
                 break;
 
             default:
-               self.dataSource;
+                self.dataTarget = self.dataSource;
                 break;
         }
     }
@@ -687,7 +687,7 @@ export default class DataAdapter {
             let _keys = key.split('.');
             let _value = Helper.get(key, data);
             let _v;
-            if (_keys.length == 1 && keys[0] == 'value' && !isArray) {
+            if (_keys.length == 1 && _keys[0] == 'value' && !isArray) {
                 _v = _value;
             } else {
                 _v = new Object();

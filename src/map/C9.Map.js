@@ -10,12 +10,7 @@ export default class Map {
             // Layers:
             // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
             // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
-            layers: {
-                type: "Tile",
-                source: {
-                    name: "OSM"
-                }
-            }, 
+            layers: null, 
             view: {
                 lat: 0,
                 lon: 0,
@@ -210,10 +205,9 @@ export default class Map {
         });
         /********************************************************/
         //adapt data to obj
-        self.update(self.dataSource);
+        self.addData(self.dataSource);
         //define interaction
         self.updateInteraction();
-
     }
     /*=====  End of Main Functions  ======*/
 
@@ -250,6 +244,7 @@ export default class Map {
                 containFeature = false;    
             }
         }
+
         if (containFeature) {
             var readFormat = function(feature) {
                 var result = {};
@@ -259,25 +254,27 @@ export default class Map {
                 result['id'] = feature.getId();
                 return result;
             }
-            if (!Helper.isEmpty(options.style)) {
-                try {
-                    self.setStyle({obj: layer.getSource(), style: options.style});
-                }
-                catch (err) {
+            var setStyle = function(){
+                if (!Helper.isEmpty(options.style)) {
                     try {
-                        self.setStyle({obj: vs, style: options.style});
+                        self.setStyle({obj: layer.getSource(), style: options.style});
                     }
                     catch (err) {
                         try {
-                            self.setStyle({obj: layer, style: options.style});    
+                            self.setStyle({obj: vs, style: options.style});
                         }
                         catch (err) {
-                            throw 'Cannot set style for this source';
+                            try {
+                                self.setStyle({obj: layer, style: options.style});    
+                            }
+                            catch (err) {
+                                throw 'Cannot set style for this source';
+                            }
                         }
+                        
                     }
-                    
                 }
-            }
+            };
             //register layer loaded event to set data for obj
             vs.once('change', function(e) {
                 if (vs.getState() == 'ready') {
@@ -288,33 +285,50 @@ export default class Map {
                     objs.forEach(function(o) {
                         o.set('data', readFormat(o));
                         o.set('type', 'c9-geojson');
-                        // o.set('c9-style', options.style);
-                        if (Helper.isFunction(options.condition) && !Helper.isEmpty(options.data)) {
-                            var data      = options.data,
-                                condition = options.condition;
-                            if (Helper.isArray(data)) {
-                                for (var i = 0; i < data.length; i++) {
-                                    if (condition(o, data[i])) {
-                                        for (var j in data[i]) {
-                                            o.get('data')[j] = data[i][j];
-                                        }
-                                        break;
-                                    }
-                                }
-                            } 
-                            else 
-                                if (condition(o, data)) {
-                                    for (var i in data) {
-                                        o.get('data')[i] = data[i];
-                                    }
-                                }
-                        }
                     })
+
+                    //read data from url
+                    if (!Helper.isEmpty(options.data) && Helper.isFunction(options.data.condition) && !Helper.isEmpty(options.data.file) && !Helper.isEmpty(options.data.file.url) && !Helper.isEmpty(options.data.file.type)) {
+                        var da = new DataAdapter(options.data);
+                        da.getDataTarget('', function(data) {
+                            var condition = options.data.condition;
+                            var process = options.data.process;
+
+                            if (!Helper.isEmpty(process) && Helper.isFunction(process))
+                                data = process(data);
+
+                            objs.forEach(function(o) {
+                                if (Helper.isArray(data)) {
+                                    for (var i = 0; i < data.length; i++) {
+                                        if (condition(o, data[i])) {
+                                            for (var j in data[i]) {
+                                                o.get('data')[j] = data[i][j];
+                                            }
+                                            break;
+                                        }
+                                    }
+                                } 
+                                else 
+                                    if (condition(o, data)) {
+                                        for (var i in data) {
+                                            o.get('data')[i] = data[i];
+                                        }
+                                    }
+                            });
+                            setStyle();
+                        });
+                    }
+                    else 
+                        setStyle();
+                        
                 }
             })
         }
 
         self.c9Layers.push(layer);
+
+        if (!Helper.isEmpty(self.c9Map))
+            self.c9Map.addLayer(layer);
 
         return layer;
     }
@@ -331,7 +345,7 @@ export default class Map {
                 self.createLayer({type: l.type, source: l.source, style: l.style, condition: l.condition, data: l.data});
             })
         }
-        else {
+        else if (Helper.isObject(layers)){
             self.createLayer({type: layers.type, source: layers.source, style: layers.style, condition: layers.condition, data: layers.data});
         }
     }
@@ -738,9 +752,10 @@ export default class Map {
      * @options  {Object} some options: strokeWidth,strokeColor,fillColor,imgSrc,scale
      * @return {}
      */
-    createObj(data, options){
+    createObject(options){
         var self = this;
-
+        if (Helper.isEmpty(options) || Helper.isEmpty(options.data)) return;
+        var data = options.data, style = options.style;
         /**
          * Create marker
          * @param  {Number} latitude of marker
@@ -788,6 +803,7 @@ export default class Map {
 
             //add this marker to marker list (c9Objs)
             self.c9Objs.addFeature(marker);
+            return marker;
         }
 
         var coorAndType = self.normalizeCoordinate(data.coor);
@@ -795,8 +811,7 @@ export default class Map {
 
         //marker
         if (coorAndType.type == "marker") {
-            createMarker(data, coorAndType.coor, options);
-            return;
+            return createMarker(data, coorAndType.coor, style);
         }
 
         // if (data == self.c9Markers) {
@@ -806,9 +821,9 @@ export default class Map {
         //     })
         // }
 
-        var strokeWidth = options ? (options.strokeWidth || 1) : 1,
-            strokeColor = options ? (options.strokeColor || "#319FD3") : "#319FD3",
-            fillColor   = options ? (options.fillColor || "rgba(255, 255, 255, 0.2)") : "rgba(255, 255, 255, 0.2)";
+        var strokeWidth = style ? (style.strokeWidth || 1) : 1,
+            strokeColor = style ? (style.strokeColor || "#319FD3") : "#319FD3",
+            fillColor   = style ? (style.fillColor || "rgba(255, 255, 255, 0.2)") : "rgba(255, 255, 255, 0.2)";
 
         var obj = new ol.Feature({
             'data-ref': '',
@@ -844,6 +859,7 @@ export default class Map {
 
         //add this marker to marker list (c9Objs)
         self.c9Objs.addFeature(obj);
+        return obj;
     }
 
     /**
@@ -887,33 +903,37 @@ export default class Map {
                 normCoor.push(isArrayOrObject(coor[0]).coor);
                 normCoor.push(isArrayOrObject(coor[1]).coor);
             }
-            // multipolygon [[[[] || {}, ...]], [[[] || {}, ...]], ...]
-            else if (coor.length >= 2){
-                type = "multipolygon";
-                coor.forEach(function(pc, i) {
-                    if (Helper.isArray(pc) && pc.length == 1) {
-                        normCoor.push([[]]);
-                        pc[0].forEach(function(c) {
-                            // data - [] || {}
-                            var obj = isArrayOrObject(c);
-                            if (obj.check) normCoor[i][0].push(obj.coor);
-                        })
-                        // cannot create polygon with the number of points is less than 2
-                        if (normCoor[i][0].length <= 2) return error; 
-                    }
-                    else return error; // because data format is not true
-                })
-            }
-            // polygon [[[] || {}, ...]]
-            else if (coor.length == 1) {
-                type = "polygon";
-                normCoor.push([]);
-                coor[0].forEach(function(c) {
-                    // data - [] || {}
-                    var obj = isArrayOrObject(c);
-                    if (obj.check) normCoor[0].push(obj.coor);
-                })
-                if (normCoor[0].length <= 2) return error;
+            //polygon || multipolygon
+            else if (coor.length >= 1){
+                // multipolygon [[[[] || {}, ...]], [[[] || {}, ...]], ...]
+                if (!Helper.isEmpty(coor[0][0]) && !Helper.isEmpty(coor[0][0][0])) {
+                    type = "multipolygon";
+                    coor.forEach(function(pc, i) {
+                        if (Helper.isArray(pc) && pc.length == 1) {
+                            normCoor.push([[]]);
+                            pc[0].forEach(function(c) {
+                                // data - [] || {}
+                                var obj = isArrayOrObject(c);
+                                if (obj.check) normCoor[i][0].push(obj.coor);
+                            })
+                            // cannot create polygon with the number of points is less than 2
+                            if (normCoor[i][0].length <= 2) return error; 
+                        }
+                        else return error; // because data format is not true
+                    })    
+                }
+                // polygon [[[] || {}, ...]]
+                else {
+                    type = "polygon";
+                    normCoor.push([]);
+                    coor[0].forEach(function(c) {
+                        // data - [] || {}
+                        var obj = isArrayOrObject(c);
+                        if (obj.check) normCoor[0].push(obj.coor);
+                    })
+                    if (normCoor[0].length <= 2) return error;
+                }
+                
             }
             else return error;
         }
@@ -926,34 +946,45 @@ export default class Map {
     /**
      * create obj base on user data
      * @data  {Object} data structure: {coor: [], name: , value: }
+     * return list of created object
      */
-    update(data){
-        if (Helper.isEmpty(data)) return;
+    addData(data){
+        if (Helper.isEmpty(data) || (Helper.isEmpty(data.plain) && Helper.isEmpty(data.file))) return;
         var self = this;
 
         var da = new DataAdapter(data);
-        self.data = da.getDataTarget('map');
-
-        if (!Helper.isEmpty(self.c9Map)) {
-            if (Helper.isArray(self.data))
-                self.data.forEach(function(d){
-                    self.createObj(d);
-                })
-            else
-                self.createObj(self.data);
-        }
+        da.getDataTarget('map', function(data) {
+            self.data = data;
+            if (!Helper.isEmpty(self.c9Map)) {
+                if (Helper.isArray(self.data))
+                    self.data.forEach(function(d, i){
+                        self.createObject({data: d});
+                    })
+                else
+                    self.createObject({data: self.data});
+            }
+        });
     }
 
-    getObjs(){
+    getObjects(){
         var c9GeojsonObjs = [];
         this.c9GeojsonObjs.forEach(function(o){
-            c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());
+            try {
+                c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());    
+            }
+            catch (err) {
+                try {
+                    c9GeojsonObjs = c9GeojsonObjs.concat(o.getFeatures());
+                }
+                catch (err) {
+                }
+            }
         });
         return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
     }
 
-    getLayers() {
-        return this.c9Layers;
+    getMap(){
+        return this.c9Map;
     }
 
     /**
@@ -982,7 +1013,6 @@ export default class Map {
                 }
             },
             'postrender': function(evt) {
-                console.log(callback)
                 if (Helper.isFunction(callback)) {
                     callback.call(this, evt);
                 }
@@ -1016,7 +1046,7 @@ export default class Map {
     setStyle(options){
         if (Helper.isEmpty(options) || Helper.isEmpty(options.obj) || Helper.isEmpty(options.style)) return;
         //create style for obj
-        if (Helper.isFunction(options.style) || style instanceof ol.style.Style) {
+        if (Helper.isFunction(options.style) || options.style instanceof ol.style.Style) {
             options.obj.setStyle(options.style);
         }
         else {
@@ -1029,8 +1059,10 @@ export default class Map {
                 imgSrc      = options.style.type == 'marker' || options.style.type == 'c9-marker' ? (options.style.imgSrc || DEFAULT_SRC)   : null,
                 scale       = options.style.type == 'marker' || options.style.type == 'c9-marker' ? (options.style.scale  || DEFAULT_SCALE) : null;
 
+            var style;
+
             if (imgSrc != null)
-                obj.setStyle(new ol.style.Style({
+                options.obj.setStyle(style = new ol.style.Style({
                     image: new ol.style.Icon({
                         anchor: [0.5, 1], //middle-width and bottom-height of image
                         src: imgSrc,
@@ -1038,7 +1070,7 @@ export default class Map {
                     })
                 }))
             else
-                obj.setStyle(new ol.style.Style({
+                options.obj.setStyle(style = new ol.style.Style({
                     stroke: new ol.style.Stroke({
                         color: strokeColor,
                         width: strokeWidth
@@ -1047,6 +1079,8 @@ export default class Map {
                         color: fillColor
                     })
                 }))
+
+            options.obj.set('c9-style', style);
         }
     }
 
@@ -1060,22 +1094,22 @@ export default class Map {
         var self = this;
         if (Helper.isEmpty(options) || Helper.isEmpty(options.url)) return;
 
-        var layer = self.createLayer({
+        self.createLayer({
             type: "Image",
             source: {
                 name: "ImageVector",
                 source: {
                     name: 'Vector',
                     url: options.url,
-                    format: 'GeoJSON'   
+                    format: 'GeoJSON'
                 }
             },
-            condition: options.condition,
-            data: options.data
+            data: options.data,
+            style: options.style
         });
-
         //create style
-        self.setStyle({obj: layer.getSource(), style: options.style});
+        // self.setStyle({obj: layer.getSource(), style: options.style});
+        
         // if (!Helper.isEmpty(options.style)) {
         //     if (Helper.isFunction(style) || style instanceof ol.style.Style) {
         //         layer.getSource().setStyle(options.style);
@@ -1097,6 +1131,5 @@ export default class Map {
         //     }
         // }
 
-        return layer;
     }
 }

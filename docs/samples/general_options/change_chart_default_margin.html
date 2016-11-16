@@ -5,11 +5,10 @@
 	    <meta charset="utf-8">
 	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
-	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
-	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Examples">
+	    <meta name="description" content="">
+	    <meta name="author" content="">
 
-	    <title>C9js - Simple Map</title>
+	    <title>Change Chart's Default Margin</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -44,8 +43,6 @@
 
 	    <!-- D3 & OL3 & C9 -->
 	    <script src="../../libs/d3/d3.min.js"></script>
-	    <script src="../../libs/ol3/ol.js"></script>
-	    <link rel="stylesheet" type="text/css" href="../../libs/ol3/ol.css">
 	    <script src="../../libs/C9js/C9.js"></script>
 	    <link rel="stylesheet" href="../../libs/C9js/C9.min.css"/>
 
@@ -86,36 +83,78 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Simple Map</h2>
+		  <h2>Change Chart's Default Margin</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>simple_map.js</span></h3>
+			<h3># <span>change_chart_default_margin.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
-				<pre><code class="javascript">var options1 = {
-    id: "demo1",
-    layer: {
-        type: "Tile"
-    }
+				<pre><code class="javascript">var data1 = [
+    {name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+    {name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+    {name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+    {name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+    {name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+    {name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
+];
+
+var options1 = {
+    id: "demo1", 
+    width: 1100, 
+    height: 500,
+    margin: {
+        top: 100,
+        right: 100,
+        bottom: 100,
+        left: 100
+    },
+    data: {
+        plain: data1,
+    },
+    title: {
+        text: "The Populations of different States in America by age group"
+    },
 };
-var map = new C9.Map(options1);
-map.draw();</code></pre>
+
+var barChart = new C9.BarChart(options1);
+barChart.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
+			var data1 = [
+					{name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+					{name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+					{name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+					{name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+					{name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+					{name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
+				];
+
 			var options1 = {
 				id: "demo1",
-				layers: {
-					type: "Tile"
-				}
+				width: 1100,
+				height: 500,
+				margin: {
+					top: 100,
+					right: 100,
+					bottom: 100,
+					left: 100
+				},
+				data: {
+					plain: data1,
+				},
+				title: {
+					text: "The Populations of different States in America by age group"
+				},
 			};
-			var map = new C9.Map(options1);
-			map.draw();
+
+			var barChart = new C9.BarChart(options1);
+			barChart.draw();
 		</script>
 		
 	</body>

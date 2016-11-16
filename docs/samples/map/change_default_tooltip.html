@@ -9,7 +9,7 @@
 	    <meta name="author" content="Cong Pham, Huy Do">
 	    <meta name="title" content="C9js - Examples">
 
-	    <title>C9js - Add Layer</title>
+	    <title>C9js - Change Default Tooltip</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -86,38 +86,40 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Add Layer</h2>
+		  <h2>Change Default Tooltip</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>add_layer.js</span></h3>
+			<h3># <span>change_default_tooltip.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var options1 = {
     id: "demo1",
-    layers: {
-        type: 'Tile',
-        source: {
-            name: 'BingMaps',
-            key: 'your Bing Maps key from http://www.bingmapsportal.com/ here'
+    layers: [
+        {
+            type: 'Tile' // if defined only layer name, c9 creates OSM source
+        }, {
+            type: 'Vector',
+            source: {
+                name: 'Vector',
+                format: 'GeoJSON',
+                url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'
+            }
+        }
+    ],
+    // styling tooltip through class 'c9-map-tooltip-container' or id 'c9MapPopup'
+    // only display tooltip when hovering on feature - default
+    tooltip: {
+        format: function(d) {
+            return 'Country ID: ' + d.id + 'Country Name: ' + d.name
         }
     }
 };
 
 var map = new C9.Map(options1);
-// you can also use createLayer function
-/*
-map.createLayer({
-    type: 'Tile',
-    source: {
-        name: 'BingMaps',
-        key: 'your Bing Maps key from http://www.bingmapsportal.com/ here'
-    }
-});
-*/
 map.draw();</code></pre>
 			</section>
 		</div>
@@ -125,23 +127,30 @@ map.draw();</code></pre>
 	    <script type="text/javascript" charset="utf-8">
 			var options1 = {
 				id: "demo1",
-				layers: {
-					type: 'Tile',
-					source: {
-						name: 'BingMaps',
-						key: 'AhZX4SaleTM7Xpa1JU0cBYbUHPhU5flIQBziZGthIcbqqTPTVScn_JUX5XB-mkv-'
+				layers: [
+					{
+						type: 'Tile'
+					}, {
+						type: 'Vector',
+						source: {
+							name: 'Vector',
+							format: 'GeoJSON',
+							url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'
+						}
 					}
-				}
+				],
+				tooltip: {
+			    	format: function(d) {
+			    		return '<strong>Country ID: </strong><span>' + d.id + '</span></br>' + '<strong>Country Name: </strong><span>' + d.name + '</span></br>'
+			    	}
+			    }
 			};
 			var map = new C9.Map(options1);
-			map.createLayer({
-				type: 'Tile',
-				source: {
-					name: 'BingMaps',
-					key: 'AhZX4SaleTM7Xpa1JU0cBYbUHPhU5flIQBziZGthIcbqqTPTVScn_JUX5XB-mkv-'
-				}
-			});
 			map.draw();
+			//you can track user's behavior through this event listener support 3 event: click, pointermove (mousemove), postrender (map loaded)
+			map.on('click', function(f) {
+				console.log(f.get('data'));
+			})
 		</script>
 		
 	</body>

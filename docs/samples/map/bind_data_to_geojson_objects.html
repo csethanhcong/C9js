@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+	<head>
+
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+	    <meta name="author" content="Cong Pham, Huy Do">
+	    <meta name="title" content="C9js - Examples">
+
+	    <title>C9js - Bind Data to Geojson Objects</title>
+	    <link rel="shortcut icon" href="../../images/icon.ico">
+
+	    <!-- Bootstrap Core CSS -->
+	    <link href="../../libs/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+	    <!-- Latest compiled and minified CSS -->
+	    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+
+	    <!-- Optional theme -->
+	    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
+
+	    <!-- Custom Fonts -->
+	    <link href="../../libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+	    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+	    <!-- Plugin CSS -->
+	    <link href="../../libs/magnific-popup/magnific-popup.css" rel="stylesheet">
+
+	    <!-- Theme CSS -->
+	    <link href="../../css/creative.css" rel="stylesheet">
+
+	    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	    <!--[if lt IE 9]>
+	        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+
+	    <!-- Highlight theme -->
+	    <link href="../../libs/highlightjs/solarized-light.css" rel="stylesheet">
+	    <script src="../../libs/highlightjs/highlight.min.js"></script>
+
+	    <!-- D3 & OL3 & C9 -->
+	    <script src="../../libs/d3/d3.min.js"></script>
+	    <script src="../../libs/ol3/ol.js"></script>
+	    <link rel="stylesheet" type="text/css" href="../../libs/ol3/ol.css">
+	    <script src="../../libs/C9js/C9.js"></script>
+	    <link rel="stylesheet" href="../../libs/C9js/C9.min.css"/>
+
+	    <link rel="stylesheet" href="../../css/main.css"/>
+	</head>
+	<body class="body-nomain">
+
+		<!-- header -->
+		<nav id="mainNav" class="navbar navbar-default navbar-fixed-top nomain">
+	      	<div class="container">
+	          	<!-- Brand and toggle get grouped for better mobile display -->
+	          	<div class="navbar-header">
+	              	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	                  	<span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+	              	</button>
+	              	<a class="navbar-brand page-scroll" href="http://c9js.me">C9js</a>
+	          	</div>
+
+	          	<!-- Collect the nav links, forms, and other content for toggling -->
+	          	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	              	<ul class="nav navbar-nav navbar-right">
+	                  	<li>
+	                      	<a class="page-scroll" href="../../getting_started.html">Getting Started</a>
+	                  	</li>
+	                  	<li>
+	                      	<a class="page-scroll" href="../../examples.html">Examples</a>
+	                  	</li>
+	                  	<li>
+	                      	<a class="page-scroll" href="https://github.com/csethanhcong/C9js" target="_blank">Source</a>
+	                  	</li>
+	              	</ul>
+	          	</div>
+	          	<!-- /.navbar-collapse -->
+	      	</div>
+	      	<!-- /.container-fluid -->
+	    </nav>
+
+	<div class="container">
+		<!-- Ex1: Bar Chart -->
+		<div class="page-header">
+		  <h2>Read Data from File and Bind It to Geojson Objects</h2>
+		</div>
+		<div id="demo1"></div>	
+		
+		<div class="section example">
+			<h3># <span>bind_data_to_geojson_objects.js</span></h3>
+			<section>
+				<div class="example-edit">
+					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
+				</div>
+				<pre><code class="javascript">var options1 = {
+    id: "demo1",
+    /* You also can use below code to bind data from file
+    layers: {
+        type: "Image",
+        source: {
+            name: "ImageVector",
+            source: {
+                name: 'Vector',
+                url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson',
+                format: 'GeoJSON'    
+            }
+        },
+        data: {
+            file: {
+                type: 'csv',
+                url: 'path/to/file'
+            },
+            process: function(data) {
+                data = data.filter(function(d) {
+                    return d.YEAR == "2011" && d.ALCOHOLTYPE == "SA_TOTAL";
+                }).sort(function(a, b) { 
+                    a.Numeric = a.Numeric == "" ? 0 : a.Numeric;
+                    b.Numeric = b.Numeric == "" ? 0 : b.Numeric;
+                    return parseFloat(a.Numeric) - parseFloat(b.Numeric); 
+                });
+
+                data.forEach(function(d, i) {
+                    d['rank'] = 186 - i;
+                });
+
+                return data;
+            },
+            condition: function(f, d) {
+                return f.getId() == d.COUNTRY;
+            }
+        },
+        style: function(f) {
+            var total = f.get('data')['Display Value'],
+                fillColor = '#4a1486';
+            if (total == undefined)
+                fillColor = '#ccc';
+            else if (total < 1)
+                fillColor = '#f2f0f7';
+            else if (total >= 1 && total < 3)
+                fillColor = '#dadaeb';
+            else if (total >= 3 && total < 5)
+                fillColor = '#bcbddc';
+            else if (total >= 5 && total < 7)
+                fillColor = '#9e9ac8';
+            else if (total >= 7 && total < 9)
+                fillColor = '#807dba';
+            else if (total >= 9 && total < 12)
+                fillColor = '#6a51a3';
+            return [new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: fillColor
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#c0c0c0',
+                    width: 1
+                })
+            })]
+        }
+    },
+    */
+    tooltip: {
+        format: function(data) {return data.name + ": " + (data['Display Value'] || 0) + " liters/person a year" + "World Rank: " + (data.rank || 184) + " of 186 countries"}
+    }
+};
+
+var map = new C9.Map(options1);
+map.draw();
+
+//use createLayerFromGeojson to quickly create layer from geojson file or url
+//to bind data, c9 require a file or plain data, a condition function(feature, data) to bind exactly data to each feature
+//you can also process data before binding by defining process function
+
+map.createLayerFromGeojson({
+    url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson', 
+    data: {
+        file: {
+            type: 'csv',
+            url: 'data-coded.csv'
+        },
+        process: function(data) {
+            data = data.filter(function(d) {
+                return d.YEAR == "2011" && d.ALCOHOLTYPE == "SA_TOTAL";
+            }).sort(function(a, b) { 
+                a.Numeric = a.Numeric == "" ? 0 : a.Numeric;
+                b.Numeric = b.Numeric == "" ? 0 : b.Numeric;
+                return parseFloat(a.Numeric) - parseFloat(b.Numeric); 
+            });
+
+            data.forEach(function(d, i) {
+                d['rank'] = 186 - i;
+            });
+
+            return data;
+        },
+        condition: function(f, d) {
+            return f.getId() == d.COUNTRY;
+        }
+    },
+    style: function(f) {
+        var total = f.get('data')['Display Value'],
+            fillColor = '#4a1486';
+        if (total == undefined)
+            fillColor = '#ccc';
+        else if (total < 1)
+            fillColor = '#f2f0f7';
+        else if (total >= 1 && total < 3)
+            fillColor = '#dadaeb';
+        else if (total >= 3 && total < 5)
+            fillColor = '#bcbddc';
+        else if (total >= 5 && total < 7)
+            fillColor = '#9e9ac8';
+        else if (total >= 7 && total < 9)
+            fillColor = '#807dba';
+        else if (total >= 9 && total < 12)
+            fillColor = '#6a51a3';
+        return [new ol.style.Style({
+            fill: new ol.style.Fill({
+                color: fillColor
+            }),
+            stroke: new ol.style.Stroke({
+                color: '#c0c0c0',
+                width: 1
+            })
+        })]	
+}})</code></pre>
+			</section>
+		</div>
+		<script>hljs.initHighlightingOnLoad();</script>
+	    <script type="text/javascript" charset="utf-8">
+			var options1 = {
+				id: "demo1",
+				// layers: {
+				// 	type: "Image",
+				// 	source: {
+				// 		name: "ImageVector",
+				// 		source: {
+				// 			name: 'Vector',
+				// 			url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson',
+				// 			format: 'GeoJSON'	
+				// 		}
+				// 	},
+				// 	data: {
+				// 		file: {
+				// 			type: 'csv',
+				// 			url: 'data-coded.csv'
+				// 		},
+				// 		process: function(data) {
+				// 			data = data.filter(function(d) {
+				// 				return d.YEAR == "2011" && d.ALCOHOLTYPE == "SA_TOTAL";
+				// 			}).sort(function(a, b) { 
+				// 				a.Numeric = a.Numeric == "" ? 0 : a.Numeric;
+				// 				b.Numeric = b.Numeric == "" ? 0 : b.Numeric;
+				// 				return parseFloat(a.Numeric) - parseFloat(b.Numeric); 
+				// 			});
+
+				// 			data.forEach(function(d, i) {
+				// 				d['rank'] = 186 - i;
+				// 			});
+
+				// 			return data;
+				// 		},
+				// 		condition: function(f, d) {
+				// 			return f.getId() == d.COUNTRY;
+				// 		}
+				// 	},
+				// 	style: function(f) {
+				// 		var total = f.get('data')['Display Value'],
+				// 			fillColor = '#4a1486';
+				// 		if (total == undefined)
+				// 			fillColor = '#ccc';
+				// 		else if (total < 1)
+				// 			fillColor = '#f2f0f7';
+				// 		else if (total >= 1 && total < 3)
+				// 			fillColor = '#dadaeb';
+				// 		else if (total >= 3 && total < 5)
+				// 			fillColor = '#bcbddc';
+				// 		else if (total >= 5 && total < 7)
+				// 			fillColor = '#9e9ac8';
+				// 		else if (total >= 7 && total < 9)
+				// 			fillColor = '#807dba';
+				// 		else if (total >= 9 && total < 12)
+				// 			fillColor = '#6a51a3';
+				// 		return [new ol.style.Style({
+				// 			fill: new ol.style.Fill({
+				// 				color: fillColor
+				// 			}),
+				// 			stroke: new ol.style.Stroke({
+				// 				color: '#c0c0c0',
+				// 				width: 1
+				// 			})
+				// 		})]
+				// 	}
+				// },
+				tooltip: {
+					format: function(data) {return "<strong>" + data.name + ":</strong>" + "<span> " + (data['Display Value'] || 0) + " liters/person a year" + "</span></br>" + "<strong>World Rank:</strong>" + "<span> " + (data.rank || 184) + " of 186 countries" + "</span></br>"}
+				}
+			};
+			var map = new C9.Map(options1);
+			map.draw();
+
+			map.createLayerFromGeojson({
+				url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson', 
+				data: {
+					file: {
+						type: 'csv',
+						url: '../../data/data-coded.csv'
+					},
+					process: function(data) {
+						data = data.filter(function(d) {
+							return d.YEAR == "2011" && d.ALCOHOLTYPE == "SA_TOTAL";
+						}).sort(function(a, b) { 
+							a.Numeric = a.Numeric == "" ? 0 : a.Numeric;
+							b.Numeric = b.Numeric == "" ? 0 : b.Numeric;
+							return parseFloat(a.Numeric) - parseFloat(b.Numeric); 
+						});
+
+						data.forEach(function(d, i) {
+							d['rank'] = 186 - i;
+						});
+
+						return data;
+					},
+					condition: function(f, d) {
+						return f.getId() == d.COUNTRY;
+					}
+				},
+				style: function(f) {
+					var total = f.get('data')['Display Value'],
+						fillColor = '#4a1486';
+					if (total == undefined)
+						fillColor = '#ccc';
+					else if (total < 1)
+						fillColor = '#f2f0f7';
+					else if (total >= 1 && total < 3)
+						fillColor = '#dadaeb';
+					else if (total >= 3 && total < 5)
+						fillColor = '#bcbddc';
+					else if (total >= 5 && total < 7)
+						fillColor = '#9e9ac8';
+					else if (total >= 7 && total < 9)
+						fillColor = '#807dba';
+					else if (total >= 9 && total < 12)
+						fillColor = '#6a51a3';
+					return [new ol.style.Style({
+						fill: new ol.style.Fill({
+							color: fillColor
+						}),
+						stroke: new ol.style.Stroke({
+							color: '#c0c0c0',
+							width: 1
+						})
+					})]	
+			}})
+		</script>
+		
+	</body>
+
+</html>
