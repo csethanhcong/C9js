@@ -1864,6 +1864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            //draw x axis
 	            self.chart.body.append("g").attr("class", "c9-axis c9-axis-x").attr("transform", "translate(0," + self.height + ")").call(self.xAxis);
+	
 	            //draw tick
 	            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
 	            //draw label
@@ -3353,7 +3354,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	                case 'timeline':
 	                    format = function format(data) {
-	                        return '<strong>' + data.name + '</strong>' + '<br><span> Start at: ' + data.start + '</span><br><span> End at: ' + data.end + '</span>';
+	                        return (data.name ? '<strong>' + data.name + '</strong>' : '<img src=' + data.icon + '" width="' + chart.options.itemHeight + '" height="' + chart.options.itemHeight + '">') + '<br><strong>Start at: </strong><span>' + data.start + '</span><br><strong>End at: </strong><span>' + data.end + '</span>';
 	                    };
 	                    break;
 	            }
@@ -3508,7 +3509,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                value: "value",
 	                x: "value.x",
 	                y: "value",
-	                coor: "coor"
+	                coor: "coor",
+	                icon: "icon"
 	            },
 	            groups: [],
 	            stacks: [],
@@ -3946,7 +3948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                var _data = {
 	                    // "color"     : color(index),
-	                    "icon": data.icon,
+	                    "icon": _C2.default.get(self.keys.icon, data),
 	                    "name": _C2.default.get(self.keys.name, data),
 	                    "value": [],
 	                    "data-ref": _C2.default.guid(),
@@ -3961,7 +3963,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    "end": null,
 	                    "color": "#fff",
 	                    "data-ref": null,
-	                    "enable": true
+	                    "enable": true,
+	                    "icon": null
 	                };
 	
 	                if (_C2.default.isArray(_dsArray)) {
@@ -3972,7 +3975,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            "end": new Date(d.end),
 	                            "color": color(index),
 	                            "data-ref": _C2.default.guid(),
-	                            "enable": true
+	                            "enable": true,
+	                            "icon": _C2.default.get(self.keys.icon, data)
 	                        };
 	                        _valueArray.push(_valueItem);
 	                    });
@@ -3983,7 +3987,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        "end": new Date(_dsArray.end),
 	                        "color": color(index),
 	                        "data-ref": _C2.default.guid(),
-	                        "enable": true
+	                        "enable": true,
+	                        "icon": _C2.default.get(self.keys.icon, data)
 	                    };
 	                    _valueArray.push(_valueItem);
 	                }
@@ -6511,7 +6516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.backgroundColor) {
 	                    var bgContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-background-container');
 	
-	                    bgContainer.selectAll(".c9-background-container").data(datum.value).enter().append("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", _C14.default.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % (self.maxStack - 1)] : self.options.backgroundColor);
+	                    bgContainer.selectAll(".c9-background-container").data(datum.value).enter().append("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", _C14.default.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % self.maxStack] : self.options.backgroundColor);
 	                }
 	
 	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.striped) {
@@ -6536,7 +6541,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return self.getXPos(d, i, scale);
 	                }).attr("r", self.options.itemHeight / 2).attr("height", self.options.itemHeight).style("fill", color(index));
 	
-	                if (self.options.separatorColor && index < self.maxStack - 1) {
+	                if (self.options.stack && self.options.separatorColor && index < self.maxStack - 1) {
 	                    var lineYAxis = self.options.itemHeight + self.options.itemMargin / 2 + (self.options.itemHeight + self.options.itemMargin) * stackList[index];
 	                    self.body.append("svg:line").attr("class", "c9-timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C14.default.isArray(self.options.separatorColor) ? self.options.separatorColor[index % (self.maxStack - 1)] : self.options.separatorColor);
 	                }
