@@ -9,7 +9,7 @@
 	    <meta name="author" content="Cong Pham, Huy Do">
 	    <meta name="title" content="C9js - Examples">
 
-	    <title>C9js - Simple Map</title>
+	    <title>C9js - Add Layers</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -86,23 +86,60 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Simple Map</h2>
+		  <h2>Add Layers</h2>
 		</div>
 		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>simple_map.js</span></h3>
+			<h3># <span>add_layers.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
 				<pre><code class="javascript">var options1 = {
     id: "demo1",
-    layer: {
-        type: "Tile"
-    }
+    layers: [
+        {
+            type: 'Tile',
+            source: {
+                name: 'BingMaps',
+                key: 'your Bing Maps key from http://www.bingmapsportal.com/ here'
+            }
+        }, {
+            type: 'Vector',
+            source: {
+                name: 'Vector',
+                format: 'GeoJSON',
+                url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'
+            }
+        }
+    ]
 };
+
 var map = new C9.Map(options1);
+// you can also use createLayer function
+/*
+map.createLayer({
+    type: 'Tile',
+    source: {
+        name: 'BingMaps',
+        key: 'your Bing Maps key from http://www.bingmapsportal.com/ here'
+    }
+});
+
+map.createLayer({
+    type: 'Vector',
+    source: {
+        name: 'Vector',
+        format: 'GeoJSON',
+        url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'
+    }
+});
+
+// you can create layer from geojson file by use createLayerFromGeojson function
+// this funtion use image tile to render some features from geojson, it runs smoother than rendering from vector tile
+map.createLayerFromGeojson({url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'})
+*/
 map.draw();</code></pre>
 			</section>
 		</div>
@@ -110,11 +147,40 @@ map.draw();</code></pre>
 	    <script type="text/javascript" charset="utf-8">
 			var options1 = {
 				id: "demo1",
-				layers: {
-					type: "Tile"
-				}
+				layers: [
+					{
+						type: 'Tile',
+						source: {
+							name: 'BingMaps',
+							key: 'AhZX4SaleTM7Xpa1JU0cBYbUHPhU5flIQBziZGthIcbqqTPTVScn_JUX5XB-mkv-'
+						}
+					}, {
+						type: 'Vector',
+						source: {
+							name: 'Vector',
+							format: 'GeoJSON',
+							url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'
+						}
+					}
+				]
 			};
 			var map = new C9.Map(options1);
+			// map.createLayer({
+			// 	type: 'Tile',
+			// 	source: {
+			// 		name: 'BingMaps',
+			// 		key: 'AhZX4SaleTM7Xpa1JU0cBYbUHPhU5flIQBziZGthIcbqqTPTVScn_JUX5XB-mkv-'
+			// 	}
+			// });
+			// map.createLayerFromGeojson({url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'})
+			// map.createLayer({
+			// 	type: 'Vector',
+			// 	source: {
+			// 		name: 'Vector',
+			// 		format: 'GeoJSON',
+			// 		url: 'https://openlayers.org/en/v3.19.1/examples/data/geojson/countries.geojson'
+			// 	}
+			// });
 			map.draw();
 		</script>
 		
