@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+	<head>
+
+	    <meta charset="utf-8">
+	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
+	    <meta name="author" content="Cong Pham, Huy Do">
+	    <meta name="title" content="C9js - Examples">
+
+	    <title>C9js - Stacked Bar Chart</title>
+	    <link rel="shortcut icon" href="../../images/icon.ico">
+
+	    <!-- Bootstrap Core CSS -->
+	    <link href="../../libs/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css">
+	    <!-- Latest compiled and minified CSS -->
+	    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+
+	    <!-- Optional theme -->
+	    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"> -->
+
+	    <!-- Custom Fonts -->
+	    <link href="../../libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+	    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+
+	    <!-- Plugin CSS -->
+	    <link href="../../libs/magnific-popup/magnific-popup.css" rel="stylesheet">
+
+	    <!-- Theme CSS -->
+	    <link href="../../css/creative.css" rel="stylesheet">
+
+	    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	    <!--[if lt IE 9]>
+	        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	    <![endif]-->
+
+	    <!-- Highlight theme -->
+	    <link href="../../libs/highlightjs/solarized-light.css" rel="stylesheet">
+	    <script src="../../libs/highlightjs/highlight.min.js"></script>
+
+	    <!-- D3 & OL3 & C9 -->
+	    <script src="../../libs/d3/d3.min.js"></script>
+	    <script src="../../libs/C9js/C9.js"></script>
+	    <link rel="stylesheet" href="../../libs/C9js/C9.min.css"/>
+
+	    <link rel="stylesheet" href="../../css/main.css"/>
+	</head>
+	<body class="body-nomain">
+
+		<!-- header -->
+		<nav id="mainNav" class="navbar navbar-default navbar-fixed-top nomain">
+	      	<div class="container">
+	          	<!-- Brand and toggle get grouped for better mobile display -->
+	          	<div class="navbar-header">
+	              	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+	                  	<span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+	              	</button>
+	              	<a class="navbar-brand page-scroll" href="http://c9js.me">C9js</a>
+	          	</div>
+
+	          	<!-- Collect the nav links, forms, and other content for toggling -->
+	          	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+	              	<ul class="nav navbar-nav navbar-right">
+	                  	<li>
+	                      	<a class="page-scroll" href="../../getting_started.html">Getting Started</a>
+	                  	</li>
+	                  	<li>
+	                      	<a class="page-scroll" href="../../examples.html">Examples</a>
+	                  	</li>
+	                  	<li>
+	                      	<a class="page-scroll" href="https://github.com/csethanhcong/C9js" target="_blank">Source</a>
+	                  	</li>
+	              	</ul>
+	          	</div>
+	          	<!-- /.navbar-collapse -->
+	      	</div>
+	      	<!-- /.container-fluid -->
+	    </nav>
+
+	<div class="container">
+		<!-- Ex1: Bar Chart -->
+		<div class="page-header">
+		  <h2>Stacked Bar Chart</h2>
+		</div>
+		<div id="demo1"></div>	
+		
+		<div class="section example">
+			<h3># <span>stacked_bar_chart.js</span></h3>
+			<section>
+				<div class="example-edit">
+					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
+				</div>
+				<pre><code class="javascript">var data1 = [
+    {name: 'AL', value: [310504,552339,259034,450818,1231572,1215966,641667]},
+    {name: 'AK', value: [52083,85640,42153,74257,198724,183159,50277]},
+    {name: 'AZ', value: [515910,828669,362642,601943,1804762,1523681,862573]},
+    {name: 'AR', value: [202070,343207,157204,264160,754420,727124,407205]},
+    {name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+    {name: 'CO', value: [358280,587154,261701,466194,1464939,1290094,511094]},
+    {name: 'CT', value: [211637,403658,196918,325110,916955,968967,478007]},
+    {name: 'DE', value: [59319,99496,47414,84464,230183,230528,121688]},
+    {name: 'DC', value: [36352,50439,25225,75569,193557,140043,70648]},
+    {name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+    {name: 'GA', value: [740521,1250460,557860,919876,2846985,2389018,981024]},
+    {name: 'HI', value: [87207,134025,64011,124834,356237,331817,190067]},
+    {name: 'ID', value: [121746,201192,89702,147606,406247,375173,182150]},
+    {name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+    {name: 'IN', value: [443089,780199,361393,605863,1724528,1647881,813839]},
+    {name: 'IA', value: [201321,345409,165883,306398,750505,788485,444554]},
+    {name: 'KS', value: [202529,342134,155822,293114,728166,713663,366706]},
+    {name: 'KY', value: [284601,493536,229927,381394,1179637,1134283,565867]},
+    {name: 'LA', value: [310716,542341,254916,471275,1162463,1128771,540314]},
+    {name: 'ME', value: [71459,133656,69752,112682,331809,397911,199187]},
+    {name: 'MD', value: [371787,651923,316873,543470,1556225,1513754,679565]},
+    {name: 'MA', value: [383568,701752,341713,665879,1782449,1751508,871098]},
+    {name: 'MI', value: [625526,1179503,585169,974480,2628322,2706100,1304322]},
+    {name: 'MN', value: [358471,606802,289371,507289,1416063,1391878,650519]},
+    {name: 'MS', value: [220813,371502,174405,305964,764203,730133,371598]},
+    {name: 'MO', value: [399450,690476,331543,560463,1569626,1554812,805235]},
+    {name: 'MT', value: [61114,106088,53156,95232,236297,278241,137312]},
+    {name: 'NE', value: [132092,215265,99638,186657,457177,451756,240847]},
+    {name: 'NV', value: [199175,325650,142976,212379,769913,653357,296717]},
+    {name: 'NH', value: [75297,144235,73826,119114,345109,388250,169978]},
+    {name: 'NJ', value: [557421,1011656,478505,769321,2379649,2335168,1150941]},
+    {name: 'NM', value: [148323,241326,112801,203097,517154,501604,260051]},
+    {name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+    {name: 'NC', value: [652823,1097890,492964,883397,2575603,2380685,1139052]},
+    {name: 'ND', value: [41896,67358,33794,82629,154913,166615,94276]},
+    {name: 'OH', value: [743750,1340492,646135,1081734,3019147,3083815,1570837]},
+    {name: 'OK', value: [266547,438926,200562,369916,957085,918688,490637]},
+    {name: 'OR', value: [243483,424167,199925,338162,1044056,1036269,503998]},
+    {name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
+    {name: 'RI', value: [60934,111408,56198,114502,277779,282321,147646]},
+    {name: 'SC', value: [303024,517803,245400,438147,1193112,1186019,596295]},
+    {name: 'SD', value: [58566,94438,45305,82869,196738,210178,116100]},
+    {name: 'TN', value: [416334,725948,336312,550612,1719433,1646623,819626]},
+    {name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+    {name: 'UT', value: [268916,413034,167685,329585,772024,538978,246202]},
+    {name: 'VT', value: [32635,62538,33757,61679,155419,188593,86649]},
+    {name: 'VA', value: [522672,887525,413004,768475,2203286,2033550,940577]},
+    {name: 'WA', value: [433119,750274,357782,610378,1850983,1762811,783877]},
+    {name: 'WV', value: [105435,189649,91074,157989,470749,514505,285067]},
+    {name: 'WI', value: [362277,640286,311849,553914,1487457,1522038,750146]},
+    {name: 'WY', value: [38253,60890,29314,53980,137338,147279,65614]},
+];
+
+var options1 = {
+    id: "demo1", 
+    width: 1100, 
+    height: 500,
+    data: {
+        plain: data1,
+        stacks: ['Under 5 Years', '5 to 13 Years', '14 to 17 Years', '18 to 24 Years', '25 to 44 Years', '45 to 64 Years', '65 Years and Over']
+    },
+    title: {
+        text: "The Populations of different States in America by age group"
+    }
+};
+
+var barChart = new C9.BarChart(options1);
+barChart.draw();</code></pre>
+			</section>
+		</div>
+		<script>hljs.initHighlightingOnLoad();</script>
+	    <script type="text/javascript" charset="utf-8">
+			var data1 = [
+					{name: 'AL', value: [310504,552339,259034,450818,1231572,1215966,641667]},
+					{name: 'AK', value: [52083,85640,42153,74257,198724,183159,50277]},
+					{name: 'AZ', value: [515910,828669,362642,601943,1804762,1523681,862573]},
+					{name: 'AR', value: [202070,343207,157204,264160,754420,727124,407205]},
+					{name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+					{name: 'CO', value: [358280,587154,261701,466194,1464939,1290094,511094]},
+					{name: 'CT', value: [211637,403658,196918,325110,916955,968967,478007]},
+					{name: 'DE', value: [59319,99496,47414,84464,230183,230528,121688]},
+					{name: 'DC', value: [36352,50439,25225,75569,193557,140043,70648]},
+					{name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+					{name: 'GA', value: [740521,1250460,557860,919876,2846985,2389018,981024]},
+					{name: 'HI', value: [87207,134025,64011,124834,356237,331817,190067]},
+					{name: 'ID', value: [121746,201192,89702,147606,406247,375173,182150]},
+					{name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+					{name: 'IN', value: [443089,780199,361393,605863,1724528,1647881,813839]},
+					{name: 'IA', value: [201321,345409,165883,306398,750505,788485,444554]},
+					{name: 'KS', value: [202529,342134,155822,293114,728166,713663,366706]},
+					{name: 'KY', value: [284601,493536,229927,381394,1179637,1134283,565867]},
+					{name: 'LA', value: [310716,542341,254916,471275,1162463,1128771,540314]},
+					{name: 'ME', value: [71459,133656,69752,112682,331809,397911,199187]},
+					{name: 'MD', value: [371787,651923,316873,543470,1556225,1513754,679565]},
+					{name: 'MA', value: [383568,701752,341713,665879,1782449,1751508,871098]},
+					{name: 'MI', value: [625526,1179503,585169,974480,2628322,2706100,1304322]},
+					{name: 'MN', value: [358471,606802,289371,507289,1416063,1391878,650519]},
+					{name: 'MS', value: [220813,371502,174405,305964,764203,730133,371598]},
+					{name: 'MO', value: [399450,690476,331543,560463,1569626,1554812,805235]},
+					{name: 'MT', value: [61114,106088,53156,95232,236297,278241,137312]},
+					{name: 'NE', value: [132092,215265,99638,186657,457177,451756,240847]},
+					{name: 'NV', value: [199175,325650,142976,212379,769913,653357,296717]},
+					{name: 'NH', value: [75297,144235,73826,119114,345109,388250,169978]},
+					{name: 'NJ', value: [557421,1011656,478505,769321,2379649,2335168,1150941]},
+					{name: 'NM', value: [148323,241326,112801,203097,517154,501604,260051]},
+					{name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+					{name: 'NC', value: [652823,1097890,492964,883397,2575603,2380685,1139052]},
+					{name: 'ND', value: [41896,67358,33794,82629,154913,166615,94276]},
+					{name: 'OH', value: [743750,1340492,646135,1081734,3019147,3083815,1570837]},
+					{name: 'OK', value: [266547,438926,200562,369916,957085,918688,490637]},
+					{name: 'OR', value: [243483,424167,199925,338162,1044056,1036269,503998]},
+					{name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
+					{name: 'RI', value: [60934,111408,56198,114502,277779,282321,147646]},
+					{name: 'SC', value: [303024,517803,245400,438147,1193112,1186019,596295]},
+					{name: 'SD', value: [58566,94438,45305,82869,196738,210178,116100]},
+					{name: 'TN', value: [416334,725948,336312,550612,1719433,1646623,819626]},
+					{name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+					{name: 'UT', value: [268916,413034,167685,329585,772024,538978,246202]},
+					{name: 'VT', value: [32635,62538,33757,61679,155419,188593,86649]},
+					{name: 'VA', value: [522672,887525,413004,768475,2203286,2033550,940577]},
+					{name: 'WA', value: [433119,750274,357782,610378,1850983,1762811,783877]},
+					{name: 'WV', value: [105435,189649,91074,157989,470749,514505,285067]},
+					{name: 'WI', value: [362277,640286,311849,553914,1487457,1522038,750146]},
+					{name: 'WY', value: [38253,60890,29314,53980,137338,147279,65614]},
+				];
+
+			var options1 = {
+				id: "demo1", 
+				width: 1100, 
+				height: 500,
+				data: {
+					plain: data1,
+					stacks: ['Under 5 Years', '5 to 13 Years', '14 to 17 Years', '18 to 24 Years', '25 to 44 Years', '45 to 64 Years', '65 Years and Over']
+				},
+				title: {
+					text: "The Populations of different States in America by age group"
+				}
+			};
+
+			var barChart = new C9.BarChart(options1);
+			barChart.draw();
+		</script>
+		
+	</body>
+
+</html>
