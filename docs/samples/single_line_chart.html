@@ -57,14 +57,14 @@
 		<div id="demo1"></div>
 	    <script type="text/javascript" charset="utf-8">
 			var data1 = [
-						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]}
+						 {"name": "ABC", "valueY": [100, 200, 300, 120, 320], "valueX": ['20010101', '20010201', '20010301', '20010401', '20010501']}
 						];
 			// var data1 = [
 			// 			 {"name": "ABC", "valueY": [100, 200, 300, 120, 320]},
 			// 			 // {"name": "DEF", "valueY": [150, 210, 269, -696, 969]},
 			// 			];
 			var options1 = {
-				id: "#demo1", 
+				id: "demo1", 
 				width: 750, 
 				height: 500, 
 				margin: {
@@ -76,16 +76,16 @@
 				data: {
 					plain: data1,
 					keys: {
-						// x: 'valueX',
+						x: 'valueX',
 						y: 'valueY'
 					},
-					// timeFormat: '%Y-%m',
+					timeFormat: '%Y%m%d',
 				}, 
 				axis: {
 					x: {
 						show: true,
 						text: "Time",
-						// type: "timeseries",
+						type: "timeseries",
 						tick: {
 							// show: false,
 							rotate: -60
@@ -119,6 +119,9 @@
 				// gridYShow: true,
 				// gridXShow: true,
 				legend: {
+					show: false
+				},
+				area: {
 					show: false
 				}
 			};

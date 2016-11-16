@@ -7,13 +7,9 @@
 	    <meta name="viewport" content="width=device-width, initial-scale=1">
 	    <meta name="description" content="Based on d3js and OpenLayers, c9js was created by C9Team from HCMUT, help web developers to make an interactive chart-map on the easiest way.">
 	    <meta name="author" content="Cong Pham, Huy Do">
-	    <meta name="title" content="C9js - Load Data From TSV">
+	    <meta name="title" content="C9js - Examples">
 
-<<<<<<< HEAD:docs/samples/LineChart/single_bar_chart.html
-	    <title>C9js - Single Bar Chart</title>
-=======
-	    <title>C9js - Load Data From TSV</title>
->>>>>>> 52d9940cac00e9dafaf99b9939baea706fcce0a3:docs/samples/data_adapter/load_data_from_tsv.html
+	    <title>C9js - Timeline and Subchart</title>
 	    <link rel="shortcut icon" href="../../images/icon.ico">
 
 	    <!-- Bootstrap Core CSS -->
@@ -88,156 +84,134 @@
 	<div class="container">
 		<!-- Ex1: Bar Chart -->
 		<div class="page-header">
-		  <h2>Load Data From TSV</h2>
+		  <h2>Timeline and Subchart</h2>
 		</div>
-		<div id="chart"></div>
+		<div id="demo1"></div>	
 		
 		<div class="section example">
-			<h3># <span>load_data_from_tsv.js</span></h3>
+			<h3># <span>timeline_and_subchart.js</span></h3>
 			<section>
 				<div class="example-edit">
 					<a href="#"><i class="fa fa-jsfiddle"></i> Edit</a>
 				</div>
-<<<<<<< HEAD:docs/samples/LineChart/single_bar_chart.html
 				<pre><code class="javascript">var data1 = [
-    {name: 'A', value: .08167},
-    {name: 'B', value: .01492},
-    {name: 'C', value: .02782},
-    {name: 'D', value: .04253},
-    {name: 'E', value: .12702},
-    {name: 'F', value: .02288},
-    {name: 'G', value: .02015},
-    {name: 'H', value: .06094},
-    {name: 'I', value: .06966},
-    {name: 'J', value: .00153},
-    {name: 'K', value: .00772},
-    {name: 'L', value: .04025},
-    {name: 'M', value: .02406},
-    {name: 'N', value: .06749},
-    {name: 'O', value: .07507},
-    {name: 'P', value: .01929},
-    {name: 'Q', value: .00095},
-    {name: 'R', value: .05987},
-    {name: 'S', value: .06327},
-    {name: 'T', value: .09056},
-    {name: 'U', value: .02758},
-    {name: 'V', value: .00978},
-    {name: 'W', value: .02360},
-    {name: 'X', value: .00150},
-    {name: 'Y', value: .01974},
-    {name: 'Z', value: .00074},
+    {
+        value: {
+            start: "11/1/2016",
+            end: "11/16/2016",
+        },
+        name: "Jeremy Kelly"
+    }, {
+        value: {
+            start: "11/13/2016",
+            end: "11/14/2016",
+        },
+        name: "Marie Hansen"
+    }, {
+        value: {
+            start: "11/11/2016",
+            end: "11/13/2016",
+        },
+        name: "Paul Myers"
+    }, {
+        value: {
+            start: "11/13/2016",
+            end: "11/21/2016",
+        },
+        name: "Steven Ross"
+    }
 ];
 
 var options1 = {
-    id: "demo1",
+    id: "demo1", 
     width: 1100, 
-    height: 500,
+    height: 250,
     data: {
         plain: data1,
     },
+    labelMargin: -50,
     title: {
-        text: "Frequency of English Letters"
-=======
-				<pre><code class="javascript">var options = {
-    id: "chart",
+        text: "Change Separator Color"
+    },
     axis: {
         x: {
+            label: {
+                text: ""
+            },
             tick: {
-                rotate: -60
+                format: d3.time.format("%d/%m/%Y")
             }
         }
     },
-    data: {
-        file: {
-            url: '../../data/data_social_media.tsv',
-            type: 'tsv'
-        },
-        keys: {
-            name: 'Social Media',
-            value: 'Rate'
-        }
->>>>>>> 52d9940cac00e9dafaf99b9939baea706fcce0a3:docs/samples/data_adapter/load_data_from_tsv.html
-    }
+    subchart: {
+        show: true // only support for timeline and line chart
+    },
+    striped: true,
+    separatorColor: "red" // default value: rgb(154, 154, 154), set false to hide it
 };
-var barChart = new C9.BarChart(options);
-barChart.draw();</code></pre>
-			</section>
-		</div>
-		<div class="section example">
-			<h3># <span>data_social_media.tsv</span></h3>
-			<section>
-				<pre><code class="javascript">Social Media	Rate
-Facebook	86.91
-Pinterest	6.43
-Twitter	3.2
-Tumblr	1.1
-VKontakte	0.61
-YouTube	0.59
-reddit	0.52
-StumbleUpon	0.3
-LinkedIn	0.1
-Google+	0.09
-Fark	0.07
-Instagram	0.07
-Other	0.01
-</code></pre>
+var timeline = new C9.TimeLine(options1);
+timeline.draw();</code></pre>
 			</section>
 		</div>
 		<script>hljs.initHighlightingOnLoad();</script>
 	    <script type="text/javascript" charset="utf-8">
-<<<<<<< HEAD:docs/samples/LineChart/single_bar_chart.html
 			var data1 = [
-					{name: '2013-01-01', value: .08167},
-					{name: '2013-01-02', value: .01492},
-					{name: '2013-01-03', value: .02782},
-					{name: '2013-01-04', value: .04253},
-					{name: '2013-01-05', value: .12702},
-				];
+            	{
+            		value: {
+            			start: "11/1/2016",
+				  		end: "11/16/2016",
+            		},
+				  	name: "Jeremy Kelly"
+				}, {
+					value: {
+						start: "11/13/2016",
+				  		end: "11/14/2016",
+					},
+				  	name: "Marie Hansen"
+				}, {
+					value: {
+						start: "11/11/2016",
+				  		end: "11/13/2016",
+					},
+				  	name: "Paul Myers"
+				}, {
+					value: {
+						start: "11/13/2016",
+				  		end: "11/21/2016",
+					},
+				  	name: "Steven Ross"
+				}
+            ];
 
 			var options1 = {
 				id: "demo1", 
 				width: 1100, 
-				height: 500,
+				height: 400,
 				data: {
 					plain: data1,
 				},
 				title: {
-					text: "Frequency of English Letters"
+					text: "Change Separtor Color"
 				},
+				labelMargin: -50,
 				axis: {
 					x: {
+						label: {
+							text: ""
+						},
 						tick: {
-							format: d3.time.format('%Y-%m-%d')
-						}
-					},
-					type: 'timeseries',
-				}
-			};
-			var barChart = new C9.BarChart(options1);
-=======
-			var options = {
-				id: "chart",
-				axis: {
-					x: {
-						tick: {
-							rotate: -60
+							format: d3.time.format("%d/%m/%Y")
 						}
 					}
 				},
-				data: {
-					file: {
-						url: '../../data/data_social_media.tsv',
-						type: 'tsv'
-					},
-					keys: {
-						name: 'Social Media',
-						value: 'Rate'
-					}
-				}
+				subchart: {
+					show: true
+				},
+				striped: true,
+				separatorColor: "red" // default value: rgb(154, 154, 154),
 			};
-			var barChart = new C9.BarChart(options);
->>>>>>> 52d9940cac00e9dafaf99b9939baea706fcce0a3:docs/samples/data_adapter/load_data_from_tsv.html
-			barChart.draw();
+			var timeline = new C9.TimeLine(options1);
+			timeline.draw();
 		</script>
 		
 	</body>
