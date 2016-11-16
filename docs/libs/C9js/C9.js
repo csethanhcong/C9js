@@ -2273,7 +2273,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                };
 	
 	                var r = 0; // current row
-	                var items = d3.selectAll(".c9-custom-legend-item")[0];
+	                var items = self.chart.svg.selectAll(".c9-custom-legend-item")[0];
 	                var itemHeight = getSize(items[0]).height;
 	                var numItemsCol = Math.floor((self.maxHeight - self.options.margin[0] - self.options.margin[2]) / (itemHeight + self.options.space));
 	
@@ -2327,6 +2327,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            var preItem = items[i - 1];
 	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
 	                            if (newR > 0) r++;
+	                            if (self.chart.id == "#chart_7") {
+	                                console.log(preItem);
+	                                console.log(getXY(preItem).x);
+	                                console.log(getSize(preItem).width);
+	                                console.log(self.options.space);
+	                            }
+	
 	                            return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
 	                        } else return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
 	                    });
