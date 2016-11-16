@@ -179,7 +179,7 @@ export default class Legend {
             var getSize = function(item) { 
                 return item.getBoundingClientRect() 
             };
-            var getXY = function(item) { 
+            var getXY = function(item) {
                 var xy = d3.select(item).attr('transform').split(','); 
                 return {
                     x: parseFloat(xy[0].replace('translate(', '')), 
@@ -188,7 +188,7 @@ export default class Legend {
             };
 
             var r = 0; // current row
-            var items = d3.selectAll(".c9-custom-legend-item")[0];
+            var items = self.chart.svg.selectAll(".c9-custom-legend-item")[0];
             var itemHeight = getSize(items[0]).height;
             var numItemsCol = Math.floor((self.maxHeight - self.options.margin[0] - self.options.margin[2]) / (itemHeight + self.options.space));
             
@@ -246,7 +246,14 @@ export default class Legend {
                         var preItem  = items[i - 1];
                         var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
                         if (newR > 0) r++;
-                        return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
+                        if (self.chart.id == "#chart_7") {
+                            console.log(preItem)
+                            console.log(getXY(preItem).x)
+                            console.log(getSize(preItem).width)
+                            console.log(self.options.space)    
+                        }
+                        
+                        return "translate(" + (newR > 0 ? self.options.margin[3] : (getXY(preItem).x + getSize(preItem).width + self.options.space)) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
                     }
                     else
                         return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
