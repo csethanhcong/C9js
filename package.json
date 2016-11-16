@@ -1,6 +1,6 @@
 {
   "name": "C9js",
-  "version": "0.0.0-semantically-released",
+  "version": "1.0.0-originally-released",
   "main": "dist/C9.min.js",
   "keywords": [
     "api",

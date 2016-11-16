@@ -12,8 +12,5 @@ results
 
 npm-debug.log
 node_modules
-dist/
 coverage
 .nyc_output
-/dist/C9.js.map
-/dist/C9.js

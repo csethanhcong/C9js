@@ -4,6 +4,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _C = require("./C9.Helper");
@@ -15,7 +17,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var DataAdapter = function () {
-    function DataAdapter(options) {
+    function DataAdapter(options, chartType, callback) {
         _classCallCheck(this, DataAdapter);
 
         var self = this;
@@ -24,10 +26,15 @@ var DataAdapter = function () {
             // ALL OPTIONS AVAILABLE IN DATA CONFIG
             keys: {
                 name: "name",
-                value: "value"
+                value: "value",
+                x: "value.x",
+                y: "value",
+                coor: "coor",
+                icon: "icon"
             },
             groups: [],
             stacks: [],
+            timeFormat: false,
 
             // NO NEED TO ADD TO DATA OPTIONS
             // Just use to define default parameters
@@ -37,11 +44,18 @@ var DataAdapter = function () {
         self._keys = _C2.default.merge(options.keys, config.keys);
         self._groups = options.groups || config.groups;
         self._stacks = options.stacks || config.stacks;
+        self._timeFormat = options.timeFormat || config.timeFormat;
         self._colorRange = options.colorRange || config.colorRange;
 
-        self._dataSource = null;
+        self._dataSource = [];
         self._dataTarget = []; // Initialize new Array to use Array methods
-        self.initDataSource(options);
+        self._dataRefs = [];
+
+        self._options = options;
+        self._chartType = chartType;
+        self._callback = callback;
+
+        self.updateConfig(config);
     }
 
     /*==============================
@@ -50,69 +64,87 @@ var DataAdapter = function () {
 
 
     _createClass(DataAdapter, [{
-        key: "initDataSource",
+        key: "updateConfig",
 
         /*=====  End of Setter  ======*/
 
         /*======================================
         =            Main Functions            =
         ======================================*/
-        value: function initDataSource(options) {
+        value: function updateConfig(config) {
             var self = this;
 
-            if (self.hasPlainData(options)) {
-                self.executePlainData(options);
-            } else if (self.hasFile(options)) {
-                self.executeFile(options);
-            }
+            self.options = _C2.default.mergeDeep(config, self.options);
+
+            // self.initDataSource();
         }
+
+        // initDataSource() {
+        //     var self = this;
+
+        //     // if (self.hasPlainData()) {
+        //     //     self.executePlainData();
+        //     // }
+        //     // TESTING
+        //     //  else if (self.hasFile()) {
+        //     //     self.executeFile();
+        //     // }
+        // }
+
     }, {
         key: "hasPlainData",
-        value: function hasPlainData(options) {
-            return options.plain && _C2.default.isArray(options.plain);
+        value: function hasPlainData() {
+            var self = this;
+
+            // return options.plain && Helper.isArray(options.plain);
+            return !_C2.default.isEmpty(self.options.plain); // fix for map
         }
     }, {
         key: "hasFile",
-        value: function hasFile(options) {
-            return options.file && _C2.default.isObject(options.file);
+        value: function hasFile() {
+            var self = this;
+
+            return _C2.default.isObject(self.options.file) && !_C2.default.isEmpty(self.options.file.url) && !_C2.default.isEmpty(self.options.file.type);
         }
     }, {
         key: "executePlainData",
-        value: function executePlainData(options) {
+        value: function executePlainData(callback) {
             var self = this;
 
-            self._dataSource = options.plain;
+            self.dataSource = self.options.plain;
+
+            callback.call(self, self.dataSource);
         }
     }, {
         key: "executeFile",
-        value: function executeFile(options) {
+        value: function executeFile(callback) {
             var self = this;
 
-            self._file = _C2.default.merge(options.file, config.file);
+            self.file = self.options.file;
 
-            if (self._file && self._file.type) {
+            if (!_C2.default.isEmpty(self.file)) {
 
-                switch (self._file.type) {
+                switch (self.file.type) {
                     case "csv":
-                        self._dataSource = self.getCsv();
+                        self.getCsv(callback);
                         break;
                     case "tsv":
-                        self._dataSource = self.getTsv();
+                        self.getTsv(callback);
                         break;
                     case "text":
-                        self._dataSource = self.getText();
+                        self.getText(callback);
                         break;
                     case "json":
-                        self._dataSource = self.getJson();
+                        self.getJson(callback);
                         break;
                     case "xml":
-                        self._dataSource = self.getXml();
+                        self.getXml(callback);
                         break;
                     case "xhr":
-                        self._dataSource = self.getJson();
+                        self.getJson(callback);
                         break;
                     default:
-                        self._dataSource = self.getJson();
+                        self.getJson(callback);
                         break;
                 }
             }
@@ -122,41 +154,71 @@ var DataAdapter = function () {
         value: function getDataTypeForBarChart() {
             var self = this;
 
-            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups)) {
+            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups) && self.groups.length !== 1) {
                 return "group";
             } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
                 return "stack";
+            }
+
+            // default grouped bar if user do not defined groups for array value
+            for (var i = self.dataSource.length - 1; i >= 0; i--) {
+                if (_C2.default.isArray(_C2.default.get(self.keys.value, self.dataSource[i]))) return "group";
             }
 
             return "single";
         }
     }, {
         key: "getDataTarget",
-        value: function getDataTarget(chartType) {
+        value: function getDataTarget(type, callback) {
             var self = this;
 
-            switch (chartType) {
+            // TESTING
+            if (self.hasFile()) {
+                self.executeFile(function (data) {
+                    self.dataSource = data;
+                    self.generateDataTarget(type);
+                    callback.call(self, self.dataTarget);
+                });
+            } else if (self.hasPlainData()) {
+                self.executePlainData(function (data) {
+                    self.dataSource = data;
+                    self.generateDataTarget(type);
+                    callback.call(self, self.dataTarget);
+                });
+            }
+        }
+    }, {
+        key: "generateDataTarget",
+        value: function generateDataTarget(type) {
+            var self = this;
+
+            switch (type) {
                 case "bar":
-                    return self.getDataTargetForBarChart();
+                    self.getDataTargetForBarChart();
                     break;
 
                 case "line":
-
+                    self.getDataTargetForLineChart();
                     break;
 
                 case "pie":
-                    return self.getDataTargetForPieChart();
+                    self.getDataTargetForPieChart();
                     break;
 
                 case "donut":
-                    return self.getDataTargetForDonutChart();
+                    self.getDataTargetForDonutChart();
                     break;
 
                 case "timeline":
-                    return self.getDataTargetForTimelineChart();
+                    self.getDataTargetForTimelineChart();
                     break;
+
+                case "map":
+                    self.getDataTargetForMap();
+                    break;
+
                 default:
-                    return self.dataSource;
+                    self.dataTarget = self.dataSource;
                     break;
             }
         }
@@ -184,162 +246,177 @@ var DataAdapter = function () {
         value: function getDataTargetForBarChart() {
             var self = this;
 
-            switch (self.getDataTypeForBarChart()) {
-                case "single":
-                    self.dataSource.forEach(function (data, index) {
-                        var _stack = [];
-                        var _data = {
-                            "max": _C2.default.get(self.keys.value, data),
-                            "stack": [{
+            var groups;
+            var groupRefs;
+            var stacks;
+            var groupRefs;
+
+            var _ret = function () {
+                switch (self.getDataTypeForBarChart()) {
+                    case "single":
+                        var color = self.colorRange;
+                        var groups = self.groups;
+
+                        self.dataSource.forEach(function (data, index) {
+                            var _data = [{
                                 "name": _C2.default.get(self.keys.name, data),
-                                "y0": 0,
+                                "value": _C2.default.get(self.keys.value, data),
+                                "y0": _C2.default.get(self.keys.value, data),
                                 "y1": _C2.default.get(self.keys.value, data),
-                                "enable": true
-                            }]
-                        };
-                        self.dataTarget.push(_data);
-                    });
-
-                    return self.dataTarget;
-                    break;
-
-                case "group":
-                    var groups = self.groups;
-
-                    // Iterate over each group
-                    self.dataSource.forEach(function (data, index) {
-                        var _group = {
-                            "max": null,
-                            "stack": []
-                        },
-                            _dsArray = _C2.default.get(self.keys.value, data);
-
-                        // If Group has only 1 value, so MAX = this.value
-                        if (_C2.default.isArray(_dsArray)) {
-                            _group.max = _C2.default.max(_dsArray);
-                        } else {
-                            _group.max = _dsArray;
-                        }
-
-                        var _stack = [],
-                            _stackItem = {
-                            "color": "#ffffff",
-                            "y0": 0,
-                            "y1": 1,
-                            "group": "",
-                            "name": "",
-                            "data-ref": "",
-                            "enable": true
-                        },
-                            color = self.colorRange;
-
-                        // Iterate each single bar in a group
-                        if (_C2.default.isArray(_dsArray)) {
-                            _dsArray.forEach(function (d, i) {
-                                _stackItem = {
-                                    "color": color(i),
-                                    "y0": 0,
-                                    "y1": d,
-                                    "group": groups[i] || i,
-                                    "name": _C2.default.get(self.keys.name, data),
-                                    "data-ref": _C2.default.guid(),
-                                    "enable": true
-                                };
-                                _stack.push(_stackItem);
-                            });
-                        } else {
-                            _stackItem = {
-                                "color": color(0),
-                                "y0": 0,
-                                "y1": _dsArray,
-                                "group": groups[0] || 0,
-                                "name": _C2.default.get(self.keys.name, data),
+                                "group": groups[0] || 'data' + 1,
                                 "data-ref": _C2.default.guid(),
+                                "enable": true,
+                                "color": color(0)
+                            }];
+                            self.dataTarget.push(_data);
+                        });
+
+                        // return self.dataTarget;
+                        break;
+
+                    case "group":
+                        groups = self.groups;
+                        groupRefs = [];
+                        // Iterate over each group
+
+                        self.dataSource.forEach(function (data, index) {
+                            var _dsArray = _C2.default.get(self.keys.value, data);
+
+                            var _stack = [],
+                                _stackItem = {
+                                "color": "#ffffff",
+                                "y0": 0,
+                                "y1": 1,
+                                "group": "",
+                                "name": "",
+                                "data-ref": "",
+                                "group-ref": "",
                                 "enable": true
-                            };
-                            _stack.push(_stackItem);
-                        }
-                        _group.stack = _stack;
+                            },
+                                color = self.colorRange;
 
-                        self.dataTarget.push(_group);
-                    });
-
-                    return self.dataTarget;
-                    break;
-
-                case "stack":
-                    var stacks = self.stacks;
-
-                    // Iterate over each group
-                    self.dataSource.forEach(function (data, index) {
-                        var _group = {
-                            "max": null,
-                            "stack": []
-                        },
-                            _dsArray = _C2.default.get(self.keys.value, data);
-
-                        // If Group has only 1 value, so MAX = this.value
-                        if (_C2.default.isArray(_dsArray)) {
-                            _group.max = _C2.default.sum(_dsArray);
-                        } else {
-                            _group.max = _dsArray;
-                        }
-
-                        var _stack = [],
-                            _stackItem = {
-                            "color": "#ffffff",
-                            "y0": 0,
-                            "y1": 1,
-                            "group": "",
-                            "name": "",
-                            "data-ref": "",
-                            "enable": true
-                        },
-                            color = self.colorRange;
-
-                        // Iterate each single bar in a group
-                        if (_C2.default.isArray(_dsArray)) {
-                            (function () {
-                                var _tempY0 = 0;
+                            // Iterate each single bar in a group
+                            if (_C2.default.isArray(_dsArray)) {
                                 _dsArray.forEach(function (d, i) {
+                                    if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+                                    if (_C2.default.isEmpty(groups[i])) groups.push('data' + (i + 1));
                                     _stackItem = {
                                         "color": color(i),
-                                        "y0": _tempY0,
-                                        "y1": _tempY0 + d,
-                                        "group": stacks[i] || i,
+                                        "y0": d,
+                                        "y1": d > 0 ? d : 0,
+                                        "group": groups[i],
                                         "name": _C2.default.get(self.keys.name, data),
+                                        "value": d,
                                         "data-ref": _C2.default.guid(),
+                                        "group-ref": groupRefs[i],
                                         "enable": true
                                     };
                                     _stack.push(_stackItem);
-                                    // Increase tempY0 by d to restore previous y0
-                                    _tempY0 += d;
                                 });
-                            })();
-                        } else {
-                            _stackItem = {
-                                "color": color(0),
+                            } else {
+                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+                                if (_C2.default.isEmpty(groups[0])) groups.push('data1');
+                                _stackItem = {
+                                    "color": color(0),
+                                    "y0": _dsArray,
+                                    "y1": _dsArray > 0 ? _dsArray : 0,
+                                    "group": groups[0],
+                                    "name": _C2.default.get(self.keys.name, data),
+                                    "value": _dsArray,
+                                    "data-ref": _C2.default.guid(),
+                                    "group-ref": groupRefs[0],
+                                    "enable": true
+                                };
+                                _stack.push(_stackItem);
+                            }
+
+                            self.dataTarget.push(_stack);
+                        });
+
+                        self.groups = groups;
+                        return {
+                            v: self.dataTarget
+                        };
+                        break;
+
+                    case "stack":
+                        stacks = self.stacks;
+                        groupRefs = [];
+                        // Iterate over each group
+
+                        self.dataSource.forEach(function (data, index) {
+                            var _dsArray = _C2.default.get(self.keys.value, data);
+
+                            var _stack = [],
+                                _stackItem = {
+                                "color": "#ffffff",
                                 "y0": 0,
-                                "y1": _dsArray,
-                                "group": stacks[0] || 0,
-                                "name": _C2.default.get(self.keys.name, data),
-                                "data-ref": _C2.default.guid(),
+                                "y1": 1,
+                                "group": "",
+                                "name": "",
+                                "data-ref": "",
                                 "enable": true
-                            };
-                            _stack.push(_stackItem);
-                        }
-                        _group.stack = _stack;
+                            },
+                                color = self.colorRange;
 
-                        self.dataTarget.push(_group);
-                    });
+                            // Iterate each single bar in a group
+                            if (_C2.default.isArray(_dsArray)) {
+                                (function () {
+                                    var _negBase = 0;
+                                    var _posBase = 0;
+                                    _dsArray.forEach(function (d, i) {
+                                        if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+                                        if (_C2.default.isEmpty(stacks[i])) stacks.push('data' + (i + 1));
+                                        _stackItem = {
+                                            "color": color(i),
+                                            "y0": d,
+                                            "y1": d > 0 ? d + _posBase : _negBase,
+                                            "group": stacks[i],
+                                            "name": _C2.default.get(self.keys.name, data),
+                                            "value": d,
+                                            "data-ref": _C2.default.guid(),
+                                            "group-ref": groupRefs[i],
+                                            "enable": true
+                                        };
+                                        _stack.push(_stackItem);
+                                        if (d > 0) _posBase += d;else _negBase += d;
+                                    });
+                                })();
+                            } else {
+                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+                                if (_C2.default.isEmpty(stacks[0])) stacks.push('data1');
+                                _stackItem = {
+                                    "color": color(0),
+                                    "y0": _dsArray,
+                                    "y1": _dsArray > 0 ? _dsArray : 0,
+                                    "group": stacks[0],
+                                    "name": _C2.default.get(self.keys.name, data),
+                                    "value": _dsArray,
+                                    "data-ref": _C2.default.guid(),
+                                    "group-ref": groupRefs[0],
+                                    "enable": true
+                                };
+                                _stack.push(_stackItem);
+                            }
 
-                    return self.dataTarget;
-                    break;
+                            self.dataTarget.push(_stack);
+                        });
 
-                default:
-                    return self.dataSource;
-                    break;
-            }
+                        self.stacks = stacks;
+                        return {
+                            v: self.dataTarget
+                        };
+                        break;
+
+                    default:
+                        return {
+                            v: self.dataSource
+                        };
+                        break;
+                }
+            }();
+
+            if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
         }
     }, {
         key: "getDataTargetForPieChart",
@@ -369,11 +446,12 @@ var DataAdapter = function () {
             self.dataSource.forEach(function (data, index) {
                 var _data = {
                     "color": color(index),
-                    "name": _C2.default.get(self.keys.name, data),
-                    "value": _C2.default.get(self.keys.value, data),
                     "data-ref": _C2.default.guid(),
-                    "enable": true
+                    "enable": true,
+                    "name": _C2.default.get(self.keys.name, data),
+                    "value": _C2.default.get(self.keys.value, data)
                 };
+
                 self.dataTarget.push(_data);
             });
 
@@ -390,7 +468,7 @@ var DataAdapter = function () {
 
                 var _data = {
                     // "color"     : color(index),
-                    "icon": data.icon,
+                    "icon": _C2.default.get(self.keys.icon, data),
                     "name": _C2.default.get(self.keys.name, data),
                     "value": [],
                     "data-ref": _C2.default.guid(),
@@ -400,31 +478,37 @@ var DataAdapter = function () {
                 var _dsArray = _C2.default.get(self.keys.value, data),
                     _valueArray = [],
                     _valueItem = {
+                    "name": _C2.default.get(self.keys.name, data),
                     "start": null,
                     "end": null,
                     "color": "#fff",
                     "data-ref": null,
-                    "enable": true
+                    "enable": true,
+                    "icon": null
                 };
 
                 if (_C2.default.isArray(_dsArray)) {
                     _dsArray.forEach(function (d, i) {
                         _valueItem = {
-                            "start": d.start,
-                            "end": d.end,
+                            "name": _C2.default.get(self.keys.name, data),
+                            "start": new Date(d.start),
+                            "end": new Date(d.end),
                             "color": color(index),
                             "data-ref": _C2.default.guid(),
-                            "enable": true
+                            "enable": true,
+                            "icon": _C2.default.get(self.keys.icon, data)
                         };
                         _valueArray.push(_valueItem);
                     });
                 } else {
                     _valueItem = {
-                        "start": d.start,
-                        "end": d.end,
+                        "name": _C2.default.get(self.keys.name, data),
+                        "start": new Date(_dsArray.start),
+                        "end": new Date(_dsArray.end),
                         "color": color(index),
                         "data-ref": _C2.default.guid(),
-                        "enable": true
+                        "enable": true,
+                        "icon": _C2.default.get(self.keys.icon, data)
                     };
                     _valueArray.push(_valueItem);
                 }
@@ -434,32 +518,152 @@ var DataAdapter = function () {
             });
             return self.dataTarget;
         }
+    }, {
+        key: "getDataTargetForLineChart",
+        value: function getDataTargetForLineChart() {
+            var self = this;
 
+            var color = self.colorRange;
+            self.dataSource.forEach(function (data, index) {
+                var _data = {
+                    "color": color(index),
+                    "name": _C2.default.get(self.keys.name, data),
+                    "value": [],
+                    "data-ref": _C2.default.guid(),
+                    "enable": true
+                };
+
+                var _valueXArray = _C2.default.get(self.keys.x, data),
+                    _valueYArray = _C2.default.get(self.keys.y, data),
+                    _valueArray = [],
+                    _valueItem = {
+                    "name": _C2.default.get(self.keys.name, data),
+                    "valueX": null,
+                    "valueY": null,
+                    "data-ref": _C2.default.guid(),
+                    "enable": true
+                };
+
+                if (_C2.default.isArray(_valueYArray)) {
+                    /**
+                     *
+                     * CASE 1: [{name:, value: []}, {}, ..]
+                     *
+                     */
+
+                    if (!_C2.default.isArray(_valueXArray)) {
+                        _valueYArray.forEach(function (d, i) {
+                            _valueItem = {
+                                "name": _C2.default.get(self.keys.name, data),
+                                "valueX": i,
+                                "valueY": d,
+                                "data-ref": _C2.default.guid(),
+                                "enable": true
+                            };
+                            _valueArray.push(_valueItem);
+                        });
+                    } else
+
+                        /**
+                         *
+                         * CASE 2: [{name:, value: {x: [], y:[]}, {}, ..]
+                         *
+                         */
+
+                        if (_C2.default.isArray(_valueXArray) && !self.timeFormat) {
+                            _valueYArray.forEach(function (d, i) {
+                                _valueItem = {
+                                    "name": _C2.default.get(self.keys.name, data),
+                                    "valueX": !_C2.default.isEmpty(_valueXArray[i]) ? _valueXArray[i] : i,
+                                    "valueY": d,
+                                    "data-ref": _C2.default.guid(),
+                                    "enable": true
+                                };
+                                _valueArray.push(_valueItem);
+                            });
+                        } else
+
+                            /**
+                             *
+                             * CASE 3: [{name:, value: {x: [], y:[]}, {}, ..] with config `timeFormat`
+                             *
+                             */
+
+                            if (_C2.default.isArray(_valueXArray) && self.timeFormat) {
+                                (function () {
+                                    var _parser = _C2.default.dateParser(self.timeFormat);
+
+                                    _valueYArray.forEach(function (d, i) {
+                                        _valueItem = {
+                                            "name": _C2.default.get(self.keys.name, data),
+                                            "valueX": !_C2.default.isEmpty(_valueXArray[i]) ? _parser(_valueXArray[i]) : i,
+                                            "valueY": d,
+                                            "data-ref": _C2.default.guid(),
+                                            "enable": true
+                                        };
+                                        _valueArray.push(_valueItem);
+                                    });
+                                })();
+                            }
+                }
+
+                _data.value = _valueArray;
+
+                self.dataTarget.push(_data);
+            });
+
+            return self.dataTarget;
+        }
         /*=====  End of Normalize Data For Charts  ======*/
 
-        /*=============================
-        =            Utils            =
-        =============================*/
-        // getBarColorForBarChart() {
-        //     var self = this;
+        /*=================================================
+        =              Normalize Data For Map             =
+        =================================================*/
 
-        //     var color = self.colorRange;
-        //     if (typeof color == 'string') {
-        //         try {
-        //             return d3.scale[color]();    
-        //         }
-        //         catch(err) {
-        //             return function(i) {
-        //                 return color;
-        //             };
-        //         }
-        //     } else if (typeof color == 'object') {
-        //         return d3.scale.ordinal().range(color);
-        //     }
-        // }
+    }, {
+        key: "getDataTargetForMap",
+        value: function getDataTargetForMap() {
+            var self = this;
 
+            var getDataValue = function getDataValue(key, data, isArray) {
+                var _keys = key.split('.');
+                var _value = _C2.default.get(key, data);
+                var _v = void 0;
+                if (_keys.length == 1 && _keys[0] == 'value' && !isArray) {
+                    _v = _value;
+                } else {
+                    _v = new Object();
+                    _v[_keys[_keys.length - 1]] = _value;
+                }
+                return _v;
+            };
 
-        /*=====  End of Utils  ======*/
+            var getData = function getData(data) {
+                var _data = {
+                    "name": _C2.default.get(self.keys.name, data),
+                    "coor": _C2.default.get(self.keys.coor, data),
+                    "value": null
+                };
+                if (_C2.default.isArray(self.keys.value)) {
+                    self.keys.value.forEach(function (k) {
+                        var _v = getDataValue(k, data, true);
+                        _data.value = _C2.default.merge(_data.value, _v);
+                    });
+                } else {
+                    _data.value = getDataValue(self.keys.value, data, false);
+                }
+
+                return _data;
+            };
+
+            if (!_C2.default.isArray(self.dataSource)) self.dataTarget = getData(self.dataSource);else self.dataSource.forEach(function (data) {
+                self.dataTarget.push(getData(data));
+            });
+
+            return self.dataTarget;
+        }
+
+        /*=====    End of Normalize Data For Map   ======*/
 
         /*=============================================
         =            Data Input From Files            =
@@ -467,54 +671,56 @@ var DataAdapter = function () {
 
     }, {
         key: "getCsv",
-        value: function getCsv() {
+        value: function getCsv(callback) {
 
             var self = this;
 
             d3.csv(self.file.url, function (err, data) {
                 if (err) throw err;
 
-                return data;
+                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
             });
         }
     }, {
         key: "getTsv",
-        value: function getTsv() {
+        value: function getTsv(callback) {
 
             var self = this;
 
             d3.tsv(self.file.url, function (err, data) {
                 if (err) throw err;
 
-                return data;
+                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
             });
         }
     }, {
         key: "getText",
-        value: function getText() {
+        value: function getText(callback) {
 
             var self = this;
 
             d3.text(self.file.url, function (err, data) {
                 if (err) throw err;
 
-                return JSON.parse(data);
+                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
             });
         }
     }, {
         key: "getJson",
-        value: function getJson() {
+        value: function getJson(callback) {
+
             var self = this;
 
             d3.json(self.file.url, function (err, data) {
                 if (err) throw err;
 
-                return data;
+                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
             });
         }
     }, {
         key: "getXml",
-        value: function getXml() {
+        value: function getXml(callback) {
+
             var self = this;
 
             d3.xml(self.file.url, function (err, data) {
@@ -530,16 +736,16 @@ var DataAdapter = function () {
                     };
                 });
 
-                return data;
+                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
             });
         }
 
         /*=====  End of Data Input From Files  ======*/
 
     }, {
-        key: "keys",
+        key: "options",
         get: function get() {
-            return this._keys;
+            return this._options;
         },
 
         /*=====  End of Getter  ======*/
@@ -547,6 +753,36 @@ var DataAdapter = function () {
         /*==============================
         =            Setter            =
         ==============================*/
+        set: function set(arg) {
+            if (arg) {
+                this._options = arg;
+            }
+        }
+    }, {
+        key: "callback",
+        get: function get() {
+            return this._callback;
+        }
+    }, {
+        key: "chartType",
+        get: function get() {
+            return this._chartType;
+        }
+    }, {
+        key: "file",
+        get: function get() {
+            return this._file;
+        },
+        set: function set(arg) {
+            if (arg) {
+                this._file = arg;
+            }
+        }
+    }, {
+        key: "keys",
+        get: function get() {
+            return this._keys;
+        },
         set: function set(arg) {
             if (arg) {
                 this._keys = arg;
@@ -600,6 +836,16 @@ var DataAdapter = function () {
         set: function set(arg) {
             if (arg) {
                 this._colorRange = arg;
+            }
+        }
+    }, {
+        key: "timeFormat",
+        get: function get() {
+            return this._timeFormat;
+        },
+        set: function set(arg) {
+            if (arg) {
+                this._timeFormat = arg;
             }
         }
     }]);

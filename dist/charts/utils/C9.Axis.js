@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6,132 +6,66 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _C = require("../../helper/C9.Helper");
+
+var _C2 = _interopRequireDefault(_C);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Axis = function () {
-    function Axis(options, body, data, width, height, xAxe, yAxe) {
+    function Axis(options, chart, width, height) {
         _classCallCheck(this, Axis);
 
+        var self = this;
+
         var config = {
-            xAxisShow: true,
-            xAxisPadding: {}, // TODO
-            xAxisText: 'Name',
-            yAxisShow: true,
-            yAxisPadding: {}, // TODO
-            yAxisText: 'Value',
-            numOfTickY: 5,
-            tickFormat: "s", // refer: https://github.com/d3/d3-format
-            isLogaric: false, // TODO: Add isPower, isNormal(default), isLogaric
-            y2AxisShow: true,
-            y2AxisPadding: {}, // TODO
-            y2AxisText: 'Value',
-            gridXShow: false,
-            gridYShow: false
+            x: {
+                tick: {
+                    rotate: 0,
+                    count: 10, // number of ticks to display
+                    size: 6, // size of tick
+                    padding: 3,
+                    format: undefined,
+                    values: [],
+                    //the following use for timeline chart
+                    time: undefined,
+                    interval: 1
+                },
+                label: {
+                    text: "Name",
+                    position: "default"
+                },
+                show: true,
+                grid: false,
+                type: ""
+            },
+            y: {
+                tick: {
+                    rotate: 0,
+                    count: 10,
+                    size: 6,
+                    padding: 3,
+                    format: undefined,
+                    values: []
+                },
+                label: {
+                    text: "Value",
+                    position: "default"
+                },
+                show: true,
+                grid: true,
+                type: ""
+            }
         };
 
-        this._xAxisShow = options.xAxisShow || config.xAxisShow;
-        this._xAxisPadding = options.xAxisPadding || config.xAxisPadding;
-        this._xAxisText = options.xAxisText || config.xAxisText;
-        this._yAxisShow = options.yAxisShow || (body.type == "timeline" ? false : config.yAxisShow);
-        this._yAxisPadding = options.yAxisPadding || config.yAxisPadding;
-        this._yAxisText = options.yAxisText || config.yAxisText;
-        this._isLogaricVariant = options.isLogaric || config.isLogaric;
-        this._tickFormat = options.tickFormat || config.tickFormat;
-        this._numOfTickY = options.numOfTickY || config.numOfTickY;
-        this._y2AxisShow = options.y2AxisShow || config.y2AxisShow;
-        this._y2AxisPadding = options.y2AxisPadding || config.y2AxisPadding;
-        this._y2AxisText = options.y2AxisText || config.y2AxisText;
-        this._gridXShow = options.gridXShow || config.gridXShow;
-        this._gridYShow = options.gridYShow || config.gridYShow;
+        self._options = options;
+        self._chart = chart;
+        self._width = width;
+        self._height = height;
 
-        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-        var y;
-
-        if (this._isLogaricVariant) {
-            y = d3.scale.log().range([height, 0]);
-        } else {
-            y = d3.scale.linear().range([height, 0]);
-        }
-
-        x.domain(data.map(function (d) {
-            return d.name || d.stack[0].name;
-        }));
-
-        if (body.type == "bar") {
-            y.domain([d3.min(data, function (d) {
-                return d.max;
-            }), d3.max(data, function (d) {
-                return d.max;
-            })]);
-        } else y.domain([d3.min(data, function (d) {
-            return d.value;
-        }), d3.max(data, function (d) {
-            return d.value;
-        })]);
-
-        if (body.type == "timeline") {
-
-            var xScale = d3.time.scale().domain([options.starting, options.ending]).range([0, width]);
-            this._xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(options.tickFormat === undefined ? d3.time.format("%I %p") : options.tickFormat.format).tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize).ticks(options.tickFormat === undefined ? d3.time.hours : options.tickFormat.tickTime, options.tickFormat === undefined ? 1 : options.tickFormat.tickInterval);
-            delete options.starting;
-            delete options.ending;
-        } else if (body.type == "line") {
-
-            this._xAxis = xAxe;
-            this._yAxis = yAxe;
-        } else {
-            // Currently, support logaric axis only for y-axis on bar-chart
-            // TODO: add for line-chart too
-            var _tickFormat = d3.format(this._tickFormat);
-            var _numOfTickY = this._numOfTickY;
-
-            this._xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(10);
-
-            // In LOG scale, can't specify default number of ticks
-            // must be filter with tickFormat instead
-            // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
-            if (this._isLogaricVariant) {
-                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY, _tickFormat).tickSize(10, 0);
-            } else {
-                this._yAxis = d3.svg.axis().scale(y).orient("left").ticks(_numOfTickY).tickSize(10, 0).tickFormat(_tickFormat);
-            }
-        }
-
-        // Grid
-        if (this._gridXShow) {
-            // Select CURRENT svg container, to make this axis outside
-            // as a SEPARATED component, just like AXIS, of CHART
-            // d3.select(this._svg[0][0].parentNode)
-            this._xAxis.innerTickSize(-height).outerTickSize(0);
-        }
-
-        if (this._gridYShow) {
-            // Select CURRENT svg container, to make this axis outside
-            // as a SEPARATED component, just like AXIS, of CHART
-            // d3.select(this._svg[0][0].parentNode)
-            this._yAxis.innerTickSize(-width).outerTickSize(0);
-        }
-
-        this._body = body;
-        this._data = data;
-        this._width = width; // TODO : ADD Getter/setter
-        this._height = height;
-
-        if (this._xAxisShow) {
-            this._body.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(this._xAxis).append("text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", width).attr("y", "20").style("text-anchor", "start").text(this._xAxisText);
-            // .attr("transform", "rotate(-90)" );
-        }
-
-        if (this._yAxisShow) {
-            this._body.append("g").attr("class", "y axis").call(this._yAxis).append("text")
-            // .attr("transform", "rotate(-90)")
-            .attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(this._yAxisText);
-        }
-
-        /**
-            TODO:
-            - Add y2-axis
-        **/
+        self.updateConfig(config);
     }
 
     /*==============================
@@ -139,9 +73,139 @@ var Axis = function () {
     ==============================*/
 
     _createClass(Axis, [{
-        key: 'xAxis',
+        key: "updateConfig",
+
+
+        /*=====  End of Setter  ======*/
+
+        /*======================================
+        =            Main Functions            =
+        ======================================*/
+        value: function updateConfig(config) {
+            var self = this;
+
+            self.options = _C2.default.mergeDeep(config, self.options);
+
+            self.x = self.chart.x;
+            self.y = self.chart.y;
+
+            self.data = self.chart.dataTarget;
+            self.isLogaricVariant = self.chart.options.isLogaric;
+
+            if (self.chart.chartType == "timeline") {
+                var xScale = d3.time.scale().domain([self.chart.options.starting, self.chart.options.ending]).range([0, self.width]);
+
+                self.xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(self.options.x.tick.format === undefined ? d3.time.format("%I %p") : self.options.x.tick.format)
+                // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
+                .ticks(self.options.x.tick.time || self.options.x.tick.count, self.options.x.tick.interval);
+                // delete options.starting;
+                // delete options.ending;
+            } else {
+                self.xAxis = d3.svg.axis().scale(self.x).orient("bottom").tickPadding(self.options.x.tick.padding).ticks(self.options.x.tick.count).tickValues(self.options.x.tick.values.length > 0 ? self.options.x.tick.values : undefined).tickFormat(self.options.x.type == "timeseries" ? self.options.x.tick.format || d3.time.format("%Y-%m-%d") : self.options.x.tick.format ? self.options.x.tick.format : undefined);
+
+                // In LOG scale, can't specify default number of ticks
+                // must be filter with tickFormat instead
+                // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
+                if (self.isLogaricVariant) {
+                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
+                } else {
+                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined).tickFormat(self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined);
+                }
+            }
+
+            if (self.chart.chartType != "timeline") {
+                // Grid
+                if (self.options.x.grid) {
+                    self.xAxis.innerTickSize(-self.height).outerTickSize(0);
+                }
+
+                if (self.options.y.grid) {
+                    self.yAxis.innerTickSize(-self.width).outerTickSize(0);
+                }
+            }
+
+            var textAnchor = function textAnchor(angle) {
+                var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+                return sin == 0 ? "middle" : sin > 0 ? "start" : "end";
+            };
+
+            var textDx = function textDx(angle) {
+                var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+                return 8 * sin;
+            };
+
+            var textY = function textY(angle) {
+                return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
+            };
+
+            //draw x axis
+            self.chart.body.append("g").attr("class", "c9-axis c9-axis-x").attr("transform", "translate(0," + self.height + ")").call(self.xAxis);
+
+            //draw tick
+            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
+            //draw label
+            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
+
+            //hide x axis
+            if (!self.options.x.show) {
+                d3.select(".c9-axis.c9-axis-x>.domain").style("display", "none");
+                if (!self.options.x.grid) d3.selectAll(".c9-axis.c9-axis-x>g.tick>line").style("display", "none");
+            }
+
+            if (self.chart.chartType != "timeline") {
+                self.chart.body.append("g").attr("class", "c9-axis c9-axis-y").call(self.yAxis);
+
+                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.label.text);
+
+                if (!self.options.y.show) {
+                    d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
+                    if (!self.options.y.grid) d3.selectAll(".c9-axis.c9-axis-y>g.tick>line").style("display", "none");
+                }
+            }
+        }
+    }, {
+        key: "update",
+        value: function update(x, y, duration) {
+            var self = this;
+
+            if (!_C2.default.isEmpty(x)) {
+                self.x = x;
+
+                if (self.chart.chartType == 'timeline') {
+                    var xScale = d3.time.scale().domain([self.chart.options.starting, self.chart.options.ending]).range([0, self.width]);
+
+                    self.xAxis.scale(xScale);
+                } else {
+                    self.xAxis.scale(self.x);
+                }
+
+                self.chart.body.select('.c9-axis.c9-axis-x').transition().duration(duration).call(self.xAxis);
+            }
+            if (!_C2.default.isEmpty(y)) {
+                self.y = y;
+
+                if (self.chart.chartType == 'timeline') {
+                    return;
+                } else {
+                    self.yAxis.scale(self.y);
+                }
+
+                self.chart.body.select(".c9-axis.c9-axis-y").transition().duration(duration).call(self.yAxis);
+            }
+        }
+    }, {
+        key: "draw",
+        value: function draw() {
+            var self = this;
+
+            self.update(self.x, self.y, 100);
+        }
+        /*=====  End of Main Functions  ======*/
+
+    }, {
+        key: "x",
         get: function get() {
-            return this._xAxis;
+            return this._x;
         },
 
 
@@ -151,99 +215,91 @@ var Axis = function () {
         =            Setter            =
         ==============================*/
 
-        set: function set(newXAxis) {
-            if (newXAxis) {
-                this._xAxis = newXAxis;
+        set: function set(arg) {
+            if (arg) {
+                this._x = arg;
             }
         }
     }, {
-        key: 'yAxis',
+        key: "y",
+        get: function get() {
+            return this._y;
+        },
+        set: function set(arg) {
+            if (arg) {
+                this._y = arg;
+            }
+        }
+    }, {
+        key: "xAxis",
+        get: function get() {
+            return this._xAxis;
+        },
+        set: function set(arg) {
+            if (arg) {
+                this._xAxis = arg;
+            }
+        }
+    }, {
+        key: "yAxis",
         get: function get() {
             return this._yAxis;
         },
-        set: function set(newYAxis) {
-            if (newYAxis) {
-                this._yAxis = newYAxis;
+        set: function set(arg) {
+            if (arg) {
+                this._yAxis = arg;
             }
         }
     }, {
-        key: 'xAxisShow',
+        key: "chart",
         get: function get() {
-            return this._xAxisShow;
+            return this._chart;
         },
-        set: function set(newXAxisShow) {
-            if (newXAxisShow) {
-                this._xAxisShow = newXAxisShow;
+        set: function set(arg) {
+            if (arg) {
+                this._chart = arg;
             }
         }
     }, {
-        key: 'xAxisPadding',
+        key: "options",
         get: function get() {
-            return this._xAxisPadding;
+            return this._options;
         },
-        set: function set(newXAxisPadding) {
-            if (newXAxisPadding) {
-                this._xAxisPadding = newXAxisPadding;
+        set: function set(arg) {
+            if (arg) {
+                this._options = arg;
             }
         }
     }, {
-        key: 'yAxisShow',
+        key: "width",
         get: function get() {
-            return this._yAxisShow;
+            return this._width;
         },
-        set: function set(newYAxisShow) {
-            if (newYAxisShow) {
-                this._yAxisShow = newYAxisShow;
+        set: function set(arg) {
+            if (arg) {
+                this._width = arg;
             }
         }
     }, {
-        key: 'yAxisPadding',
+        key: "height",
         get: function get() {
-            return this._yAxisPadding;
+            return this._height;
         },
-        set: function set(newYAxisPadding) {
-            if (newYAxisPadding) {
-                this._yAxisPadding = newYAxisPadding;
+        set: function set(arg) {
+            if (arg) {
+                this._height = arg;
             }
         }
     }, {
-        key: 'isLogaricVariant',
+        key: "data",
         get: function get() {
-            return this._isLogaricVariant;
+            return this._data;
         },
-        set: function set(newIsLogaricVariant) {
-            if (newIsLogaricVariant) {
-                this._isLogaricVariant = newIsLogaricVariant;
+        set: function set(arg) {
+            if (arg) {
+                this._data = arg;
             }
         }
-    }, {
-        key: 'y2AxisShow',
-        get: function get() {
-            return this._y2AxisShow;
-        },
-        set: function set(newY2AxisShow) {
-            if (newY2AxisShow) {
-                this._y2AxisShow = newY2AxisShow;
-            }
-        }
-    }, {
-        key: 'y2AxisPadding',
-        get: function get() {
-            return this._y2AxisPadding;
-        },
-        set: function set(newY2AxisPadding) {
-            if (newY2AxisPadding) {
-                this._y2AxisPadding = newY2AxisPadding;
-            }
-        }
-
-        /*=====  End of Setter  ======*/
-
-        /*======================================
-        =            Main Functions            =
-        ======================================*/
-        /*=====  End of Main Functions  ======*/
-
     }]);
 
     return Axis;

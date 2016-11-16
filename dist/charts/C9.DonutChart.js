@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 var _C = require('./C9.Chart');
 
 var _C2 = _interopRequireDefault(_C);
@@ -22,9 +24,21 @@ var _C7 = require('./utils/C9.Legend');
 
 var _C8 = _interopRequireDefault(_C7);
 
-var _C9 = require('../helper/C9.DataAdapter');
+var _C9 = require('./utils/C9.Table');
 
 var _C10 = _interopRequireDefault(_C9);
+
+var _C11 = require('./utils/C9.Tooltip');
+
+var _C12 = _interopRequireDefault(_C11);
+
+var _C13 = require('../helper/C9.Helper');
+
+var _C14 = _interopRequireDefault(_C13);
+
+var _C15 = require('../helper/C9.DataAdapter');
+
+var _C16 = _interopRequireDefault(_C15);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43,25 +57,14 @@ var DonutChart = function (_Chart) {
         var _this = _possibleConstructorReturn(this, (DonutChart.__proto__ || Object.getPrototypeOf(DonutChart)).call(this, options));
 
         var self = _this;
+
         var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
-        var config = {
+        self.config = {
             outerRadius: R,
-            innerRadius: R > 80 ? R - 80 : R - 40,
-            showText: true // show/hide text on middle or each donut
+            innerRadius: R > 80 ? R - 80 : R - 40
         };
 
-        self._outerRadius = options.outerRadius || config.outerRadius;
-        self._innerRadius = options.innerRadius || config.innerRadius;
-        self._showText = options.showText || config.showText;
-        self.body.type = 'donut';
-
-        var dataOption = self.dataOption;
-        dataOption.colorRange = self.colorRange;
-
-        var da = new _C10.default(dataOption);
-        self.dataTarget = da.getDataTarget("donut");
-
-        self.updateConfig();
+        // self.updateConfig(config);
         return _this;
     }
 
@@ -81,119 +84,79 @@ var DonutChart = function (_Chart) {
         /**
          * Update Donut Chart Config
          */
-        value: function updateConfig() {
+        value: function updateConfig(config, callback) {
+            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'updateConfig', this).call(this, config);
+
             var self = this;
 
-            // chartInnerAfter, chartOuterAfter define easing radius of donut chart during animation
-            // TODO: Add configs allow users to define these radius
+            self.options = _C14.default.mergeDeep(config, self.options);
+
+            self.chartType = 'donut';
+
+            var dataOption = self.dataOption;
+            dataOption.colorRange = self.colorRange;
+
+            var da = new _C16.default(dataOption, self.chartType, null);
+            da.getDataTarget(self.chartType, function (data) {
+                self.dataTarget = data;
+
+                if (_C14.default.isFunction(callback)) {
+                    callback.call(self, self.dataTarget);
+                }
+            });
+        }
+
+        /**
+         * Update Donut Chart Config
+         */
+
+    }, {
+        key: 'updateDataConfig',
+        value: function updateDataConfig(dataCfg, callback) {
+            var self = this;
+
+            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+
+            self.chartType = 'donut';
+
+            var dataOption = self.dataOption;
+            dataOption.colorRange = self.colorRange;
+
+            var da = new _C16.default(dataOption, self.chartType, null);
+            da.getDataTarget(self.chartType, function (data) {
+                self.dataTarget = data;
+
+                if (_C14.default.isFunction(callback)) {
+                    callback.call(self, self.dataTarget);
+                }
+            });
+        }
+
+        /**
+         * Update Donut Chart based on new data
+         * @param  {[type]} data [description]
+         */
+
+    }, {
+        key: 'update',
+        value: function update(data) {
+            var self = this;
+
             var width = self.width - self.margin.left - self.margin.right,
                 height = self.height - self.margin.top - self.margin.bottom,
-                color = self.colorRange,
-                chartInnerBefore = self.innerRadius,
-                chartOuterBefore = self.outerRadius,
-                chartInnerAfter = self.innerRadius,
-                chartOuterAfter = self.outerRadius * 1.2;
+                color = self.colorRange;
 
-            var hoverOptions = self.hover.options,
-                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-                onMouseOutCallback = hoverOptions.onMouseOut.callback;
-
-            // Define Animations for paths
-            self.pathAnim = function (path, dir) {
-                switch (dir) {
-
-                    case 'mouseover':
-                        path.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter))
-                        // .style('stroke', '#000')
-                        .attr('fill-opacity', '1.0');
-                        break;
-
-                    case 'mouseout':
-                        path.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore))
-                        // .style('stroke', '#000')
-                        .attr('fill-opacity', '0.5');
-                        break;
-
-                }
-            };
-
-            // Main Event Dispatch for paths in donut chart
-            self.eventFactory = {
-
-                'mouseover': function mouseover(d, i, j) {
-                    self.pathAnim(d3.select(this), 'mouseover');
-                    self.tooltip().mouseover(d);
-
-                    // var thisDonut = self.body..select('.type' + j);
-                    // thisDonut.select('.value').text(function(donut_d) {
-                    //     return d.data.val.toFixed(1) + donut_d.unit;
-                    // });
-                    // thisDonut.select('.percentage').text(function(donut_d) {
-                    //     return (d.data.val/donut_d.total*100).toFixed(2) + '%';
-                    // });
-                },
-
-                'mouseout': function mouseout(d, i, j) {
-                    self.pathAnim(d3.select(this), 'mouseout');
-                    self.tooltip().mouseout(d);
-
-                    // var thisDonut = charts.select('.type' + j);
-                    // setCenterText(thisDonut);
-                }
-
-            };
-
-            // Define the tooltip
-            // TODO: Define it as a individual CLASS, in C9.Tooltip
-            self.tooltip = function () {
-                // First, remove all before hover div
-                self.body.selectAll('g.c9-custom-tooltip-container').remove();
-
-                // TODO: Add margin to tooltip configs
-                // Default: (100, 100) relative to mouse coordinate and chart margin transformation
-                var divOnHover = self.body.append('g').attr('class', 'c9-custom-tooltip-container').attr("transform", function () {
-                    return 'translate(' + (d3.mouse(this)[0] - 100) + "," + (d3.mouse(this)[1] - 100) + ')';
-                }).style('display', 'none');
-
-                var arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
-
-                // Rect Container
-                divOnHover.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').attr('fill', '#FEE5E2').attr('stroke', '#FDCCC6').attr('stroke-width', 2);
-                // First line
-                var text_1 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-                // Second line
-                var text_2 = divOnHover.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
-
-                var tooltipEventFactory = {
-
-                    'mouseover': function mouseover(d) {
-                        divOnHover.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block');
-
-                        var name = d.data.name || d.data.data.name,
-                            value = d.data.value || d.data.data.value;
-
-                        text_1.text('Name: ' + name);
-                        text_2.text('Value: ' + value);
-                    },
-
-                    'mouseout': function mouseout(d) {
-                        divOnHover.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
-                    }
-
-                };
-
-                return tooltipEventFactory;
-            };
-
-            self.arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
+            self.arc = d3.svg.arc().outerRadius(self.options.outerRadius).innerRadius(self.options.innerRadius);
 
             //we can sort data here
             self.pie = d3.layout.pie().sort(null).value(function (d) {
                 return d.value;
             });
 
+            self.body.selectAll(".c9-chart-donut.c9-custom-arc-container").data([]).exit().remove();
+
             //draw chart
-            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
+            var arcs = self.body.append('g').attr('class', 'c9-chart-donut c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
 
             // Append main path contains donut
             // TODO: add a unique class to allow Legend could find selected donut/pie
@@ -201,8 +164,8 @@ var DonutChart = function (_Chart) {
                 return d.data['data-ref'];
             }).attr('d', self.arc).attr('fill', function (d, i) {
                 return color(i);
-            }).attr('stroke', '#ffffff').attr('fill-opacity', '0.5').each(function (d) {
-                self._currentData = d;
+            }).attr('stroke', '#ffffff').each(function (d) {
+                self.currentData = d;
             });
             // Current data used for calculate interpolation 
             // between current arc vs disabled arc
@@ -217,26 +180,7 @@ var DonutChart = function (_Chart) {
             //             .attr('text-anchor', 'middle')
             //             .text(function(d) { return d.data.name; });
             // }
-        }
 
-        /**
-         * Main draw function of Donut Chart
-         */
-
-    }, {
-        key: 'draw',
-        value: function draw() {
-
-            var self = this;
-
-            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-            var legend = new _C8.default(self.options, self.body, self.dataTarget);
-
-            // Draw legend
-            legend.draw();
-            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
-
-            // Update interaction of this own chart
             self.updateInteraction();
         }
 
@@ -263,23 +207,257 @@ var DonutChart = function (_Chart) {
         key: 'updateInteraction',
         value: function updateInteraction() {
             var self = this,
-                hoverEnable = self.hover.enable,
-                hoverOptions = self.hover.options,
                 selector = self.selectAllPath(),
-                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+                width = self.width - self.margin.left - self.margin.right,
+                height = self.height - self.margin.top - self.margin.bottom,
+                color = self.colorRange,
+                chartInnerBefore = self.options.innerRadius,
+                chartOuterBefore = self.options.outerRadius,
+                chartInnerAfter = self.options.innerRadius,
+                chartOuterAfter = self.options.outerRadius * 1.2;
 
-            if (hoverEnable) {
-                selector.on(self._eventFactory);
-            }
+            var hoverOptions = self.hover.options,
+                hoverEnable = self.hover.enable,
+                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+                onClickCallback = self.click.callback;
+
+            var tooltip = new _C12.default(self.options.tooltip);
+
+            // Main Event Dispatch for paths in donut chart
+            self._eventFactory = {
+                'click': function click(d, i) {
+                    if (_C14.default.isFunction(onClickCallback)) {
+                        onClickCallback.call(this, d);
+                    }
+                },
+
+                'mouseover': function mouseover(d, i) {
+                    if (!hoverEnable) return;
+
+                    if (_C14.default.isFunction(onMouseOverCallback)) {
+                        onMouseOverCallback.call(this, d);
+                    }
+
+                    var selector = d3.select(this);
+                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+
+                    // For legend
+                    if (self.options.legend.show) self.legend.item.each(function () {
+                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                            d3.select(this).attr('opacity', '0.3');
+                        }
+                    });
+
+                    // For Table
+                    if (self.options.table.show) {
+                        var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+                        tr.filter(function (i) {
+                            return i['data-ref'] != d.data['data-ref'];
+                        }).selectAll('td').style('opacity', '0.5');
+                        var selectedItem = tr.filter(function (i) {
+                            return i['data-ref'] == d.data['data-ref'];
+                        });
+                        //set its style and scroll to its pos
+                        selectedItem.selectAll('td').style('opacity', '1');
+                        _C14.default.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+                    }
+
+                    // For Chart
+                    self.selectAllPath().each(function () {
+                        if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+                            d3.select(this).attr('opacity', '0.3');
+                        }
+                    });
+
+                    // For Tooltip
+                    tooltip.draw(d, self, 'mouseover');
+                },
+
+                'mouseout': function mouseout(d, i) {
+                    if (!hoverEnable) return;
+
+                    if (_C14.default.isFunction(onMouseOutCallback)) {
+                        onMouseOutCallback.call(this, d);
+                    }
+
+                    var selector = d3.select(this);
+                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
+
+                    // For legend
+                    if (self.options.legend.show) self.legend.item.each(function () {
+                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
+
+                    // For Table
+                    if (self.options.table.show) d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
+
+                    // For Chart
+                    self.selectAllPath().each(function () {
+                        if (d3.select(this).attr('data-ref') !== d.data['data-ref']) {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
+
+                    // For Tooltip
+                    tooltip.draw(d, self, 'mouseout');
+                }
+
+            };
+
+            selector.on(self._eventFactory);
         }
 
         /*=====  End of Main Functions  ======*/
 
+        /*========================================
+        =            User's Functions            =
+        ========================================*/
+        /**
+         * Custom Event Listener
+         * @param  {[type]}   eventType [description]
+         * @param  {Function} callback  [description]
+         * @return {[type]}             [description]
+         */
+
     }, {
-        key: 'outerRadius',
+        key: 'on',
+        value: function on(eventType, callback) {
+            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'on', this).call(this, eventType, callback);
+
+            var self = this;
+            var selector = self.selectAllPath();
+
+            // Update Event Factory
+            var eventFactory = {
+                'click.event': function clickEvent(d) {
+                    if (_C14.default.isFunction(callback)) {
+                        callback.call(this, d);
+                    }
+                },
+                'mouseover.event': function mouseoverEvent(d) {
+                    if (_C14.default.isFunction(callback)) {
+                        callback.call(this, d);
+                    }
+                },
+                'mouseout.event': function mouseoutEvent(d) {
+                    if (_C14.default.isFunction(callback)) {
+                        callback.call(this, d);
+                    }
+                }
+            };
+
+            var eventName = eventType + '.event';
+
+            selector.on(eventName, eventFactory[eventName]);
+        }
+
+        /**
+         * Main draw function of Donut Chart
+         */
+
+    }, {
+        key: 'draw',
+        value: function draw() {
+            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'draw', this).call(this);
+
+            var self = this;
+
+            self.updateConfig(self.config, function (data) {
+                var title = new _C6.default(self.options.title, self);
+                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+                var table = new _C10.default(self.options.table, self, self.dataTarget);
+
+                self.title = title;
+                self.legend = legend;
+                self.table = table;
+
+                // Draw title
+                self.title.draw();
+
+                // Update interaction of this own chart
+                self.update(self.dataTarget);
+                self.updateInteraction();
+
+                self.legend = legend;
+                self.table = table;
+
+                // Draw legend
+                self.legend.draw();
+                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+                // Draw table
+                self.table.draw();
+                self.table.updateInteractionForDonutPieChart(self);
+            });
+        }
+
+        /**
+         * Set option via stand-alone function
+         * @param {[type]} key   [description]
+         * @param {[type]} value [description]
+         */
+
+    }, {
+        key: 'setOption',
+        value: function setOption(key, value) {
+            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'setOption', this).call(this, key, value);
+
+            var self = this;
+
+            _C14.default.set(key, value, self.options);
+
+            self.updateConfig(self.options);
+        }
+
+        /**
+         * Update chart based on new data with optional dataConfig
+         * @param  {[type]} data       [description]
+         * @param  {[type]} dataConfig [description]
+         */
+
+    }, {
+        key: 'updateData',
+        value: function updateData(newData, newDataConfig) {
+            var self = this;
+
+            var newCfg = {};
+
+            if (!_C14.default.isEmpty(newDataConfig)) {
+
+                newCfg.data = {
+                    plain: newData,
+                    keys: newDataConfig
+                };
+            } else {
+
+                newCfg.data = {
+                    plain: newData
+                };
+            }
+
+            self.updateDataConfig(newCfg, function (data) {
+                // Update Chart
+                self.update(data);
+
+                // Update Legend
+                self.legend.update(data);
+                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+
+                // Update Table
+                self.table.update(data);
+                self.table.updateInteractionForDonutPieChart(self);
+            });
+        }
+
+        /*=====  End of User's Functions  ======*/
+
+    }, {
+        key: 'pie',
         get: function get() {
-            return this._outerRadius;
+            return this._pie;
         },
 
         /*=====  End of Getter  ======*/
@@ -287,69 +465,9 @@ var DonutChart = function (_Chart) {
         /*==============================
         =            Setter            =
         ==============================*/
-        set: function set(newOuterRadius) {
-            if (newOuterRadius) {
-                this._outerRadius = newOuterRadius;
-            }
-        }
-    }, {
-        key: 'innerRadius',
-        get: function get() {
-            return this._innerRadius;
-        },
-        set: function set(newInnerRadius) {
-            if (newInnerRadius) {
-                this._innerRadius = newInnerRadius;
-            }
-        }
-    }, {
-        key: 'showText',
-        get: function get() {
-            return this._showText;
-        },
-        set: function set(newShowText) {
-            if (newShowText) {
-                this._showText = newShowText;
-            }
-        }
-    }, {
-        key: 'eventFactory',
-        get: function get() {
-            return this._eventFactory;
-        },
-        set: function set(newEventFactory) {
-            if (newEventFactory) {
-                this._eventFactory = newEventFactory;
-            }
-        }
-    }, {
-        key: 'pathAnim',
-        get: function get() {
-            return this._pathAnim;
-        },
-        set: function set(newPathAnim) {
-            if (newPathAnim) {
-                this._pathAnim = newPathAnim;
-            }
-        }
-    }, {
-        key: 'tooltip',
-        get: function get() {
-            return this._tooltip;
-        },
-        set: function set(newTooltip) {
-            if (newTooltip) {
-                this._tooltip = newTooltip;
-            }
-        }
-    }, {
-        key: 'pie',
-        get: function get() {
-            return this._pie;
-        },
-        set: function set(newPie) {
-            if (newPie) {
-                this._pie = newPie;
+        set: function set(arg) {
+            if (arg) {
+                this._pie = arg;
             }
         }
     }, {
@@ -357,9 +475,9 @@ var DonutChart = function (_Chart) {
         get: function get() {
             return this._arc;
         },
-        set: function set(newArc) {
-            if (newArc) {
-                this._arc = newArc;
+        set: function set(arg) {
+            if (arg) {
+                this._arc = arg;
             }
         }
     }, {
@@ -367,15 +485,10 @@ var DonutChart = function (_Chart) {
         get: function get() {
             return this._currentData;
         },
-        set: function set(newCurrentData) {
-            if (newCurrentData) {
-                this._currentData = newCurrentData;
+        set: function set(arg) {
+            if (arg) {
+                this._currentData = arg;
             }
-        }
-    }, {
-        key: 'chartType',
-        get: function get() {
-            return this._body.type;
         }
     }]);
 

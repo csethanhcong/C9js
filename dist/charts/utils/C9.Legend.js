@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6,37 +6,36 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _C = require("../../helper/C9.Helper");
+
+var _C2 = _interopRequireDefault(_C);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Legend = function () {
-    function Legend(options, body, data) {
+    function Legend(options, chart) {
         _classCallCheck(this, Legend);
-
-        var config = {
-            legendShow: false,
-            legendPosition: [0, 0],
-            legendBox: false,
-            legendSize: 18,
-            legendTextSize: "14px",
-            legendMargin: [50, 5, 5, 5],
-            legendSpace: 150
-        };
 
         var self = this;
 
-        self._legendShow = options.legendShow || config.legendShow;
-        self._legendTextSize = options.legendTextSize || config.legendTextSize;
-        self._legendPosition = options.legendPosition || config.legendPosition;
-        self._legendSize = options.legendSize || config.legendSize;
-        self._legendBox = options.legendBox || config.legendBox;
-        self._legendMargin = options.legendMargin || config.legendMargin;
-        self._legendSpace = options.legendSpace || config.legendSpace;
-        // self._legendStyle        = options.legendStyle      || config.legendStyle;
+        var config = {
+            show: true,
+            position: "top",
+            size: 10,
+            fontSize: "12px",
+            fontColor: "#999",
+            fontWeight: 'bold',
+            margin: [5, 5, 5, 5],
+            space: 10,
+            box: false
+        };
 
         self._options = options;
-        self._body = body;
-        // self._color     = color;
-        self._data = data;
+        self._chart = chart;
+
+        self.updateConfig(config);
     }
 
     /*==============================
@@ -45,104 +44,140 @@ var Legend = function () {
 
 
     _createClass(Legend, [{
-        key: "draw",
-
+        key: "updateConfig",
 
         /*=====  End of Setter  ======*/
 
         /*======================================
         =            Main Functions            =
         ======================================*/
-        value: function draw() {
+        value: function updateConfig(config) {
             var self = this;
 
-            // var color = self.color;
+            self.options = _C2.default.mergeDeep(config, self.options);
 
-            if (self._legendShow) {
-                // TODO: Remove these conditional checks by getData for general purposes
-                var legendDomain = [];
+            self.maxWidth = self.chart.width;
+            self.maxHeight = self.chart.height;
+            self.data = self.chart.dataTarget;
+        }
+    }, {
+        key: "update",
+        value: function update(data) {
+            var self = this;
 
-                // var setEnableData = function(_data, _flag) {
-                //     return {
-                //         'data': _data,
-                //         'enable': _flag
-                //     };
-                // };
+            self.data = data;
 
-                // if (self._body.type == "line") {
+            if (self.options.show) {
+                // Remove current legend
+                self.chart.svg.selectAll('.c9-custom-legend.c9-custom-legend-container').remove();
 
-                //     var dataGroup = d3.nest()
-                //         .key(function(d) { return d.Client; })
-                //         .entries(self._data);
+                // var color = self.color;
+                var domain = [];
 
-                //     dataGroup.forEach(function(d, i) {
-                //         legendDomain.push(d.key);
-                //     });
-
-                // } else if (self._body.type == "bar") {
-
-                //     legendDomain = self._data;
-
-
-                // } else if (self._body.type == "pie" || self._body.type == "donut" || self._body.type == "timeline") {
-
-                //     self._data.forEach(function(d) {
-                //         d.name ? legendDomain.push(d.name) : legendDomain.push("");
-                //     });
-
-                // }
-
-
-                // Store for backup, and add enable flag to each data
-                // self.legendDomain = [];
-                // self._data.forEach(function(d) {
-                //     if (d) {
-                //         self.legendDomain.push(setEnableData(d, true));
-                //     }
-                // });
-
-                // var i;
-                // for (i = 0; i < legendDomain.length; i++) {
-                //     if (legendDomain[i] != "")
-                //         break;
-                // };
-
-                // if (i == legendDomain.length)
-                //     legendDomain = [];
-
-                // Calculate domain for color to draw
-                // color.domain(legendDomain);
-
-                if (self._body.type == "bar") {
+                if (self.chart.chartType == "bar") {
                     self.data = self.data[self.data.reduce(function (p, c, i, a) {
-                        return a[p].stack.length > c.stack.length ? p : i;
-                    }, 0)].stack;
+                        return a[p].length > c.length ? p : i;
+                    }, 0)];
                 }
 
                 // Legend will be appended in main SVG container
-                var legendContainer = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container").attr("transform", "translate(" + self._legendPosition[0] + "," + self._legendPosition[1] + ")");
+                // var container = d3.select(self._body[0][0].parentNode)
+                var container = self.chart.svg.append("g").attr("class", "c9-custom-legend c9-custom-legend-container");
 
                 // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 
-                self.legendItem = legendContainer.selectAll("g.c9-custom-legend.c9-custom-legend-item")
-                // .data(color.domain())
-                .data(self.data).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr('data-ref', function (d) {
+                self.item = container.selectAll("g.c9-custom-legend.c9-custom-legend-item").data(self.data).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr('data-ref', function (d) {
                     return d['data-ref'];
-                }).attr("transform", function (d, i) {
-                    return "translate(" + (i * (self.legendSize + self.legendSpace) + self.legendMargin[0]) + "," + self.legendMargin[3] + ")";
+                }).attr('data-enable', function (d) {
+                    return d['enable'];
                 });
 
-                self.legendItem.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.legendSize * 2).attr('height', self.legendSize).attr('r', self.legendSize).attr('fill', function (d) {
-                    return d.color;
-                }).attr('stroke', function (d) {
-                    return d.color;
-                });
+                self.item.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.options.size).attr('height', self.options.size).attr('r', self.options.size).attr('fill', function (d) {
+                    return d.color || d[0].color;
+                })
+                // .attr('stroke', function(d){ return d.color || d[0].color; })
+                .style('cursor', 'pointer');
 
-                self.legendItem.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self._legendSize * 2 + 20).attr('y', 15)
+                self.item.append('rect').attr('width', 5).attr('height', self.options.size).attr('x', self.options.size).attr('y', 0).attr('opacity', 0).style('cursor', 'pointer');
+
+                self.item.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self.options.size + 5).attr('y', self.options.size).style('font-size', self.options.fontSize).style('font-weight', self.options.fontWeight).style('fill', self.options.fontColor).style('cursor', 'pointer')
                 // .attr('text-anchor', 'middle')
                 .text(function (d) {
-                    return self._body.type == "bar" ? d.group : d.name;
+                    return self.chart.chartType == "bar" ? d.group : d.name;
                 });
+
+                //caculate position for legend
+                var getSize = function getSize(item) {
+                    return item.getBoundingClientRect();
+                };
+                var getXY = function getXY(item) {
+                    var xy = d3.select(item).attr('transform').split(',');
+                    return {
+                        x: parseFloat(xy[0].replace('translate(', '')),
+                        y: parseFloat(xy[1].replace(')', ''))
+                    };
+                };
+
+                var r = 0; // current row
+                var items = self.chart.svg.selectAll(".c9-custom-legend-item")[0];
+                var itemHeight = getSize(items[0]).height;
+                var numItemsCol = Math.floor((self.maxHeight - self.options.margin[0] - self.options.margin[2]) / (itemHeight + self.options.space));
+
+                if (self.options.space > itemHeight) numItemsCol++;
+
+                var maxWidthCol = new Array(Math.floor(items.length / numItemsCol));
+
+                items.forEach(function (i, n) {
+                    var pos = Math.floor(n / numItemsCol);
+                    var width = getSize(i).width;
+                    if (maxWidthCol[pos] == undefined || width > maxWidthCol[pos]) maxWidthCol[pos] = width;
+                });
+
+                if (self.options.position == "bottom") {
+                    self.item.attr("transform", function (d, i) {
+                        if (i > 0) {
+                            var item = items[i];
+                            var preItem = items[i - 1];
+                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
+                            if (newR > 0) r++;
+                            return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.maxHeight - self.options.margin[0] - itemHeight - r * (itemHeight + self.options.space)) + ")";
+                        } else {
+                            return "translate(" + self.options.margin[3] + "," + (self.maxHeight - self.options.margin[0] - itemHeight) + ")";
+                        }
+                    });
+                } else if (self.options.position == "left") {
+                    self.item.attr("transform", function (d, i) {
+                        var pos = Math.floor(i / numItemsCol);
+
+                        if (i > 0) {
+                            var prePos = Math.floor((i - 1) / numItemsCol);
+                            var item = items[i];
+                            var preItem = items[i - 1];
+                            return "translate(" + (pos > prePos ? maxWidthCol[pos] + self.options.space + getXY(preItem).x : getXY(preItem).x) + "," + (pos > prePos ? self.options.margin[0] : getXY(preItem).y + getSize(preItem).height + self.options.space) + ")";
+                        } else return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
+                    });
+                } else if (self.options.position == "right") {
+                    self.item.attr("transform", function (d, i) {
+                        var pos = Math.floor(i / numItemsCol);
+                        if (i > 0) {
+                            var prePos = Math.floor((i - 1) / numItemsCol);
+                            var item = items[i];
+                            var preItem = items[i - 1];
+                            return "translate(" + (pos > prePos ? getXY(preItem).x - self.options.space - maxWidthCol[pos] : getXY(preItem).x) + "," + (pos > prePos ? self.options.margin[0] : getXY(preItem).y + getSize(preItem).height + self.options.space) + ")";
+                        } else return "translate(" + (self.maxWidth - self.options.margin[3] - maxWidthCol[pos]) + "," + self.options.margin[0] + ")";
+                    });
+                } else {
+                    self.item.attr("transform", function (d, i) {
+                        if (i > 0) {
+                            var item = items[i];
+                            var preItem = items[i - 1];
+                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
+                            if (newR > 0) r++;
+
+                            return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
+                        } else return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
+                    });
+                }
 
                 // if (self._legendBox && legendDomain.length > 0) {
                 //     var box = legendContainer[0][0].getBBox();
@@ -154,6 +189,110 @@ var Legend = function () {
                 //         .style("fill", "none")
                 //         .style("stroke", color);
                 // }
+            }
+        }
+    }, {
+        key: "draw",
+        value: function draw() {
+            var self = this;
+
+            self.update(self.chart.dataTarget);
+        }
+
+        /**
+         * Update interaction event dispatchers for legend
+         * For: Donut Chart, Pie Chart
+         */
+
+    }, {
+        key: "updateInteractionForLineChart",
+        value: function updateInteractionForLineChart(chart) {
+
+            var self = this;
+
+            var hoverOptions = chart.hover.options,
+                hoverEnable = chart.hover.enable,
+                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+                onClickCallback = chart.click.callback;
+
+            self.itemEventFactory = {
+
+                'click': function click(item) {
+                    if (_C2.default.isFunction(onClickCallback)) {
+                        onClickCallback.call(this, item);
+                    }
+
+                    var selector = d3.select(this);
+                    var enable = true,
+                        dataSet = self.data;
+                    var totalEnable = d3.sum(dataSet.map(function (d) {
+                        return d.enable ? 1 : 0;
+                    }));
+
+                    // Add pointer to cursor
+                    // selector.style('cursor', 'pointer');
+
+                    // If current selector is disabled, then turn it on back
+                    // Else, set enable to false
+                    if (selector.attr('data-enable') == 'false') {
+                        selector.attr('data-enable', true);
+                        selector.style('opacity', '1');
+                    } else {
+                        if (totalEnable < 2) return;
+                        selector.attr('data-enable', false);
+                        selector.style('opacity', '0.1');
+                        enable = false;
+                    }
+
+                    // update line
+                    var newData = [];
+                    chart.dataTarget.forEach(function (_data) {
+                        if (_data['data-ref'] == item['data-ref']) _data.enable = enable;
+                        if (_data.enable) newData.push(_data);
+                    });
+
+                    chart.updateDomain(newData);
+                    chart.axis.update(chart.x, chart.y, 750);
+                    chart.update(newData);
+
+                    // Update subchart
+                    if (chart.options.subchart.show) {
+                        chart.subChartX.domain(chart.x.domain());
+                        chart.subChartY.domain(chart.y.domain());
+                        chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
+                        chart.updateSubChart(newData);
+                    }
+                },
+
+                'mouseover': function mouseover(item) {
+                    if (_C2.default.isFunction(onMouseOverCallback)) {
+                        onMouseOverCallback.call(this, item);
+                    }
+
+                    var legendSelector = d3.select(this);
+
+                    // Add pointer to cursor and make it lighten
+                    // legendSelector.style('cursor', 'pointer');
+                    self.lightenLegendItem(legendSelector);
+                },
+
+                'mouseout': function mouseout(item) {
+                    if (_C2.default.isFunction(onMouseOutCallback)) {
+                        onMouseOutCallback.call(this, item);
+                    }
+
+                    var legendSelector = d3.select(this);
+
+                    // Add pointer to cursor
+                    // legendSelector.style('cursor', 'pointer');
+                    self.normalizeLegendItem(legendSelector);
+                }
+
+            };
+
+            if (self.options.show) {
+                self.item.on(self.itemEventFactory);
             }
         }
 
@@ -168,16 +307,25 @@ var Legend = function () {
 
             var self = this;
 
+            var hoverOptions = chart.hover.options,
+                hoverEnable = chart.hover.enable,
+                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+                onClickCallback = chart.click.callback;
+
             var chartType = chart.chartType;
 
-            var chartInnerBefore = chartType == 'pie' ? 0 : chart.innerRadius,
-                chartOuterBefore = chartType == 'pie' ? chart.radius : chart.outerRadius,
-                chartInnerAfter = chartType == 'pie' ? 0 : chart.innerRadius,
-                chartOuterAfter = chartType == 'pie' ? chart.radius * 1.2 : chart.outerRadius * 1.2;
+            var chartInnerBefore = chartType == 'pie' ? 0 : chart.options.innerRadius,
+                chartOuterBefore = chartType == 'pie' ? chart.options.radius : chart.options.outerRadius,
+                chartInnerAfter = chartType == 'pie' ? 0 : chart.options.innerRadius,
+                chartOuterAfter = chartType == 'pie' ? chart.options.radius * 1.2 : chart.options.outerRadius * 1.2;
 
-            self.legendItemEventFactory = {
+            self.itemEventFactory = {
 
                 'click': function click(item) {
+                    if (_C2.default.isFunction(onClickCallback)) {
+                        onClickCallback.call(this, item);
+                    }
 
                     var selector = d3.select(this);
                     var enable = true,
@@ -187,20 +335,37 @@ var Legend = function () {
                     }));
 
                     // Add pointer to cursor
-                    selector.style('cursor', 'pointer');
+                    // selector.style('cursor', 'pointer');
 
                     // If current selector is disabled, then turn it on back
                     // Else, set enable to false
-                    if (selector.style('opacity') == '0.1') {
-                        selector.style('opacity', '1.0');
+                    if (selector.attr('data-enable') == 'false') {
+                        selector.attr('data-enable', true);
+                        selector.attr('opacity', '1.0');
                     } else {
                         if (totalEnable < 2) return;
-                        selector.style('opacity', '0.1');
+                        selector.attr('data-enable', false);
+                        selector.attr('opacity', '0.1');
                         enable = false;
                     }
 
+                    /*----------  Reset opacity after click  ----------*/
+
+                    self.item.each(function () {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
+
+                    chart.selectAllPath().each(function () {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
+                    /*----------  End Reset opacity after click  ----------*/
+
                     chart.pie.value(function (d) {
-                        if (d.name == item.name) d.enable = enable;
+                        if (d["data-ref"] == item["data-ref"]) d.enable = enable;
                         return d.enable ? d.value : 0;
                     });
 
@@ -220,119 +385,75 @@ var Legend = function () {
                 },
 
                 'mouseover': function mouseover(item) {
+                    if (_C2.default.isFunction(onMouseOverCallback)) {
+                        onMouseOverCallback.call(this, item);
+                    }
+
                     var legendSelector = d3.select(this);
                     // Add pointer to cursor
-                    legendSelector.style('cursor', 'pointer');
+                    // legendSelector.style('cursor', 'pointer');
+                    self.lightenLegendItem(legendSelector);
 
-                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+                    if (legendSelector.attr('data-enable')) {
+                        // For Legend
+                        self.item.each(function () {
+                            if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable')) {
+                                d3.select(this).attr('opacity', '0.3');
+                            }
+                        });
 
-                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter)).attr('fill-opacity', '1.0');
-                    // var enable = true,
-                    //     dataSet = self.legendDomain,
-                    //     isCurrentEnable = true;
+                        // For Chart
+                        chart.selectAllPath().each(function () {
+                            if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                                d3.select(this).attr('opacity', '0.3');
+                            }
+                        });
 
-                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-                    //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
-                    //     return (d.enable) ? 1 : 0;
-                    // }));
+                        var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 
-                    // // Add pointer to cursor
-                    // selector.style('cursor', 'pointer');
-
-                    // // If current selector is disabled, then remains it
-                    // // Else, turn enabled to disabled
-                    // if (!isCurrentEnable) {
-                    //     return false;
-                    // } else {
-                    //     if (totalEnable < 2) return;
-                    //     selector.style('opacity', '0.5');
-                    //     enable = false;
-                    // }
-
-                    // chart.pie.value(function(d) {
-                    //     if (d.data.name == item) d.tempEnable = enable;
-                    //     else d.tempEnable = d.enable;
-
-                    //     return (d.tempEnable) ? d.data.value : 0;
-                    // });
-
-                    // path = path.data(chart.pie(dataSet));
-
-                    // path.transition()
-                    //     .duration(200)
-                    //     .attrTween('d', function(d) {
-                    //         var interpolate = d3.interpolate(chart.currentData, d);
-                    //         // Returns an interpolator between the two arbitrary values a and b. 
-                    //         // The interpolator implementation is based on the type of the end value b.
-                    //         chart.currentData = interpolate(0);
-                    //         return function(t) {
-                    //             return arc(interpolate(t));
-                    //         };
-                    //     });
+                        selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+                    }
                 },
 
                 'mouseout': function mouseout(item) {
+                    if (_C2.default.isFunction(onMouseOutCallback)) {
+                        onMouseOutCallback.call(this, item);
+                    }
 
                     var legendSelector = d3.select(this);
                     // Add pointer to cursor
-                    legendSelector.style('cursor', 'pointer');
+                    // legendSelector.style('cursor', 'pointer');
+                    self.normalizeLegendItem(legendSelector);
+
+                    // if (legendSelector.attr('data-enable') == 'true') {
+                    // For Legend
+                    self.item.each(function () {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable')) {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
+
+                    // For Chart
+                    chart.selectAllPath().each(function () {
+                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+                            d3.select(this).attr('opacity', '1.0');
+                        }
+                    });
 
                     var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
 
-                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore)).attr('fill-opacity', '0.5');
-                    // var dataSet = self.legendDomain,
-                    //     isCurrentEnable = true;
-
-                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-                    //     if (d.data.name == item && !d.enable) isCurrentEnable = false;
-                    //     return (d.enable) ? 1 : 0;
-                    // }));
-
-                    // // Add pointer to cursor
-                    // selector.style('cursor', 'pointer');
-
-                    // chart.pie.value(function(d) {
-                    //     if (d.data.name == item && !d.enable) d.enable = enable;
-                    //     return (d.enable) ? d.data.value : 0;
-                    // });
-
-                    // if (!isCurrentEnable) {
-                    //     return;
-                    // } else {
-                    //     if (totalEnable < 2 || selector.style('opacity') == '1') return;
-                    //     selector.style('opacity', '1.0');
+                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
                     // }
-
-                    // path = path.data(chart.pie(dataSet));
-
-                    // path.transition()
-                    //     .duration(200)
-                    //     .attrTween('d', function(d) {
-                    //         var interpolate = d3.interpolate(chart.currentData, d);
-                    //         // Returns an interpolator between the two arbitrary values a and b. 
-                    //         // The interpolator implementation is based on the type of the end value b.
-                    //         chart.currentData = interpolate(0);
-                    //         return function(t) {
-                    //             return arc(interpolate(t));
-                    //         };
-                    //     });
                 }
 
             };
 
-            if (self.legendShow) {
-
-                self.legendItem.on(self.legendItemEventFactory);
-            }
+            if (self.options.show) self.item.on(self.itemEventFactory);
         }
 
         /**
          * Update interaction for barchart
          * @param  {[type]} chart       [description]
-         * @param  {[type]} path        [description]
-         * @param  {[type]} pie         [description]
-         * @param  {[type]} currentData [description]
-         * @param  {[type]} arc         [description]
          * @return {[type]}             [description]
          */
 
@@ -342,9 +463,19 @@ var Legend = function () {
 
             var self = this;
 
-            self.legendItemEventFactory = {
+            var hoverOptions = chart.hover.options,
+                hoverEnable = chart.hover.enable,
+                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+                onClickCallback = chart.click.callback;
+
+            self.itemEventFactory = {
 
                 'click': function click(item) {
+                    if (_C2.default.isFunction(onClickCallback)) {
+                        onClickCallback.call(this, item);
+                    }
+
                     var selector = d3.select(this);
                     var enable = true,
                         dataBackup = chart.dataTarget,
@@ -357,14 +488,16 @@ var Legend = function () {
                     var enableSetOld = [];
                     var data = [];
                     // Add pointer to cursor
-                    selector.style('cursor', 'pointer');
+                    // selector.style('cursor', 'pointer');
 
                     // If current selector is disabled, then turn it on back
                     // Else, set enable to false
-                    if (selector.style('opacity') == '0.1') {
+                    if (selector.attr('data-enable') == 'false') {
+                        selector.attr('data-enable', 'true');
                         selector.style('opacity', '1.0');
                     } else {
                         if (totalEnable < 2) return;
+                        selector.attr('data-enable', 'false');
                         selector.style('opacity', '0.1');
                         enable = false;
                     }
@@ -376,46 +509,97 @@ var Legend = function () {
                         if (d.enable) enableSet.push(d.group);
                     });
 
-                    //TODO - handle total - use for axis
-                    dataBackup.forEach(function (d, i) {
-                        var element = { stack: [], max: d.max };
-                        d.stack.forEach(function (s, j) {
-                            enableSet.forEach(function (e) {
+                    dataBackup.forEach(function (d) {
+                        var negElement = [];
+                        var posElement = [];
+                        d.forEach(function (s) {
+                            enableSet.forEach(function (e, i) {
                                 if (e == s.group) {
-                                    element.stack.push(s);
+                                    if (s.y0 < 0) negElement.push({ e: s, s: i });else posElement.push({ e: s, s: i });
                                 }
                             });
                         });
+                        if (!chart.isGroup) {
+                            if (negElement.length > 0) {
+                                if (negElement[0].e.y1 < 0) negElement[0].e.y1 = 0;
+                                for (var i = 1; i < negElement.length; i++) {
+                                    negElement[i].e.y1 = negElement[i - 1].e.y1 + negElement[i - 1].e.y0;
+                                };
+                            }
+                            if (posElement.length > 0) {
+                                if (posElement[0].e.y1 - posElement[0].e.y0 != 0) posElement[0].e.y1 = posElement[0].e.y0;
+                                for (var i = 1; i < posElement.length; i++) {
+                                    posElement[i].e.y1 = posElement[i - 1].e.y1 + posElement[i].e.y0;
+                                };
+                            }
+                        }
+                        var element = new Array(negElement.length + posElement.length);
+                        for (var i = 0; i < negElement.length; i++) {
+                            element[negElement[i].s] = negElement[i].e;
+                        };
+                        for (var i = 0; i < posElement.length; i++) {
+                            element[posElement[i].s] = posElement[i].e;
+                        };
                         data.push(element);
                     });
 
                     chart.updateLegendInteraction(data, enableSet, enableSetOld, item.group);
+                },
+
+                'mouseover': function mouseover(item) {
+                    var selector = d3.select(this);
+                    // selector.style('cursor', 'pointer');
+                    self.lightenLegendItem(selector);
+
+                    if (selector.attr('data-enable') == 'true') d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
+                        return d['group-ref'] != item['group-ref'];
+                    }).attr('opacity', 0.3);
+                },
+
+                'mouseout': function mouseout(item) {
+                    var selector = d3.select(this);
+                    // selector.style('cursor', 'pointer');
+                    self.normalizeLegendItem(selector);
+
+                    d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
+                        return d['group-ref'] != item['group-ref'];
+                    }).attr('opacity', 1);
                 }
 
             };
-
-            if (self.legendShow) {
-
-                self.legendItem.on(self.legendItemEventFactory);
-            }
+            if (self.options.show) self.item.on(self.itemEventFactory);
         }
     }, {
-        key: "setYLocation",
-        value: function setYLocation(height, margin) {
-            if (this.legendPosition === 'top') {
-                return margin.top / 2;
-            } else if (this.legendPosition === 'bottom') {
-                return height - margin.bottom / 2;
-            }
+        key: "lightenLegendItem",
+        value: function lightenLegendItem(item) {
+            var self = this;
+
+            item.select('.c9-custom-legend-rect').attr('fill', function (d) {
+                return _C2.default.shadeColor(0.5, d.color || d[0].color);
+            });
+            item.select('.c9-custom-legend-text').style('fill', function (d) {
+                return _C2.default.shadeColor(-0.5, self.options.fontColor);
+            });
+        }
+    }, {
+        key: "normalizeLegendItem",
+        value: function normalizeLegendItem(item) {
+            var self = this;
+
+            item.select('.c9-custom-legend-rect').attr('fill', function (d) {
+                return d.color || d[0].color;
+            });
+            item.select('.c9-custom-legend-text').style('fill', function (d) {
+                return self.options.fontColor;
+            });
         }
         /*=====  End of Main Functions  ======*/
 
     }, {
-        key: "data",
+        key: "options",
         get: function get() {
-            return this._data;
+            return this._options;
         },
-
 
         /*=====  End of Getter  ======*/
 
@@ -424,107 +608,67 @@ var Legend = function () {
         ==============================*/
         set: function set(arg) {
             if (arg) {
+                this._options = arg;
+            }
+        }
+    }, {
+        key: "data",
+        get: function get() {
+            return this._data;
+        },
+        set: function set(arg) {
+            if (arg) {
                 this._data = arg;
             }
         }
     }, {
-        key: "body",
+        key: "chart",
         get: function get() {
-            return this._body;
-        }
-    }, {
-        key: "color",
-        get: function get() {
-            return this._color;
-        }
-    }, {
-        key: "legendShow",
-        get: function get() {
-            return this._legendShow;
-        },
-        set: function set(newlegendShow) {
-            if (newlegendShow) {
-                this._legendShow = newlegendShow;
-            }
-        }
-    }, {
-        key: "legendText",
-        get: function get() {
-            return this._legendText;
-        },
-        set: function set(newlegendText) {
-            if (newlegendText) {
-                this._legendText = newlegendText;
-            }
-        }
-    }, {
-        key: "legendPosition",
-        get: function get() {
-            return this._legendPosition;
-        },
-        set: function set(newlegendPosition) {
-            if (newlegendPosition) {
-                this._legendPosition = newlegendPosition;
-            }
-        }
-    }, {
-        key: "legendSize",
-        get: function get() {
-            return this._legendSize;
-        },
-        set: function set(newlegendSize) {
-            if (newlegendSize) {
-                this._legendSize = newlegendSize;
-            }
-        }
-    }, {
-        key: "legendMargin",
-        get: function get() {
-            return this._legendMargin;
+            return this._chart;
         },
         set: function set(arg) {
             if (arg) {
-                this._legendMargin = arg;
+                this._chart = arg;
             }
         }
     }, {
-        key: "legendSpace",
+        key: "item",
         get: function get() {
-            return this._legendSpace;
+            return this._item;
         },
         set: function set(arg) {
             if (arg) {
-                this._legendSpace = arg;
+                this._item = arg;
             }
         }
     }, {
-        key: "legendItem",
+        key: "itemEventFactory",
         get: function get() {
-            return this._legendItem;
+            return this._itemEventFactory;
         },
-        set: function set(newLegendItem) {
-            if (newLegendItem) {
-                this._legendItem = newLegendItem;
+        set: function set(arg) {
+            if (arg) {
+                this._itemEventFactory = arg;
             }
         }
     }, {
-        key: "legendDomain",
+        key: "maxWidth",
         get: function get() {
-            return this._legendDomain;
+            return this._maxWidth;
         },
-        set: function set(newLegendDomain) {
-            if (newLegendDomain) {
-                this._legendDomain = newLegendDomain;
+        set: function set(arg) {
+            if (arg) {
+                this._maxWidth = arg;
             }
         }
     }, {
-        key: "legendItemEventFactory",
+        key: "maxHeight",
         get: function get() {
-            return this._legendItemEventFactory;
+            return this._maxHeight;
         },
-        set: function set(newLegendItemEventFactory) {
-            if (newLegendItemEventFactory) {
-                this._legendItemEventFactory = newLegendItemEventFactory;
+        set: function set(arg) {
+            if (arg) {
+                this._maxHeight = arg;
             }
         }
     }]);

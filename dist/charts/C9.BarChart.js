@@ -4,9 +4,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _C = require('./C9.Chart');
 
@@ -24,17 +24,21 @@ var _C7 = require('./utils/C9.Legend');
 
 var _C8 = _interopRequireDefault(_C7);
 
-var _C9 = require('./utils/C9.Tooltip');
+var _C9 = require('./utils/C9.Table');
 
 var _C10 = _interopRequireDefault(_C9);
 
-var _C11 = require('../helper/C9.Helper');
+var _C11 = require('./utils/C9.Tooltip');
 
 var _C12 = _interopRequireDefault(_C11);
 
-var _C13 = require('../helper/C9.DataAdapter');
+var _C13 = require('../helper/C9.Helper');
 
 var _C14 = _interopRequireDefault(_C13);
+
+var _C15 = require('../helper/C9.DataAdapter');
+
+var _C16 = _interopRequireDefault(_C15);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -53,103 +57,27 @@ var BarChart = function (_Chart) {
         var _this = _possibleConstructorReturn(this, (BarChart.__proto__ || Object.getPrototypeOf(BarChart)).call(this, options));
 
         var self = _this;
-        var config = {
-            barWidth: undefined
-        };
 
-        var width = self.width - self.margin.left - self.margin.right;
-        var height = self.height - self.margin.top - self.margin.bottom;
-        // var groupCount   = 0; // use to count how many element in group
-        // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
-
-        self.body.type = "bar";
-        // self._groupType     = options.groupType     ||  config.groupType;
-
-        var dataOption = self.dataOption;
-        dataOption.colorRange = self.colorRange;
-
-        var da = new _C14.default(dataOption);
-        self.dataTarget = da.getDataTarget("bar");
-        var barChartType = da.getDataTypeForBarChart();
-        if (barChartType != "single") {
-            self._groupNames = da.groups || da.stacks; //define group names use for showing legend
-            self._isGroup = barChartType == "group";
-        }
-
-        // self.data.forEach(function(d, i) {
-        //     var y0 = 0; // calculate stacked data (top of each bar)
-        //     var count = 0; // count number of group
-        //     groupStart = i; 
-        //     if (typeof d.value === "object") {
-        //         if (self.groupType == "stack") {
-        //             d.stack = d.value.map(function(v) {
-        //                 count++;
-        //                 return {name: d.name, y0: y0, y1: y0 += v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-        //             });
-        //             d.total = d.stack[d.stack.length - 1].y1;
-        //         }
-        //         else if (self.groupType == "group") {
-        //             var total = -Infinity;
-        //             d.stack = d.value.map(function(v) {
-        //                 count++;
-        //                 total = v > total ? v : total;
-        //                 return {name: d.name, y0: y0, y1: v, group: self._groupNames.length > 0 ? self._groupNames[count - 1] : "Group " + count};
-        //             });
-        //             d.total = total;
-        //         }
-        //     }
-        //     else {
-        //         d.stack = [{name: d.name, y0: y0, y1: d.value, group: count > 0 ? self._groupNames.length > 0 ? self._groupNames[count] : "Group " + ++count : undefined}];
-        //         d.total = d.stack[d.stack.length - 1].y1;
-        //     }
-        //     if (count > groupCount)
-        //         groupCount = count;
-        // });
-
-        // // assign group to those first elements in data if they don't have
-        // for (var i = 0; i < groupStart - 1; i++) {
-        //     self.data[i].stack[0].group = self._groupNames.length > 0 ? self._groupNames[0] : "Group 1";
+        // var config = {
+        //     // barWidth: undefined,
+        //     isLogaric: false,
         // };
 
-        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-        var y = d3.scale.linear().range([height, 0]);
+        self.config = {
+            // barWidth: undefined,
+            isLogaric: false
+        };
 
-        x.domain(self.dataTarget.map(function (d) {
-            return d.stack[0].name;
-        }));
-
-        y.domain([0, d3.max(self.dataTarget, function (d) {
-            return d.max;
-        })]);
-
-        /******** Handle for grouped, stacked bar chart ********/
-        if (self._groupNames) {
-            self._xGroup = d3.scale.ordinal();
-            self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
-        }
-
-        //self-define group names if user do not define
-        // if (self._groupNames.length == 0)
-        //     for (var i = 1; i <= groupCount; i++) {
-        //         self._groupNames.push("Group " + i);
-        //     };
-
-        /**********************************************/
-
-        // Make flexible width according to barWidth
-        config.barWidth = x.rangeBand();
-        self._barWidth = options.barWidth || config.barWidth;
-        self._x = x;
-        self._y = y;
-        self.updateConfig();
+        // self.updateConfig(config);
         return _this;
     }
 
     /*==============================
     =            Getter            =
     ==============================*/
-
+    // get barWidth() {
+    //     return this._barWidth;
+    // }
 
     _createClass(BarChart, [{
         key: 'updateConfig',
@@ -159,26 +87,192 @@ var BarChart = function (_Chart) {
         /*======================================
         =            Main Functions            =
         ======================================*/
-
         /**
          * Init Bar Chart Config
          */
-        value: function updateConfig() {
-            var self = this,
-                color = self.colorRange,
-                x = self._x,
-                y = self._y,
-                xGroup = self._xGroup;
+        value: function updateConfig(config, callback) {
+            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'updateConfig', this).call(this, config);
 
-            var bar = self.body.selectAll(".bar").data(self.dataTarget).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
-                return "translate(" + x(d.stack[0].name) + ",0)";
+            var self = this;
+
+            self.options = _C14.default.mergeDeep(config, self.options);
+
+            self.chartType = "bar";
+
+            var dataOption = self.dataOption;
+            dataOption.colorRange = self.colorRange;
+
+            // TESTING
+            var da = new _C16.default(dataOption, self.chartType, null);
+            da.getDataTarget(self.chartType, function (data) {
+                self.dataTarget = data;
+
+                var barChartType = da.getDataTypeForBarChart();
+                if (barChartType != "single") {
+                    self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+                    self._isGroup = barChartType == "group";
+                }
+
+                var width = self.width - self.margin.left - self.margin.right,
+                    height = self.height - self.margin.top - self.margin.bottom;
+
+                // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+                var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+                    y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+
+                var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+
+                x.domain(self.dataTarget.map(function (d) {
+                    return d[0].name;
+                }));
+
+                y.domain([minMax.min, minMax.max]);
+
+                /******** Handle for grouped, stacked bar chart ********/
+                if (self.groupNames) {
+                    self.xGroup = d3.scale.ordinal();
+                    self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+                }
+
+                /**********************************************/
+
+                // Make flexible width according to barWidth
+                // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+                self.x = x;
+                self.y = y;
+
+                if (_C14.default.isFunction(callback)) {
+                    callback.call(self, self.dataTarget);
+                }
             });
 
-            var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
-                return d.stack;
+            // var da = new DataAdapter(dataOption);
+            // self.dataTarget = da.getDataTarget(self.chartType);
+            // console.log(self.dataTarget);
+            // self.dataSource = da.dataSource;
+
+            // var barChartType = da.getDataTypeForBarChart();
+            // if (barChartType != "single") {
+            //     self._groupNames    = da.groups.length > 0 ? da.groups : da.stacks;  //define group names use for showing legend
+            //     self._isGroup       = barChartType == "group";
+            // }
+
+            // var width        = self.width - self.margin.left - self.margin.right,
+            //     height       = self.height - self.margin.top - self.margin.bottom;
+
+            // // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+            // var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+            //     y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+
+            // var minMax = Helper.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+
+            // x.domain(self.dataTarget.map(function(d) {
+            //     return d[0].name;
+            // }));
+
+            // y.domain([minMax.min, minMax.max]);
+
+            // /******** Handle for grouped, stacked bar chart ********/
+            // if (self.groupNames) {
+            //     self.xGroup = d3.scale.ordinal();
+            //     self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+            // }
+
+            // /**********************************************/
+
+            // // Make flexible width according to barWidth
+            // // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+            // self.x              = x;
+            // self.y              = y;
+        }
+
+        /**
+         * Update Chart Data Config
+         * Notes: Merge Deep change order of Config and Option
+         * ---------------------------------------------------
+         */
+
+    }, {
+        key: 'updateDataConfig',
+        value: function updateDataConfig(dataCfg, callback) {
+            var self = this;
+
+            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+
+            var dataOption = self.dataOption;
+            dataOption.colorRange = self.colorRange;
+
+            var da = new _C16.default(dataOption, self.chartType, null);
+            da.getDataTarget(self.chartType, function (data) {
+                self.dataTarget = data;
+
+                var barChartType = da.getDataTypeForBarChart();
+                if (barChartType != "single") {
+                    self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+                    self._isGroup = barChartType == "group";
+                }
+
+                var width = self.width - self.margin.left - self.margin.right,
+                    height = self.height - self.margin.top - self.margin.bottom;
+
+                // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+                var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+                    y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+
+                var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+
+                x.domain(self.dataTarget.map(function (d) {
+                    return d[0].name;
+                }));
+
+                y.domain([minMax.min, minMax.max]);
+
+                /******** Handle for grouped, stacked bar chart ********/
+                if (self.groupNames) {
+                    self.xGroup = d3.scale.ordinal();
+                    self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+                }
+
+                /**********************************************/
+
+                // Make flexible width according to barWidth
+                // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+                self.x = x;
+                self.y = y;
+
+                if (_C14.default.isFunction(callback)) {
+                    callback.call(self, self.dataTarget);
+                }
+            });
+        }
+
+        /**
+         * Update chart based on data
+         * @param  {[type]} data [description]
+         */
+
+    }, {
+        key: 'update',
+        value: function update(data) {
+            var self = this;
+
+            self.body.selectAll(".c9-chart-bar.c9-custom-rect").data([]).exit().remove();
+            self.body.selectAll(".c9-chart-bar.c9-custom-bar").data([]).exit().remove();
+
+            var color = self.colorRange,
+                x = self.x,
+                y = self.y,
+                xGroup = self.xGroup;
+
+            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
+                return "translate(" + x(d[0].name) + ",0)";
             });
 
-            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d, i) {
+            var bars = bar.selectAll(".c9-chart-bar.c9-custom-rect").data(function (d) {
+                return d;
+            });
+
+            bars.enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d, i) {
                 return d.color || color(i);
             }).attr("x", function (d) {
                 return self.isGroup ? xGroup(d.group) : undefined;
@@ -187,17 +281,18 @@ var BarChart = function (_Chart) {
             }).attr("width", function (d) {
                 return self.isGroup ? xGroup.rangeBand() : x.rangeBand();
             }).attr("height", function (d) {
-                return y(d.y0) - y(d.y1);
+                return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
             });
+
+            self.updateInteraction();
         }
 
         /**
-         * [updateLegendInteraction description]
+         * Update Interaction with Legend
          * @param  {[type]} data          [description]
          * @param  {[type]} groupNames    [description]
          * @param  {[type]} groupNamesOld [description]
          * @param  {[type]} newLabel      [description]
-         * @return {[type]}               [description]
          */
 
     }, {
@@ -205,6 +300,11 @@ var BarChart = function (_Chart) {
         value: function updateLegendInteraction(data, groupNames, groupNamesOld, newLabel) {
             var self = this;
             var type = self.groupType;
+
+            var y = self.y;
+            var minMax = _C14.default.getMinMax(data, self.isGroup == false ? "stack" : null, self.options.isLogaric);
+            y.domain([minMax.min, minMax.max]);
+            self.axis.update(null, y, 750);
 
             var xGroup = d3.scale.ordinal();
             xGroup.domain(groupNames).rangeRoundBands([0, self.x.rangeBand()]);
@@ -217,17 +317,18 @@ var BarChart = function (_Chart) {
             if (groupNames.length > groupNamesOld.length && 0 < groupNames.indexOf(newLabel) && groupNames.indexOf(newLabel) < groupNames.length - 1) midGroup = groupNamesOld[groupNames.indexOf(newLabel)];
 
             // self.body.selectAll(".c9-custom-rect").transition().duration(750).attr("height", 0).remove();
-            self.body.selectAll(".c9-custom-rect").data([]).exit().remove();
+            self.body.selectAll(".c9-chart-bar.c9-custom-rect").data([]).exit().remove();
+            self.body.selectAll(".c9-chart-bar.c9-custom-bar").data([]).exit().remove();
 
-            var bar = self.body.selectAll(".bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d, i) {
-                return "translate(" + self.x(self.dataTarget[i].stack[0].name) + ",0)";
+            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d, i) {
+                return "translate(" + self.x(self.dataTarget[i][0].name) + ",0)";
             });
 
             var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
-                return d.stack;
+                return d;
             });
 
-            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d) {
+            bars.enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d) {
                 return d.color;
             }).attr("x", function (d) {
                 // use for stack
@@ -237,37 +338,23 @@ var BarChart = function (_Chart) {
                 if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1) return self.x.rangeBand();
                 return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
             }).attr("y", function (d) {
-                return self.y(d.y1);
+                return self.isGroup ? y(d.y1) : self.options.isLogaric ? y(y.domain()[1]) : y(0);
             }).attr("width", function (d) {
                 return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
             }).attr("height", function (d) {
-                return self.y(d.y0) - self.y(d.y1);
+                return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0;
             });
 
             bars.transition().duration(750).attr("x", function (d) {
                 return !self.isGroup ? undefined : xGroup(d.group);
             }).attr("width", function (d) {
                 return !self.isGroup ? self.x.rangeBand() : xGroup.rangeBand();
+            }).attr("y", function (d) {
+                return y(d.y1);
+            }).attr("height", function (d) {
+                return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
             });
 
-            self.updateInteraction();
-        }
-
-        /**
-         * [Main draw function of Bar Chart]
-         * @return {[type]} [description]
-         */
-
-    }, {
-        key: 'draw',
-        value: function draw() {
-            var self = this;
-            var axis = new _C4.default(self.options, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, null, null);
-            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-            var legend = new _C8.default(self.options, self.body, self.dataTarget);
-
-            legend.draw();
-            legend.updateInteractionForBarChart(self);
             self.updateInteraction();
         }
 
@@ -300,7 +387,6 @@ var BarChart = function (_Chart) {
 
         /**
          * Update Interaction: Hover
-         * @return {} 
          */
 
     }, {
@@ -311,40 +397,245 @@ var BarChart = function (_Chart) {
                 hoverOptions = self.hover.options,
                 selector = self.selectAllBar(),
                 onMouseOverCallback = hoverOptions.onMouseOver.callback,
-                onMouseOutCallback = hoverOptions.onMouseOut.callback;
+                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+                onClickCallback = self.click.callback;
 
-            if (hoverEnable) {
-                // Define the div for the tooltip
-                // TODO: Allow user to add custom DIV, CLASS
-                // Make sure that: 
-                // - Rect not overflow the bar, if not, hover effect will be messed
-                // -> So, just align the rect to right/left (x: 25) to avoid it
-                // -> And, the text will be align also
-                var div = self.body.append('g').style('display', 'none');
-                // Rect Container
-                div.append('rect').attr('class', 'c9-custom-tooltip-box').attr('x', 25).attr('rx', 5).attr('ry', 5).style('position', 'absolute').style('width', '100px').style('height', '50px').style('fill', '#FEE5E2').style('stroke', '#FDCCC6').style('stroke-width', 2);
-                // First line
-                var text_1 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 10).style('font-family', 'sans-serif').style('font-size', '10px');
-                // Second line
-                var text_2 = div.append('text').attr('class', 'c9-custom-tooltip-label').attr('x', 30).attr('y', 20).style('font-family', 'sans-serif').style('font-size', '10px');
+            var tooltip = new _C12.default(self.options.tooltip);
 
-                selector.on("mouseover", function (d) {
-                    div.transition().duration(hoverOptions.onMouseOver.fadeIn).style("display", 'block').attr("transform", "translate(" + self.x(d.name) + "," + self.y(self.retrieveValue(d.y0, d.y1)) + ")");
+            // Update Event Factory
+            self.eventFactory = {
+                'click': function click(d) {
+                    if (_C14.default.isFunction(onClickCallback)) {
+                        onClickCallback.call(this, d);
+                    }
+                },
+                'mouseover': function mouseover(d) {
+                    if (!hoverEnable) return;
 
-                    text_1.text('Name: ' + d.name);
-                    text_2.text('Value: ' + self.retrieveValue(d.y0, d.y1));
-                }).on("mouseout", function (d) {
-                    div.transition().duration(hoverOptions.onMouseOut.fadeOut).style('display', 'none');
-                });
-            }
+                    if (_C14.default.isFunction(onMouseOverCallback)) {
+                        onMouseOverCallback.call(this, d);
+                    }
+
+                    // For table
+                    if (self.options.table.show) {
+                        var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+                        tr.filter(function (i) {
+                            return i['data-ref'] != d['data-ref'];
+                        }).selectAll('td').style('opacity', '0.5');
+                        var selectedItem = tr.filter(function (i) {
+                            return i['data-ref'] == d['data-ref'];
+                        });
+                        //set its style and scroll to its pos
+                        selectedItem.selectAll('td').style('opacity', '1');
+                        _C14.default.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+                    }
+
+                    d3.select(this).style("fill", function (d, i) {
+                        return self.getLightenColor(d.color || color(i));
+                    });
+
+                    tooltip.draw(d, self, 'mouseover');
+                },
+                'mouseout': function mouseout(d) {
+                    if (!hoverEnable) return;
+
+                    if (_C14.default.isFunction(onMouseOutCallback)) {
+                        onMouseOutCallback.call(this, d);
+                    }
+
+                    // For Table
+                    if (self.options.table.show) d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
+
+                    d3.select(this).style("fill", function (d, i) {
+                        return d.color || color(i);
+                    });
+
+                    tooltip.draw(d, self, 'mouseout');
+                }
+            };
+
+            selector.on(self.eventFactory);
         }
 
         /*=====  End of Main Functions  ======*/
 
+        /*========================================
+        =            User's Functions            =
+        ========================================*/
+
+        /**
+         * Custom Event Listener
+         * @param  {[type]}   eventType [description]
+         * @param  {Function} callback  [description]
+         */
+
     }, {
-        key: 'barWidth',
+        key: 'on',
+        value: function on(eventType, callback) {
+            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'on', this).call(this, eventType, callback);
+
+            var self = this;
+            var selector = self.selectAllBar();
+
+            // Update Event Factory
+            var eventFactory = {
+                'click.event': function clickEvent(d) {
+                    if (_C14.default.isFunction(callback)) {
+                        callback.call(this, d);
+                    }
+                },
+                'mouseover.event': function mouseoverEvent(d) {
+                    if (_C14.default.isFunction(callback)) {
+                        callback.call(this, d);
+                    }
+                },
+                'mouseout.event': function mouseoutEvent(d) {
+                    if (_C14.default.isFunction(callback)) {
+                        callback.call(this, d);
+                    }
+                }
+            };
+
+            var eventName = eventType + '.event';
+
+            selector.on(eventName, eventFactory[eventName]);
+        }
+
+        /**
+         * [Main draw function of Bar Chart]
+         * @return {[type]} [description]
+         */
+
+    }, {
+        key: 'draw',
+        value: function draw() {
+            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'draw', this).call(this);
+
+            var self = this;
+
+            // var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+            // var title   = new Title(self.options.title, self);
+            // var legend  = new Legend(self.options.legend, self, self.dataTarget);
+            // var table   = new Table(self.options.table, self, self.dataTarget);
+
+            // self.axis = axis;
+            // self.title = title;
+            // self.table = table;
+            // self.legend = legend;
+
+            // TESTING
+            self.updateConfig(self.config, function (data) {
+                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+                var title = new _C6.default(self.options.title, self);
+                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+                var table = new _C10.default(self.options.table, self, self.dataTarget);
+                self.axis = axis;
+                self.title = title;
+                self.table = table;
+                self.legend = legend;
+
+                // Draw axis
+                // self.axis.draw();
+
+                // Draw title
+                self.title.draw();
+                // Update Chart based on dataTarget
+                self.update(data);
+                self.updateInteraction();
+
+                // Draw legend
+                self.legend.draw();
+                self.legend.updateInteractionForBarChart(self);
+
+                // Draw table
+                self.table.draw();
+                self.table.updateInteractionForBarChart(self);
+            });
+
+            // // Draw axis
+            // self.axis.draw();
+
+            // // Draw title
+            // self.title.draw();
+
+            // // Update Chart based on dataTarget
+            // self.update(self.dataTarget);
+            // self.updateInteraction();
+
+            // // Draw legend
+            // self.legend.draw();
+            // self.legend.updateInteractionForBarChart(self);
+
+            // // Draw table
+            // self.table.draw();
+            // self.table.updateInteractionForBarChart(self);
+        }
+
+        /**
+         * Set option via stand-alone function
+         * @param {[type]} key   [description]
+         * @param {[type]} value [description]
+         */
+
+    }, {
+        key: 'setOption',
+        value: function setOption(key, value) {
+            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'setOption', this).call(this, key, value);
+
+            var self = this;
+
+            _C14.default.set(key, value, self.options);
+
+            self.updateConfig(self.options);
+        }
+
+        /**
+         * Update chart based on new data with optional dataConfig
+         * @param  {[type]} data       [description]
+         * @param  {[type]} dataConfig [description]
+         */
+
+    }, {
+        key: 'updateData',
+        value: function updateData(newData, newDataConfig) {
+            var self = this;
+
+            var newCfg = {};
+
+            if (!_C14.default.isEmpty(newDataConfig)) {
+
+                newCfg.data = {
+                    plain: newData,
+                    keys: newDataConfig
+                };
+            } else {
+
+                newCfg.data = {
+                    plain: newData
+                };
+            }
+
+            // Update Chart
+            self.updateDataConfig(newCfg, function (data) {
+                self.update(data);
+
+                // Update Axis
+                self.axis.update(self.x, self.y, 100);
+
+                // Update Legend
+                self.legend.update(data);
+                self.legend.updateInteractionForBarChart(self);
+
+                // Update Table
+                self.table.update(data);
+            });
+        }
+        /*=====  End of User's Functions  ======*/
+
+    }, {
+        key: 'groupType',
         get: function get() {
-            return this._barWidth;
+            return this._groupType;
         },
 
         /*=====  End of Getter  ======*/
@@ -352,60 +643,15 @@ var BarChart = function (_Chart) {
         /*==============================
         =            Setter            =
         ==============================*/
-        set: function set(newBarWidth) {
-            if (newBarWidth) {
-                this._barWidth = newBarWidth;
-            }
-        }
-    }, {
-        key: 'colorRange',
-        get: function get() {
-            var color = this._colorRange;
-            if (typeof color == 'string') {
-                try {
-                    return d3.scale[color]();
-                } catch (err) {
-                    return function (i) {
-                        return color;
-                    };
-                }
-            } else if ((typeof color === 'undefined' ? 'undefined' : _typeof(color)) == 'object') {
-                return d3.scale.ordinal().range(color);
-            }
-        },
-        set: function set(newBarColor) {
-            if (newBarColor) {
-                this._colorRange = newBarColor;
-            }
-        }
-    }, {
-        key: 'groupType',
-        get: function get() {
-            return this._groupType;
-        },
-        set: function set(newGroupType) {
-            if (newGroupType) {
-                this._groupType = newGroupType;
-            }
-        }
-    }, {
-        key: 'x',
-        get: function get() {
-            return this._x;
-        },
-        set: function set(newX) {
-            if (newX) {
-                this._x = newX;
-            }
-        }
-    }, {
-        key: 'y',
-        get: function get() {
-            return this._y;
-        },
-        set: function set(newY) {
-            if (newY) {
-                this._y = newY;
+        // set barWidth(arg) {
+        //     if (arg) {
+        //         this._barWidth = arg;
+        //     }
+        // }
+
+        set: function set(arg) {
+            if (arg) {
+                this._groupType = arg;
             }
         }
     }, {
@@ -413,9 +659,9 @@ var BarChart = function (_Chart) {
         get: function get() {
             return this._xGroup;
         },
-        set: function set(newXGroup) {
-            if (newXGroup) {
-                this._xGroup = newXGroup;
+        set: function set(arg) {
+            if (arg) {
+                this._xGroup = arg;
             }
         }
     }, {
@@ -423,20 +669,20 @@ var BarChart = function (_Chart) {
         get: function get() {
             return this._groupNames;
         },
-        set: function set(newGroupNames) {
-            if (newGroupNames) {
-                this._groupNames = newGroupNames;
+        set: function set(arg) {
+            if (arg) {
+                this._groupNames = arg;
             }
-        }
-    }, {
-        key: 'chartType',
-        get: function get() {
-            return this._body.type;
         }
     }, {
         key: 'isGroup',
         get: function get() {
             return this._isGroup;
+        },
+        set: function set(arg) {
+            if (arg) {
+                this._isGroup = arg;
+            }
         }
     }]);
 

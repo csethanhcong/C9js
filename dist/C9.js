@@ -60,7 +60,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C2 = _interopRequireDefault(_C);
 	
-	var _C3 = __webpack_require__(9);
+	var _C3 = __webpack_require__(10);
 	
 	var _C4 = _interopRequireDefault(_C3);
 	
@@ -84,7 +84,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C14 = _interopRequireDefault(_C13);
 	
-	var _C15 = __webpack_require__(8);
+	var _C15 = __webpack_require__(9);
 	
 	var _C16 = _interopRequireDefault(_C15);
 	
@@ -124,8 +124,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    value: true
 	});
 	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -150,13 +148,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(3);
+	var _C11 = __webpack_require__(8);
 	
 	var _C12 = _interopRequireDefault(_C11);
 	
-	var _C13 = __webpack_require__(8);
+	var _C13 = __webpack_require__(3);
 	
 	var _C14 = _interopRequireDefault(_C13);
+	
+	var _C15 = __webpack_require__(9);
+	
+	var _C16 = _interopRequireDefault(_C15);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -175,64 +177,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = _possibleConstructorReturn(this, (BarChart.__proto__ || Object.getPrototypeOf(BarChart)).call(this, options));
 	
 	        var self = _this;
-	        var config = {
-	            barWidth: undefined
+	
+	        // var config = {
+	        //     // barWidth: undefined,
+	        //     isLogaric: false,
+	        // };
+	
+	        self.config = {
+	            // barWidth: undefined,
+	            isLogaric: false
 	        };
 	
-	        var width = self.width - self.margin.left - self.margin.right;
-	        var height = self.height - self.margin.top - self.margin.bottom;
-	        // var groupCount   = 0; // use to count how many element in group
-	        // var groupStart   = 0; // calculate the number of those first element that just have only 1 value
-	
-	        self.body.type = "bar";
-	        // self._groupType     = options.groupType     ||  config.groupType;
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        var da = new _C14.default(dataOption);
-	        self.dataTarget = da.getDataTarget("bar");
-	        self.dataSource = da.dataSource;
-	        var barChartType = da.getDataTypeForBarChart();
-	        if (barChartType != "single") {
-	            self._groupNames = da.groups || da.stacks; //define group names use for showing legend
-	            self._isGroup = barChartType == "group";
-	        }
-	
-	        // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
-	        var x = d3.scale.ordinal().rangeRoundBands([0, width], .1);
-	        var y = options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
-	
-	        var minMax = _C12.default.getMinMax(self.dataTarget, barChartType, options.isLogaric);
-	
-	        x.domain(self.dataTarget.map(function (d) {
-	            return d[0].name;
-	        }));
-	
-	        y.domain([minMax.min, minMax.max]);
-	
-	        /******** Handle for grouped, stacked bar chart ********/
-	        if (self._groupNames) {
-	            self._xGroup = d3.scale.ordinal();
-	            self._xGroup.domain(self._groupNames).rangeRoundBands([0, x.rangeBand()]);
-	        }
-	
-	        /**********************************************/
-	
-	        // Make flexible width according to barWidth
-	        config.barWidth = x.rangeBand();
-	        self._barWidth = options.barWidth || config.barWidth;
-	        self._x = x;
-	        self._y = y;
-	        self.isLogaric = options.isLogaric;
-	        self.updateConfig();
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
 	    /*==============================
 	    =            Getter            =
 	    ==============================*/
-	
+	    // get barWidth() {
+	    //     return this._barWidth;
+	    // }
 	
 	    _createClass(BarChart, [{
 	        key: 'updateConfig',
@@ -242,26 +207,192 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
-	
 	        /**
 	         * Init Bar Chart Config
 	         */
-	        value: function updateConfig() {
-	            var self = this,
-	                color = self.colorRange,
-	                x = self._x,
-	                y = self._y,
-	                xGroup = self._xGroup;
+	        value: function updateConfig(config, callback) {
+	            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'updateConfig', this).call(this, config);
 	
-	            var bar = self.body.selectAll(".bar").data(self.dataTarget).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
+	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(config, self.options);
+	
+	            self.chartType = "bar";
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            // TESTING
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                var barChartType = da.getDataTypeForBarChart();
+	                if (barChartType != "single") {
+	                    self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+	                    self._isGroup = barChartType == "group";
+	                }
+	
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+	                var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+	                    y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+	
+	                var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+	
+	                x.domain(self.dataTarget.map(function (d) {
+	                    return d[0].name;
+	                }));
+	
+	                y.domain([minMax.min, minMax.max]);
+	
+	                /******** Handle for grouped, stacked bar chart ********/
+	                if (self.groupNames) {
+	                    self.xGroup = d3.scale.ordinal();
+	                    self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+	                }
+	
+	                /**********************************************/
+	
+	                // Make flexible width according to barWidth
+	                // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+	                self.x = x;
+	                self.y = y;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	
+	            // var da = new DataAdapter(dataOption);
+	            // self.dataTarget = da.getDataTarget(self.chartType);
+	            // console.log(self.dataTarget);
+	            // self.dataSource = da.dataSource;
+	
+	            // var barChartType = da.getDataTypeForBarChart();
+	            // if (barChartType != "single") {
+	            //     self._groupNames    = da.groups.length > 0 ? da.groups : da.stacks;  //define group names use for showing legend
+	            //     self._isGroup       = barChartType == "group";
+	            // }
+	
+	            // var width        = self.width - self.margin.left - self.margin.right,
+	            //     height       = self.height - self.margin.top - self.margin.bottom;
+	
+	            // // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+	            // var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+	            //     y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+	
+	            // var minMax = Helper.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+	
+	            // x.domain(self.dataTarget.map(function(d) {
+	            //     return d[0].name;
+	            // }));
+	
+	            // y.domain([minMax.min, minMax.max]);
+	
+	            // /******** Handle for grouped, stacked bar chart ********/
+	            // if (self.groupNames) {
+	            //     self.xGroup = d3.scale.ordinal();
+	            //     self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+	            // }
+	
+	            // /**********************************************/
+	
+	            // // Make flexible width according to barWidth
+	            // // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+	            // self.x              = x;
+	            // self.y              = y;
+	        }
+	
+	        /**
+	         * Update Chart Data Config
+	         * Notes: Merge Deep change order of Config and Option
+	         * ---------------------------------------------------
+	         */
+	
+	    }, {
+	        key: 'updateDataConfig',
+	        value: function updateDataConfig(dataCfg, callback) {
+	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                var barChartType = da.getDataTypeForBarChart();
+	                if (barChartType != "single") {
+	                    self._groupNames = da.groups.length > 0 ? da.groups : da.stacks; //define group names use for showing legend
+	                    self._isGroup = barChartType == "group";
+	                }
+	
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                // .1 to make outerPadding, according to: https://github.com/d3/d3/wiki/Ordinal-Scales
+	                var x = d3.scale.ordinal().rangeRoundBands([0, width], .1),
+	                    y = self.options.isLogaric ? d3.scale.log().range([height, 0]) : d3.scale.linear().range([height, 0]);
+	
+	                var minMax = _C14.default.getMinMax(self.dataTarget, barChartType, self.options.isLogaric);
+	
+	                x.domain(self.dataTarget.map(function (d) {
+	                    return d[0].name;
+	                }));
+	
+	                y.domain([minMax.min, minMax.max]);
+	
+	                /******** Handle for grouped, stacked bar chart ********/
+	                if (self.groupNames) {
+	                    self.xGroup = d3.scale.ordinal();
+	                    self.xGroup.domain(self.groupNames).rangeRoundBands([0, x.rangeBand()]);
+	                }
+	
+	                /**********************************************/
+	
+	                // Make flexible width according to barWidth
+	                // self.barWidth       = self.options.barWidth  ||  x.rangeBand();
+	                self.x = x;
+	                self.y = y;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	
+	        /**
+	         * Update chart based on data
+	         * @param  {[type]} data [description]
+	         */
+	
+	    }, {
+	        key: 'update',
+	        value: function update(data) {
+	            var self = this;
+	
+	            self.body.selectAll(".c9-chart-bar.c9-custom-rect").data([]).exit().remove();
+	            self.body.selectAll(".c9-chart-bar.c9-custom-bar").data([]).exit().remove();
+	
+	            var color = self.colorRange,
+	                x = self.x,
+	                y = self.y,
+	                xGroup = self.xGroup;
+	
+	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d) {
 	                return "translate(" + x(d[0].name) + ",0)";
 	            });
 	
-	            var bars = bar.selectAll(".c9-custom-rect").data(function (d) {
+	            var bars = bar.selectAll(".c9-chart-bar.c9-custom-rect").data(function (d) {
 	                return d;
 	            });
 	
-	            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d, i) {
+	            bars.enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d, i) {
 	                return d.color || color(i);
 	            }).attr("x", function (d) {
 	                return self.isGroup ? xGroup(d.group) : undefined;
@@ -270,17 +401,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }).attr("width", function (d) {
 	                return self.isGroup ? xGroup.rangeBand() : x.rangeBand();
 	            }).attr("height", function (d) {
-	                return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
+	                return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
 	            });
+	
+	            self.updateInteraction();
 	        }
 	
 	        /**
-	         * [updateLegendInteraction description]
+	         * Update Interaction with Legend
 	         * @param  {[type]} data          [description]
 	         * @param  {[type]} groupNames    [description]
 	         * @param  {[type]} groupNamesOld [description]
 	         * @param  {[type]} newLabel      [description]
-	         * @return {[type]}               [description]
 	         */
 	
 	    }, {
@@ -290,7 +422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var type = self.groupType;
 	
 	            var y = self.y;
-	            var minMax = _C12.default.getMinMax(data, self.isGroup == false ? "stack" : null, self.isLogaric);
+	            var minMax = _C14.default.getMinMax(data, self.isGroup == false ? "stack" : null, self.options.isLogaric);
 	            y.domain([minMax.min, minMax.max]);
 	            self.axis.update(null, y, 750);
 	
@@ -305,8 +437,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (groupNames.length > groupNamesOld.length && 0 < groupNames.indexOf(newLabel) && groupNames.indexOf(newLabel) < groupNames.length - 1) midGroup = groupNamesOld[groupNames.indexOf(newLabel)];
 	
 	            // self.body.selectAll(".c9-custom-rect").transition().duration(750).attr("height", 0).remove();
-	            self.body.selectAll(".c9-custom-rect").data([]).exit().remove();
-	            self.body.selectAll(".c9-custom-bar").data([]).exit().remove();
+	            self.body.selectAll(".c9-chart-bar.c9-custom-rect").data([]).exit().remove();
+	            self.body.selectAll(".c9-chart-bar.c9-custom-bar").data([]).exit().remove();
+	
 	            var bar = self.body.selectAll(".c9-chart-bar.c9-custom-bar").data(data).enter().append("g").attr("class", "c9-chart-bar c9-custom-bar").attr("transform", function (d, i) {
 	                return "translate(" + self.x(self.dataTarget[i][0].name) + ",0)";
 	            });
@@ -315,7 +448,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return d;
 	            });
 	
-	            bars.enter().append("rect").attr("class", "c9-custom-rect").style("fill", function (d) {
+	            bars.enter().append("rect").attr("class", "c9-chart-bar c9-custom-rect").style("fill", function (d) {
 	                return d.color;
 	            }).attr("x", function (d) {
 	                // use for stack
@@ -325,11 +458,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (groupNames.length > groupNamesOld.length && d.group == newLabel && groupNames.indexOf(newLabel) == groupNames.length - 1) return self.x.rangeBand();
 	                return midGroup ? d.group == newLabel ? xGroupOld(midGroup) : xGroupOld(d.group) : xGroupOld(d.group);
 	            }).attr("y", function (d) {
-	                return self.isGroup ? y(d.y1) : self.isLogaric ? y(y.domain()[1]) : y(0);
+	                return self.isGroup ? y(d.y1) : self.options.isLogaric ? y(y.domain()[1]) : y(0);
 	            }).attr("width", function (d) {
 	                return !self.isGroup ? self.x.rangeBand() : d.group == newLabel ? 0 : xGroupOld.rangeBand();
 	            }).attr("height", function (d) {
-	                return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0;
+	                return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : self.isGroup ? y(0) - y(Math.abs(d.y0)) : 0;
 	            });
 	
 	            bars.transition().duration(750).attr("x", function (d) {
@@ -339,27 +472,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }).attr("y", function (d) {
 	                return y(d.y1);
 	            }).attr("height", function (d) {
-	                return self.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
+	                return self.options.isLogaric ? y(y.domain()[0]) - y(d.y0) : y(0) - y(Math.abs(d.y0));
 	            });
-	
-	            self.updateInteraction();
-	        }
-	
-	        /**
-	         * [Main draw function of Bar Chart]
-	         * @return {[type]} [description]
-	         */
-	
-	    }, {
-	        key: 'draw',
-	        value: function draw() {
-	            var self = this;
-	            self.axis = new _C4.default(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self.x, self.y);
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
-	
-	            legend.draw();
-	            legend.updateInteractionForBarChart(self);
 	
 	            self.updateInteraction();
 	        }
@@ -393,7 +507,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        /**
 	         * Update Interaction: Hover
-	         * @return {} 
 	         */
 	
 	    }, {
@@ -407,30 +520,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
 	                onClickCallback = self.click.callback;
 	
-	            var tooltip = new _C10.default(self.options.tooltip);
+	            var tooltip = new _C12.default(self.options.tooltip);
 	
 	            // Update Event Factory
 	            self.eventFactory = {
 	                'click': function click(d) {
-	                    if (_C12.default.isFunction(onClickCallback)) {
+	                    if (_C14.default.isFunction(onClickCallback)) {
 	                        onClickCallback.call(this, d);
 	                    }
 	                },
 	                'mouseover': function mouseover(d) {
 	                    if (!hoverEnable) return;
 	
-	                    if (_C12.default.isFunction(onMouseOverCallback)) {
+	                    if (_C14.default.isFunction(onMouseOverCallback)) {
 	                        onMouseOverCallback.call(this, d);
 	                    }
+	
+	                    // For table
+	                    if (self.options.table.show) {
+	                        var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+	                        tr.filter(function (i) {
+	                            return i['data-ref'] != d['data-ref'];
+	                        }).selectAll('td').style('opacity', '0.5');
+	                        var selectedItem = tr.filter(function (i) {
+	                            return i['data-ref'] == d['data-ref'];
+	                        });
+	                        //set its style and scroll to its pos
+	                        selectedItem.selectAll('td').style('opacity', '1');
+	                        _C14.default.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+	                    }
+	
+	                    d3.select(this).style("fill", function (d, i) {
+	                        return self.getLightenColor(d.color || color(i));
+	                    });
 	
 	                    tooltip.draw(d, self, 'mouseover');
 	                },
 	                'mouseout': function mouseout(d) {
 	                    if (!hoverEnable) return;
 	
-	                    if (_C12.default.isFunction(onMouseOutCallback)) {
+	                    if (_C14.default.isFunction(onMouseOutCallback)) {
 	                        onMouseOutCallback.call(this, d);
 	                    }
+	
+	                    // For Table
+	                    if (self.options.table.show) d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
+	
+	                    d3.select(this).style("fill", function (d, i) {
+	                        return d.color || color(i);
+	                    });
 	
 	                    tooltip.draw(d, self, 'mouseout');
 	                }
@@ -439,11 +577,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(self.eventFactory);
 	        }
 	
+	        /*=====  End of Main Functions  ======*/
+	
+	        /*========================================
+	        =            User's Functions            =
+	        ========================================*/
+	
 	        /**
 	         * Custom Event Listener
 	         * @param  {[type]}   eventType [description]
 	         * @param  {Function} callback  [description]
-	         * @return {[type]}             [description]
 	         */
 	
 	    }, {
@@ -457,17 +600,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // Update Event Factory
 	            var eventFactory = {
 	                'click.event': function clickEvent(d) {
-	                    if (_C12.default.isFunction(callback)) {
+	                    if (_C14.default.isFunction(callback)) {
 	                        callback.call(this, d);
 	                    }
 	                },
 	                'mouseover.event': function mouseoverEvent(d) {
-	                    if (_C12.default.isFunction(callback)) {
+	                    if (_C14.default.isFunction(callback)) {
 	                        callback.call(this, d);
 	                    }
 	                },
 	                'mouseout.event': function mouseoutEvent(d) {
-	                    if (_C12.default.isFunction(callback)) {
+	                    if (_C14.default.isFunction(callback)) {
 	                        callback.call(this, d);
 	                    }
 	                }
@@ -478,12 +621,141 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
-	        /*=====  End of Main Functions  ======*/
+	        /**
+	         * [Main draw function of Bar Chart]
+	         * @return {[type]} [description]
+	         */
 	
 	    }, {
-	        key: 'barWidth',
+	        key: 'draw',
+	        value: function draw() {
+	            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'draw', this).call(this);
+	
+	            var self = this;
+	
+	            // var axis    = new Axis(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+	            // var title   = new Title(self.options.title, self);
+	            // var legend  = new Legend(self.options.legend, self, self.dataTarget);
+	            // var table   = new Table(self.options.table, self, self.dataTarget);
+	
+	            // self.axis = axis;
+	            // self.title = title;
+	            // self.table = table;
+	            // self.legend = legend;
+	
+	            // TESTING
+	            self.updateConfig(self.config, function (data) {
+	                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+	                var table = new _C10.default(self.options.table, self, self.dataTarget);
+	                self.axis = axis;
+	                self.title = title;
+	                self.table = table;
+	                self.legend = legend;
+	
+	                // Draw axis
+	                // self.axis.draw();
+	
+	                // Draw title
+	                self.title.draw();
+	                // Update Chart based on dataTarget
+	                self.update(data);
+	                self.updateInteraction();
+	
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForBarChart(self);
+	
+	                // Draw table
+	                self.table.draw();
+	                self.table.updateInteractionForBarChart(self);
+	            });
+	
+	            // // Draw axis
+	            // self.axis.draw();
+	
+	            // // Draw title
+	            // self.title.draw();
+	
+	            // // Update Chart based on dataTarget
+	            // self.update(self.dataTarget);
+	            // self.updateInteraction();
+	
+	            // // Draw legend
+	            // self.legend.draw();
+	            // self.legend.updateInteractionForBarChart(self);
+	
+	            // // Draw table
+	            // self.table.draw();
+	            // self.table.updateInteractionForBarChart(self);
+	        }
+	
+	        /**
+	         * Set option via stand-alone function
+	         * @param {[type]} key   [description]
+	         * @param {[type]} value [description]
+	         */
+	
+	    }, {
+	        key: 'setOption',
+	        value: function setOption(key, value) {
+	            _get(BarChart.prototype.__proto__ || Object.getPrototypeOf(BarChart.prototype), 'setOption', this).call(this, key, value);
+	
+	            var self = this;
+	
+	            _C14.default.set(key, value, self.options);
+	
+	            self.updateConfig(self.options);
+	        }
+	
+	        /**
+	         * Update chart based on new data with optional dataConfig
+	         * @param  {[type]} data       [description]
+	         * @param  {[type]} dataConfig [description]
+	         */
+	
+	    }, {
+	        key: 'updateData',
+	        value: function updateData(newData, newDataConfig) {
+	            var self = this;
+	
+	            var newCfg = {};
+	
+	            if (!_C14.default.isEmpty(newDataConfig)) {
+	
+	                newCfg.data = {
+	                    plain: newData,
+	                    keys: newDataConfig
+	                };
+	            } else {
+	
+	                newCfg.data = {
+	                    plain: newData
+	                };
+	            }
+	
+	            // Update Chart
+	            self.updateDataConfig(newCfg, function (data) {
+	                self.update(data);
+	
+	                // Update Axis
+	                self.axis.update(self.x, self.y, 100);
+	
+	                // Update Legend
+	                self.legend.update(data);
+	                self.legend.updateInteractionForBarChart(self);
+	
+	                // Update Table
+	                self.table.update(data);
+	            });
+	        }
+	        /*=====  End of User's Functions  ======*/
+	
+	    }, {
+	        key: 'groupType',
 	        get: function get() {
-	            return this._barWidth;
+	            return this._groupType;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -491,60 +763,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(newBarWidth) {
-	            if (newBarWidth) {
-	                this._barWidth = newBarWidth;
-	            }
-	        }
-	    }, {
-	        key: 'colorRange',
-	        get: function get() {
-	            var color = this._colorRange;
-	            if (typeof color == 'string') {
-	                try {
-	                    return d3.scale[color]();
-	                } catch (err) {
-	                    return function (i) {
-	                        return color;
-	                    };
-	                }
-	            } else if ((typeof color === 'undefined' ? 'undefined' : _typeof(color)) == 'object') {
-	                return d3.scale.ordinal().range(color);
-	            }
-	        },
-	        set: function set(newBarColor) {
-	            if (newBarColor) {
-	                this._colorRange = newBarColor;
-	            }
-	        }
-	    }, {
-	        key: 'groupType',
-	        get: function get() {
-	            return this._groupType;
-	        },
-	        set: function set(newGroupType) {
-	            if (newGroupType) {
-	                this._groupType = newGroupType;
-	            }
-	        }
-	    }, {
-	        key: 'x',
-	        get: function get() {
-	            return this._x;
-	        },
-	        set: function set(newX) {
-	            if (newX) {
-	                this._x = newX;
-	            }
-	        }
-	    }, {
-	        key: 'y',
-	        get: function get() {
-	            return this._y;
-	        },
-	        set: function set(newY) {
-	            if (newY) {
-	                this._y = newY;
+	        // set barWidth(arg) {
+	        //     if (arg) {
+	        //         this._barWidth = arg;
+	        //     }
+	        // }
+	
+	        set: function set(arg) {
+	            if (arg) {
+	                this._groupType = arg;
 	            }
 	        }
 	    }, {
@@ -552,9 +779,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._xGroup;
 	        },
-	        set: function set(newXGroup) {
-	            if (newXGroup) {
-	                this._xGroup = newXGroup;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._xGroup = arg;
 	            }
 	        }
 	    }, {
@@ -562,20 +789,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._groupNames;
 	        },
-	        set: function set(newGroupNames) {
-	            if (newGroupNames) {
-	                this._groupNames = newGroupNames;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._groupNames = arg;
 	            }
-	        }
-	    }, {
-	        key: 'chartType',
-	        get: function get() {
-	            return this._body.type;
 	        }
 	    }, {
 	        key: 'isGroup',
 	        get: function get() {
 	            return this._isGroup;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._isGroup = arg;
+	            }
 	        }
 	    }]);
 	
@@ -615,14 +842,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // container
 	            id: "body",
 	            // size (width, height), margin, padding
-	            width: 960,
-	            height: 480,
+	            width: 750,
+	            height: 500,
 	            margin: {
-	                top: 20,
-	                right: 20,
-	                bottom: 70,
-	                left: 40
+	                top: 100,
+	                left: 50,
+	                right: 50,
+	                bottom: 50
 	            },
+	
 	            // interaction in chart
 	            hover: {
 	                enable: true,
@@ -654,12 +882,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            },
 	
+	            // title
+	            title: {
+	                show: true,
+	                text: "Sample Chart",
+	                position: 'top',
+	                fontSize: "14px"
+	            },
+	
 	            // legend
 	            legend: {
-	                show: false,
+	                show: true,
 	                position: "top",
 	                size: 10,
-	                textSize: "12px",
+	                fontSize: "12px",
+	                fontColor: "#999",
+	                fontWeight: 'bold',
 	                margin: [5, 5, 5, 5],
 	                space: 10
 	            },
@@ -667,18 +905,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // tooltip
 	            tooltip: {
 	                show: true,
-	                position: 'left', // [top, right, bottom, left]
+	                position: 'right', // [top, right, bottom, left]
 	                backgroundColor: 'rgba(0, 0, 0, 0.8)',
 	                fontColor: '#fff',
+	                fontSize: '11px',
 	                format: null
 	            },
 	
 	            // table 
 	            table: {
 	                container: "body",
-	                show: true,
+	                show: false,
 	                headings: ["Name", "Value"],
-	                style: "default", // "strip", "border"
+	                style: "stripe", // "strip", "border"
 	                serial: true,
 	                hover: {
 	                    enable: true,
@@ -727,7 +966,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        text: "Name",
 	                        position: "default"
 	                    },
-	                    show: false,
+	                    show: true,
 	                    grid: false,
 	                    type: ""
 	                },
@@ -744,42 +983,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        text: "Value",
 	                        position: "default"
 	                    },
-	                    show: false,
-	                    grid: false,
+	                    show: true,
+	                    grid: true,
 	                    type: ""
 	                }
+	            },
+	
+	            // sub-chart
+	            subchart: {
+	                show: false,
+	                height: 100
 	            }
 	        };
 	
-	        self._id = options.id || config.id;
-	        self._width = options.width || config.width;
-	        self._height = options.height || config.height;
-	        self._colorRange = options.colorRange || config.colorRange;
-	
-	        self._margin = _C2.default.merge(options.margin, config.margin);
-	        self._hover = _C2.default.merge(options.hover, config.hover);
-	        self._click = _C2.default.merge(options.click, config.click);
-	
-	        // Main factory contains all interactions
-	        self._eventFactory = null;
-	
-	        self._dataOption = _C2.default.merge(options.data, config.data);
-	        self._dataTarget = null;
-	
-	        // Skeleton: 
-	        // SVG
-	        // ---BODY (g)
-	        // -------BlaBla
-	        self._svg = null;
-	        self._body = null;
 	        self._options = options;
 	
-	        self._options.table = _C2.default.merge(options.table, config.table);
-	        self._options.tooltip = _C2.default.merge(options.tooltip, config.tooltip);
-	        self._options.legend = _C2.default.merge(options.legend, config.legend);
-	        self._options.axis = _C2.default.mergeDeep(config.axis, options.axis);
-	
-	        self.initConfig();
+	        self.initConfig(config);
 	    }
 	
 	    /*==============================
@@ -796,31 +1015,146 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Main Functions            =
 	        ======================================*/
 	        /**
-	         * Init & Update Parent Chart Config
+	         * Init parent config
+	         * Only in BaseClass <Chart> to init config
 	         */
-	        value: function initConfig() {
-	            var margin = this.margin,
-	                id = this.id,
-	                width = this.width - margin.left - margin.right,
-	                height = this.height - margin.top - margin.bottom;
+	        value: function initConfig(config) {
+	            var self = this;
 	
-	            this.container = d3.select(id);
+	            self.options = _C2.default.mergeDeep(config, self.options);
 	
-	            this.svg = d3.select(id).append("svg").style('overflow', 'visible') // to overwrite overflow: hidden by Boostrap as default
-	            .attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom);
+	            var options = self.options;
 	
-	            this.body = this.svg.append("g").attr('class', 'c9-chart c9-custom-container').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	            self.id = options.id || config.id;
+	            self.width = options.width || config.width;
+	            self.height = options.height || config.height;
+	            self.colorRange = options.colorRange || config.colorRange;
+	
+	            self.margin = _C2.default.merge(options.margin, config.margin);
+	            self.hover = _C2.default.merge(options.hover, config.hover);
+	            self.click = _C2.default.merge(options.click, config.click);
+	
+	            self.dataOption = _C2.default.mergeDeep(config.data, options.data);
+	
+	            self.options.subchart = _C2.default.merge(options.subchart, config.subchart);
+	            self.options.table = _C2.default.merge(options.table, config.table);
+	            self.options.tooltip = _C2.default.merge(options.tooltip, config.tooltip);
+	            self.options.legend = _C2.default.merge(options.legend, config.legend);
+	            self.options.axis = _C2.default.mergeDeep(config.axis, options.axis);
 	        }
 	
 	        /**
+	         * Update parent config
+	         */
+	
+	    }, {
+	        key: 'updateConfig',
+	        value: function updateConfig(config) {
+	            var self = this;
+	
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            var options = self.options;
+	
+	            self.id = options.id || config.id;
+	            self.width = options.width || config.width;
+	            self.height = options.height || config.height;
+	            self.colorRange = options.colorRange || config.colorRange;
+	
+	            self.margin = _C2.default.merge(options.margin, config.margin);
+	            self.hover = _C2.default.merge(options.hover, config.hover);
+	            self.click = _C2.default.merge(options.click, config.click);
+	
+	            self.dataOption = _C2.default.mergeDeep(config.data, options.data);
+	
+	            self.options.subchart = _C2.default.merge(options.subchart, config.subchart);
+	            self.options.table = _C2.default.merge(options.table, config.table);
+	            self.options.tooltip = _C2.default.merge(options.tooltip, config.tooltip);
+	            self.options.legend = _C2.default.merge(options.legend, config.legend);
+	            self.options.axis = _C2.default.mergeDeep(config.axis, options.axis);
+	        }
+	
+	        /**
+	         * Draw or Re-draw Base Chart
+	         */
+	
+	    }, {
+	        key: 'draw',
+	        value: function draw() {
+	            var self = this;
+	
+	            var margin = self.margin,
+	                id = self.id,
+	                width = self.width - margin.left - margin.right,
+	                height = self.height - margin.top - margin.bottom;
+	
+	            self.container = d3.select(id);
+	
+	            // Remove existing chart at current container
+	            self.container.selectAll(".c9-svg").data([]).exit().remove();
+	
+	            self.svg = d3.select(id).style('position', 'relative').append("svg").attr('class', 'c9-svg').attr("width", self.width).attr("height", self.height).style('overflow', 'visible'); // to overwrite overflow: hidden by Boostrap as default
+	
+	
+	            self.svg.append("defs").append("clipPath").attr("id", "clip").append("rect").attr("width", width).attr("height", height);
+	
+	            self.body = self.svg.append("g").attr('class', 'c9-chart c9-custom-container').attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	        }
+	
+	        /**
+	         * Get lightening color to create effect when interacting
+	         * @param  {[type]} color [description]
+	         */
+	
+	    }, {
+	        key: 'getLightenColor',
+	        value: function getLightenColor(color) {
+	            return _C2.default.shadeColor(0.5, color);
+	        }
+	
+	        /*=====  End of Main Functions  ======*/
+	
+	        /*========================================
+	        =            User's Functions            =
+	        ========================================*/
+	        /**
 	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
 	         */
 	
 	    }, {
 	        key: 'on',
 	        value: function on(eventType, callback) {}
 	
-	        /*=====  End of Main Functions  ======*/
+	        /**
+	         * Set option via stand-alone function
+	         * @param {[type]} key   [description]
+	         * @param {[type]} value [description]
+	         */
+	
+	    }, {
+	        key: 'setOption',
+	        value: function setOption(key, value) {
+	            var self = this;
+	
+	            _C2.default.set(key, value, self.options);
+	
+	            // Self-update on Base Chart to make sure that self.options consisting
+	            // of all new values
+	            self.updateConfig(self.options);
+	        }
+	
+	        /**
+	         * Update chart based on new data with optional dataConfig
+	         * @param  {[type]} data       [description]
+	         * @param  {[type]} dataConfig [description]
+	         */
+	
+	    }, {
+	        key: 'updateData',
+	        value: function updateData(data, dataConfig) {}
+	        /*=====  End of User's Functions  ======*/
 	
 	    }, {
 	        key: 'container',
@@ -833,19 +1167,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(newContainer) {
-	            if (newContainer) {
-	                this._container = newContainer;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._container = arg;
 	            }
 	        }
 	    }, {
 	        key: 'id',
 	        get: function get() {
+	            if (this._id !== 'body') {
+	                return '#' + this._id;
+	            }
 	            return this._id;
 	        },
-	        set: function set(newId) {
-	            if (newId) {
-	                this._id = newId;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._id = arg;
 	            }
 	        }
 	    }, {
@@ -853,9 +1190,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._width;
 	        },
-	        set: function set(newWidth) {
-	            if (newWidth) {
-	                this._width = newWidth;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._width = arg;
 	            }
 	        }
 	    }, {
@@ -863,9 +1200,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._height;
 	        },
-	        set: function set(newHeight) {
-	            if (newHeight) {
-	                this._height = newHeight;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._height = arg;
 	            }
 	        }
 	    }, {
@@ -897,15 +1234,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'colorRange',
 	        get: function get() {
-	            if (typeof this._colorRange == 'string') {
-	                return d3.scale[this._colorRange]();
-	            } else if (_typeof(this._colorRange) == 'object') {
-	                return d3.scale.ordinal().range(this._colorRange);
+	            var color = this._colorRange;
+	
+	            if (typeof color == 'string') {
+	                try {
+	                    return d3.scale[color]();
+	                } catch (err) {
+	                    return function (i) {
+	                        return color;
+	                    };
+	                }
+	            } else if ((typeof color === 'undefined' ? 'undefined' : _typeof(color)) == 'object') {
+	                return d3.scale.ordinal().range(color);
 	            }
 	        },
-	        set: function set(newColorRange) {
-	            if (newColorRange) {
-	                this._colorRange = newColorRange;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._colorRange = arg;
 	            }
 	        }
 	    }, {
@@ -913,9 +1258,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._margin;
 	        },
-	        set: function set(newMargin) {
-	            if (newMargin) {
-	                this._margin = newMargin;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._margin = arg;
 	            }
 	        }
 	    }, {
@@ -933,9 +1278,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._svg;
 	        },
-	        set: function set(newSvg) {
-	            if (newSvg) {
-	                this._svg = newSvg;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._svg = arg;
 	            }
 	        }
 	    }, {
@@ -943,9 +1288,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._body;
 	        },
-	        set: function set(newBody) {
-	            if (newBody) {
-	                this._body = newBody;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._body = arg;
 	            }
 	        }
 	    }, {
@@ -953,9 +1298,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._options;
 	        },
-	        set: function set(newOptions) {
-	            if (newOptions) {
-	                this._options = newOptions;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
 	            }
 	        }
 	    }, {
@@ -963,9 +1308,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._hover;
 	        },
-	        set: function set(newHover) {
-	            if (newHover) {
-	                this._hover = newHover;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._hover = arg;
 	            }
 	        }
 	    }, {
@@ -989,6 +1334,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 	    }, {
+	        key: 'dataSource',
+	        get: function get() {
+	            return this._dataSource;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._dataSource = arg;
+	            }
+	        }
+	    }, {
 	        key: 'eventFactory',
 	        get: function get() {
 	            return this._eventFactory;
@@ -996,6 +1351,86 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(arg) {
 	            if (arg) {
 	                this._eventFactory = arg;
+	            }
+	        }
+	    }, {
+	        key: 'x',
+	        get: function get() {
+	            return this._x;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._x = arg;
+	            }
+	        }
+	    }, {
+	        key: 'y',
+	        get: function get() {
+	            return this._y;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._y = arg;
+	            }
+	        }
+	    }, {
+	        key: 'chartType',
+	        get: function get() {
+	            return this._chartType;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._chartType = arg;
+	            }
+	        }
+	    }, {
+	        key: 'title',
+	        get: function get() {
+	            return this._title;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._title = arg;
+	            }
+	        }
+	    }, {
+	        key: 'axis',
+	        get: function get() {
+	            return this._axis;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._axis = arg;
+	            }
+	        }
+	    }, {
+	        key: 'legend',
+	        get: function get() {
+	            return this._legend;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._legend = arg;
+	            }
+	        }
+	    }, {
+	        key: 'table',
+	        get: function get() {
+	            return this._table;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._table = arg;
+	            }
+	        }
+	    }, {
+	        key: 'tooltip',
+	        get: function get() {
+	            return this._tooltip;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._tooltip = arg;
 	            }
 	        }
 	    }]);
@@ -1042,20 +1477,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    },
 	
-	    // setDefaultConfig: function() {
-	    //     var self = this;
-	
-	    //     if (self.defaultConfig == null || self.defaultConfig === undefined) {
-	    //         return;
-	    //     } else {
-	    //         self.lastConfig = self.merge(Chart._options, Chart);
-	    //         self.each(self.lastConfig, function(value, index) {
-	    //             // var prefixCfg = self.setPrefix(index);
-	    //             self.setValue(self.lastConfig[index], index);
-	    //         }, self);
-	    //     }
-	    // }
-	
 	    setValue: function setValue(value, key) {
 	        var self = this;
 	        self[key] = value;
@@ -1084,17 +1505,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return !Util.isEmpty(func) && typeof func === 'function';
 	    },
 	
-	    merge: function merge(obj1, obj2) {
+	    // Overlap source by target
+	    merge: function merge(target, source) {
 	        var obj3 = {};
-	        for (var attrname in obj2) {
-	            if (!Util.isEmpty(obj2[attrname])) obj3[attrname] = obj2[attrname];
+	        for (var attrname in source) {
+	            if (!Util.isEmpty(source[attrname])) obj3[attrname] = source[attrname];
 	        }
-	        for (var attrname in obj1) {
-	            if (!Util.isEmpty(obj1[attrname])) obj3[attrname] = obj1[attrname];
+	        for (var attrname in target) {
+	            if (!Util.isEmpty(target[attrname])) obj3[attrname] = target[attrname];
 	        }
 	        return obj3;
 	    },
 	
+	    // Overlap target by source
 	    mergeDeep: function mergeDeep(target, source) {
 	        return _mergeDeep(target, source);
 	    },
@@ -1102,30 +1525,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    get: function get(_key, _data) {
 	        var _keys = _key.split(".");
 	        var _current = _data;
-	        var self = this;
 	
-	        for (var i = 0, len = _keys.length; i < len; i++) {
-	            var _fun = _keys[i].split("|");
-	
-	            if (_fun && _fun.length == 2) {
-	                _keys[i] = _fun[0];
-	                _fun = _fun[1];
-	            } else {
-	                _fun = null;
-	            }
+	        for (var i = 0; i < _keys.length; i++) {
 	
 	            if ('undefined' == typeof _current[_keys[i]]) {
 	                return '';
 	            } else {
 	                _current = _current[_keys[i]];
 	            }
-	
-	            if (null !== _fun) {
-	                _current = self.filter[_fun].call(this, _current);
-	            }
 	        }
 	
 	        return _current;
+	    },
+	
+	    set: function set(_key, _value, _context) {
+	        var _current = _context; // a moving reference to internal objects within obj
+	        var _keys = _key.split('.');
+	        var len = _keys.length;
+	        for (var i = 0; i < len - 1; i++) {
+	            var _handle = _keys[i];
+	            if (!_current[_handle]) _current[_handle] = {};
+	            _current = _current[_handle];
+	        }
+	
+	        _current[_keys[len - 1]] = _value;
 	    },
 	
 	    max: function max(arr) {
@@ -1155,15 +1578,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _temp = new Array();
 	        var _min = 0,
 	            _max = 0;
-	        if (type == "stack") data.forEach(function (d) {
-	            d.forEach(function (s) {
-	                if (s.y0 > 0) _temp.push(s.y1);else _temp.push(s.y1 + s.y0);
+	        if (type == "stack") {
+	            data.forEach(function (d) {
+	                d.forEach(function (s) {
+	                    if (s.y0 > 0) _temp.push(s.y1);else _temp.push(s.y1 + s.y0);
+	                });
 	            });
-	        });else data.forEach(function (d) {
-	            d.forEach(function (s) {
-	                _temp.push(s.y0);
+	        } else {
+	            data.forEach(function (d) {
+	                d.forEach(function (s) {
+	                    _temp.push(s.y0);
+	                });
 	            });
-	        });
+	        }
 	
 	        var _newMin = self.min(_temp);
 	        var _newMax = self.max(_temp);
@@ -1181,6 +1608,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // Convert color 'from' to 'to' (if any) in propotion of 'p'
 	    // Use to lighten/darken specific color
 	    shadeColor: function shadeColor(p, from, to) {
+	        // Convert color from 'Name' to 'Hex'
+	        from = Util.convertColorToHex(from) || from;
+	
 	        if (typeof p != "number" || p < -1 || p > 1 || typeof from != "string" || from[0] != 'r' && from[0] != '#' || typeof to != "string" && typeof to != "undefined") return null; //ErrorCheck
 	        if (!this.sbcRip) this.sbcRip = function (d) {
 	            var l = d.length,
@@ -1203,8 +1633,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            b = p < 0,
 	            p = b ? p * -1 : p,
 	            to = to && to != "c" ? to : b ? "#000000" : "#FFFFFF",
-	            f = sbcRip(from),
-	            t = sbcRip(to);
+	            f = this.sbcRip(from),
+	            t = this.sbcRip(to);
 	        if (!f || !t) return null; //ErrorCheck
 	        if (h) return "rgb(" + r((t[0] - f[0]) * p + f[0]) + "," + r((t[1] - f[1]) * p + f[1]) + "," + r((t[2] - f[2]) * p + f[2]) + (f[3] < 0 && t[3] < 0 ? ")" : "," + (f[3] > -1 && t[3] > -1 ? r(((t[3] - f[3]) * p + f[3]) * 10000) / 10000 : t[3] < 0 ? f[3] : t[3]) + ")");else return "#" + (0x100000000 + (f[3] > -1 && t[3] > -1 ? r(((t[3] - f[3]) * p + f[3]) * 255) : t[3] > -1 ? r(t[3] * 255) : f[3] > -1 ? r(f[3] * 255) : 255) * 0x1000000 + r((t[0] - f[0]) * p + f[0]) * 0x10000 + r((t[1] - f[1]) * p + f[1]) * 0x100 + r((t[2] - f[2]) * p + f[2])).toString(16).slice(f[3] > -1 || t[3] > -1 ? 1 : 3);
 	    },
@@ -1234,6 +1664,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    isObject: function isObject(object) {
 	        return object && (typeof object === 'undefined' ? 'undefined' : _typeof(object)) === 'object' && !Array.isArray(object);
+	    },
+	
+	    convertColorToHex: function convertColorToHex(colour) {
+	        var colours = {
+	            "aliceblue": "#f0f8ff", "antiquewhite": "#faebd7", "aqua": "#00ffff", "aquamarine": "#7fffd4", "azure": "#f0ffff",
+	            "beige": "#f5f5dc", "bisque": "#ffe4c4", "black": "#000000", "blanchedalmond": "#ffebcd", "blue": "#0000ff", "blueviolet": "#8a2be2", "brown": "#a52a2a", "burlywood": "#deb887",
+	            "cadetblue": "#5f9ea0", "chartreuse": "#7fff00", "chocolate": "#d2691e", "coral": "#ff7f50", "cornflowerblue": "#6495ed", "cornsilk": "#fff8dc", "crimson": "#dc143c", "cyan": "#00ffff",
+	            "darkblue": "#00008b", "darkcyan": "#008b8b", "darkgoldenrod": "#b8860b", "darkgray": "#a9a9a9", "darkgreen": "#006400", "darkkhaki": "#bdb76b", "darkmagenta": "#8b008b", "darkolivegreen": "#556b2f",
+	            "darkorange": "#ff8c00", "darkorchid": "#9932cc", "darkred": "#8b0000", "darksalmon": "#e9967a", "darkseagreen": "#8fbc8f", "darkslateblue": "#483d8b", "darkslategray": "#2f4f4f", "darkturquoise": "#00ced1",
+	            "darkviolet": "#9400d3", "deeppink": "#ff1493", "deepskyblue": "#00bfff", "dimgray": "#696969", "dodgerblue": "#1e90ff",
+	            "firebrick": "#b22222", "floralwhite": "#fffaf0", "forestgreen": "#228b22", "fuchsia": "#ff00ff",
+	            "gainsboro": "#dcdcdc", "ghostwhite": "#f8f8ff", "gold": "#ffd700", "goldenrod": "#daa520", "gray": "#808080", "green": "#008000", "greenyellow": "#adff2f",
+	            "honeydew": "#f0fff0", "hotpink": "#ff69b4",
+	            "indianred ": "#cd5c5c", "indigo": "#4b0082", "ivory": "#fffff0", "khaki": "#f0e68c",
+	            "lavender": "#e6e6fa", "lavenderblush": "#fff0f5", "lawngreen": "#7cfc00", "lemonchiffon": "#fffacd", "lightblue": "#add8e6", "lightcoral": "#f08080", "lightcyan": "#e0ffff", "lightgoldenrodyellow": "#fafad2",
+	            "lightgrey": "#d3d3d3", "lightgreen": "#90ee90", "lightpink": "#ffb6c1", "lightsalmon": "#ffa07a", "lightseagreen": "#20b2aa", "lightskyblue": "#87cefa", "lightslategray": "#778899", "lightsteelblue": "#b0c4de",
+	            "lightyellow": "#ffffe0", "lime": "#00ff00", "limegreen": "#32cd32", "linen": "#faf0e6",
+	            "magenta": "#ff00ff", "maroon": "#800000", "mediumaquamarine": "#66cdaa", "mediumblue": "#0000cd", "mediumorchid": "#ba55d3", "mediumpurple": "#9370d8", "mediumseagreen": "#3cb371", "mediumslateblue": "#7b68ee",
+	            "mediumspringgreen": "#00fa9a", "mediumturquoise": "#48d1cc", "mediumvioletred": "#c71585", "midnightblue": "#191970", "mintcream": "#f5fffa", "mistyrose": "#ffe4e1", "moccasin": "#ffe4b5",
+	            "navajowhite": "#ffdead", "navy": "#000080",
+	            "oldlace": "#fdf5e6", "olive": "#808000", "olivedrab": "#6b8e23", "orange": "#ffa500", "orangered": "#ff4500", "orchid": "#da70d6",
+	            "palegoldenrod": "#eee8aa", "palegreen": "#98fb98", "paleturquoise": "#afeeee", "palevioletred": "#d87093", "papayawhip": "#ffefd5", "peachpuff": "#ffdab9", "peru": "#cd853f", "pink": "#ffc0cb", "plum": "#dda0dd", "powderblue": "#b0e0e6", "purple": "#800080",
+	            "red": "#ff0000", "rosybrown": "#bc8f8f", "royalblue": "#4169e1",
+	            "saddlebrown": "#8b4513", "salmon": "#fa8072", "sandybrown": "#f4a460", "seagreen": "#2e8b57", "seashell": "#fff5ee", "sienna": "#a0522d", "silver": "#c0c0c0", "skyblue": "#87ceeb", "slateblue": "#6a5acd", "slategray": "#708090", "snow": "#fffafa", "springgreen": "#00ff7f", "steelblue": "#4682b4",
+	            "tan": "#d2b48c", "teal": "#008080", "thistle": "#d8bfd8", "tomato": "#ff6347", "turquoise": "#40e0d0",
+	            "violet": "#ee82ee",
+	            "wheat": "#f5deb3", "white": "#ffffff", "whitesmoke": "#f5f5f5",
+	            "yellow": "#ffff00", "yellowgreen": "#9acd32"
+	        };
+	
+	        if (typeof colours[colour.toLowerCase()] != 'undefined') return colours[colour.toLowerCase()];
+	
+	        return false;
 	    }
 	};
 	
@@ -1241,7 +1704,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (Util.isObject(target) && Util.isObject(source)) {
 	        for (var key in source) {
 	            if (Util.isObject(source[key])) {
-	                if (!target[key]) Object.assign(target, _defineProperty({}, key, {}));
+	                if (Helper.isEmpty(target[key])) {
+	                    Object.assign(target, _defineProperty({}, key, {}));
+	                }
 	                _mergeDeep(target[key], source[key]);
 	            } else {
 	                Object.assign(target, _defineProperty({}, key, source[key]));
@@ -1255,6 +1720,319 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _C = __webpack_require__(3);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Axis = function () {
+	    function Axis(options, chart, width, height) {
+	        _classCallCheck(this, Axis);
+	
+	        var self = this;
+	
+	        var config = {
+	            x: {
+	                tick: {
+	                    rotate: 0,
+	                    count: 10, // number of ticks to display
+	                    size: 6, // size of tick
+	                    padding: 3,
+	                    format: undefined,
+	                    values: [],
+	                    //the following use for timeline chart
+	                    time: undefined,
+	                    interval: 1
+	                },
+	                label: {
+	                    text: "Name",
+	                    position: "default"
+	                },
+	                show: true,
+	                grid: false,
+	                type: ""
+	            },
+	            y: {
+	                tick: {
+	                    rotate: 0,
+	                    count: 10,
+	                    size: 6,
+	                    padding: 3,
+	                    format: undefined,
+	                    values: []
+	                },
+	                label: {
+	                    text: "Value",
+	                    position: "default"
+	                },
+	                show: true,
+	                grid: true,
+	                type: ""
+	            }
+	        };
+	
+	        self._options = options;
+	        self._chart = chart;
+	        self._width = width;
+	        self._height = height;
+	
+	        self.updateConfig(config);
+	    }
+	
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+	
+	    _createClass(Axis, [{
+	        key: "updateConfig",
+	
+	
+	        /*=====  End of Setter  ======*/
+	
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function updateConfig(config) {
+	            var self = this;
+	
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            self.x = self.chart.x;
+	            self.y = self.chart.y;
+	
+	            self.data = self.chart.dataTarget;
+	            self.isLogaricVariant = self.chart.options.isLogaric;
+	
+	            if (self.chart.chartType == "timeline") {
+	                var xScale = d3.time.scale().domain([self.chart.options.starting, self.chart.options.ending]).range([0, self.width]);
+	
+	                self.xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(self.options.x.tick.format === undefined ? d3.time.format("%I %p") : self.options.x.tick.format)
+	                // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
+	                .ticks(self.options.x.tick.time || self.options.x.tick.count, self.options.x.tick.interval);
+	                // delete options.starting;
+	                // delete options.ending;
+	            } else {
+	                self.xAxis = d3.svg.axis().scale(self.x).orient("bottom").tickPadding(self.options.x.tick.padding).ticks(self.options.x.tick.count).tickValues(self.options.x.tick.values.length > 0 ? self.options.x.tick.values : undefined).tickFormat(self.options.x.type == "timeseries" ? self.options.x.tick.format || d3.time.format("%Y-%m-%d") : self.options.x.tick.format ? self.options.x.tick.format : undefined);
+	
+	                // In LOG scale, can't specify default number of ticks
+	                // must be filter with tickFormat instead
+	                // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
+	                if (self.isLogaricVariant) {
+	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count, self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined);
+	                } else {
+	                    self.yAxis = d3.svg.axis().scale(self.y).orient("left").ticks(self.options.y.tick.count).tickPadding(self.options.y.tick.padding).tickValues(self.options.y.tick.values.length > 0 ? self.options.y.tick.values : undefined).tickFormat(self.options.y.type == "timeseries" ? self.options.y.tick.format || d3.time.format("%Y-%m-%d") : self.options.y.tick.format ? self.options.y.tick.format : undefined);
+	                }
+	            }
+	
+	            if (self.chart.chartType != "timeline") {
+	                // Grid
+	                if (self.options.x.grid) {
+	                    self.xAxis.innerTickSize(-self.height).outerTickSize(0);
+	                }
+	
+	                if (self.options.y.grid) {
+	                    self.yAxis.innerTickSize(-self.width).outerTickSize(0);
+	                }
+	            }
+	
+	            var textAnchor = function textAnchor(angle) {
+	                var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+	                return sin == 0 ? "middle" : sin > 0 ? "start" : "end";
+	            };
+	
+	            var textDx = function textDx(angle) {
+	                var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+	                return 8 * sin;
+	            };
+	
+	            var textY = function textY(angle) {
+	                return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
+	            };
+	
+	            //draw x axis
+	            self.chart.body.append("g").attr("class", "c9-axis c9-axis-x").attr("transform", "translate(0," + self.height + ")").call(self.xAxis);
+	
+	            //draw tick
+	            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
+	            //draw label
+	            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
+	
+	            //hide x axis
+	            if (!self.options.x.show) {
+	                d3.select(".c9-axis.c9-axis-x>.domain").style("display", "none");
+	                if (!self.options.x.grid) d3.selectAll(".c9-axis.c9-axis-x>g.tick>line").style("display", "none");
+	            }
+	
+	            if (self.chart.chartType != "timeline") {
+	                self.chart.body.append("g").attr("class", "c9-axis c9-axis-y").call(self.yAxis);
+	
+	                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.label.text);
+	
+	                if (!self.options.y.show) {
+	                    d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
+	                    if (!self.options.y.grid) d3.selectAll(".c9-axis.c9-axis-y>g.tick>line").style("display", "none");
+	                }
+	            }
+	        }
+	    }, {
+	        key: "update",
+	        value: function update(x, y, duration) {
+	            var self = this;
+	
+	            if (!_C2.default.isEmpty(x)) {
+	                self.x = x;
+	
+	                if (self.chart.chartType == 'timeline') {
+	                    var xScale = d3.time.scale().domain([self.chart.options.starting, self.chart.options.ending]).range([0, self.width]);
+	
+	                    self.xAxis.scale(xScale);
+	                } else {
+	                    self.xAxis.scale(self.x);
+	                }
+	
+	                self.chart.body.select('.c9-axis.c9-axis-x').transition().duration(duration).call(self.xAxis);
+	            }
+	            if (!_C2.default.isEmpty(y)) {
+	                self.y = y;
+	
+	                if (self.chart.chartType == 'timeline') {
+	                    return;
+	                } else {
+	                    self.yAxis.scale(self.y);
+	                }
+	
+	                self.chart.body.select(".c9-axis.c9-axis-y").transition().duration(duration).call(self.yAxis);
+	            }
+	        }
+	    }, {
+	        key: "draw",
+	        value: function draw() {
+	            var self = this;
+	
+	            self.update(self.x, self.y, 100);
+	        }
+	        /*=====  End of Main Functions  ======*/
+	
+	    }, {
+	        key: "x",
+	        get: function get() {
+	            return this._x;
+	        },
+	
+	
+	        /*=====  End of Getter  ======*/
+	
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	
+	        set: function set(arg) {
+	            if (arg) {
+	                this._x = arg;
+	            }
+	        }
+	    }, {
+	        key: "y",
+	        get: function get() {
+	            return this._y;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._y = arg;
+	            }
+	        }
+	    }, {
+	        key: "xAxis",
+	        get: function get() {
+	            return this._xAxis;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._xAxis = arg;
+	            }
+	        }
+	    }, {
+	        key: "yAxis",
+	        get: function get() {
+	            return this._yAxis;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._yAxis = arg;
+	            }
+	        }
+	    }, {
+	        key: "chart",
+	        get: function get() {
+	            return this._chart;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._chart = arg;
+	            }
+	        }
+	    }, {
+	        key: "options",
+	        get: function get() {
+	            return this._options;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
+	            }
+	        }
+	    }, {
+	        key: "width",
+	        get: function get() {
+	            return this._width;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._width = arg;
+	            }
+	        }
+	    }, {
+	        key: "height",
+	        get: function get() {
+	            return this._height;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._height = arg;
+	            }
+	        }
+	    }, {
+	        key: "data",
+	        get: function get() {
+	            return this._data;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._data = arg;
+	            }
+	        }
+	    }]);
+	
+	    return Axis;
+	}();
+	
+	exports.default = Axis;
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1273,405 +2051,94 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var Axis = function () {
-	    function Axis(options, body, data, width, height, x, y) {
-	        _classCallCheck(this, Axis);
-	
-	        var config = {
-	            x: {
-	                tick: {
-	                    rotate: 0,
-	                    count: 10,
-	                    size: 6,
-	                    padding: 3,
-	                    format: undefined,
-	                    values: [],
-	                    //the following use for timeline chart
-	                    type: d3.time.hours,
-	                    interval: 1
-	                },
-	                label: {
-	                    text: "Name",
-	                    position: "default"
-	                },
-	                show: false,
-	                grid: false,
-	                type: ""
-	            },
-	            y: {
-	                tick: {
-	                    rotate: 0,
-	                    count: 10,
-	                    size: 6,
-	                    padding: 3,
-	                    format: undefined,
-	                    values: []
-	                },
-	                label: {
-	                    text: "Value",
-	                    position: "default"
-	                },
-	                show: false,
-	                grid: false,
-	                type: ""
-	            }
-	        };
-	
-	        this._xShow = options.x.show || config.x.show;
-	        this._xText = options.x.text || config.x.text;
-	        this._yShow = options.y.show || (body.type == "timeline" ? false : config.y.show);
-	        this._yText = options.y.text || config.y.text;
-	        // this._isLogaricVariant     = options.isLogaric      || config.isLogaric;
-	        this._xTick = options.x.tick || config.x.tick;
-	        this._yTick = options.y.tick || config.y.tick;
-	        this._xGrid = options.x.grid || config.x.grid;
-	        this._yGrid = options.y.grid || config.y.grid;
-	        this._xType = options.x.type || config.x.type;
-	        this._yType = options.y.type || config.y.type;
-	        this._x = x;
-	        this._y = y;
-	
-	        // x.domain(data.map(function(d) {
-	        //     return d.name || d[0].name;
-	        // }));
-	
-	        // y.domain([
-	        //     d3.min(data, function(d) {
-	        //         return d.value;
-	        //     }), 
-	        //     d3.max(data, function(d) {
-	        //         return d.value;
-	        //     })
-	        // ]);
-	
-	        if (body.type == "timeline") {
-	
-	            var xScale = d3.time.scale().domain([options.starting, options.ending]).range([0, width]);
-	            this._xAxis = d3.svg.axis().scale(xScale).orient("bottom").tickFormat(this._xTick.format === undefined ? d3.time.format("%I %p") : this._xTick.format)
-	            // .tickSize(options.tickFormat === undefined ? 6 : options.tickFormat.tickSize)
-	            .ticks(this._xTick.type, this._xTick.interval);
-	            delete options.starting;
-	            delete options.ending;
-	        } else {
-	
-	            this._xAxis = d3.svg.axis().scale(this._x).orient("bottom").tickPadding(this._xTick.padding).ticks(this._xTick.count).tickValues(this._xTick.values.length > 0 ? this._xTick.values : undefined).tickFormat(this._xType == "timeseries" ? this._xTick.format || d3.time.format("%Y-%m-%d") : this._xTick.format ? this._xTick.format : undefined);
-	
-	            // In LOG scale, can't specify default number of ticks
-	            // must be filter with tickFormat instead
-	            // refer: https://github.com/d3/d3/wiki/Quantitative-Scales#log_ticks
-	            if (this._isLogaricVariant) {
-	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").tickPadding(this._yTick.padding).ticks(this._yTick.count, this._yType == "timeseries" ? this._yTick.format || "%Y-%m-%d" : this._yTick.format ? this._yTick.format : undefined).tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined);
-	            } else {
-	                this._yAxis = d3.svg.axis().scale(this._y).orient("left").tickPadding(this._yTick.padding).ticks(this._yTick.count).tickValues(this._yTick.values.length > 0 ? this._yTick.values : undefined).tickFormat(this._yType == "timeseries" ? this._yTick.format || d3.time.format("%Y-%m-%d") : this._yTick.format ? this._yTick.format : undefined);
-	            }
-	        }
-	
-	        if (body.type != "timeline") {
-	            // Grid
-	            if (this._xGrid) {
-	                // Select CURRENT svg container, to make this axis outside
-	                // as a SEPARATED component, just like AXIS, of CHART
-	                // d3.select(this._svg[0][0].parentNode)
-	                this._xAxis.innerTickSize(-height).outerTickSize(0);
-	            }
-	
-	            if (this._yGrid) {
-	                // Select CURRENT svg container, to make this axis outside
-	                // as a SEPARATED component, just like AXIS, of CHART
-	                // d3.select(this._svg[0][0].parentNode)
-	                this._yAxis.innerTickSize(-width).outerTickSize(0);
-	            }
-	        }
-	
-	        this._body = body;
-	        this._data = data;
-	        this._width = width; // TODO : ADD Getter/setter
-	        this._height = height;
-	
-	        var textAnchor = function textAnchor(angle) {
-	            var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
-	            return sin == 0 ? "middle" : sin > 0 ? "start" : "end";
-	        };
-	
-	        var textDx = function textDx(angle) {
-	            var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
-	            return 8 * sin;
-	        };
-	
-	        var textY = function textY(angle) {
-	            return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
-	        };
-	
-	        //draw x axis
-	        this._body.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(this._xAxis);
-	        //draw tick
-	        d3.select(".x.axis").selectAll("text").style("text-anchor", textAnchor(this._xTick.rotate)).attr("y", textY(this._xTick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(this._xTick.rotate)).attr("transform", "rotate(" + this._xTick.rotate + ")");
-	        //draw label
-	        d3.select(".x.axis").append("text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", width + 20).attr("y", 10).style("text-anchor", "start").text(this._xText);
-	
-	        //hide x axis
-	        if (!this._xShow) {
-	            d3.select(".x.axis>.domain").style("display", "none");
-	            if (!this._xGrid) d3.selectAll(".x.axis>g.tick>line").style("display", "none");
-	        }
-	
-	        if (body.type != "timeline") {
-	            this._body.append("g").attr("class", "y axis").call(this._yAxis);
-	            d3.select(".y.axis").append("text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(this._yText);
-	
-	            if (!this._yShow) {
-	                d3.select(".y.axis>.domain").style("display", "none");
-	                if (!this._yGrid) d3.selectAll(".y.axis>g.tick>line").style("display", "none");
-	            }
-	        }
-	
-	        /**
-	            TODO:
-	            - Add y2-axis
-	        **/
-	    }
-	
-	    _createClass(Axis, [{
-	        key: 'update',
-	        value: function update(x, y, duration) {
-	            if (x) {
-	                this._x = x;
-	                this._body.select('.x.axis').transition().duration(duration).call(this._xAxis);
-	            }
-	            if (y) {
-	                this._y = y;
-	                this._body.select(".y.axis").transition().duration(duration).call(this._yAxis);
-	            }
-	        }
-	
-	        /*==============================
-	        =            Getter            =
-	        ==============================*/
-	
-	    }, {
-	        key: 'xAxis',
-	        get: function get() {
-	            return this._xAxis;
-	        },
-	
-	
-	        /*=====  End of Getter  ======*/
-	
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	
-	        set: function set(newXAxis) {
-	            if (newXAxis) {
-	                this._xAxis = newXAxis;
-	            }
-	        }
-	    }, {
-	        key: 'yAxis',
-	        get: function get() {
-	            return this._yAxis;
-	        },
-	        set: function set(newYAxis) {
-	            if (newYAxis) {
-	                this._yAxis = newYAxis;
-	            }
-	        }
-	    }, {
-	        key: 'xAxisShow',
-	        get: function get() {
-	            return this._xAxisShow;
-	        },
-	        set: function set(newXAxisShow) {
-	            if (newXAxisShow) {
-	                this._xAxisShow = newXAxisShow;
-	            }
-	        }
-	    }, {
-	        key: 'xAxisPadding',
-	        get: function get() {
-	            return this._xAxisPadding;
-	        },
-	        set: function set(newXAxisPadding) {
-	            if (newXAxisPadding) {
-	                this._xAxisPadding = newXAxisPadding;
-	            }
-	        }
-	    }, {
-	        key: 'yAxisShow',
-	        get: function get() {
-	            return this._yAxisShow;
-	        },
-	        set: function set(newYAxisShow) {
-	            if (newYAxisShow) {
-	                this._yAxisShow = newYAxisShow;
-	            }
-	        }
-	    }, {
-	        key: 'yAxisPadding',
-	        get: function get() {
-	            return this._yAxisPadding;
-	        },
-	        set: function set(newYAxisPadding) {
-	            if (newYAxisPadding) {
-	                this._yAxisPadding = newYAxisPadding;
-	            }
-	        }
-	    }, {
-	        key: 'isLogaricVariant',
-	        get: function get() {
-	            return this._isLogaricVariant;
-	        },
-	        set: function set(newIsLogaricVariant) {
-	            if (newIsLogaricVariant) {
-	                this._isLogaricVariant = newIsLogaricVariant;
-	            }
-	        }
-	    }, {
-	        key: 'y2AxisShow',
-	        get: function get() {
-	            return this._y2AxisShow;
-	        },
-	        set: function set(newY2AxisShow) {
-	            if (newY2AxisShow) {
-	                this._y2AxisShow = newY2AxisShow;
-	            }
-	        }
-	    }, {
-	        key: 'y2AxisPadding',
-	        get: function get() {
-	            return this._y2AxisPadding;
-	        },
-	        set: function set(newY2AxisPadding) {
-	            if (newY2AxisPadding) {
-	                this._y2AxisPadding = newY2AxisPadding;
-	            }
-	        }
-	
-	        /*=====  End of Setter  ======*/
-	
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	        /*=====  End of Main Functions  ======*/
-	
-	    }]);
-	
-	    return Axis;
-	}();
-	
-	exports.default = Axis;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
 	var Title = function () {
-	    function Title(options, body, width, height, margin) {
+	    function Title(options, chart) {
 	        _classCallCheck(this, Title);
 	
+	        var self = this;
+	
 	        var config = {
-	            titleShow: true,
-	            titleText: "Sample Chart",
-	            titlePosition: 'top',
-	            titleSize: "14px"
+	            show: true,
+	            text: "Sample Chart",
+	            position: 'top',
+	            fontSize: "14px"
 	        };
 	
-	        this._titleShow = options.titleShow || config.titleShow;
-	        this._titleText = options.titleText || config.titleText;
-	        this._titlePosition = options.titlePosition || config.titlePosition;
-	        this._titleSize = options.titleSize || config.titleSize;
+	        self._options = options;
+	        self._chart = chart;
 	
-	        this._body = body;
-	
-	        if (this._titleShow) {
-	            var self = this;
-	            // Select CURRENT body container, to make this axis outside
-	            // as a SEPARATED component, just like AXIS, of CHART
-	            var text = d3.select(self._body[0][0].parentNode).append("g").attr('class', 'c9-custom-title c9-custom-title-container').append("text").attr("class", "c9-custom-title c9-custom-title-text");
-	
-	            // Get title width: text.node().getComputedTextLength()           
-	            text.attr("x", (width - text.node().getComputedTextLength()) / 2).attr("y", this.setYLocation(height, margin)).attr("text-anchor", "middle").style("font-size", this._titleSize).text(this._titleText);
-	        }
+	        self.updateConfig(config);
 	    }
 	
 	    /*==============================
 	    =            Getter            =
 	    ==============================*/
 	
-	    _createClass(Title, [{
-	        key: 'setYLocation',
 	
+	    _createClass(Title, [{
+	        key: 'updateConfig',
 	
 	        /*=====  End of Setter  ======*/
 	
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
+	        value: function updateConfig(config) {
+	            var self = this;
+	
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	        }
+	    }, {
+	        key: 'draw',
+	        value: function draw() {
+	            var self = this;
+	
+	            if (self.options.show) {
+	                var text = self.chart.svg.append("g").attr('class', 'c9-custom-title c9-custom-title-container').append("text").attr("class", "c9-custom-title c9-custom-title-text");
+	
+	                // Get title self.chart.width: text.node().getComputedTextLength()           
+	                text.attr("x", (self.chart.width - text.node().getComputedTextLength()) / 2)
+	                // text.attr("x", (((self.chart.width - 200) / 2)))           
+	                .attr("y", self.setYLocation(self.chart.height, self.chart.margin)).attr("text-anchor", "middle").style("font-size", self.options.fontSize).text(self.options.text);
+	            }
+	        }
+	    }, {
+	        key: 'setYLocation',
 	        value: function setYLocation(height, margin) {
-	            if (this.titlePosition === 'top') {
+	            var self = this;
+	
+	            if (self.options.position === 'top') {
 	                return margin.top / 2;
-	            } else if (this.titlePosition === 'bottom') {
+	            } else if (self.options.position === 'bottom') {
 	                return height - margin.bottom / 2;
 	            }
 	        }
 	        /*=====  End of Main Functions  ======*/
 	
 	    }, {
-	        key: 'titleShow',
+	        key: 'chart',
 	        get: function get() {
-	            return this._titleShow;
+	            return this._chart;
 	        },
-	
 	
 	        /*=====  End of Getter  ======*/
 	
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	
-	        set: function set(newTitleShow) {
-	            if (newTitleShow) {
-	                this._titleShow = newTitleShow;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._chart = arg;
 	            }
 	        }
 	    }, {
-	        key: 'titleText',
+	        key: 'options',
 	        get: function get() {
-	            return this._titleText;
+	            return this._options;
 	        },
-	        set: function set(newTitleText) {
-	            if (newTitleText) {
-	                this._titleText = newTitleText;
-	            }
-	        }
-	    }, {
-	        key: 'titlePosition',
-	        get: function get() {
-	            return this._titlePosition;
-	        },
-	        set: function set(newTitlePosition) {
-	            if (newTitlePosition) {
-	                this._titlePosition = newTitlePosition;
-	            }
-	        }
-	    }, {
-	        key: 'titleSize',
-	        get: function get() {
-	            return this._titleSize;
-	        },
-	        set: function set(newTitleSize) {
-	            if (newTitleSize) {
-	                this._titleSize = newtitleSize;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
 	            }
 	        }
 	    }]);
@@ -1702,36 +2169,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var Legend = function () {
-	    function Legend(options, body, data) {
+	    function Legend(options, chart) {
 	        _classCallCheck(this, Legend);
-	
-	        var config = {
-	            show: false,
-	            position: "top",
-	            box: false,
-	            size: 10,
-	            textSize: "12px",
-	            margin: [5, 5, 5, 5],
-	            space: 10
-	        };
 	
 	        var self = this;
 	
-	        self._show = options.show ? options.show : config.show;
-	        self._textSize = options.textSize || config.textSize;
-	        self._position = options.position || config.position;
-	        self._size = options.size || config.size;
-	        self._box = options.box || config.box;
-	        self._margin = options.margin || config.margin;
-	        self._space = options.space || config.space;
-	        // self._legendStyle        = options.legendStyle      || config.legendStyle;
+	        var config = {
+	            show: true,
+	            position: "top",
+	            size: 10,
+	            fontSize: "12px",
+	            fontColor: "#999",
+	            fontWeight: 'bold',
+	            margin: [5, 5, 5, 5],
+	            space: 10,
+	            box: false
+	        };
 	
 	        self._options = options;
-	        self._body = body;
-	        self._maxWidth = d3.select(body[0][0].parentNode).attr('width');
-	        self._maxHeight = d3.select(body[0][0].parentNode).attr('height');
-	        // self._color     = color;
-	        self._data = data;
+	        self._chart = chart;
+	
+	        self.updateConfig(config);
 	    }
 	
 	    /*==============================
@@ -1740,60 +2198,66 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(Legend, [{
-	        key: "draw",
-	
+	        key: "updateConfig",
 	
 	        /*=====  End of Setter  ======*/
 	
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
-	        value: function draw() {
+	        value: function updateConfig(config) {
 	            var self = this;
 	
-	            if (self.show) {
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            self.maxWidth = self.chart.width;
+	            self.maxHeight = self.chart.height;
+	            self.data = self.chart.dataTarget;
+	        }
+	    }, {
+	        key: "update",
+	        value: function update(data) {
+	            var self = this;
+	
+	            self.data = data;
+	
+	            if (self.options.show) {
+	                // Remove current legend
+	                self.chart.svg.selectAll('.c9-custom-legend.c9-custom-legend-container').remove();
+	
 	                // var color = self.color;
-	                // TODO: Remove these conditional checks by getData for general purposes
 	                var domain = [];
 	
-	                if (self._body.type == "bar") {
+	                if (self.chart.chartType == "bar") {
 	                    self.data = self.data[self.data.reduce(function (p, c, i, a) {
 	                        return a[p].length > c.length ? p : i;
 	                    }, 0)];
-	                } else if (self._body.type == "line") {
-	                    self.data = d3.nest().key(function (d) {
-	                        return d.name;
-	                    }).entries(self.data);
-	                    self.data.forEach(function (d) {
-	                        d.color = d.values[0].color;
-	                    });
 	                }
 	
 	                // Legend will be appended in main SVG container
-	                var container = d3.select(self._body[0][0].parentNode).append("g").attr("class", "c9-custom-legend c9-custom-legend-container");
+	                // var container = d3.select(self._body[0][0].parentNode)
+	                var container = self.chart.svg.append("g").attr("class", "c9-custom-legend c9-custom-legend-container");
 	
 	                // var legendBox = legendContainer.selectAll(".c9-custom-legend.c9-custom-legend-box").data([true]).enter();
 	
-	                self.item = container.selectAll("g.c9-custom-legend.c9-custom-legend-item")
-	                // .data(color.domain())
-	                .data(self.data).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr('data-ref', function (d) {
+	                self.item = container.selectAll("g.c9-custom-legend.c9-custom-legend-item").data(self.data).enter().append("g").attr("class", "c9-custom-legend c9-custom-legend-item").attr('data-ref', function (d) {
 	                    return d['data-ref'];
 	                }).attr('data-enable', function (d) {
 	                    return d['enable'];
 	                });
 	
-	                self.item.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.size).attr('height', self.size).attr('r', self.size).attr('fill', function (d) {
-	                    return d.color;
-	                }).attr('stroke', function (d) {
-	                    return d.color;
-	                });
+	                self.item.append('rect').attr('class', 'c9-custom-legend c9-custom-legend-rect').attr('width', self.options.size).attr('height', self.options.size).attr('r', self.options.size).attr('fill', function (d) {
+	                    return d.color || d[0].color;
+	                })
+	                // .attr('stroke', function(d){ return d.color || d[0].color; })
+	                .style('cursor', 'pointer');
 	
-	                self.item.append('rect').attr('width', 5).attr('height', self.size).attr('x', self.size).attr('y', 0).attr('opacity', 0);
+	                self.item.append('rect').attr('width', 5).attr('height', self.options.size).attr('x', self.options.size).attr('y', 0).attr('opacity', 0).style('cursor', 'pointer');
 	
-	                self.item.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self.size + 5).attr('y', self.size).style('font-size', self.textSize)
+	                self.item.append('text').attr('class', 'c9-custom-legend c9-custom-legend-text').attr('x', self.options.size + 5).attr('y', self.options.size).style('font-size', self.options.fontSize).style('font-weight', self.options.fontWeight).style('fill', self.options.fontColor).style('cursor', 'pointer')
 	                // .attr('text-anchor', 'middle')
 	                .text(function (d) {
-	                    return self._body.type == "bar" ? d.group : d.name || d.key;
+	                    return self.chart.chartType == "bar" ? d.group : d.name;
 	                });
 	
 	                //caculate position for legend
@@ -1801,13 +2265,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    return item.getBoundingClientRect();
 	                };
 	                var getXY = function getXY(item) {
-	                    var xy = d3.select(item).attr('transform').split(',');return { x: parseFloat(xy[0].replace('translate(', '')), y: parseFloat(xy[1].replace(')', '')) };
+	                    var xy = d3.select(item).attr('transform').split(',');
+	                    return {
+	                        x: parseFloat(xy[0].replace('translate(', '')),
+	                        y: parseFloat(xy[1].replace(')', ''))
+	                    };
 	                };
+	
 	                var r = 0; // current row
-	                var items = d3.selectAll(".c9-custom-legend-item")[0];
+	                var items = self.chart.svg.selectAll(".c9-custom-legend-item")[0];
 	                var itemHeight = getSize(items[0]).height;
-	                var numItemsCol = Math.floor((self._maxHeight - self.margin[0] - self.margin[2]) / (itemHeight + self.space));
-	                if (self.space > itemHeight) numItemsCol++;
+	                var numItemsCol = Math.floor((self.maxHeight - self.options.margin[0] - self.options.margin[2]) / (itemHeight + self.options.space));
+	
+	                if (self.options.space > itemHeight) numItemsCol++;
+	
 	                var maxWidthCol = new Array(Math.floor(items.length / numItemsCol));
 	
 	                items.forEach(function (i, n) {
@@ -1816,19 +2287,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    if (maxWidthCol[pos] == undefined || width > maxWidthCol[pos]) maxWidthCol[pos] = width;
 	                });
 	
-	                if (self.position == "bottom") {
-	                    /************ BOTTOM ***************/
+	                if (self.options.position == "bottom") {
 	                    self.item.attr("transform", function (d, i) {
 	                        if (i > 0) {
 	                            var item = items[i];
 	                            var preItem = items[i - 1];
-	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.space + getSize(item).width + self.margin[1]) / self._maxWidth);
+	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
 	                            if (newR > 0) r++;
-	                            return "translate(" + (newR > 0 ? self.margin[3] : getXY(preItem).x + getSize(preItem).width + self.space) + "," + (self._maxHeight - self.margin[0] - itemHeight - r * (itemHeight + self.space)) + ")";
-	                        } else return "translate(" + self.margin[3] + "," + (self._maxHeight - self.margin[0] - itemHeight) + ")";
+	                            return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.maxHeight - self.options.margin[0] - itemHeight - r * (itemHeight + self.options.space)) + ")";
+	                        } else {
+	                            return "translate(" + self.options.margin[3] + "," + (self.maxHeight - self.options.margin[0] - itemHeight) + ")";
+	                        }
 	                    });
-	                } else if (self.position == "left") {
-	                    /************ LEFT ***************/
+	                } else if (self.options.position == "left") {
 	                    self.item.attr("transform", function (d, i) {
 	                        var pos = Math.floor(i / numItemsCol);
 	
@@ -1836,30 +2307,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            var prePos = Math.floor((i - 1) / numItemsCol);
 	                            var item = items[i];
 	                            var preItem = items[i - 1];
-	                            return "translate(" + (pos > prePos ? maxWidthCol[pos] + self.space + getXY(preItem).x : getXY(preItem).x) + "," + (pos > prePos ? self.margin[0] : getXY(preItem).y + getSize(preItem).height + self.space) + ")";
-	                        } else return "translate(" + self.margin[3] + "," + self.margin[0] + ")";
+	                            return "translate(" + (pos > prePos ? maxWidthCol[pos] + self.options.space + getXY(preItem).x : getXY(preItem).x) + "," + (pos > prePos ? self.options.margin[0] : getXY(preItem).y + getSize(preItem).height + self.options.space) + ")";
+	                        } else return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
 	                    });
-	                } else if (self.position == "right") {
-	                    /************ RIGHT ***************/
+	                } else if (self.options.position == "right") {
 	                    self.item.attr("transform", function (d, i) {
 	                        var pos = Math.floor(i / numItemsCol);
 	                        if (i > 0) {
 	                            var prePos = Math.floor((i - 1) / numItemsCol);
 	                            var item = items[i];
 	                            var preItem = items[i - 1];
-	                            return "translate(" + (pos > prePos ? getXY(preItem).x - self.space - maxWidthCol[pos] : getXY(preItem).x) + "," + (pos > prePos ? self.margin[0] : getXY(preItem).y + getSize(preItem).height + self.space) + ")";
-	                        } else return "translate(" + (self._maxWidth - self.margin[3] - maxWidthCol[pos]) + "," + self.margin[0] + ")";
+	                            return "translate(" + (pos > prePos ? getXY(preItem).x - self.options.space - maxWidthCol[pos] : getXY(preItem).x) + "," + (pos > prePos ? self.options.margin[0] : getXY(preItem).y + getSize(preItem).height + self.options.space) + ")";
+	                        } else return "translate(" + (self.maxWidth - self.options.margin[3] - maxWidthCol[pos]) + "," + self.options.margin[0] + ")";
 	                    });
 	                } else {
-	                    /************ TOP ***************/
 	                    self.item.attr("transform", function (d, i) {
 	                        if (i > 0) {
 	                            var item = items[i];
 	                            var preItem = items[i - 1];
-	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.space + getSize(item).width + self.margin[1]) / self._maxWidth);
+	                            var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
 	                            if (newR > 0) r++;
-	                            return "translate(" + (newR > 0 ? self.margin[3] : getXY(preItem).x + getSize(preItem).width + self.space) + "," + (self.margin[0] + r * (itemHeight + self.space)) + ")";
-	                        } else return "translate(" + self.margin[3] + "," + self.margin[0] + ")";
+	
+	                            return "translate(" + (newR > 0 ? self.options.margin[3] : getXY(preItem).x + getSize(preItem).width + self.options.space) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
+	                        } else return "translate(" + self.options.margin[3] + "," + self.options.margin[0] + ")";
 	                    });
 	                }
 	
@@ -1874,6 +2344,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                //         .style("stroke", color);
 	                // }
 	            }
+	        }
+	    }, {
+	        key: "draw",
+	        value: function draw() {
+	            var self = this;
+	
+	            self.update(self.chart.dataTarget);
 	        }
 	
 	        /**
@@ -1908,16 +2385,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }));
 	
 	                    // Add pointer to cursor
-	                    selector.style('cursor', 'pointer');
+	                    // selector.style('cursor', 'pointer');
 	
 	                    // If current selector is disabled, then turn it on back
 	                    // Else, set enable to false
-	                    if (selector.style('opacity') == '0.1') {
-	                        selector.style('opacity', '1.0');
+	                    if (selector.attr('data-enable') == 'false') {
+	                        selector.attr('data-enable', true);
+	                        selector.style('opacity', '1');
 	                    } else {
 	                        if (totalEnable < 2) return;
+	                        selector.attr('data-enable', false);
 	                        selector.style('opacity', '0.1');
 	                        enable = false;
+	                    }
+	
+	                    // update line
+	                    var newData = [];
+	                    chart.dataTarget.forEach(function (_data) {
+	                        if (_data['data-ref'] == item['data-ref']) _data.enable = enable;
+	                        if (_data.enable) newData.push(_data);
+	                    });
+	
+	                    chart.updateDomain(newData);
+	                    chart.axis.update(chart.x, chart.y, 750);
+	                    chart.update(newData);
+	
+	                    // Update subchart
+	                    if (chart.options.subchart.show) {
+	                        chart.subChartX.domain(chart.x.domain());
+	                        chart.subChartY.domain(chart.y.domain());
+	                        chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
+	                        chart.updateSubChart(newData);
 	                    }
 	                },
 	
@@ -1927,8 +2425,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	
 	                    var legendSelector = d3.select(this);
-	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
+	
+	                    // Add pointer to cursor and make it lighten
+	                    // legendSelector.style('cursor', 'pointer');
+	                    self.lightenLegendItem(legendSelector);
 	                },
 	
 	                'mouseout': function mouseout(item) {
@@ -1937,15 +2437,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	
 	                    var legendSelector = d3.select(this);
-	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
 	
-	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	                    // Add pointer to cursor
+	                    // legendSelector.style('cursor', 'pointer');
+	                    self.normalizeLegendItem(legendSelector);
 	                }
 	
 	            };
 	
-	            if (self.show) self.item.on(self.itemEventFactory);
+	            if (self.options.show) {
+	                self.item.on(self.itemEventFactory);
+	            }
 	        }
 	
 	        /**
@@ -1967,10 +2469,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var chartType = chart.chartType;
 	
-	            var chartInnerBefore = chartType == 'pie' ? 0 : chart.innerRadius,
-	                chartOuterBefore = chartType == 'pie' ? chart.radius : chart.outerRadius,
-	                chartInnerAfter = chartType == 'pie' ? 0 : chart.innerRadius,
-	                chartOuterAfter = chartType == 'pie' ? chart.radius * 1.2 : chart.outerRadius * 1.2;
+	            var chartInnerBefore = chartType == 'pie' ? 0 : chart.options.innerRadius,
+	                chartOuterBefore = chartType == 'pie' ? chart.options.radius : chart.options.outerRadius,
+	                chartInnerAfter = chartType == 'pie' ? 0 : chart.options.innerRadius,
+	                chartOuterAfter = chartType == 'pie' ? chart.options.radius * 1.2 : chart.options.outerRadius * 1.2;
 	
 	            self.itemEventFactory = {
 	
@@ -1987,7 +2489,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }));
 	
 	                    // Add pointer to cursor
-	                    selector.style('cursor', 'pointer');
+	                    // selector.style('cursor', 'pointer');
 	
 	                    // If current selector is disabled, then turn it on back
 	                    // Else, set enable to false
@@ -2017,7 +2519,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    /*----------  End Reset opacity after click  ----------*/
 	
 	                    chart.pie.value(function (d) {
-	                        if (d.name == item.name) d.enable = enable;
+	                        if (d["data-ref"] == item["data-ref"]) d.enable = enable;
 	                        return d.enable ? d.value : 0;
 	                    });
 	
@@ -2043,12 +2545,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    var legendSelector = d3.select(this);
 	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
+	                    // legendSelector.style('cursor', 'pointer');
+	                    self.lightenLegendItem(legendSelector);
 	
-	                    if (legendSelector.attr('data-enable') == 'true') {
+	                    if (legendSelector.attr('data-enable')) {
 	                        // For Legend
 	                        self.item.each(function () {
-	                            if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                            if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable')) {
 	                                d3.select(this).attr('opacity', '0.3');
 	                            }
 	                        });
@@ -2073,12 +2576,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    var legendSelector = d3.select(this);
 	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
+	                    // legendSelector.style('cursor', 'pointer');
+	                    self.normalizeLegendItem(legendSelector);
 	
 	                    // if (legendSelector.attr('data-enable') == 'true') {
 	                    // For Legend
 	                    self.item.each(function () {
-	                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref'] && d3.select(this).attr('data-enable')) {
 	                            d3.select(this).attr('opacity', '1.0');
 	                        }
 	                    });
@@ -2094,12 +2598,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
 	                    // }
-	
 	                }
 	
 	            };
 	
-	            if (self.show) self.item.on(self.itemEventFactory);
+	            if (self.options.show) self.item.on(self.itemEventFactory);
 	        }
 	
 	        /**
@@ -2139,7 +2642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    var enableSetOld = [];
 	                    var data = [];
 	                    // Add pointer to cursor
-	                    selector.style('cursor', 'pointer');
+	                    // selector.style('cursor', 'pointer');
 	
 	                    // If current selector is disabled, then turn it on back
 	                    // Else, set enable to false
@@ -2199,39 +2702,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                'mouseover': function mouseover(item) {
 	                    var selector = d3.select(this);
-	                    selector.style('cursor', 'pointer');
+	                    // selector.style('cursor', 'pointer');
+	                    self.lightenLegendItem(selector);
+	
 	                    if (selector.attr('data-enable') == 'true') d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
-	                        return d.group != item.group;
+	                        return d['group-ref'] != item['group-ref'];
 	                    }).attr('opacity', 0.3);
 	                },
 	
 	                'mouseout': function mouseout(item) {
-	                    d3.select(this).style('cursor', 'pointer');
+	                    var selector = d3.select(this);
+	                    // selector.style('cursor', 'pointer');
+	                    self.normalizeLegendItem(selector);
+	
 	                    d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
-	                        return d.group != item.group;
+	                        return d['group-ref'] != item['group-ref'];
 	                    }).attr('opacity', 1);
 	                }
 	
 	            };
-	            if (self.show) self.item.on(self.itemEventFactory);
+	            if (self.options.show) self.item.on(self.itemEventFactory);
 	        }
 	    }, {
-	        key: "setYLocation",
-	        value: function setYLocation(height, margin) {
-	            if (this.position === 'top') {
-	                return margin.top / 2;
-	            } else if (this.position === 'bottom') {
-	                return height - margin.bottom / 2;
-	            }
+	        key: "lightenLegendItem",
+	        value: function lightenLegendItem(item) {
+	            var self = this;
+	
+	            item.select('.c9-custom-legend-rect').attr('fill', function (d) {
+	                return _C2.default.shadeColor(0.5, d.color || d[0].color);
+	            });
+	            item.select('.c9-custom-legend-text').style('fill', function (d) {
+	                return _C2.default.shadeColor(-0.5, self.options.fontColor);
+	            });
+	        }
+	    }, {
+	        key: "normalizeLegendItem",
+	        value: function normalizeLegendItem(item) {
+	            var self = this;
+	
+	            item.select('.c9-custom-legend-rect').attr('fill', function (d) {
+	                return d.color || d[0].color;
+	            });
+	            item.select('.c9-custom-legend-text').style('fill', function (d) {
+	                return self.options.fontColor;
+	            });
 	        }
 	        /*=====  End of Main Functions  ======*/
 	
 	    }, {
-	        key: "data",
+	        key: "options",
 	        get: function get() {
-	            return this._data;
+	            return this._options;
 	        },
-	
 	
 	        /*=====  End of Getter  ======*/
 	
@@ -2240,97 +2762,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ==============================*/
 	        set: function set(arg) {
 	            if (arg) {
+	                this._options = arg;
+	            }
+	        }
+	    }, {
+	        key: "data",
+	        get: function get() {
+	            return this._data;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
 	                this._data = arg;
 	            }
 	        }
 	    }, {
-	        key: "body",
+	        key: "chart",
 	        get: function get() {
-	            return this._body;
-	        }
-	    }, {
-	        key: "color",
-	        get: function get() {
-	            return this._color;
-	        }
-	    }, {
-	        key: "show",
-	        get: function get() {
-	            return this._show;
-	        }
-	    }, {
-	        key: "text",
-	        get: function get() {
-	            return this._text;
-	        },
-	        set: function set(newText) {
-	            if (newText) {
-	                this._text = newText;
-	            }
-	        }
-	    }, {
-	        key: "position",
-	        get: function get() {
-	            return this._position;
-	        },
-	        set: function set(newPosition) {
-	            if (newPosition) {
-	                this._position = newPosition;
-	            }
-	        }
-	    }, {
-	        key: "size",
-	        get: function get() {
-	            return this._size;
-	        },
-	        set: function set(newSize) {
-	            if (newSize) {
-	                this._size = newSize;
-	            }
-	        }
-	    }, {
-	        key: "margin",
-	        get: function get() {
-	            return this._margin;
+	            return this._chart;
 	        },
 	        set: function set(arg) {
 	            if (arg) {
-	                this._margin = arg;
+	                this._chart = arg;
 	            }
-	        }
-	    }, {
-	        key: "space",
-	        get: function get() {
-	            return this._space;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._space = arg;
-	            }
-	        }
-	    }, {
-	        key: "textSize",
-	        get: function get() {
-	            return this._textSize;
 	        }
 	    }, {
 	        key: "item",
 	        get: function get() {
 	            return this._item;
 	        },
-	        set: function set(newItem) {
-	            if (newItem) {
-	                this._item = newItem;
-	            }
-	        }
-	    }, {
-	        key: "domain",
-	        get: function get() {
-	            return this._domain;
-	        },
-	        set: function set(newDomain) {
-	            if (newDomain) {
-	                this._domain = newDomain;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._item = arg;
 	            }
 	        }
 	    }, {
@@ -2338,9 +2800,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        get: function get() {
 	            return this._itemEventFactory;
 	        },
-	        set: function set(newItemEventFactory) {
-	            if (newItemEventFactory) {
-	                this._itemEventFactory = newItemEventFactory;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._itemEventFactory = arg;
+	            }
+	        }
+	    }, {
+	        key: "maxWidth",
+	        get: function get() {
+	            return this._maxWidth;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._maxWidth = arg;
+	            }
+	        }
+	    }, {
+	        key: "maxHeight",
+	        get: function get() {
+	            return this._maxHeight;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._maxHeight = arg;
 	            }
 	        }
 	    }]);
@@ -2354,11 +2836,338 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _C = __webpack_require__(3);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Table = function () {
+	    function Table(options, chart) {
+	        _classCallCheck(this, Table);
+	
+	        var self = this;
+	
+	        var config = {
+	            container: "body",
+	            show: false,
+	            headings: ["Name", "Value"],
+	            style: "default", // || "stripe"
+	            serial: true,
+	            hover: {
+	                enable: true,
+	                callback: null
+	            },
+	            click: {
+	                enable: true,
+	                callback: null
+	            }
+	        };
+	
+	        self._options = options;
+	        self._chart = chart;
+	
+	        self.updateConfig(config);
+	    }
+	
+	    /*==============================
+	    =            Getter            =
+	    ==============================*/
+	
+	
+	    _createClass(Table, [{
+	        key: "updateConfig",
+	
+	        /*=====  End of Setter  ======*/
+	
+	        /*======================================
+	        =            Main Functions            =
+	        ======================================*/
+	        value: function updateConfig(config) {
+	            var self = this;
+	
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	        }
+	    }, {
+	        key: "update",
+	        value: function update(data) {
+	            var self = this;
+	
+	            if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
+	                //headings
+	                if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) self.options.headings.push("Group");
+	
+	                //data
+	                self.data = [];
+	                data.forEach(function (d) {
+	                    (_C2.default.isArray(d) ? d : d.value).forEach(function (b) {
+	                        self.data.push(b);
+	                    });
+	                });
+	            } else {
+	                self.data = data;
+	            }
+	
+	            if (self.options.show) {
+	                d3.selectAll('.c9-table').remove();
+	                d3.selectAll('.c9-table-container').remove();
+	
+	                var headTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body').append("table").attr('class', 'c9-table c9-table-header'),
+	                    thead = headTbl.append("thead"),
+	                    bodyTbl = d3.select(self.options.container !== 'body' ? '#' + self.options.container : 'body').append("div").attr('class', 'c9-table-container').append("table").attr('class', function () {
+	                    return self.getTableStyle();
+	                }),
+	                    tbody = bodyTbl.append("tbody");
+	
+	                // Append serial no heading
+	                // Bind each statistic to a line of the table
+	                // Show serial no.
+	                var hRows = thead.append("tr");
+	
+	                if (self.options.serial) {
+	                    hRows.append("th").text("#");
+	                }
+	
+	                hRows.selectAll("thead").data(self.options.headings).enter().append("th").text(function (d) {
+	                    return d;
+	                });
+	
+	                // Bind each statistic to a line of the table
+	                // Show serial no.
+	                var bRows = tbody.selectAll("tr").data(self.data).enter().append("tr").attr("data-ref", function (d) {
+	                    return d["data-ref"];
+	                });
+	
+	                if (self.options.serial) {
+	                    bRows.append("td").text(function (d, i) {
+	                        return i + 1;
+	                    });
+	                }
+	
+	                // Add statistic names to each row
+	                bRows.append("td").text(function (d) {
+	                    return d.name;
+	                });
+	
+	                // Add values to each row
+	                bRows.append("td").text(function (d) {
+	                    return d.value || d.y0 || d.valueY;
+	                });
+	
+	                // Add group if chart is bar chart
+	                if (self.chart.chartType == "bar" && self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) bRows.append("td").text(function (d) {
+	                    return d.group;
+	                });
+	            }
+	        }
+	    }, {
+	        key: "draw",
+	        value: function draw() {
+	            var self = this;
+	
+	            self.update(self.chart.dataTarget);
+	        }
+	    }, {
+	        key: "updateInteractionForBarChart",
+	        value: function updateInteractionForBarChart(chart) {
+	
+	            var self = this;
+	
+	            var hoverOptions = chart.hover.options,
+	                hoverEnable = chart.hover.enable,
+	                onMouseOverCallback = hoverOptions.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = chart.click.callback;
+	
+	            self.itemEventFactory = {
+	
+	                'click': function click(item) {
+	                    if (_C2.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, item);
+	                    }
+	                },
+	
+	                'mouseover': function mouseover(item) {
+	                    if (!item) return;
+	
+	                    var selector = d3.select(this);
+	                    selector.style('cursor', 'pointer');
+	                    // if (selector.attr('data-enable') == 'true')
+	                    d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
+	                        return d['data-ref'] != item['data-ref'];
+	                    }).attr('opacity', 0.3);
+	                },
+	
+	                'mouseout': function mouseout(item) {
+	                    if (!item) return;
+	                    d3.select(this).style('cursor', 'pointer');
+	                    d3.selectAll('.c9-custom-bar>.c9-custom-rect').filter(function (d) {
+	                        return d['data-ref'] != item['data-ref'];
+	                    }).attr('opacity', 1);
+	                }
+	
+	            };
+	            if (self.options.show) self.selectAllRow().on(self.itemEventFactory);
+	        }
+	    }, {
+	        key: "updateInteractionForDonutPieChart",
+	        value: function updateInteractionForDonutPieChart(chart) {
+	
+	            var self = this;
+	
+	            var hoverOptions = chart.hover.options,
+	                hoverEnable = chart.hover.enable,
+	                onMouseOverCallback = hoverOptions.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = chart.click.callback;
+	
+	            var chartType = chart.chartType;
+	
+	            var chartInnerBefore = chartType == 'pie' ? 0 : chart.options.innerRadius,
+	                chartOuterBefore = chartType == 'pie' ? chart.options.radius : chart.options.outerRadius,
+	                chartInnerAfter = chartType == 'pie' ? 0 : chart.options.innerRadius,
+	                chartOuterAfter = chartType == 'pie' ? chart.options.radius * 1.2 : chart.options.outerRadius * 1.2;
+	            self.itemEventFactory = {
+	
+	                'click': function click(item) {
+	                    if (_C2.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, item);
+	                    }
+	                },
+	
+	                'mouseover': function mouseover(item) {
+	                    if (!item) return;
+	
+	                    if (_C2.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	                    // if (legendSelector.attr('enable') == 'true') {
+	
+	                    // For Chart
+	                    chart.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                            d3.select(this).attr('opacity', '0.3');
+	                        }
+	                    });
+	
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
+	                    // }
+	                },
+	
+	                'mouseout': function mouseout(item) {
+	                    if (!item) return;
+	
+	                    if (_C2.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, item);
+	                    }
+	
+	                    var legendSelector = d3.select(this);
+	                    // Add pointer to cursor
+	                    legendSelector.style('cursor', 'pointer');
+	
+	                    chart.selectAllPath().each(function () {
+	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
+	                            d3.select(this).attr('opacity', '1.0');
+	                        }
+	                    });
+	
+	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
+	
+	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
+	                }
+	
+	            };
+	
+	            if (self.options.show) self.selectAllRow().on(self.itemEventFactory);
+	        }
+	    }, {
+	        key: "selectAllRow",
+	        value: function selectAllRow() {
+	            return d3.selectAll(".c9-table tr");
+	        }
+	    }, {
+	        key: "getTableStyle",
+	        value: function getTableStyle() {
+	            var self = this;
+	
+	            if (self.options.style === 'default') {
+	                return 'c9-table c9-table-body';
+	            } else if (self.options.style === 'stripe') {
+	                return 'c9-table c9-table-body c9-stripe';
+	            }
+	        }
+	        /*=====  End of Main Functions  ======*/
+	
+	    }, {
+	        key: "data",
+	        get: function get() {
+	            return this._data;
+	        },
+	
+	        /*=====  End of Getter  ======*/
+	
+	        /*==============================
+	        =            Setter            =
+	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._data = arg;
+	            }
+	        }
+	    }, {
+	        key: "chart",
+	        get: function get() {
+	            return this._chart;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._chart = arg;
+	            }
+	        }
+	    }, {
+	        key: "options",
+	        get: function get() {
+	            return this._options;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
+	            }
+	        }
+	    }]);
+	
+	    return Table;
+	}();
+	
+	exports.default = Table;
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -2378,19 +3187,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var config = {
 	            show: true,
-	            position: 'left', // [top, right, bottom, left]
+	            position: 'right', // [top, right, bottom, left]
 	            backgroundColor: 'rgba(0, 0, 0, 0.8)',
 	            fontColor: '#fff',
-	            fontSize: '11px'
+	            fontSize: '11px',
+	            format: null
 	        };
 	
-	        self._show = options.show || config.show;
-	        self._position = options.position || config.position;
-	        self._backgroundColor = options.backgroundColor || config.backgroundColor;
-	        self._fontColor = options.fontColor || config.fontColor;
-	        self._fontSize = options.fontSize || config.fontSize;
-	
 	        self._options = options;
+	
+	        self.updateConfig(config);
 	    }
 	
 	    /*==============================
@@ -2399,19 +3205,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(Tooltip, [{
-	        key: 'draw',
-	
+	        key: 'updateConfig',
 	
 	        /*=====  End of Setter  ======*/
 	
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
+	        value: function updateConfig(config) {
+	            var self = this;
+	
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	        }
 	
 	        /**
-	         * [draw description]
-	         * @return {[type]} [description]
+	         * Draw Tooltip
 	         */
+	
+	    }, {
+	        key: 'draw',
 	        value: function draw(data, chart, eventType) {
 	            var self = this;
 	
@@ -2428,7 +3240,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return 'c9-custom-tooltip-container ' + self.getTriangleClass();
 	            })
 	            // .attr("transform", function() { return 'translate(' + (d3.mouse(this)[0] - 100) +","+ (d3.mouse(this)[1] - 100) + ')'; })
-	            .style('display', 'none').style('position', 'absolute').style('pointer-events', 'all').style('background-color', self.backgroundColor).style('color', self.fontColor).style('font-size', self.fontSize);
+	            .style('display', 'none').style('position', 'absolute').style('pointer-events', 'all').style('background-color', self.options.backgroundColor).style('color', self.options.fontColor).style('font-size', self.options.fontSize);
 	            // .style('width', '100px')
 	            // .style('height', '50px')
 	            // .html(function() {
@@ -2443,11 +3255,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }).transition()
 	                    // .style('left', function() {return d3.mouse(this)[0] + 'px';})
 	                    .style('left', function () {
-	                        return self.getCoordinate()['left'];
+	                        return self.getCoordinate(chart)['left'];
 	                    })
 	                    // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
 	                    .style('top', function () {
-	                        return self.getCoordinate()['top'];
+	                        return self.getCoordinate(chart)['top'];
 	                    }).duration(200).style("display", 'block').style('pointer-events', 'none');
 	                },
 	
@@ -2457,11 +3269,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }).transition()
 	                    // .style('left', function() {return d3.mouse(this)[0] + 'px';})
 	                    .style('left', function () {
-	                        return self.getCoordinate()['left'];
+	                        return self.getCoordinate(chart)['left'];
 	                    })
 	                    // .style('top', function() {return d3.mouse(this)[1]  + 'px';})
 	                    .style('top', function () {
-	                        return self.getCoordinate()['top'];
+	                        return self.getCoordinate(chart)['top'];
 	                    }).duration(200).style("display", 'block').style('pointer-events', 'none');
 	                },
 	
@@ -2471,7 +3283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            };
 	
-	            if (self.show) {
+	            if (self.options.show) {
 	
 	                switch (eventType) {
 	                    case 'mouseover':
@@ -2492,7 +3304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var self = this;
 	            var r = void 0;
 	
-	            switch (self.position) {
+	            switch (self.options.position) {
 	                case 'top':
 	                    r = 'c9-tooltip-top';
 	                    break;
@@ -2514,13 +3326,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // if (Helper.isEmpty(data)) { console.log(data);return false;}
 	            var self = this;
 	
-	            var chartType = chart.body.type,
+	            var chartType = chart.chartType,
 	                format = void 0;
 	
 	            switch (chartType) {
 	                case 'bar':
 	                    format = function format(data) {
-	                        return '<strong>' + data.name + '</strong>' + '<br><span>' + chart.retrieveValue(data.y0, data.y1) + '</span>';
+	                        return '<strong>' + data.name + '</strong>' + '<br><span>' + data.value + '</span>';
 	                    };
 	                    break;
 	                case 'pie':
@@ -2544,7 +3356,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	                case 'timeline':
 	                    format = function format(data) {
-	                        return '<strong>' + data.name + '</strong>' + '<br><span>' + data.start, data.end + '</span>';
+	                        return (data.name ? '<strong>' + data.name + '</strong>' : '<img src=' + data.icon + '" width="' + chart.options.itemHeight + '" height="' + chart.options.itemHeight + '">') + '<br><strong>Start at: </strong><span>' + data.start + '</span><br><strong>End at: </strong><span>' + data.end + '</span>';
 	                    };
 	                    break;
 	            }
@@ -2555,37 +3367,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }, {
 	        key: 'getCoordinate',
-	        value: function getCoordinate() {
+	        value: function getCoordinate(chart) {
 	            var self = this;
 	            var r = void 0;
 	
-	            switch (self.position) {
+	            var offset = self.getOffset(d3.select(chart.id)[0][0]);
+	
+	            switch (self.options.position) {
 	                case 'top':
 	                    r = {
-	                        'left': d3.event.pageX - 50 + 'px',
-	                        'top': d3.event.pageY - 50 + 'px'
+	                        'left': d3.event.pageX - offset.left - 50 + 'px',
+	                        'top': d3.event.pageY - offset.top - 50 + 'px'
 	                    };
 	                    break;
 	                case 'right':
 	                    r = {
-	                        'left': d3.event.pageX - 50 + 'px',
-	                        'top': d3.event.pageY - 50 + 'px'
+	                        // 'left': (d3.event.pageX - offset.left - 50) + 'px',
+	                        'left': d3.event.pageX - offset.left + 'px',
+	                        // 'top': (d3.event.pageY - offset.top - 50) + 'px'
+	                        'top': d3.event.pageY - offset.top - 25 + 'px'
 	                    };
 	                    break;
 	                case 'bottom':
 	                    r = {
-	                        'left': d3.event.pageX - 50 + 'px',
-	                        'top': d3.event.pageY + 50 + 'px'
+	                        'left': d3.event.pageX - offset.left - 50 + 'px',
+	                        'top': d3.event.pageY - offset.top + 50 + 'px'
 	                    };
 	                    break;
 	                case 'left':
 	                    r = {
-	                        'left': d3.event.pageX + 50 + 'px',
-	                        'top': d3.event.pageY - 50 + 'px'
+	                        // 'left': (d3.event.pageX - offset.left + 50) + 'px',
+	                        'left': d3.event.pageX - offset.left - 50 + 'px',
+	                        // 'top': (d3.event.pageY - offset.top - 50) + 'px'
+	                        'top': d3.event.pageY - offset.top - 25 + 'px'
 	                    };
 	                    break;
 	            }
 	            return r;
+	        }
+	    }, {
+	        key: 'getOffset',
+	        value: function getOffset(elem) {
+	            var box = { top: 0, left: 0 };
+	
+	            // BlackBerry 5, iOS 3 (original iPhone)
+	            if (_typeof(elem.getBoundingClientRect) !== undefined) {
+	                box = elem.getBoundingClientRect();
+	            }
+	
+	            return {
+	                top: box.top + (window.pageYOffset || elem.scrollTop) - (elem.clientTop || 0),
+	                left: box.left + (window.pageXOffset || elem.scrollLeft) - (elem.clientLeft || 0)
+	            };
 	        }
 	    }, {
 	        key: 'getFormatByChartType',
@@ -2598,71 +3431,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            return r;
 	        }
-	
 	        /*=====  End of Main Functions  ======*/
 	
 	    }, {
-	        key: 'show',
+	        key: 'format',
 	        get: function get() {
-	            return this._show;
+	            return this._format;
 	        },
-	
 	
 	        /*=====  End of Getter  ======*/
 	
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(arg) {
-	            if (arg) {
-	                this._show = arg;
-	            }
-	        }
-	    }, {
-	        key: 'position',
-	        get: function get() {
-	            return this._position;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._position = arg;
-	            }
-	        }
-	    }, {
-	        key: 'backgroundColor',
-	        get: function get() {
-	            return this._backgroundColor;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._backgroundColor = arg;
-	            }
-	        }
-	    }, {
-	        key: 'fontColor',
-	        get: function get() {
-	            return this._fontColor;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._fontColor = arg;
-	            }
-	        }
-	    }, {
-	        key: 'fontSize',
-	        get: function get() {
-	            return this._fontSize;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._fontSize = arg;
-	            }
-	        }
-	    }, {
-	        key: 'format',
-	        get: function get() {
-	            return this._format;
-	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._format = arg;
@@ -2696,7 +3477,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = Tooltip;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -2704,6 +3485,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -2716,7 +3499,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var DataAdapter = function () {
-	    function DataAdapter(options) {
+	    function DataAdapter(options, chartType, callback) {
 	        _classCallCheck(this, DataAdapter);
 	
 	        var self = this;
@@ -2727,7 +3510,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                name: "name",
 	                value: "value",
 	                x: "value.x",
-	                y: "value"
+	                y: "value",
+	                coor: "coor",
+	                icon: "icon"
 	            },
 	            groups: [],
 	            stacks: [],
@@ -2744,10 +3529,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        self._timeFormat = options.timeFormat || config.timeFormat;
 	        self._colorRange = options.colorRange || config.colorRange;
 	
-	        self._dataSource = null;
+	        self._dataSource = [];
 	        self._dataTarget = []; // Initialize new Array to use Array methods
 	        self._dataRefs = [];
-	        self.initDataSource(options);
+	
+	        self._options = options;
+	        self._chartType = chartType;
+	        self._callback = callback;
+	
+	        self.updateConfig(config);
 	    }
 	
 	    /*==============================
@@ -2756,69 +3546,87 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	
 	    _createClass(DataAdapter, [{
-	        key: "initDataSource",
+	        key: "updateConfig",
 	
 	        /*=====  End of Setter  ======*/
 	
 	        /*======================================
 	        =            Main Functions            =
 	        ======================================*/
-	        value: function initDataSource(options) {
+	        value: function updateConfig(config) {
 	            var self = this;
 	
-	            if (self.hasPlainData(options)) {
-	                self.executePlainData(options);
-	            } else if (self.hasFile(options)) {
-	                self.executeFile(options);
-	            }
+	            self.options = _C2.default.mergeDeep(config, self.options);
+	
+	            // self.initDataSource();
 	        }
+	
+	        // initDataSource() {
+	        //     var self = this;
+	
+	        //     // if (self.hasPlainData()) {
+	        //     //     self.executePlainData();
+	        //     // }
+	        //     // TESTING
+	        //     //  else if (self.hasFile()) {
+	        //     //     self.executeFile();
+	        //     // }
+	        // }
+	
 	    }, {
 	        key: "hasPlainData",
-	        value: function hasPlainData(options) {
-	            return options.plain && _C2.default.isArray(options.plain);
+	        value: function hasPlainData() {
+	            var self = this;
+	
+	            // return options.plain && Helper.isArray(options.plain);
+	            return !_C2.default.isEmpty(self.options.plain); // fix for map
 	        }
 	    }, {
 	        key: "hasFile",
-	        value: function hasFile(options) {
-	            return options.file && _C2.default.isObject(options.file);
+	        value: function hasFile() {
+	            var self = this;
+	
+	            return _C2.default.isObject(self.options.file) && !_C2.default.isEmpty(self.options.file.url) && !_C2.default.isEmpty(self.options.file.type);
 	        }
 	    }, {
 	        key: "executePlainData",
-	        value: function executePlainData(options) {
+	        value: function executePlainData(callback) {
 	            var self = this;
 	
-	            self._dataSource = options.plain;
+	            self.dataSource = self.options.plain;
+	
+	            callback.call(self, self.dataSource);
 	        }
 	    }, {
 	        key: "executeFile",
-	        value: function executeFile(options) {
+	        value: function executeFile(callback) {
 	            var self = this;
 	
-	            self._file = _C2.default.merge(options.file, config.file);
+	            self.file = self.options.file;
 	
-	            if (self._file && self._file.type) {
+	            if (!_C2.default.isEmpty(self.file)) {
 	
-	                switch (self._file.type) {
+	                switch (self.file.type) {
 	                    case "csv":
-	                        self._dataSource = self.getCsv();
+	                        self.getCsv(callback);
 	                        break;
 	                    case "tsv":
-	                        self._dataSource = self.getTsv();
+	                        self.getTsv(callback);
 	                        break;
 	                    case "text":
-	                        self._dataSource = self.getText();
+	                        self.getText(callback);
 	                        break;
 	                    case "json":
-	                        self._dataSource = self.getJson();
+	                        self.getJson(callback);
 	                        break;
 	                    case "xml":
-	                        self._dataSource = self.getXml();
+	                        self.getXml(callback);
 	                        break;
 	                    case "xhr":
-	                        self._dataSource = self.getJson();
+	                        self.getJson(callback);
 	                        break;
 	                    default:
-	                        self._dataSource = self.getJson();
+	                        self.getJson(callback);
 	                        break;
 	                }
 	            }
@@ -2828,41 +3636,71 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function getDataTypeForBarChart() {
 	            var self = this;
 	
-	            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups)) {
+	            if (!_C2.default.isEmpty(self.groups) && _C2.default.isArray(self.groups) && self.groups.length !== 1) {
 	                return "group";
 	            } else if (!_C2.default.isEmpty(self.stacks) && _C2.default.isArray(self.stacks)) {
 	                return "stack";
+	            }
+	
+	            // default grouped bar if user do not defined groups for array value
+	            for (var i = self.dataSource.length - 1; i >= 0; i--) {
+	                if (_C2.default.isArray(_C2.default.get(self.keys.value, self.dataSource[i]))) return "group";
 	            }
 	
 	            return "single";
 	        }
 	    }, {
 	        key: "getDataTarget",
-	        value: function getDataTarget(chartType) {
+	        value: function getDataTarget(type, callback) {
 	            var self = this;
 	
-	            switch (chartType) {
+	            // TESTING
+	            if (self.hasFile()) {
+	                self.executeFile(function (data) {
+	                    self.dataSource = data;
+	                    self.generateDataTarget(type);
+	                    callback.call(self, self.dataTarget);
+	                });
+	            } else if (self.hasPlainData()) {
+	                self.executePlainData(function (data) {
+	                    self.dataSource = data;
+	                    self.generateDataTarget(type);
+	                    callback.call(self, self.dataTarget);
+	                });
+	            }
+	        }
+	    }, {
+	        key: "generateDataTarget",
+	        value: function generateDataTarget(type) {
+	            var self = this;
+	
+	            switch (type) {
 	                case "bar":
-	                    return self.getDataTargetForBarChart();
+	                    self.getDataTargetForBarChart();
 	                    break;
 	
 	                case "line":
-	                    return self.getDataTargetForLineChart();
+	                    self.getDataTargetForLineChart();
 	                    break;
 	
 	                case "pie":
-	                    return self.getDataTargetForPieChart();
+	                    self.getDataTargetForPieChart();
 	                    break;
 	
 	                case "donut":
-	                    return self.getDataTargetForDonutChart();
+	                    self.getDataTargetForDonutChart();
 	                    break;
 	
 	                case "timeline":
-	                    return self.getDataTargetForTimelineChart();
+	                    self.getDataTargetForTimelineChart();
 	                    break;
+	
+	                case "map":
+	                    self.getDataTargetForMap();
+	                    break;
+	
 	                default:
-	                    return self.dataSource;
+	                    self.dataTarget = self.dataSource;
 	                    break;
 	            }
 	        }
@@ -2890,138 +3728,177 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function getDataTargetForBarChart() {
 	            var self = this;
 	
-	            switch (self.getDataTypeForBarChart()) {
-	                case "single":
-	                    self.dataSource.forEach(function (data, index) {
-	                        var _stack = [];
-	                        var _data = {
-	                            "max": _C2.default.get(self.keys.value, data),
-	                            "stack": [{
+	            var groups;
+	            var groupRefs;
+	            var stacks;
+	            var groupRefs;
+	
+	            var _ret = function () {
+	                switch (self.getDataTypeForBarChart()) {
+	                    case "single":
+	                        var color = self.colorRange;
+	                        var groups = self.groups;
+	
+	                        self.dataSource.forEach(function (data, index) {
+	                            var _data = [{
 	                                "name": _C2.default.get(self.keys.name, data),
-	                                "y0": 0,
+	                                "value": _C2.default.get(self.keys.value, data),
+	                                "y0": _C2.default.get(self.keys.value, data),
 	                                "y1": _C2.default.get(self.keys.value, data),
-	                                "enable": true
-	                            }]
-	                        };
-	                        self.dataTarget.push(_data);
-	                    });
-	
-	                    return self.dataTarget;
-	                    break;
-	
-	                case "group":
-	                    var groups = self.groups;
-	
-	                    // Iterate over each group
-	                    self.dataSource.forEach(function (data, index) {
-	                        var _dsArray = _C2.default.get(self.keys.value, data);
-	
-	                        var _stack = [],
-	                            _stackItem = {
-	                            "color": "#ffffff",
-	                            "y0": 0,
-	                            "y1": 1,
-	                            "group": "",
-	                            "name": "",
-	                            "data-ref": "",
-	                            "enable": true
-	                        },
-	                            color = self.colorRange;
-	
-	                        // Iterate each single bar in a group
-	                        if (_C2.default.isArray(_dsArray)) {
-	                            _dsArray.forEach(function (d, i) {
-	                                _stackItem = {
-	                                    "color": color(i),
-	                                    "y0": d,
-	                                    "y1": d > 0 ? d : 0,
-	                                    "group": groups[i] || i,
-	                                    "name": _C2.default.get(self.keys.name, data),
-	                                    "data-ref": _C2.default.guid(),
-	                                    "enable": true
-	                                };
-	                                _stack.push(_stackItem);
-	                            });
-	                        } else {
-	                            _stackItem = {
-	                                "color": color(0),
-	                                "y0": _dsArray,
-	                                "y1": _dsArray > 0 ? _dsArray : 0,
-	                                "group": groups[0] || 0,
-	                                "name": _C2.default.get(self.keys.name, data),
+	                                "group": groups[0] || 'data' + 1,
 	                                "data-ref": _C2.default.guid(),
+	                                "enable": true,
+	                                "color": color(0)
+	                            }];
+	                            self.dataTarget.push(_data);
+	                        });
+	
+	                        // return self.dataTarget;
+	                        break;
+	
+	                    case "group":
+	                        groups = self.groups;
+	                        groupRefs = [];
+	                        // Iterate over each group
+	
+	                        self.dataSource.forEach(function (data, index) {
+	                            var _dsArray = _C2.default.get(self.keys.value, data);
+	
+	                            var _stack = [],
+	                                _stackItem = {
+	                                "color": "#ffffff",
+	                                "y0": 0,
+	                                "y1": 1,
+	                                "group": "",
+	                                "name": "",
+	                                "data-ref": "",
+	                                "group-ref": "",
 	                                "enable": true
-	                            };
-	                            _stack.push(_stackItem);
-	                        }
+	                            },
+	                                color = self.colorRange;
 	
-	                        self.dataTarget.push(_stack);
-	                    });
-	
-	                    return self.dataTarget;
-	                    break;
-	
-	                case "stack":
-	                    var stacks = self.stacks;
-	
-	                    // Iterate over each group
-	                    self.dataSource.forEach(function (data, index) {
-	                        var _dsArray = _C2.default.get(self.keys.value, data);
-	
-	                        var _stack = [],
-	                            _stackItem = {
-	                            "color": "#ffffff",
-	                            "y0": 0,
-	                            "y1": 1,
-	                            "group": "",
-	                            "name": "",
-	                            "data-ref": "",
-	                            "enable": true
-	                        },
-	                            color = self.colorRange;
-	
-	                        // Iterate each single bar in a group
-	                        if (_C2.default.isArray(_dsArray)) {
-	                            (function () {
-	                                var _negBase = 0;
-	                                var _posBase = 0;
+	                            // Iterate each single bar in a group
+	                            if (_C2.default.isArray(_dsArray)) {
 	                                _dsArray.forEach(function (d, i) {
+	                                    if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+	                                    if (_C2.default.isEmpty(groups[i])) groups.push('data' + (i + 1));
 	                                    _stackItem = {
 	                                        "color": color(i),
 	                                        "y0": d,
-	                                        "y1": d > 0 ? d + _posBase : _negBase,
-	                                        "group": stacks[i] || i,
+	                                        "y1": d > 0 ? d : 0,
+	                                        "group": groups[i],
 	                                        "name": _C2.default.get(self.keys.name, data),
+	                                        "value": d,
 	                                        "data-ref": _C2.default.guid(),
+	                                        "group-ref": groupRefs[i],
 	                                        "enable": true
 	                                    };
 	                                    _stack.push(_stackItem);
-	                                    if (d > 0) _posBase += d;else _negBase += d;
 	                                });
-	                            })();
-	                        } else {
-	                            _stackItem = {
-	                                "color": color(0),
-	                                "y0": _dsArray,
-	                                "y1": _dsArray > 0 ? _dsArray : 0,
-	                                "group": stacks[0] || 0,
-	                                "name": _C2.default.get(self.keys.name, data),
-	                                "data-ref": _C2.default.guid(),
+	                            } else {
+	                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+	                                if (_C2.default.isEmpty(groups[0])) groups.push('data1');
+	                                _stackItem = {
+	                                    "color": color(0),
+	                                    "y0": _dsArray,
+	                                    "y1": _dsArray > 0 ? _dsArray : 0,
+	                                    "group": groups[0],
+	                                    "name": _C2.default.get(self.keys.name, data),
+	                                    "value": _dsArray,
+	                                    "data-ref": _C2.default.guid(),
+	                                    "group-ref": groupRefs[0],
+	                                    "enable": true
+	                                };
+	                                _stack.push(_stackItem);
+	                            }
+	
+	                            self.dataTarget.push(_stack);
+	                        });
+	
+	                        self.groups = groups;
+	                        return {
+	                            v: self.dataTarget
+	                        };
+	                        break;
+	
+	                    case "stack":
+	                        stacks = self.stacks;
+	                        groupRefs = [];
+	                        // Iterate over each group
+	
+	                        self.dataSource.forEach(function (data, index) {
+	                            var _dsArray = _C2.default.get(self.keys.value, data);
+	
+	                            var _stack = [],
+	                                _stackItem = {
+	                                "color": "#ffffff",
+	                                "y0": 0,
+	                                "y1": 1,
+	                                "group": "",
+	                                "name": "",
+	                                "data-ref": "",
 	                                "enable": true
-	                            };
-	                            _stack.push(_stackItem);
-	                        }
+	                            },
+	                                color = self.colorRange;
 	
-	                        self.dataTarget.push(_stack);
-	                    });
+	                            // Iterate each single bar in a group
+	                            if (_C2.default.isArray(_dsArray)) {
+	                                (function () {
+	                                    var _negBase = 0;
+	                                    var _posBase = 0;
+	                                    _dsArray.forEach(function (d, i) {
+	                                        if (groupRefs.length - 1 < i) groupRefs.push(_C2.default.guid());
+	                                        if (_C2.default.isEmpty(stacks[i])) stacks.push('data' + (i + 1));
+	                                        _stackItem = {
+	                                            "color": color(i),
+	                                            "y0": d,
+	                                            "y1": d > 0 ? d + _posBase : _negBase,
+	                                            "group": stacks[i],
+	                                            "name": _C2.default.get(self.keys.name, data),
+	                                            "value": d,
+	                                            "data-ref": _C2.default.guid(),
+	                                            "group-ref": groupRefs[i],
+	                                            "enable": true
+	                                        };
+	                                        _stack.push(_stackItem);
+	                                        if (d > 0) _posBase += d;else _negBase += d;
+	                                    });
+	                                })();
+	                            } else {
+	                                if (groupRefs.length == 0) groupRefs.push(_C2.default.guid());
+	                                if (_C2.default.isEmpty(stacks[0])) stacks.push('data1');
+	                                _stackItem = {
+	                                    "color": color(0),
+	                                    "y0": _dsArray,
+	                                    "y1": _dsArray > 0 ? _dsArray : 0,
+	                                    "group": stacks[0],
+	                                    "name": _C2.default.get(self.keys.name, data),
+	                                    "value": _dsArray,
+	                                    "data-ref": _C2.default.guid(),
+	                                    "group-ref": groupRefs[0],
+	                                    "enable": true
+	                                };
+	                                _stack.push(_stackItem);
+	                            }
 	
-	                    return self.dataTarget;
-	                    break;
+	                            self.dataTarget.push(_stack);
+	                        });
 	
-	                default:
-	                    return self.dataSource;
-	                    break;
-	            }
+	                        self.stacks = stacks;
+	                        return {
+	                            v: self.dataTarget
+	                        };
+	                        break;
+	
+	                    default:
+	                        return {
+	                            v: self.dataSource
+	                        };
+	                        break;
+	                }
+	            }();
+	
+	            if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
 	        }
 	    }, {
 	        key: "getDataTargetForPieChart",
@@ -3073,7 +3950,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                var _data = {
 	                    // "color"     : color(index),
-	                    "icon": data.icon,
+	                    "icon": _C2.default.get(self.keys.icon, data),
 	                    "name": _C2.default.get(self.keys.name, data),
 	                    "value": [],
 	                    "data-ref": _C2.default.guid(),
@@ -3088,7 +3965,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    "end": null,
 	                    "color": "#fff",
 	                    "data-ref": null,
-	                    "enable": true
+	                    "enable": true,
+	                    "icon": null
 	                };
 	
 	                if (_C2.default.isArray(_dsArray)) {
@@ -3099,18 +3977,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            "end": new Date(d.end),
 	                            "color": color(index),
 	                            "data-ref": _C2.default.guid(),
-	                            "enable": true
+	                            "enable": true,
+	                            "icon": _C2.default.get(self.keys.icon, data)
 	                        };
 	                        _valueArray.push(_valueItem);
 	                    });
 	                } else {
 	                    _valueItem = {
 	                        "name": _C2.default.get(self.keys.name, data),
-	                        "start": new Date(d.start),
-	                        "end": new Date(d.end),
+	                        "start": new Date(_dsArray.start),
+	                        "end": new Date(_dsArray.end),
 	                        "color": color(index),
 	                        "data-ref": _C2.default.guid(),
-	                        "enable": true
+	                        "enable": true,
+	                        "icon": _C2.default.get(self.keys.icon, data)
 	                    };
 	                    _valueArray.push(_valueItem);
 	                }
@@ -3218,29 +4098,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        /*=====  End of Normalize Data For Charts  ======*/
 	
-	        /*=============================
-	        =            Utils            =
-	        =============================*/
-	        // getBarColorForBarChart() {
-	        //     var self = this;
+	        /*=================================================
+	        =              Normalize Data For Map             =
+	        =================================================*/
 	
-	        //     var color = self.colorRange;
-	        //     if (typeof color == 'string') {
-	        //         try {
-	        //             return d3.scale[color]();    
-	        //         }
-	        //         catch(err) {
-	        //             return function(i) {
-	        //                 return color;
-	        //             };
-	        //         }
-	        //     } else if (typeof color == 'object') {
-	        //         return d3.scale.ordinal().range(color);
-	        //     }
-	        // }
+	    }, {
+	        key: "getDataTargetForMap",
+	        value: function getDataTargetForMap() {
+	            var self = this;
 	
+	            var getDataValue = function getDataValue(key, data, isArray) {
+	                var _keys = key.split('.');
+	                var _value = _C2.default.get(key, data);
+	                var _v = void 0;
+	                if (_keys.length == 1 && _keys[0] == 'value' && !isArray) {
+	                    _v = _value;
+	                } else {
+	                    _v = new Object();
+	                    _v[_keys[_keys.length - 1]] = _value;
+	                }
+	                return _v;
+	            };
 	
-	        /*=====  End of Utils  ======*/
+	            var getData = function getData(data) {
+	                var _data = {
+	                    "name": _C2.default.get(self.keys.name, data),
+	                    "coor": _C2.default.get(self.keys.coor, data),
+	                    "value": null
+	                };
+	                if (_C2.default.isArray(self.keys.value)) {
+	                    self.keys.value.forEach(function (k) {
+	                        var _v = getDataValue(k, data, true);
+	                        _data.value = _C2.default.merge(_data.value, _v);
+	                    });
+	                } else {
+	                    _data.value = getDataValue(self.keys.value, data, false);
+	                }
+	
+	                return _data;
+	            };
+	
+	            if (!_C2.default.isArray(self.dataSource)) self.dataTarget = getData(self.dataSource);else self.dataSource.forEach(function (data) {
+	                self.dataTarget.push(getData(data));
+	            });
+	
+	            return self.dataTarget;
+	        }
+	
+	        /*=====    End of Normalize Data For Map   ======*/
 	
 	        /*=============================================
 	        =            Data Input From Files            =
@@ -3248,54 +4153,56 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	    }, {
 	        key: "getCsv",
-	        value: function getCsv() {
+	        value: function getCsv(callback) {
 	
 	            var self = this;
 	
 	            d3.csv(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getTsv",
-	        value: function getTsv() {
+	        value: function getTsv(callback) {
 	
 	            var self = this;
 	
 	            d3.tsv(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getText",
-	        value: function getText() {
+	        value: function getText(callback) {
 	
 	            var self = this;
 	
 	            d3.text(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return JSON.parse(data);
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getJson",
-	        value: function getJson() {
+	        value: function getJson(callback) {
+	
 	            var self = this;
 	
 	            d3.json(self.file.url, function (err, data) {
 	                if (err) throw err;
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	    }, {
 	        key: "getXml",
-	        value: function getXml() {
+	        value: function getXml(callback) {
+	
 	            var self = this;
 	
 	            d3.xml(self.file.url, function (err, data) {
@@ -3311,16 +4218,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    };
 	                });
 	
-	                return data;
+	                if (!_C2.default.isEmpty(callback) && _C2.default.isFunction(callback)) callback.call(self, data);
 	            });
 	        }
 	
 	        /*=====  End of Data Input From Files  ======*/
 	
 	    }, {
-	        key: "keys",
+	        key: "options",
 	        get: function get() {
-	            return this._keys;
+	            return this._options;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -3328,6 +4235,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
+	        set: function set(arg) {
+	            if (arg) {
+	                this._options = arg;
+	            }
+	        }
+	    }, {
+	        key: "callback",
+	        get: function get() {
+	            return this._callback;
+	        }
+	    }, {
+	        key: "chartType",
+	        get: function get() {
+	            return this._chartType;
+	        }
+	    }, {
+	        key: "file",
+	        get: function get() {
+	            return this._file;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._file = arg;
+	            }
+	        }
+	    }, {
+	        key: "keys",
+	        get: function get() {
+	            return this._keys;
+	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._keys = arg;
@@ -3401,7 +4338,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = DataAdapter;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3430,11 +4367,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(10);
+	var _C9 = __webpack_require__(7);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(7);
+	var _C11 = __webpack_require__(8);
 	
 	var _C12 = _interopRequireDefault(_C11);
 	
@@ -3442,7 +4379,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C14 = _interopRequireDefault(_C13);
 	
-	var _C15 = __webpack_require__(8);
+	var _C15 = __webpack_require__(9);
 	
 	var _C16 = _interopRequireDefault(_C15);
 	
@@ -3463,25 +4400,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = _possibleConstructorReturn(this, (DonutChart.__proto__ || Object.getPrototypeOf(DonutChart)).call(this, options));
 	
 	        var self = _this;
+	
 	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
-	        var config = {
+	        self.config = {
 	            outerRadius: R,
-	            innerRadius: R > 80 ? R - 80 : R - 40,
-	            showText: true // show/hide text on middle or each donut
+	            innerRadius: R > 80 ? R - 80 : R - 40
 	        };
 	
-	        self._outerRadius = options.outerRadius || config.outerRadius;
-	        self._innerRadius = options.innerRadius || config.innerRadius;
-	        self._showText = options.showText || config.showText;
-	        self.body.type = 'donut';
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        var da = new _C16.default(dataOption);
-	        self.dataTarget = da.getDataTarget("donut");
-	
-	        self.updateConfig();
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -3501,18 +4427,137 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Update Donut Chart Config
 	         */
-	        value: function updateConfig() {
+	        value: function updateConfig(config, callback) {
+	            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'updateConfig', this).call(this, config);
+	
 	            var self = this;
 	
-	            // chartInnerAfter, chartOuterAfter define easing radius of donut chart during animation
-	            // TODO: Add configs allow users to define these radius
+	            self.options = _C14.default.mergeDeep(config, self.options);
+	
+	            self.chartType = 'donut';
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	
+	        /**
+	         * Update Donut Chart Config
+	         */
+	
+	    }, {
+	        key: 'updateDataConfig',
+	        value: function updateDataConfig(dataCfg, callback) {
+	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+	
+	            self.chartType = 'donut';
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	
+	        /**
+	         * Update Donut Chart based on new data
+	         * @param  {[type]} data [description]
+	         */
+	
+	    }, {
+	        key: 'update',
+	        value: function update(data) {
+	            var self = this;
+	
 	            var width = self.width - self.margin.left - self.margin.right,
 	                height = self.height - self.margin.top - self.margin.bottom,
+	                color = self.colorRange;
+	
+	            self.arc = d3.svg.arc().outerRadius(self.options.outerRadius).innerRadius(self.options.innerRadius);
+	
+	            //we can sort data here
+	            self.pie = d3.layout.pie().sort(null).value(function (d) {
+	                return d.value;
+	            });
+	
+	            self.body.selectAll(".c9-chart-donut.c9-custom-arc-container").data([]).exit().remove();
+	
+	            //draw chart
+	            var arcs = self.body.append('g').attr('class', 'c9-chart-donut c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(data)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
+	
+	            // Append main path contains donut
+	            // TODO: add a unique class to allow Legend could find selected donut/pie
+	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('data-ref', function (d) {
+	                return d.data['data-ref'];
+	            }).attr('d', self.arc).attr('fill', function (d, i) {
+	                return color(i);
+	            }).attr('stroke', '#ffffff').each(function (d) {
+	                self.currentData = d;
+	            });
+	            // Current data used for calculate interpolation 
+	            // between current arc vs disabled arc
+	
+	
+	            // Append middle text display name
+	            // if (self.showText) {
+	            //     arcs.append('text')
+	            //             .attr('class', 'c9-chart-donut c9-custom-text')
+	            //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
+	            //             .attr('dy', '.35em')
+	            //             .attr('text-anchor', 'middle')
+	            //             .text(function(d) { return d.data.name; });
+	            // }
+	
+	            self.updateInteraction();
+	        }
+	
+	        /**
+	         * Select all path as type PATH in Donut Chart via its CLASS
+	         */
+	
+	    }, {
+	        key: 'selectAllPath',
+	        value: function selectAllPath() {
+	            var self = this;
+	
+	            return self.body
+	            // .selectAll('g')
+	            .selectAll('path.c9-chart-donut.c9-custom-path');
+	        }
+	
+	        /**
+	         * Update Interaction: Hover
+	         * @return {} 
+	         */
+	
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                selector = self.selectAllPath(),
+	                width = self.width - self.margin.left - self.margin.right,
+	                height = self.height - self.margin.top - self.margin.bottom,
 	                color = self.colorRange,
-	                chartInnerBefore = self.innerRadius,
-	                chartOuterBefore = self.outerRadius,
-	                chartInnerAfter = self.innerRadius,
-	                chartOuterAfter = self.outerRadius * 1.2;
+	                chartInnerBefore = self.options.innerRadius,
+	                chartOuterBefore = self.options.outerRadius,
+	                chartInnerAfter = self.options.innerRadius,
+	                chartOuterAfter = self.options.outerRadius * 1.2;
 	
 	            var hoverOptions = self.hover.options,
 	                hoverEnable = self.hover.enable,
@@ -3541,11 +4586,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
 	
 	                    // For legend
-	                    if (self.legend.item) self.legend.item.each(function () {
+	                    if (self.options.legend.show) self.legend.item.each(function () {
 	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
 	                            d3.select(this).attr('opacity', '0.3');
 	                        }
 	                    });
+	
+	                    // For Table
+	                    if (self.options.table.show) {
+	                        var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
+	                        tr.filter(function (i) {
+	                            return i['data-ref'] != d.data['data-ref'];
+	                        }).selectAll('td').style('opacity', '0.5');
+	                        var selectedItem = tr.filter(function (i) {
+	                            return i['data-ref'] == d.data['data-ref'];
+	                        });
+	                        //set its style and scroll to its pos
+	                        selectedItem.selectAll('td').style('opacity', '1');
+	                        _C14.default.scroll(d3.select('.c9-table-container')[0][0], selectedItem[0][0].offsetTop, 200);
+	                    }
 	
 	                    // For Chart
 	                    self.selectAllPath().each(function () {
@@ -3569,11 +4628,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
 	
 	                    // For legend
-	                    if (self.legend.item) self.legend.item.each(function () {
+	                    if (self.options.legend.show) self.legend.item.each(function () {
 	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
 	                            d3.select(this).attr('opacity', '1.0');
 	                        }
 	                    });
+	
+	                    // For Table
+	                    if (self.options.table.show) d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
 	
 	                    // For Chart
 	                    self.selectAllPath().each(function () {
@@ -3588,91 +4650,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            };
 	
-	            self.arc = d3.svg.arc().outerRadius(self.outerRadius).innerRadius(self.innerRadius);
-	
-	            //we can sort data here
-	            self.pie = d3.layout.pie().sort(null).value(function (d) {
-	                return d.value;
-	            });
-	
-	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-donut.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-donut c9-custom-arc');
-	
-	            // Append main path contains donut
-	            // TODO: add a unique class to allow Legend could find selected donut/pie
-	            arcs.append('path').attr('class', 'c9-chart-donut c9-custom-path').attr('data-ref', function (d) {
-	                return d.data['data-ref'];
-	            }).attr('d', self.arc).attr('fill', function (d, i) {
-	                return color(i);
-	            }).attr('stroke', '#ffffff').each(function (d) {
-	                self._currentData = d;
-	            });
-	            // Current data used for calculate interpolation 
-	            // between current arc vs disabled arc
-	
-	
-	            // Append middle text display name
-	            // if (self.showText) {
-	            //     arcs.append('text')
-	            //             .attr('class', 'c9-chart-donut c9-custom-text')
-	            //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
-	            //             .attr('dy', '.35em')
-	            //             .attr('text-anchor', 'middle')
-	            //             .text(function(d) { return d.data.name; });
-	            // }
-	        }
-	
-	        /**
-	         * Main draw function of Donut Chart
-	         */
-	
-	    }, {
-	        key: 'draw',
-	        value: function draw() {
-	
-	            var self = this;
-	
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
-	
-	            self.legend = legend;
-	
-	            // Draw legend
-	            legend.draw();
-	            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
-	
-	            // Update interaction of this own chart
-	            self.updateInteraction();
-	        }
-	
-	        /**
-	         * Select all path as type PATH in Donut Chart via its CLASS
-	         */
-	
-	    }, {
-	        key: 'selectAllPath',
-	        value: function selectAllPath() {
-	            var self = this;
-	
-	            return self.body
-	            // .selectAll('g')
-	            .selectAll('path.c9-chart-donut.c9-custom-path');
-	        }
-	
-	        /**
-	         * Update Interaction: Hover
-	         * @return {} 
-	         */
-	
-	    }, {
-	        key: 'updateInteraction',
-	        value: function updateInteraction() {
-	            var self = this,
-	                selector = self.selectAllPath();
-	
 	            selector.on(self._eventFactory);
 	        }
 	
+	        /*=====  End of Main Functions  ======*/
+	
+	        /*========================================
+	        =            User's Functions            =
+	        ========================================*/
 	        /**
 	         * Custom Event Listener
 	         * @param  {[type]}   eventType [description]
@@ -3712,12 +4697,110 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
-	        /*=====  End of Main Functions  ======*/
+	        /**
+	         * Main draw function of Donut Chart
+	         */
 	
 	    }, {
-	        key: 'outerRadius',
+	        key: 'draw',
+	        value: function draw() {
+	            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'draw', this).call(this);
+	
+	            var self = this;
+	
+	            self.updateConfig(self.config, function (data) {
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+	                var table = new _C10.default(self.options.table, self, self.dataTarget);
+	
+	                self.title = title;
+	                self.legend = legend;
+	                self.table = table;
+	
+	                // Draw title
+	                self.title.draw();
+	
+	                // Update interaction of this own chart
+	                self.update(self.dataTarget);
+	                self.updateInteraction();
+	
+	                self.legend = legend;
+	                self.table = table;
+	
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	
+	                // Draw table
+	                self.table.draw();
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
+	        }
+	
+	        /**
+	         * Set option via stand-alone function
+	         * @param {[type]} key   [description]
+	         * @param {[type]} value [description]
+	         */
+	
+	    }, {
+	        key: 'setOption',
+	        value: function setOption(key, value) {
+	            _get(DonutChart.prototype.__proto__ || Object.getPrototypeOf(DonutChart.prototype), 'setOption', this).call(this, key, value);
+	
+	            var self = this;
+	
+	            _C14.default.set(key, value, self.options);
+	
+	            self.updateConfig(self.options);
+	        }
+	
+	        /**
+	         * Update chart based on new data with optional dataConfig
+	         * @param  {[type]} data       [description]
+	         * @param  {[type]} dataConfig [description]
+	         */
+	
+	    }, {
+	        key: 'updateData',
+	        value: function updateData(newData, newDataConfig) {
+	            var self = this;
+	
+	            var newCfg = {};
+	
+	            if (!_C14.default.isEmpty(newDataConfig)) {
+	
+	                newCfg.data = {
+	                    plain: newData,
+	                    keys: newDataConfig
+	                };
+	            } else {
+	
+	                newCfg.data = {
+	                    plain: newData
+	                };
+	            }
+	
+	            self.updateDataConfig(newCfg, function (data) {
+	                // Update Chart
+	                self.update(data);
+	
+	                // Update Legend
+	                self.legend.update(data);
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	
+	                // Update Table
+	                self.table.update(data);
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
+	        }
+	
+	        /*=====  End of User's Functions  ======*/
+	
+	    }, {
+	        key: 'pie',
 	        get: function get() {
-	            return this._outerRadius;
+	            return this._pie;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -3725,46 +4808,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(arg) {
-	            if (arg) {
-	                this._outerRadius = arg;
-	            }
-	        }
-	    }, {
-	        key: 'innerRadius',
-	        get: function get() {
-	            return this._innerRadius;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._innerRadius = arg;
-	            }
-	        }
-	    }, {
-	        key: 'showText',
-	        get: function get() {
-	            return this._showText;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._showText = arg;
-	            }
-	        }
-	    }, {
-	        key: 'tooltip',
-	        get: function get() {
-	            return this._tooltip;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._tooltip = arg;
-	            }
-	        }
-	    }, {
-	        key: 'pie',
-	        get: function get() {
-	            return this._pie;
-	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._pie = arg;
@@ -3790,351 +4833,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this._currentData = arg;
 	            }
 	        }
-	    }, {
-	        key: 'chartType',
-	        get: function get() {
-	            return this._body.type;
-	        }
-	    }, {
-	        key: 'legend',
-	        get: function get() {
-	            return this._legend;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._legend = arg;
-	            }
-	        }
 	    }]);
 	
 	    return DonutChart;
 	}(_C2.default);
 	
 	exports.default = DonutChart;
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	var _C = __webpack_require__(3);
-	
-	var _C2 = _interopRequireDefault(_C);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Table = function () {
-	    function Table(options, body, data) {
-	        _classCallCheck(this, Table);
-	
-	        var config = {
-	            container: "body",
-	            show: false,
-	            headings: ["Name", "Value"],
-	            style: "stripe", // || "stripe"
-	            serial: true,
-	            hover: {
-	                enable: true,
-	                callback: null
-	            },
-	            click: {
-	                enable: true,
-	                callback: null
-	            }
-	        };
-	
-	        var self = this;
-	
-	        self._container = options.container || config.container;
-	        self._show = options.show ? options.show : config.show;
-	        self._headings = options.headings || config.headings;
-	        self._style = options.style || config.style;
-	        self._serial = options.serial || config.serial;
-	        self._hover = _C2.default.merge(options.hover, config.hover);
-	        self._click = _C2.default.merge(options.click, config.click);
-	
-	        self._data = data;
-	        self._body = body;
-	    }
-	
-	    /*==============================
-	    =            Getter            =
-	    ==============================*/
-	
-	
-	    _createClass(Table, [{
-	        key: "draw",
-	
-	
-	        /*=====  End of Setter  ======*/
-	
-	        /*======================================
-	        =            Main Functions            =
-	        ======================================*/
-	        value: function draw() {
-	            var self = this;
-	
-	            if (self.show) {
-	
-	                var headTbl = d3.select(self.container).append("table").attr('class', 'c9-table c9-table-header'),
-	                    thead = headTbl.append("thead"),
-	                    bodyTbl = d3.select(self.container).append("div").attr('class', 'c9-table-container').append("table").attr('class', function () {
-	                    if (self.style === 'default') return 'c9-table c9-table-body';else if (self.style === 'stripe') return 'c9-table c9-table-body c9-stripe';
-	                }),
-	                    tbody = bodyTbl.append("tbody");
-	
-	                // Append serial no heading
-	                // Bind each statistic to a line of the table
-	                // Show serial no.
-	                var hRows = thead.append("tr");
-	
-	                if (self.serial) {
-	                    hRows.append("th").text("#");
-	                }
-	
-	                hRows.selectAll("thead").data(self.headings).enter().append("th").text(function (d) {
-	                    return d;
-	                });
-	
-	                // Bind each statistic to a line of the table
-	                // Show serial no.
-	                var bRows = tbody.selectAll("tr").data(self.data).enter().append("tr").attr("data-ref", function (d) {
-	                    return d["data-ref"];
-	                });
-	
-	                if (self.serial) {
-	                    bRows.append("td").text(function (d, i) {
-	                        return i + 1;
-	                    });
-	                }
-	
-	                // Add statistic names to each row
-	                bRows.append("td").text(function (d) {
-	                    return d.name;
-	                });
-	
-	                // Add values to each row
-	                bRows.append("td").text(function (d) {
-	                    return d.value;
-	                });
-	            }
-	        }
-	    }, {
-	        key: "updateInteractionForPieChart",
-	        value: function updateInteractionForPieChart(chart) {
-	
-	            var self = this;
-	
-	            var hoverOptions = chart.hover.options,
-	                hoverEnable = chart.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
-	                onClickCallback = chart.click.callback;
-	
-	            var chartType = chart.chartType;
-	
-	            var chartInnerBefore = chartType == 'pie' ? 0 : chart.innerRadius,
-	                chartOuterBefore = chartType == 'pie' ? chart.radius : chart.outerRadius,
-	                chartInnerAfter = chartType == 'pie' ? 0 : chart.innerRadius,
-	                chartOuterAfter = chartType == 'pie' ? chart.radius * 1.2 : chart.outerRadius * 1.2;
-	            self.itemEventFactory = {
-	
-	                'click': function click(item) {
-	                    if (_C2.default.isFunction(onClickCallback)) {
-	                        onClickCallback.call(this, item);
-	                    }
-	
-	                    // var selector = d3.select(this);
-	                    // var enable = true,
-	                    //     dataSet = self.data;
-	                    // var totalEnable = d3.sum(dataSet.map(function(d) {
-	                    //     return (d.enable) ? 1 : 0;
-	                    // }));
-	
-	                    // // Add pointer to cursor
-	                    // selector.style('cursor', 'pointer');
-	
-	                    // // If current selector is disabled, then turn it on back
-	                    // // Else, set enable to false
-	                    // if (selector.style('opacity') == '0.1') {
-	                    //     selector.style('opacity', '1.0');
-	                    // } else {
-	                    //     if (totalEnable < 2) return;
-	                    //     selector.style('opacity', '0.1');
-	                    //     enable = false;
-	                    // }
-	                },
-	
-	                'mouseover': function mouseover(item) {
-	                    if (!item) return;
-	
-	                    if (_C2.default.isFunction(onMouseOverCallback)) {
-	                        onMouseOverCallback.call(this, item);
-	                    }
-	
-	                    var legendSelector = d3.select(this);
-	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
-	                    // if (legendSelector.attr('enable') == 'true') {
-	
-	                    // For Chart
-	                    chart.selectAllPath().each(function () {
-	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
-	                            d3.select(this).attr('opacity', '0.3');
-	                        }
-	                    });
-	
-	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
-	
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
-	                    // }
-	                },
-	
-	                'mouseout': function mouseout(item) {
-	                    if (!item) return;
-	
-	                    if (_C2.default.isFunction(onMouseOutCallback)) {
-	                        onMouseOutCallback.call(this, item);
-	                    }
-	
-	                    var legendSelector = d3.select(this);
-	                    // Add pointer to cursor
-	                    legendSelector.style('cursor', 'pointer');
-	
-	                    chart.selectAllPath().each(function () {
-	                        if (d3.select(this).attr('data-ref') !== item['data-ref']) {
-	                            d3.select(this).attr('opacity', '1.0');
-	                        }
-	                    });
-	
-	                    var selector = d3.select("path[data-ref='" + item['data-ref'] + "']");
-	
-	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
-	                }
-	
-	            };
-	
-	            if (self.show) self.selectAllRow().on(self.itemEventFactory);
-	        }
-	        /*=====  End of Main Functions  ======*/
-	
-	    }, {
-	        key: "selectAllRow",
-	        value: function selectAllRow() {
-	            return d3.selectAll(".c9-table tr");
-	        }
-	    }, {
-	        key: "data",
-	        get: function get() {
-	            return this._data;
-	        },
-	
-	
-	        /*=====  End of Getter  ======*/
-	
-	        /*==============================
-	        =            Setter            =
-	        ==============================*/
-	        set: function set(arg) {
-	            if (arg) {
-	                this._data = arg;
-	            }
-	        }
-	    }, {
-	        key: "body",
-	        get: function get() {
-	            return this._body;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._body = arg;
-	            }
-	        }
-	    }, {
-	        key: "container",
-	        get: function get() {
-	            return this._container;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._container = arg;
-	            }
-	        }
-	    }, {
-	        key: "show",
-	        get: function get() {
-	            return this._show;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._show = arg;
-	            }
-	        }
-	    }, {
-	        key: "headings",
-	        get: function get() {
-	            return this._headings;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._headings = arg;
-	            }
-	        }
-	    }, {
-	        key: "style",
-	        get: function get() {
-	            return this._style;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._style = arg;
-	            }
-	        }
-	    }, {
-	        key: "serial",
-	        get: function get() {
-	            return this._serial;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._serial = arg;
-	            }
-	        }
-	    }, {
-	        key: "hover",
-	        get: function get() {
-	            return this._hover;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._hover = arg;
-	            }
-	        }
-	    }, {
-	        key: "click",
-	        get: function get() {
-	            return this._click;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._click = arg;
-	            }
-	        }
-	    }]);
-	
-	    return Table;
-	}();
-	
-	exports.default = Table;
 
 /***/ },
 /* 11 */
@@ -4166,11 +4870,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(10);
+	var _C9 = __webpack_require__(7);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(7);
+	var _C11 = __webpack_require__(8);
 	
 	var _C12 = _interopRequireDefault(_C11);
 	
@@ -4178,7 +4882,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C14 = _interopRequireDefault(_C13);
 	
-	var _C15 = __webpack_require__(8);
+	var _C15 = __webpack_require__(9);
 	
 	var _C16 = _interopRequireDefault(_C15);
 	
@@ -4200,12 +4904,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var config = {
+	        self.config = {
 	            point: {
 	                show: true,
 	                fill: "steelblue",
-	                stroke: "#d26b5f",
-	                'stroke-width': 2,
+	                stroke: "steelblue",
+	                'stroke-width': 1,
 	                opacity: 1.0,
 	                radius: 5
 	            },
@@ -4218,32 +4922,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            interpolate: "linear" };
 	
-	        self._point = _C14.default.merge(options.point, config.point);
-	        self._area = _C14.default.merge(options.area, config.area);
-	        self._line = _C14.default.merge(options.line, config.line);
-	        self._interpolate = options.interpolate || config.interpolate;
-	
-	        self.body.type = "line";
-	        self._bisectDate = d3.bisector(function (d) {
-	            return d.valueX;
-	        }).left;;
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        self._da = new _C16.default(dataOption);
-	        self.dataTarget = self._da.getDataTarget("line");
-	
-	        self._isTimeDomain = self._da.timeFormat;
-	
-	        self.updateConfig();
-	
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
 	    /*==============================
 	    =            Getter            =
 	    ==============================*/
+	
 	
 	    _createClass(LineChart, [{
 	        key: 'updateConfig',
@@ -4255,118 +4941,344 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ======================================*/
 	
 	        /**
-	         * First init Line Chart
+	         * Init Line Chart Config
 	         */
-	        value: function updateConfig() {
+	        value: function updateConfig(config, callback) {
+	            _get(LineChart.prototype.__proto__ || Object.getPrototypeOf(LineChart.prototype), 'updateConfig', this).call(this, config);
+	
 	            var self = this;
 	
-	            var da = self._da;
+	            self.options = _C14.default.mergeDeep(config, self.options);
+	
+	            self.chartType = "line";
+	            self.bisectDate = d3.bisector(function (d) {
+	                return d.valueX;
+	            }).left;
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	                self.isTimeDomain = da.timeFormat;
+	
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                self.x = self.isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]), self.y = d3.scale.linear().range([height, 0]);
+	
+	                self.updateDomain(self.dataTarget);
+	
+	                self.lineGen = d3.svg.line().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y(function (d) {
+	                    return self.y(d.valueY);
+	                }).interpolate(self.options.interpolate);
+	
+	                self.areaGen = d3.svg.area().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y0(function (d) {
+	                    return self.y(d.valueY);
+	                }).y1(height).interpolate(self.options.interpolate);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	
+	        /**
+	         * Update data config
+	         */
+	
+	    }, {
+	        key: 'updateDataConfig',
+	        value: function updateDataConfig(dataCfg, callback) {
+	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+	
+	            self.chartType = "line";
+	            self.bisectDate = d3.bisector(function (d) {
+	                return d.valueX;
+	            }).left;
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	                self.isTimeDomain = da.timeFormat;
+	
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                self.x = self.isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]), self.y = d3.scale.linear().range([height, 0]);
+	
+	                self.updateDomain(self.dataTarget);
+	
+	                self.lineGen = d3.svg.line().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y(function (d) {
+	                    return self.y(d.valueY);
+	                }).interpolate(self.options.interpolate);
+	
+	                self.areaGen = d3.svg.area().x(function (d) {
+	                    return self.x(d.valueX);
+	                }).y0(function (d) {
+	                    return self.y(d.valueY);
+	                }).y1(height).interpolate(self.options.interpolate);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'updateOverlay',
+	        value: function updateOverlay() {
+	            var self = this;
 	
 	            var width = self.width - self.margin.left - self.margin.right,
 	                height = self.height - self.margin.top - self.margin.bottom;
 	
-	            var x = self._isTimeDomain ? d3.time.scale().range([0, width]) : d3.scale.linear().range([0, width]),
-	                y = d3.scale.linear().range([height, 0]);
-	
-	            var valueXArray = d3.merge(self.dataTarget.map(function (data) {
-	                return data.value.map(function (d) {
-	                    return d.valueX;
-	                });
-	            }));
-	
-	            var valueYArray = d3.merge(self.dataTarget.map(function (data) {
-	                return data.value.map(function (d) {
-	                    return d.valueY;
-	                });
-	            }));
-	
-	            x.domain(d3.extent(valueXArray));
-	
-	            y.domain(d3.extent(valueYArray));
-	
-	            // Update domain if all values positive / negative
-	            if (y.domain()[0] > 0 && y.domain()[1] > 0) {
-	                y.domain([0, y.domain()[1]]);
-	            } else if (y.domain()[0] < 0 && y.domain()[1] < 0) {
-	                y.domain([y.domain()[0], 0]);
-	            }
-	
-	            self._x = x;
-	            self._y = y;
-	
-	            var lineGen = d3.svg.line().x(function (d) {
-	                return x(d.valueX);
-	            }).y(function (d) {
-	                return y(d.valueY);
-	            }).interpolate(self.interpolate);
-	
-	            var areaGen = d3.svg.area().x(function (d) {
-	                return x(d.valueX);
-	            }).y0(function (d) {
-	                return y(d.valueY);
-	            }).y1(height).interpolate(self.interpolate);
-	
-	            self.dataTarget.forEach(function (d, i) {
-	                if (self.area.show) {
-	                    self.body.append('path').attr('class', 'c9-chart-line c9-path-area-custom').attr('d', areaGen(d.value)).attr('data-ref', 'c9-' + d['data-ref']).style('fill', d.color).style('stroke', 'none').style('opacity', '0.1');
-	                }
-	
-	                self.body.append('path').attr('class', 'c9-chart-line c9-path-line-custom').attr('d', lineGen(d.value)).attr('data-ref', 'c9-' + d['data-ref']).style('stroke', d.color).style('stroke-dasharray', function () {
-	                    console.log(self.getLineStyle());
-	                    return self.getLineStyle();
-	                }).style('stroke-width', self.line.width).style('fill', 'none');
-	
-	                if (self.point.show) {
-	                    self.body.selectAll("dot").data(d.value).enter().append("circle").attr('class', 'c9-chart-line c9-circle-custom').attr("r", self.point.radius).attr("cx", function (_d) {
-	                        return x(_d.valueX);
-	                    }).attr("cy", function (_d) {
-	                        return y(_d.valueY);
-	                    }).attr("data-ref", function (d) {
-	                        return d["data-ref"];
-	                    }).style("fill", self.point.fill).style("stroke", self.point.stroke).style("stroke-width", self.point['stroke-width']).style("opacity", self.point.opacity);
-	                }
-	            });
-	
-	            // Draw axis before rect-overlay
-	            var axis = new _C4.default(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
-	
-	            // Set actual size for chart after initialization
-	            var chartBox = self.body.node().getBBox();
-	            self.actualWidth = chartBox.width - 4 * self.point.radius;
-	            self.actualHeight = chartBox.height;
-	
 	            //** Create a invisible rect for mouse tracking
+	            var paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01,
+	                paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
+	
 	            self.body.append('rect').attr('class', 'c9-chart-line c9-rect-overlay')
 	            // .attr('width', self.actualWidth)
 	            // .attr('height', self.actualHeight)
-	            .attr('width', width).attr('height', height).style('fill', 'none').style('pointer-events', 'all');
-	
-	            //** Hover line & invisible rect
+	            .attr('width', width - self.x(paddingX)).attr('height', height).attr('x', self.x(paddingX) / 2).style('fill', 'none').style('pointer-events', 'all');
+	        }
+	    }, {
+	        key: 'updateHoverLine',
+	        value: function updateHoverLine() {
+	            var self = this;
 	
 	            //** Add the line to the group
 	            self.hoverLine = self.body.append('g').attr('class', 'c9-chart-line c9-comparator-line').append('line').style('stroke', 'grey').style('stroke-opacity', 0);
 	
-	            self.hoverCircle = self.hoverLine.append('circle').attr('class', 'c9-chart-line c9-comparator-line').attr('r', self.point.radius);
+	            self.hoverCircle = self.hoverLine.append('circle').attr('class', 'c9-chart-line c9-comparator-line').attr('r', self.options.point.radius);
 	        }
 	
 	        /**
-	         * Main draw function of Line Chart
+	         * Update LineChart Domain
+	         * @param  {[type]} data [description]
 	         */
 	
 	    }, {
-	        key: 'draw',
-	        value: function draw() {
+	        key: 'updateDomain',
+	        value: function updateDomain(data) {
 	            var self = this;
 	
-	            // var axis    = new Axis(self.options.axis, self.body, self.data, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom, self._x, self._y);
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
+	            var valueXArray = d3.merge(data.map(function (_data) {
+	                return _data.value.map(function (d) {
+	                    return d.valueX;
+	                });
+	            }));
 	
-	            // Draw legend
-	            legend.draw();
-	            legend.updateInteractionForLineChart(self);
+	            var valueYArray = d3.merge(data.map(function (_data) {
+	                return _data.value.map(function (d) {
+	                    return d.valueY;
+	                });
+	            }));
+	
+	            self.x.domain(d3.extent(valueXArray));
+	
+	            self.y.domain(d3.extent(valueYArray));
+	
+	            // Update domain if all values positive / negative
+	            if (self.y.domain()[0] > 0 && self.y.domain()[1] > 0) {
+	                self.y.domain([0, self.y.domain()[1]]);
+	            } else if (self.y.domain()[0] < 0 && self.y.domain()[1] < 0) {
+	                self.y.domain([self.y.domain()[0], 0]);
+	            }
+	
+	            // Check if its is timeDomain then skip
+	            if (!self.isTimeDomain) {
+	                var xDomain = self.x.domain(),
+	                    paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01;
+	                var yDomain = self.y.domain(),
+	                    paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
+	
+	                self.x.domain([xDomain[0] - paddingX, xDomain[1] + paddingX]);
+	                self.y.domain([yDomain[0], yDomain[1] + paddingY]);
+	            }
+	            // else {
+	            //     var xDomain = self.x.domain(), paddingX = (self.x.domain()[1] - self.x.domain()[0]);
+	            //     var yDomain = self.y.domain(), paddingY = (self.y.domain()[1] - self.y.domain()[0]);
+	            //         console.log(xDomain[0]);
+	            //     self.x.domain([xDomain[0] - new Date(paddingX), xDomain[1] + new Date(paddingX)]);
+	            //     self.y.domain([yDomain[0], yDomain[1] + paddingY]);
+	            // }
+	        }
+	
+	        /**
+	         * Update main path of Line Chart when brushing
+	         */
+	
+	    }, {
+	        key: 'update',
+	        value: function update(data) {
+	            var self = this;
+	
+	            var width = self.width - self.margin.left - self.margin.right,
+	                height = self.height - self.margin.top - self.margin.bottom;
+	
+	            self.updateDomain(data);
+	
+	            self.body.selectAll(".c9-chart-line.c9-area-container").data([]).exit().remove();
+	            self.body.selectAll(".c9-chart-line.c9-path-container").data([]).exit().remove();
+	            self.body.selectAll(".c9-chart-line.c9-point-container").data([]).exit().remove();
+	
+	            if (self.options.area.show) {
+	                var areaContainer = self.body.append('g').attr('class', 'c9-chart-line c9-area-container').attr("clip-path", "url(#clip)");
+	
+	                areaContainer.selectAll(".c9-chart-line.c9-path-area-custom")
+	                // self.body.selectAll("dot")
+	                .data(data).enter().append('path').filter(function (d) {
+	                    return d.enable;
+	                })
+	                // .attr("clip-path", "url(#clip)")
+	                .attr('class', 'c9-chart-line c9-path-area-custom').attr('d', function (d) {
+	                    return self.areaGen(d.value);
+	                }).attr('data-ref', function (d) {
+	                    return 'c9-' + d['data-ref'];
+	                }).style('fill', function (d) {
+	                    return d.color;
+	                }).style('stroke', 'none').style('opacity', '0.5');
+	            }
+	
+	            var pathContainer = self.body.append('g').attr('class', 'c9-chart-line c9-path-container').attr("clip-path", "url(#clip)");
+	
+	            pathContainer.selectAll(".c9-chart-line.c9-path-line-custom")
+	            // self.body.selectAll("dot")
+	            .data(data).enter().append('path').filter(function (d) {
+	                return d.enable;
+	            }).attr('class', 'c9-chart-line c9-path-line-custom').attr('d', function (d) {
+	                return self.lineGen(d.value);
+	            }).attr('data-ref', function (d) {
+	                return 'c9-' + d['data-ref'];
+	            }).style('stroke', function (d) {
+	                return d.color;
+	            }).style('stroke-dasharray', function () {
+	                return self.getLineStyle();
+	            }).style('stroke-width', self.options.line.width).style('fill', 'none');
+	
+	            if (self.options.point.show) {
+	                var pointContainer = self.body.append('g').attr('class', 'c9-chart-line c9-point-container').attr("clip-path", "url(#clip)");
+	
+	                data.forEach(function (d) {
+	                    if (!d.enable) return;
+	                    pointContainer.selectAll(".c9-chart-line.c9-point-container")
+	                    // self.body.selectAll("dot")
+	                    .data(d.value).enter().append("circle")
+	                    // .attr("clip-path", "url(#clip)")
+	                    .attr('class', 'c9-chart-line c9-circle-custom').attr("r", self.options.point.radius).attr("cx", function (_d) {
+	                        return self.x(_d.valueX);
+	                    }).attr("cy", function (_d) {
+	                        return self.y(_d.valueY);
+	                    }).attr("data-ref", function (data) {
+	                        return data["data-ref"];
+	                    }).style("fill", self.options.point.fill).style("stroke", self.options.point.stroke).style("stroke-width", self.options.point['stroke-width']).style("opacity", self.options.point.opacity);
+	                });
+	            }
+	
+	            /*----------  Set actual size for chart after initialization  ----------*/
+	            var chartBox = self.body.node().getBBox();
+	            self.actualWidth = chartBox.width - 4 * self.options.point.radius;
+	            self.actualHeight = chartBox.height;
+	            /*----------  End of Set actual size for chart after initialization  ----------*/
 	
 	            self.updateInteraction();
+	        }
+	
+	        /**
+	         * Update sub chart
+	         */
+	
+	    }, {
+	        key: 'updateSubChart',
+	        value: function updateSubChart(data) {
+	            var self = this;
+	
+	            if (self.options.subchart.show) {
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                /*----------  Sub Chart  ----------*/
+	                self.subChartWidth = width, self.subChartHeight = self.options.subchart.height;
+	                if (_C14.default.isEmpty(self.subChartMargin)) {
+	                    self.subChartMargin = {
+	                        'top': self.actualHeight + 100,
+	                        'left': self.margin.left
+	                    };
+	                }
+	
+	                self.subChartX = self._isTimeDomain ? d3.time.scale().range([0, self.subChartWidth]) : d3.scale.linear().range([0, self.subChartWidth]), self.subChartY = d3.scale.linear().range([self.subChartHeight, 0]);
+	
+	                self.subChartX.domain(self.x.domain());
+	                self.subChartY.domain(self.y.domain());
+	
+	                self.subChartXAxis = d3.svg.axis().scale(self.subChartX).orient("bottom");
+	
+	                self.brush = d3.svg.brush().x(self.subChartX).on("brush", function () {
+	                    // Update axis
+	                    self.x.domain(self.brush.empty() ? self.subChartX.domain() : self.brush.extent());
+	                    self.axis.update(self.x, self.y, 500);
+	
+	                    // Update main path of Line Chart
+	                    if (self.options.area.show) {
+	                        self.body.selectAll("path.c9-chart-line.c9-path-area-custom").attr("d", function (d) {
+	                            return self.areaGen(d.value);
+	                        });
+	                    }
+	                    self.body.selectAll("path.c9-chart-line.c9-path-line-custom").attr("d", function (d) {
+	                        return self.lineGen(d.value);
+	                    });
+	
+	                    if (self.options.point.show) {
+	                        self.body.selectAll("circle.c9-chart-line.c9-circle-custom").attr("cx", function (d) {
+	                            return self.x(d.valueX);
+	                        }).attr("cy", function (d) {
+	                            return self.y(d.valueY);
+	                        });
+	                    }
+	                });
+	
+	                self.subChartAreaGen = d3.svg.area().x(function (d) {
+	                    return self.subChartX(d.valueX);
+	                }).y0(function (d) {
+	                    return self.subChartY(d.valueY);
+	                }).y1(self.subChartHeight).interpolate(self.options.interpolate);
+	
+	                self.svg.attr('height', self.height + self.subChartHeight);
+	
+	                self.svg.selectAll(".c9-subchart-custom").remove();
+	                self.svg.selectAll(".c9-subchart-custom .c9-subchart-axis").remove();
+	
+	                var subChart = self.svg.append("g").attr("class", "c9-subchart-custom").attr("transform", "translate(" + self.subChartMargin.left + "," + self.subChartMargin.top + ")");
+	
+	                var subChartAreaContainer = subChart.append('g').attr('class', 'c9-subchart-custom c9-subchart-area-container').attr("clip-path", "url(#clip)");
+	
+	                data.forEach(function (d, i) {
+	                    if (!d.enable) return;
+	
+	                    subChartAreaContainer.append("path")
+	                    // .attr("clip-path", "url(#clip)")
+	                    .attr("class", "c9-subchart-area").attr("d", function () {
+	                        return self.subChartAreaGen(d.value);
+	                    }).attr('data-ref', 'c9-' + d['data-ref']).style('fill', d.color).style('stroke', 'none').style('opacity', '0.5');
+	                });
+	
+	                subChart.append("g").attr("class", "c9-subchart-axis").attr("transform", "translate(0," + self.subChartHeight + ")").call(self.subChartXAxis);
+	
+	                //append the brush for the selection of subsection  
+	                subChart.append("g").attr("class", "c9-subchart-brush").call(self.brush).selectAll("rect").attr("height", self.subChartHeight);
+	            }
 	        }
 	
 	        /**
@@ -4401,6 +5313,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'updateInteraction',
 	        value: function updateInteraction() {
 	            var self = this,
+	                selector = self.selectRectLayer(),
 	                hoverEnable = self.hover.enable,
 	                hoverOptions = self.hover.options,
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
@@ -4409,8 +5322,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                onClickCallback = self.click.callback;
 	
 	            var tooltip = new _C12.default(self.options.tooltip);
-	
-	            var selector = self.selectRectLayer();
 	
 	            // Update Event Factory
 	            self.eventFactory = {
@@ -4439,7 +5350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                    // Remove circle style before
 	                    self.selectAllCircle()[0].forEach(function (circle) {
-	                        d3.select(circle).style('fill', self.point.fill).style('fill-opacity', self.point.opacity);
+	                        d3.select(circle).style('fill', self.options.point.fill).style('fill-opacity', self.options.point.opacity);
 	                    });
 	
 	                    tooltip.draw(d, self, 'mouseout');
@@ -4465,7 +5376,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        var d0, d1;
 	
 	                        d0 = idx === 0 ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
-	                        d1 = sameTimeArr[i][idx];
+	                        d1 = !_C14.default.isEmpty(sameTimeArr[i][idx]) ? sameTimeArr[i][idx] : sameTimeArr[i][idx - 1];
+	
+	                        // Check d0, d1 still in boundary or not
+	                        // To work well with brushing
+	                        d0 = self.checkBoundary(d0.valueX) === -1 ? d1 : d0;
+	                        d1 = self.checkBoundary(d1.valueX) === 1 ? d0 : d1;
 	
 	                        // work out which date value is closest to the mouse
 	                        sameTimeValueArr[i] = curValueX - d0.valueX > d1.valueX - curValueX ? d1 : d0;
@@ -4475,18 +5391,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        onMouseMoveCallback.call(this, sameTimeValueArr);
 	                    }
 	
-	                    var x = self.x(sameTimeValueArr[0].valueX);
-	                    var y = self.y(sameTimeValueArr[0].valueY);
+	                    var x = self.x(!_C14.default.isEmpty(sameTimeValueArr[0].valueX) ? sameTimeValueArr[0].valueX : sameTimeValueArr[1].valueX);
+	                    var y = self.y(!_C14.default.isEmpty(sameTimeValueArr[0].valueY) ? sameTimeValueArr[0].valueY : sameTimeValueArr[1].valueY);
+	
+	                    // console.log(x);
 	
 	                    // Remove circle style before
 	                    self.selectAllCircle()[0].forEach(function (circle) {
-	                        d3.select(circle).style('fill', self.point.fill).style('fill-opacity', self.point.opacity);
+	                        d3.select(circle).style('fill', self.options.point.fill).style('fill-opacity', self.options.point.opacity);
 	                    });
 	
 	                    // Update circle style after mouse move
 	                    for (var i = 0; i < sameTimeValueArr.length; i++) {
 	                        var circle = d3.select("circle[data-ref='" + sameTimeValueArr[i]['data-ref'] + "']");
-	                        circle.style('fill', 'steelblue').style('fill-opacity', 1);
+	                        circle.style('fill', self.getLightenColor(self.options.point.fill)).style('fill-opacity', 1);
 	                    }
 	
 	                    // focus.select('#focusCircle')
@@ -4517,7 +5435,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            var r = void 0;
 	
-	            switch (self.line.style) {
+	            switch (self.options.line.style) {
 	                case 'dot':
 	                    r = "1, 1";
 	                    break;
@@ -4534,12 +5452,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            return r;
 	        }
+	    }, {
+	        key: 'checkBoundary',
+	        value: function checkBoundary(value) {
+	            var self = this;
 	
+	            var bound = self.width - self.margin.left - self.margin.right,
+	                checkWidth = self.x(value);
+	
+	            return checkWidth < 0 ? -1 : checkWidth > bound ? 1 : 0;
+	        }
+	
+	        /*=====  End of Main Functions  ======*/
+	
+	        /*========================================
+	        =            User's Functions            =
+	        ========================================*/
 	        /**
 	         * Custom Event Listener
 	         * @param  {[type]}   eventType [description]
 	         * @param  {Function} callback  [description]
-	         * @return {[type]}             [description]
 	         */
 	
 	    }, {
@@ -4589,12 +5521,115 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
-	        /*=====  End of Main Functions  ======*/
+	        /**
+	         * Main draw function of Line Chart
+	         */
 	
 	    }, {
-	        key: 'point',
+	        key: 'draw',
+	        value: function draw() {
+	            _get(LineChart.prototype.__proto__ || Object.getPrototypeOf(LineChart.prototype), 'draw', this).call(this);
+	
+	            var self = this;
+	
+	            self.updateConfig(self.config, function (data) {
+	                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom);
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self);
+	                var table = new _C10.default(self.options.table, self, data);
+	
+	                self.axis = axis;
+	                self.title = title;
+	                self.legend = legend;
+	                self.table = table;
+	
+	                // Draw title
+	                self.title.draw();
+	
+	                // Draw axis
+	                self.axis.draw();
+	
+	                self.update(data);
+	                self.updateSubChart(data);
+	                self.updateOverlay();
+	                self.updateHoverLine();
+	                self.updateInteraction();
+	
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForLineChart(self);
+	
+	                // Draw table
+	                self.table.draw();
+	            });
+	        }
+	
+	        /**
+	         * Set option via stand-alone function
+	         * @param {[type]} key   [description]
+	         * @param {[type]} value [description]
+	         */
+	
+	    }, {
+	        key: 'setOption',
+	        value: function setOption(key, value) {
+	            _get(LineChart.prototype.__proto__ || Object.getPrototypeOf(LineChart.prototype), 'setOption', this).call(this, key, value);
+	
+	            var self = this;
+	
+	            _C14.default.set(key, value, self.options);
+	
+	            self.updateConfig(self.options);
+	        }
+	
+	        /**
+	         * Update chart based on new data with optional dataConfig
+	         * @param  {[type]} data       [description]
+	         * @param  {[type]} dataConfig [description]
+	         */
+	
+	    }, {
+	        key: 'updateData',
+	        value: function updateData(newData, newDataConfig) {
+	            var self = this;
+	
+	            var newCfg = {};
+	
+	            if (!_C14.default.isEmpty(newDataConfig)) {
+	
+	                newCfg.data = {
+	                    plain: newData,
+	                    keys: newDataConfig
+	                };
+	            } else {
+	
+	                newCfg.data = {
+	                    plain: newData
+	                };
+	            }
+	
+	            self.updateDataConfig(newCfg, function (data) {
+	                // Update Chart
+	                self.update(data);
+	                self.updateSubChart(data);
+	
+	                // Update Axis
+	                self.axis.update(self.x, self.y, 100);
+	
+	                // Update Legend
+	                self.legend.update(data);
+	                self.legend.updateInteractionForLineChart(self);
+	
+	                // Update Table
+	                self.table.update(data);
+	            });
+	        }
+	        /*=====  End of User's Functions  ======*/
+	
+	    }, {
+	        key: 'isTimeDomain',
 	        get: function get() {
-	            return this._point;
+	            return this._isTimeDomain;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -4602,80 +5637,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	
-	        set: function set(arg) {
-	            if (arg) {
-	                this._point = arg;
-	            }
-	        }
-	    }, {
-	        key: 'area',
-	        get: function get() {
-	            return this._area;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._area = arg;
-	            }
-	        }
-	    }, {
-	        key: 'line',
-	        get: function get() {
-	            return this._line;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._line = arg;
-	            }
-	        }
-	    }, {
-	        key: 'interpolate',
-	        get: function get() {
-	            return this._interpolate;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._interpolate = arg;
-	            }
-	        }
-	    }, {
-	        key: 'x',
-	        get: function get() {
-	            return this._x;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._x = arg;
-	            }
-	        }
-	    }, {
-	        key: 'y',
-	        get: function get() {
-	            return this._y;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._y = arg;
-	            }
-	        }
-	    }, {
-	        key: 'isTimeDomain',
-	        get: function get() {
-	            return this._isTimeDomain;
-	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._isTimeDomain = arg;
-	            }
-	        }
-	    }, {
-	        key: 'da',
-	        get: function get() {
-	            return this._da;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._da = arg;
 	            }
 	        }
 	    }, {
@@ -4696,6 +5660,106 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(arg) {
 	            if (arg) {
 	                this._hoverLine = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartX',
+	        get: function get() {
+	            return this._subChartX;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartX = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartY',
+	        get: function get() {
+	            return this._subChartY;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartY = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartWidth',
+	        get: function get() {
+	            return this._subChartWidth;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartWidth = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartHeight',
+	        get: function get() {
+	            return this._subChartHeight;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartHeight = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartMargin',
+	        get: function get() {
+	            return this._subChartMargin;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartMargin = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartXAxis',
+	        get: function get() {
+	            return this._subChartXAxis;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartXAxis = arg;
+	            }
+	        }
+	    }, {
+	        key: 'brush',
+	        get: function get() {
+	            return this._brush;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._brush = arg;
+	            }
+	        }
+	    }, {
+	        key: 'subChartAreaGen',
+	        get: function get() {
+	            return this._subChartAreaGen;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartAreaGen = arg;
+	            }
+	        }
+	    }, {
+	        key: 'lineGen',
+	        get: function get() {
+	            return this._lineGen;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._lineGen = arg;
+	            }
+	        }
+	    }, {
+	        key: 'areaGen',
+	        get: function get() {
+	            return this._areaGen;
+	        },
+	        set: function set(arg) {
+	            if (arg) {
+	                this._areaGen = arg;
 	            }
 	        }
 	    }]);
@@ -4735,11 +5799,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(10);
+	var _C9 = __webpack_require__(7);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(7);
+	var _C11 = __webpack_require__(8);
 	
 	var _C12 = _interopRequireDefault(_C11);
 	
@@ -4747,7 +5811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C14 = _interopRequireDefault(_C13);
 	
-	var _C15 = __webpack_require__(8);
+	var _C15 = __webpack_require__(9);
 	
 	var _C16 = _interopRequireDefault(_C15);
 	
@@ -4769,24 +5833,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var R = Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2;
-	        var config = {
-	            radius: R,
-	            showText: true
+	        self.config = {
+	            radius: Math.min(self.width - self.margin.left - self.margin.right, self.height - self.margin.top - self.margin.bottom) / 2
 	        };
 	
-	        self._radius = options.radius || config.radius;
-	        self._showText = options.showText || config.showText;
-	
-	        self.body.type = 'pie';
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        var da = new _C16.default(dataOption);
-	        self.dataTarget = da.getDataTarget("pie");
-	
-	        self.updateConfig();
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -4806,20 +5857,133 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Update Donut Chart Config
 	         */
-	        value: function updateConfig() {
+	        value: function updateConfig(config, callback) {
+	            _get(PieChart.prototype.__proto__ || Object.getPrototypeOf(PieChart.prototype), 'updateConfig', this).call(this, config);
+	
 	            var self = this;
 	
-	            // chartInnerAfter, chartOuterAfter define easing radius of pie chart during animation
-	            // TODO: Add configs allow users to define these radius
+	            self.options = _C14.default.mergeDeep(config, self.options);
+	
+	            self.chartType = 'pie';
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	
+	        /**
+	         * Update Donut Chart Config
+	         */
+	
+	    }, {
+	        key: 'updateDataConfig',
+	        value: function updateDataConfig(dataCfg, callback) {
+	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+	
+	            self.chartType = 'pie';
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	
+	        /**
+	         * Update Donut Chart based on new data
+	         * @param  {[type]} data [description]
+	         */
+	
+	    }, {
+	        key: 'update',
+	        value: function update(data) {
+	            var self = this;
+	
 	            var width = self.width - self.margin.left - self.margin.right,
 	                height = self.height - self.margin.top - self.margin.bottom,
+	                color = self.colorRange;
+	
+	            self.arc = d3.svg.arc().innerRadius(0).outerRadius(self.options.radius);
+	
+	            //we can sort data here
+	            self.pie = d3.layout.pie().sort(null).value(function (d) {
+	                return d.value;
+	            });
+	
+	            self.body.selectAll(".c9-chart-pie.c9-custom-arc-container").data([]).exit().remove();
+	
+	            //draw chart
+	            var arcs = self.body.append('g').attr('class', 'c9-chart-pie c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(data)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
+	
+	            // Append main path contains pie
+	            arcs.append('path').attr('class', 'c9-chart-pie c9-custom-path').attr('data-ref', function (d) {
+	                return d.data['data-ref'];
+	            }).attr('d', self.arc).attr('fill', function (d, i) {
+	                return color(i);
+	            }).attr('stroke', '#ffffff').each(function (d) {
+	                self.currentData = d;
+	            });
+	            // Current data used for calculate interpolation 
+	            // between current arc vs disabled arc
+	
+	
+	            // Append middle text display name
+	            // if (self.options.showText) {
+	            //     arcs.append('text')
+	            //             .attr('class', 'c9-chart-pie c9-custom-text')
+	            //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
+	            //             .attr('dy', '.35em')
+	            //             .attr('text-anchor', 'middle')
+	            //             .text(function(d) { return d.data.name; });
+	            // }
+	
+	            self.updateInteraction();
+	        }
+	
+	        /**
+	         * Select all path as type PATH in Donut Chart via its CLASS
+	         */
+	
+	    }, {
+	        key: 'selectAllPath',
+	        value: function selectAllPath() {
+	            var self = this;
+	
+	            return self.body.selectAll('path.c9-chart-pie.c9-custom-path');
+	        }
+	
+	        /**
+	         * Update Interaction: Hover
+	         * @return {} 
+	         */
+	
+	    }, {
+	        key: 'updateInteraction',
+	        value: function updateInteraction() {
+	            var self = this,
+	                selector = self.selectAllPath(),
 	                color = self.colorRange,
 	                chartInnerBefore = 0,
-	                chartOuterBefore = self.radius,
+	                chartOuterBefore = self.options.radius,
 	                chartInnerAfter = 0,
-	                chartOuterAfter = self.radius * 1.2;
-	
-	            var hoverOptions = self.hover.options,
+	                chartOuterAfter = self.options.radius * 1.2,
+	                hoverOptions = self.hover.options,
 	                hoverEnable = self.hover.enable,
 	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
 	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
@@ -4846,14 +6010,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    selector.transition().attr('d', d3.svg.arc().innerRadius(chartInnerAfter).outerRadius(chartOuterAfter));
 	
 	                    // For legend
-	                    if (self.legend.show) self.legend.item.each(function () {
-	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
-	                            d3.select(this).attr('opacity', '0.3');
-	                        }
-	                    });
+	                    if (self.options.legend.show) {
+	                        self.legend.item.each(function () {
+	                            if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable')) {
+	                                d3.select(this).attr('opacity', '0.3');
+	                            }
+	                        });
+	                    }
 	
 	                    // For Table
-	                    if (self.table.show) {
+	                    if (self.options.table.show) {
 	                        var tr = d3.selectAll('.c9-table-container>.c9-table-body tr');
 	                        tr.filter(function (i) {
 	                            return i['data-ref'] != d.data['data-ref'];
@@ -4888,16 +6054,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    selector.transition().duration(500).ease('bounce').attr('d', d3.svg.arc().innerRadius(chartInnerBefore).outerRadius(chartOuterBefore));
 	
 	                    // For legend
-	                    if (self.legend.item) self.legend.item.each(function () {
-	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable') == 'true') {
+	                    if (self.options.legend.show) self.legend.item.each(function () {
+	                        if (d3.select(this).attr('data-ref') !== d.data['data-ref'] && d3.select(this).attr('data-enable')) {
 	                            d3.select(this).attr('opacity', '1.0');
 	                        }
 	                    });
 	
 	                    // For Table
-	                    if (self.table.show) d3.selectAll('.c9-table-container>.c9-table-body tr').filter(function (i) {
-	                        return i['data-ref'] != d.data['data-ref'];
-	                    }).selectAll('td').style('opacity', '1');
+	                    if (self.options.table.show) {
+	                        d3.selectAll('.c9-table-container>.c9-table-body tr').selectAll('td').style('opacity', '');
+	                    }
 	
 	                    // For Chart
 	                    self.selectAllPath().each(function () {
@@ -4909,95 +6075,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // For Tooltip
 	                    tooltip.draw(d, self, 'mouseout');
 	                }
-	
 	            };
-	
-	            self.arc = d3.svg.arc().innerRadius(0).outerRadius(self.radius);
-	
-	            //we can sort data here
-	            self.pie = d3.layout.pie().sort(null).value(function (d) {
-	                return d.value;
-	            });
-	
-	            //draw chart
-	            var arcs = self.body.append('g').attr('class', 'c9-chart c9-custom-arc-container').attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')').selectAll('.c9-chart-pie.c9-custom-arc').data(self.pie(self.dataTarget)).enter().append('g').attr('class', 'c9-chart-pie c9-custom-arc');
-	
-	            // Append main path contains pie
-	            arcs.append('path').attr('class', 'c9-chart-pie c9-custom-path').attr('data-ref', function (d) {
-	                return d.data['data-ref'];
-	            }).attr('d', self.arc).attr('fill', function (d, i) {
-	                return color(i);
-	            }).attr('stroke', '#ffffff').each(function (d) {
-	                self._currentData = d;
-	            });
-	            // Current data used for calculate interpolation 
-	            // between current arc vs disabled arc
-	
-	
-	            // Append middle text display name
-	            // if (self.showText) {
-	            //     arcs.append('text')
-	            //             .attr('class', 'c9-chart-pie c9-custom-text')
-	            //             .attr('transform', function(d) { return 'translate(' + self.arc.centroid(d) + ')'; })
-	            //             .attr('dy', '.35em')
-	            //             .attr('text-anchor', 'middle')
-	            //             .text(function(d) { return d.data.name; });
-	            // }
-	        }
-	
-	        /**
-	         * Main draw function of Donut Chart
-	         */
-	
-	    }, {
-	        key: 'draw',
-	        value: function draw() {
-	
-	            var self = this;
-	
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options.legend, self.body, self.dataTarget);
-	            var table = new _C10.default(self.options.table, self.body, self.dataTarget);
-	
-	            self.legend = legend;
-	            self.table = table;
-	            // Draw legend
-	            legend.draw();
-	            legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
-	
-	            // Draw table
-	            table.draw();
-	            table.updateInteractionForPieChart(self);
-	            // Update interaction of this own chart
-	            self.updateInteraction();
-	        }
-	
-	        /**
-	         * Select all path as type PATH in Donut Chart via its CLASS
-	         */
-	
-	    }, {
-	        key: 'selectAllPath',
-	        value: function selectAllPath() {
-	            var self = this;
-	
-	            return self.body.selectAll('path.c9-chart-pie.c9-custom-path');
-	        }
-	
-	        /**
-	         * Update Interaction: Hover
-	         * @return {} 
-	         */
-	
-	    }, {
-	        key: 'updateInteraction',
-	        value: function updateInteraction() {
-	            var self = this,
-	                selector = self.selectAllPath();
 	
 	            selector.on(self.eventFactory);
 	        }
 	
+	        /*=====  End of Main Functions  ======*/
+	
+	        /*========================================
+	        =            User's Functions            =
+	        ========================================*/
 	        /**
 	         * Custom Event Listener
 	         * @param  {[type]}   eventType [description]
@@ -5037,12 +6124,106 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
-	        /*=====  End of Main Functions  ======*/
+	        /**
+	         * Main draw function of Pie Chart
+	         */
 	
 	    }, {
-	        key: 'radius',
+	        key: 'draw',
+	        value: function draw() {
+	            _get(PieChart.prototype.__proto__ || Object.getPrototypeOf(PieChart.prototype), 'draw', this).call(this);
+	
+	            var self = this;
+	
+	            self.updateConfig(self.config, function (data) {
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.dataTarget);
+	                var table = new _C10.default(self.options.table, self, self.dataTarget);
+	
+	                self.title = title;
+	                self.legend = legend;
+	                self.table = table;
+	
+	                // Draw title
+	                self.title.draw();
+	
+	                // Update interaction of this own chart
+	                self.update(data);
+	                self.updateInteraction();
+	
+	                // Draw legend
+	                self.legend.draw();
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	
+	                // Draw table
+	                self.table.draw();
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
+	        }
+	
+	        /**
+	         * Set option via stand-alone function
+	         * @param {[type]} key   [description]
+	         * @param {[type]} value [description]
+	         */
+	
+	    }, {
+	        key: 'setOption',
+	        value: function setOption(key, value) {
+	            _get(PieChart.prototype.__proto__ || Object.getPrototypeOf(PieChart.prototype), 'setOption', this).call(this, key, value);
+	
+	            var self = this;
+	
+	            _C14.default.set(key, value, self.options);
+	
+	            self.updateConfig(self.options);
+	        }
+	
+	        /**
+	         * Update chart based on new data with optional dataConfig
+	         * @param  {[type]} data       [description]
+	         * @param  {[type]} dataConfig [description]
+	         */
+	
+	    }, {
+	        key: 'updateData',
+	        value: function updateData(newData, newDataConfig) {
+	            var self = this;
+	
+	            var newCfg = {};
+	
+	            if (!_C14.default.isEmpty(newDataConfig)) {
+	
+	                newCfg.data = {
+	                    plain: newData,
+	                    keys: newDataConfig
+	                };
+	            } else {
+	
+	                newCfg.data = {
+	                    plain: newData
+	                };
+	            }
+	
+	            self.updateDataConfig(newCfg, function (data) {
+	                // Update Chart
+	                self.update(self.dataTarget);
+	
+	                // Update Legend
+	                self.legend.update(self.dataTarget);
+	                self.legend.updateInteractionForDonutPieChart(self, self.selectAllPath(), self.pie, self.currentData, self.arc);
+	
+	                // Update Table
+	                self.table.update(self.dataTarget);
+	                self.table.updateInteractionForDonutPieChart(self);
+	            });
+	        }
+	        /*=====  End of User's Functions  ======*/
+	
+	    }, {
+	        key: 'pie',
 	        get: function get() {
-	            return this._radius;
+	            return this._pie;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -5050,26 +6231,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(newradius) {
-	            if (newradius) {
-	                this._radius = newradius;
-	            }
-	        }
-	    }, {
-	        key: 'showText',
-	        get: function get() {
-	            return this._showText;
-	        },
-	        set: function set(newShowText) {
-	            if (newShowText) {
-	                this._showText = newShowText;
-	            }
-	        }
-	    }, {
-	        key: 'pie',
-	        get: function get() {
-	            return this._pie;
-	        },
 	        set: function set(arg) {
 	            if (arg) {
 	                this._pie = arg;
@@ -5093,21 +6254,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        set: function set(arg) {
 	            if (arg) {
 	                this._currentData = arg;
-	            }
-	        }
-	    }, {
-	        key: 'chartType',
-	        get: function get() {
-	            return this._body.type;
-	        }
-	    }, {
-	        key: 'legend',
-	        get: function get() {
-	            return this._legend;
-	        },
-	        set: function set(arg) {
-	            if (arg) {
-	                this._legend = arg;
 	            }
 	        }
 	    }]);
@@ -5147,11 +6293,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C8 = _interopRequireDefault(_C7);
 	
-	var _C9 = __webpack_require__(10);
+	var _C9 = __webpack_require__(7);
 	
 	var _C10 = _interopRequireDefault(_C9);
 	
-	var _C11 = __webpack_require__(7);
+	var _C11 = __webpack_require__(8);
 	
 	var _C12 = _interopRequireDefault(_C11);
 	
@@ -5159,7 +6305,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _C14 = _interopRequireDefault(_C13);
 	
-	var _C15 = __webpack_require__(8);
+	var _C15 = __webpack_require__(9);
 	
 	var _C16 = _interopRequireDefault(_C15);
 	
@@ -5181,38 +6327,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	        var self = _this;
 	
-	        var config = {
-	            rowSeparator: "rgb(154, 154, 154)",
+	        self.config = {
+	            separatorColor: "rgb(154, 154, 154)",
 	            backgroundColor: null,
 	            starting: 0,
 	            ending: 0,
-	            stack: false, //test
-	            // rotateTicks: false,
+	            stack: true,
 	            itemHeight: 25,
-	            itemMargin: 20,
-	            labelMargin: 20,
+	            itemMargin: 15,
+	            labelMargin: 50,
 	            striped: null
 	        };
 	
-	        self.body.type = "timeline";
-	        self._stack = options.stack || config.stack;
-	        self._starting = options.starting || config.starting;
-	        self._ending = options.ending || config.ending;
-	        self._rowSeparator = options.rowSeparator || config.rowSeparator;
-	        self._backgroundColor = options.backgroundColor || config.backgroundColor;
-	        self._itemHeight = options.itemHeight || config.itemHeight;
-	        self._itemMargin = options.itemMargin || config.itemMargin;
-	        self._labelMargin = options.labelMargin || config.labelMargin;
-	        self._maxStack = 1;
-	        self._striped = options.striped || config.striped;
-	
-	        var dataOption = self.dataOption;
-	        dataOption.colorRange = self.colorRange;
-	
-	        var da = new _C16.default(dataOption);
-	        self.dataTarget = da.getDataTarget("timeline");
-	
-	        self.updateConfig();
+	        // self.updateConfig(config);
 	        return _this;
 	    }
 	
@@ -5230,192 +6357,320 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Main Functions            =
 	        ======================================*/
 	
-	        value: function updateConfig() {
+	        value: function updateConfig(config, callback) {
+	            _get(TimeLine.prototype.__proto__ || Object.getPrototypeOf(TimeLine.prototype), 'updateConfig', this).call(this, config);
+	
 	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(config, self.options);
+	
+	            self.chartType = "timeline";
+	            self.maxStack = 1;
+	            self.stackList = {};
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                var maxStack = 0,
+	                    minTime = 0,
+	                    maxTime = 0,
+	                    width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                // count number of stack and calculate min time, max time from data
+	                if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
+	
+	                    self.dataTarget.forEach(function (datum, index) {
+	
+	                        if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
+	                            self.stackList[index] = maxStack;
+	                            maxStack++;
+	                        }
+	
+	                        datum.value.forEach(function (time, i) {
+	                            if (self.options.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
+	                            if (self.options.ending === 0) {
+	                                if (time.start > maxTime) maxTime = time.start;
+	                                if (time.end > maxTime) maxTime = time.end;
+	                            }
+	                        });
+	                    });
+	
+	                    if (self.options.ending === 0) {
+	                        self.options.ending = maxTime;
+	                    }
+	                    if (self.options.starting === 0) {
+	                        self.options.starting = minTime;
+	                    }
+	                }
+	
+	                self.maxStack = maxStack;
+	
+	                self.x = d3.time.scale().domain([self.options.starting, self.options.ending]).range([0, self.width]);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'updateDataConfig',
+	        value: function updateDataConfig(dataCfg, callback) {
+	
+	            var self = this;
+	
+	            self.options = _C14.default.mergeDeep(self.options, dataCfg);
+	
+	            self.chartType = "timeline";
+	            self.maxStack = 1;
+	            self.stackList = {};
+	
+	            var dataOption = self.dataOption;
+	            dataOption.colorRange = self.colorRange;
+	
+	            var da = new _C16.default(dataOption, self.chartType, null);
+	            da.getDataTarget(self.chartType, function (data) {
+	                self.dataTarget = data;
+	
+	                var maxStack = 0,
+	                    minTime = 0,
+	                    maxTime = 0,
+	                    width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
+	
+	                // Count number of stack and calculate min time, max time from data
+	                // Update from existing data, so starting|ending both existed, no need
+	                // to check
+	                if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
+	
+	                    self.dataTarget.forEach(function (datum, index) {
+	
+	                        if (self.options.stack && Object.keys(self.stackList).indexOf(index) == -1) {
+	                            self.stackList[index] = maxStack;
+	                            maxStack++;
+	                        }
+	
+	                        datum.value.forEach(function (time, i) {
+	                            // if(self.options.starting === 0)
+	                            if (time.start < minTime || minTime === 0) minTime = time.start;
+	                            // if(self.options.ending === 0) {
+	                            if (time.start > maxTime) maxTime = time.start;
+	                            if (time.end > maxTime) maxTime = time.end;
+	                            // }
+	                        });
+	                    });
+	
+	                    // if (self.options.ending === 0) {
+	                    self.options.ending = maxTime;
+	                    // }
+	                    // if (self.options.starting === 0) {
+	                    self.options.starting = minTime;
+	                    // }
+	                }
+	
+	                self.maxStack = maxStack;
+	
+	                self.x = d3.time.scale().domain([self.options.starting, self.options.ending]).range([0, self.width]);
+	
+	                if (_C14.default.isFunction(callback)) {
+	                    callback.call(self, self.dataTarget);
+	                }
+	            });
+	        }
+	    }, {
+	        key: 'update',
+	        value: function update(data) {
+	            var self = this;
+	
+	            var width = self.width - self.margin.left - self.margin.right,
+	                height = self.height - self.margin.top - self.margin.bottom;
+	
+	            var scale = width / (self.options.ending - self.options.starting);
 	
 	            var color = self.colorRange;
 	
-	            var stackList = {},
-	                maxStack = 0,
-	                minTime = 0,
-	                maxTime = 0,
-	                width = self.width - self.margin.left - self.margin.right,
-	                height = self.height - self.margin.top - self.margin.bottom;
+	            var stackList = self.stackList;
 	
-	            var hoverOptions = self.hover.options,
-	                hoverEnable = self.hover.enable,
-	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
-	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
-	                onClickCallback = self.click.callback;
+	            self.body.selectAll(".c9-timeline-border-bar").data([]).exit().remove();
+	            self.body.selectAll(".c9-timeline-chart.c9-background-container").data([]).exit().remove();
+	            self.body.selectAll(".c9-timeline-chart.c9-stripe-background-container").data([]).exit().remove();
+	            self.body.selectAll(".c9-timeline-chart.c9-rect-container").data([]).exit().remove();
+	            self.svg.selectAll(".c9-timeline-chart.c9-label-container").remove();
+	            self.body.selectAll(".c9-timeline-row-separator").remove();
 	
-	            // Update Tooltip options for Timeline Chart
-	            self.options.tooltip = {
-	                show: true,
-	                position: 'left', // [top, right, bottom, left]
-	                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-	                fontColor: '#fff',
-	                fontSize: '11px',
-	                format: null
-	            };
-	
-	            var tooltip = new _C12.default(self.options.tooltip);
-	
-	            // Main Event Dispatch for paths in pie chart
-	            self._eventFactory = {
-	                'click': function click(d, i) {
-	                    if (_C14.default.isFunction(onClickCallback)) {
-	                        onClickCallback.call(this, d);
-	                    }
-	                },
-	
-	                'mouseover': function mouseover(d, i) {
-	                    if (!hoverEnable) return;
-	
-	                    if (_C14.default.isFunction(onMouseOverCallback)) {
-	                        onMouseOverCallback.call(this, d);
-	                    }
-	
-	                    // var selector = d3.select(this);
-	                    // selector.transition()
-	                    //         .attr('d', d3.svg.arc()
-	                    //             .innerRadius(chartInnerAfter)
-	                    //             .outerRadius(chartOuterAfter)
-	                    //         )
-	                    //         // .style('stroke', '#FFFFF3')
-	                    //         .attr('fill-opacity', '1.0');
-	
-	                    tooltip.draw(d, self, 'mouseover');
-	                },
-	
-	                'mouseout': function mouseout(d, i) {
-	                    if (!hoverEnable) return;
-	
-	                    if (_C14.default.isFunction(onMouseOutCallback)) {
-	                        onMouseOutCallback.call(this, d);
-	                    }
-	
-	                    // var selector = d3.select(this);
-	                    // selector.transition()
-	                    //         .duration(500)
-	                    //         .ease('bounce')
-	                    //         .attr('d', d3.svg.arc()
-	                    //             .innerRadius(chartInnerBefore)
-	                    //             .outerRadius(chartOuterBefore)
-	                    //         )
-	                    //         // .style('stroke', '#ffffff')
-	                    //         .attr('fill-opacity', '0.5');
-	
-	                    tooltip.draw(d, self, 'mouseout');
-	                }
-	
-	            };
-	
-	            // count number of stack and calculate min time, max time from data
-	            if (self.stack || self.ending === 0 || self.starting === 0) {
-	
-	                self.dataTarget.forEach(function (datum, index) {
-	
-	                    if (self.stack && Object.keys(stackList).indexOf(index) == -1) {
-	                        stackList[index] = maxStack;
-	                        maxStack++;
-	                    }
-	
-	                    datum.value.forEach(function (time, i) {
-	                        if (self.starting === 0) if (time.start < minTime || minTime === 0) minTime = time.start;
-	                        if (self.ending === 0) {
-	                            if (time.start > maxTime) maxTime = time.start;
-	                            if (time.end > maxTime) maxTime = time.end;
-	                        }
-	                    });
-	                });
-	
-	                if (self.ending === 0) {
-	                    self.ending = maxTime;
-	                }
-	                if (self.starting === 0) {
-	                    self.starting = minTime;
-	                }
-	            }
-	
-	            self.maxStack = maxStack;
-	            var scale = width / (self.ending - self.starting);
+	            // Update clip-parth
+	            self.svg.select('#clip').select('rect').attr('height', (self.options.itemHeight + self.options.itemMargin) * data.length);
 	
 	            //draw border
-	            self.body.append("rect").attr("class", "c9-timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.itemMargin / 2).attr("height", (self.itemHeight + self.itemMargin) * self.dataTarget.length).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
+	            self.body.append("rect").attr("class", "c9-timeline-border-bar").attr("x", 0).attr("width", width).attr("y", 0 - self.options.itemMargin / 2).attr("height", (self.options.itemHeight + self.options.itemMargin) * (self.options.stack ? self.maxStack : 1)).attr("stroke", "rgb(154, 154, 154)").attr("stroke-width", 2).attr("fill", "none");
 	
-	            self.dataTarget.forEach(function (datum, index) {
-	                var data = datum.value;
+	            var labelContainer = self.svg.append("g").attr('class', 'c9-timeline-chart c9-label-container');
+	
+	            data.forEach(function (datum, index) {
+	                var barYAxis = (self.options.itemHeight + self.options.itemMargin) * stackList[index];
+	                if (!self.options.stack) barYAxis = 0;
 	
 	                //draw background
-	                if (self.backgroundColor) {
-	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", _C14.default.isArray(self.backgroundColor) ? self.backgroundColor[index % (self.maxStack - 1)] : self.backgroundColor);
+	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.backgroundColor) {
+	                    var bgContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-background-container');
+	
+	                    bgContainer.selectAll(".c9-background-container").data(datum.value).enter().append("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", _C14.default.isArray(self.options.backgroundColor) ? self.options.backgroundColor[index % self.maxStack] : self.options.backgroundColor);
 	                }
 	
-	                if (self.striped) {
-	                    var barYAxis = (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.selectAll("g").data(data).enter().insert("rect").attr("class", "c9-timeline-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.itemMargin / 2).attr("height", self.itemHeight + self.itemMargin).attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
+	                if ((!self.options.stack && index == 0 || self.options.stack) && self.options.striped) {
+	                    var bgContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-stripe-background-container');
+	                    bgContainer.selectAll(".c9-stripe-background-container").data(datum.value).enter().insert("rect").attr("class", "c9-timeline-stripe-background-bar").attr("x", 0).attr("width", width).attr("y", barYAxis - self.options.itemMargin / 2).attr("height", self.options.itemHeight + self.options.itemMargin).attr("fill", index % 2 ? "rgb(255, 255, 255)" : "rgb(230, 230, 230)");
 	                }
 	
 	                //draw item
-	                self.body.selectAll("g").data(data).enter().append(function (d, i) {
-	                    return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
-	                }).attr('class', 'c9-timeline-custom-rect').attr("x", getXPos).attr("y", getStackPosition).attr("width", function (d, i) {
-	                    return (d.end - d.start) * scale;
-	                }).attr("cy", function (d, i) {
-	                    return getStackPosition(d, i) + self.itemHeight / 2;
-	                }).attr("cx", getXPos).attr("r", self.itemHeight / 2).attr("height", self.itemHeight).style("fill", color(index));
+	                var itemContainer = self.body.append("g").attr('class', 'c9-timeline-chart c9-rect-container').attr("clip-path", "url(#clip)");
 	
-	                if (self.rowSeparator && index < self.maxStack - 1) {
-	                    var lineYAxis = self.itemHeight + self.itemMargin / 2 + (self.itemHeight + self.itemMargin) * stackList[index];
-	                    self.body.append("svg:line").attr("class", "c9-timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C14.default.isArray(self.rowSeparator) ? self.rowSeparator[index % (self.maxStack - 1)] : self.rowSeparator);
+	                itemContainer.selectAll(".c9-rect-container").data(datum.value).enter().append(function (d, i) {
+	                    return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
+	                }).attr('class', 'c9-timeline-custom-rect')
+	                // .attr("x", function(d, i) { return self.getXPos(d,i,scale); })
+	                .attr("x", function (d, i) {
+	                    return self.x(d.start);
+	                }).attr("y", function (d, i) {
+	                    return self.getStackPosition(d, i, index);
+	                })
+	                // .attr("width", function (d, i) {
+	                //     return (d.end - d.start) * scale;
+	                // })
+	                .attr("width", function (d, i) {
+	                    return self.x(d.end) - self.x(d.start);
+	                }).attr("cy", function (d, i) {
+	                    return self.getStackPosition(d, i, index) + self.options.itemHeight / 2;
+	                }).attr("cx", function (d, i) {
+	                    return self.getXPos(d, i, scale);
+	                }).attr("r", self.options.itemHeight / 2).attr("height", self.options.itemHeight).style("fill", color(index));
+	
+	                if (self.options.stack && self.options.separatorColor && index < self.maxStack - 1) {
+	                    var lineYAxis = self.options.itemHeight + self.options.itemMargin / 2 + (self.options.itemHeight + self.options.itemMargin) * stackList[index];
+	                    self.body.append("svg:line").attr("class", "c9-timeline-row-separator").attr("x1", 0).attr("x2", width).attr("y1", lineYAxis).attr("y2", lineYAxis).attr("stroke-width", 3).attr("stroke", _C14.default.isArray(self.options.separatorColor) ? self.options.separatorColor[index % (self.maxStack - 1)] : self.options.separatorColor);
 	                }
 	
 	                //draw the label left side item
-	                if (!_C14.default.isEmpty(datum.name) && datum.name != "") {
-	                    var rowsDown = self.margin.top + (self.itemHeight + self.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.itemHeight * 0.75;
+	                if (self.options.stack && !_C14.default.isEmpty(datum.name) && datum.name != "") {
+	                    var rowsDown = self.margin.top + (self.options.itemHeight + self.options.itemMargin) * (stackList[index] === undefined ? 0 : stackList[index]) + self.options.itemHeight * 0.75;
 	
-	                    d3.select(self.body[0][0].parentNode).append("text").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.labelMargin + "," + rowsDown + ")").text(datum.name);
+	                    labelContainer.append("text").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.options.labelMargin + "," + rowsDown + ")").text(datum.name);
 	                }
 	                //draw icon
-	                else if (!_C14.default.isEmpty(datum.icon) && datum.icon != "") {
-	                        d3.select(self.body[0][0].parentNode).append("image").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.labelMargin + "," + (self.margin.top + (self.itemHeight + self.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.itemHeight).attr("height", self.itemHeight);
+	                else if (self.options.stack && !_C14.default.isEmpty(datum.icon) && datum.icon != "") {
+	                        labelContainer.append("image").attr("class", "c9-timeline-label").attr("transform", "translate(" + self.options.labelMargin + "," + (self.margin.top + (self.options.itemHeight + self.options.itemMargin) * stackList[index]) + ")").attr("xlink:href", datum.icon).attr("width", self.options.itemHeight).attr("height", self.options.itemHeight);
 	                    }
-	
-	                function getStackPosition(d, i) {
-	                    if (self.stack) {
-	                        return (self.itemHeight + self.itemMargin) * stackList[index];
-	                    }
-	                    return 0;
-	                }
-	                function getStackTextPosition(d, i) {
-	                    if (self.stack) {
-	                        return (self.itemHeight + self.itemMargin) * stackList[index] + self.itemHeight * 0.75;
-	                    }
-	                    return self.itemHeight * 0.75;
-	                }
 	            });
 	
-	            function getXPos(d, i) {
-	                return (d.start - self.starting) * scale;
-	            }
-	
-	            function getXTextPos(d, i) {
-	                return (d.start - self.starting) * scale + 5;
-	            }
+	            self.updateInteraction();
 	        }
+	
+	        /**
+	         * Update sub chart
+	         */
+	
 	    }, {
-	        key: 'draw',
-	        value: function draw() {
+	        key: 'updateSubChart',
+	        value: function updateSubChart(data) {
 	            var self = this;
 	
-	            self.options.axis.starting = self.starting;
-	            self.options.axis.ending = self.ending;
-	            var axis = new _C4.default(self.options.axis, self.body, self.dataTarget, self.width - self.margin.left - self.margin.right, (self.itemHeight + self.itemMargin) * self.maxStack, null, null);
-	            var title = new _C6.default(self.options, self.body, self.width, self.height, self.margin);
-	            var legend = new _C8.default(self.options.legend, self.body, self.colorRange, self.dataTarget);
+	            if (self.options.subchart.show) {
+	                var width = self.width - self.margin.left - self.margin.right,
+	                    height = self.height - self.margin.top - self.margin.bottom;
 	
-	            self.updateInteraction();
+	                // Set actual size for chart after initialization
+	                var chartBox = self.body.node().getBBox();
+	                // self.actualWidth = chartBox.width - 4 * self.point.radius;
+	                self.actualHeight = chartBox.height;
+	
+	                /*----------  Sub Chart  ----------*/
+	
+	                self.subChartWidth = width, self.subChartHeight = self.options.subchart.height, self.subChartMargin = {
+	                    'top': self.actualHeight + 100,
+	                    'left': self.margin.left
+	                };
+	
+	                self.subChartX = d3.time.scale().range([0, self.subChartWidth]);
+	
+	                self.subChartX.domain([self.options.starting, self.options.ending]);
+	
+	                self.subChartXAxis = d3.svg.axis().scale(self.subChartX).orient("bottom");
+	
+	                self.brush = d3.svg.brush().x(self.subChartX).on("brush", function () {
+	                    // Update axis
+	                    self.x.domain(self.brush.empty() ? self.subChartX.domain() : self.brush.extent());
+	
+	                    self.options.starting = self.x.domain()[0];
+	                    self.options.ending = self.x.domain()[1];
+	
+	                    self.axis.update(self.x, self.y, 500);
+	                    var scale = width / (self.options.ending - self.options.starting);
+	
+	                    // Update main path of Line Chart
+	                    self.body.selectAll(".c9-timeline-custom-rect").attr("x", function (d, i) {
+	                        return self.x(d.start);
+	                    }).attr("width", function (d, i) {
+	                        return self.x(d.end) - self.x(d.start);
+	                    });
+	                    // .attr("x", function(d, i) { return self.getXPos(d,i, scale); });
+	                    // .attr("y", function(d, i) { return self.getStackPosition(d,i,stackList, index); })
+	                    // .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
+	                    // .attr("cy", function (d, i) {
+	                    //     return self.getStackPosition(d, i, stackList, index) + self.options.itemHeight / 2;
+	                    // });
+	                });
+	
+	                var scale = width / (self.options.ending - self.options.starting);
+	
+	                var color = self.colorRange;
+	
+	                self.svg.attr('height', self.height + self.subChartHeight);
+	
+	                self.svg.selectAll(".c9-subchart-custom").remove();
+	                self.svg.selectAll(".c9-subchart-custom .c9-subchart-axis").remove();
+	
+	                var subChart = self.svg.append("g").attr("class", "c9-subchart-custom")
+	                // .attr("clip-path", "url(#clip)")
+	                .attr("transform", "translate(" + self.subChartMargin.left + "," + self.subChartMargin.top + ")");
+	
+	                var itemContainer = subChart.append('g').attr('class', 'c9-subchart-custom c9-subchart-timeline-container');
+	                // .attr("clip-path", "url(#clip)");
+	
+	                data.forEach(function (datum, index) {
+	                    if (!datum.enable) return;
+	
+	                    itemContainer.selectAll(".c9-subchart-timeline-container").data(datum.value).enter().append(function (d, i) {
+	                        return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
+	                    }).attr('class', 'c9-timeline-custom-rect')
+	                    // .attr("x", function(d, i) { return self.getXPos(d,i, scale); })
+	                    .attr("x", function (d, i) {
+	                        return self.subChartX(d.start);
+	                    }).attr("y", function (d, i) {
+	                        return self.getStackPosition(d, i, index, true);
+	                    })
+	                    // .attr("width", function (d, i) {
+	                    //     return (d.end - d.start) * scale;
+	                    // })
+	                    .attr("width", function (d, i) {
+	                        return self.subChartX(d.end) - self.subChartX(d.start);
+	                    }).attr("cy", function (d, i) {
+	                        return self.getStackPosition(d, i, index) + self.options.itemHeight / 2;
+	                    })
+	                    // .attr("cx", function(d, i) { return self.getXPos(d,i, scale); })
+	                    .attr("cx", function (d, i) {
+	                        return self.subChartX(d.start);
+	                    }).attr("r", self.options.itemHeight / 2).attr("height", self.options.itemHeight / 2).style("fill", color(index));
+	                });
+	
+	                itemContainer.append("g").attr("class", "c9-subchart-axis").attr("transform", "translate(0," + self.subChartHeight + ")").call(self.subChartXAxis);
+	
+	                //append the brush for the selection of subsection  
+	                itemContainer.append("g").attr("class", "c9-subchart-brush").call(self.brush).selectAll("rect").attr("height", self.subChartHeight);
+	            }
 	        }
 	
 	        /**
@@ -5439,10 +6694,85 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'updateInteraction',
 	        value: function updateInteraction() {
 	            var self = this,
-	                selector = self.selectAllRect();
+	                selector = self.selectAllRect(),
+	                hoverOptions = self.hover.options,
+	                hoverEnable = self.hover.enable,
+	                onMouseOverCallback = hoverOptions.onMouseOver.callback,
+	                onMouseOutCallback = hoverOptions.onMouseOut.callback,
+	                onClickCallback = self.click.callback;
+	
+	            var tooltip = new _C12.default(self.options.tooltip);
+	
+	            // Main Event Dispatch for paths in pie chart
+	            self.eventFactory = {
+	                'click': function click(d, i) {
+	                    if (_C14.default.isFunction(onClickCallback)) {
+	                        onClickCallback.call(this, d);
+	                    }
+	                },
+	
+	                'mouseover': function mouseover(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOverCallback)) {
+	                        onMouseOverCallback.call(this, d);
+	                    }
+	
+	                    d3.select(this).style("fill", function (d, i) {
+	                        return self.getLightenColor(d.color || color(i));
+	                    });
+	
+	                    tooltip.draw(d, self, 'mouseover');
+	                },
+	
+	                'mouseout': function mouseout(d, i) {
+	                    if (!hoverEnable) return;
+	
+	                    if (_C14.default.isFunction(onMouseOutCallback)) {
+	                        onMouseOutCallback.call(this, d);
+	                    }
+	
+	                    d3.select(this).style("fill", function (d, i) {
+	                        return d.color || color(i);
+	                    });
+	
+	                    tooltip.draw(d, self, 'mouseout');
+	                }
+	            };
 	
 	            selector.on(self.eventFactory);
 	        }
+	    }, {
+	        key: 'getXPos',
+	        value: function getXPos(d, i, scale) {
+	            var self = this;
+	            return (d.start - self.options.starting) * scale;
+	        }
+	    }, {
+	        key: 'getStackPosition',
+	        value: function getStackPosition(d, i, index, isSubchart) {
+	            var self = this;
+	
+	            var stackList = self.stackList;
+	
+	            if (self.options.stack) {
+	                if (isSubchart) {
+	                    var height = self.height - self.margin.top - self.margin.bottom;
+	                    var ratio = self.subChartHeight / height;
+	
+	                    return (self.options.itemHeight * ratio + self.options.itemMargin) * stackList[index];
+	                } else {
+	                    return (self.options.itemHeight + self.options.itemMargin) * stackList[index];
+	                }
+	            }
+	            return 0;
+	        }
+	
+	        /*=====  End of Main Functions  ======*/
+	
+	        /*========================================
+	        =            User's Functions            =
+	        ========================================*/
 	
 	        /**
 	         * Custom Event Listener
@@ -5483,12 +6813,97 @@ return /******/ (function(modules) { // webpackBootstrap
 	            selector.on(eventName, eventFactory[eventName]);
 	        }
 	
-	        /*=====  End of Main Functions  ======*/
+	        /**
+	         * Main draw function
+	         */
 	
 	    }, {
-	        key: 'stack',
+	        key: 'draw',
+	        value: function draw() {
+	            _get(TimeLine.prototype.__proto__ || Object.getPrototypeOf(TimeLine.prototype), 'draw', this).call(this);
+	
+	            var self = this;
+	
+	            self.updateConfig(self.config, function (data) {
+	                var axis = new _C4.default(self.options.axis, self, self.width - self.margin.left - self.margin.right, (self.options.itemHeight + self.options.itemMargin) * self.maxStack);
+	                var title = new _C6.default(self.options.title, self);
+	                var legend = new _C8.default(self.options.legend, self, self.colorRange, data);
+	
+	                self.axis = axis;
+	                self.title = title;
+	                self.legend = legend;
+	
+	                // Draw title
+	                self.title.draw();
+	
+	                // Draw axis
+	                self.axis.draw();
+	
+	                self.update(data);
+	                self.updateSubChart(data);
+	                self.updateInteraction();
+	            });
+	        }
+	
+	        /**
+	         * Set option via stand-alone function
+	         * @param {[type]} key   [description]
+	         * @param {[type]} value [description]
+	         */
+	
+	    }, {
+	        key: 'setOption',
+	        value: function setOption(key, value) {
+	            _get(TimeLine.prototype.__proto__ || Object.getPrototypeOf(TimeLine.prototype), 'setOption', this).call(this, key, value);
+	
+	            var self = this;
+	
+	            _C14.default.set(key, value, self.options);
+	
+	            self.updateConfig(self.options);
+	        }
+	
+	        /**
+	         * Update chart based on new data with optional dataConfig
+	         * @param  {[type]} data       [description]
+	         * @param  {[type]} dataConfig [description]
+	         */
+	
+	    }, {
+	        key: 'updateData',
+	        value: function updateData(newData, newDataConfig) {
+	            var self = this;
+	
+	            var newCfg = {};
+	
+	            if (!_C14.default.isEmpty(newDataConfig)) {
+	
+	                newCfg.data = {
+	                    plain: newData,
+	                    keys: newDataConfig
+	                };
+	            } else {
+	
+	                newCfg.data = {
+	                    plain: newData
+	                };
+	            }
+	
+	            // Update chart
+	            self.updateDataConfig(newCfg, function (data) {
+	                self.update(data);
+	                self.updateSubChart(data);
+	
+	                // Update Axis
+	                self.axis.update(self.x, self.y, 100);
+	            });
+	        }
+	        /*=====  End of User's Functions  ======*/
+	
+	    }, {
+	        key: 'maxStack',
 	        get: function get() {
-	            return this._stack;
+	            return this._maxStack;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -5496,99 +6911,79 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /*==============================
 	        =            Setter            =
 	        ==============================*/
-	        set: function set(newStack) {
-	            if (newStack) {
-	                this._stacked = newStack;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._maxStack = arg;
 	            }
 	        }
 	    }, {
-	        key: 'backgroundColor',
+	        key: 'subChartX',
 	        get: function get() {
-	            return this._backgroundColor;
+	            return this._subChartX;
 	        },
-	        set: function set(newBackgroundColor) {
-	            if (newBackgroundColor) {
-	                this._backgroundColor = newBackgroundColor;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartX = arg;
 	            }
 	        }
 	    }, {
-	        key: 'rowSeparator',
+	        key: 'subChartXAxis',
 	        get: function get() {
-	            return this._rowSeparator;
+	            return this._subChartXAxis;
 	        },
-	        set: function set(newRowSeparator) {
-	            if (newRowSeparator) {
-	                this._rowSeparator = newRowSeparator;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartXAxis = arg;
 	            }
 	        }
 	    }, {
-	        key: 'starting',
+	        key: 'subChartWidth',
 	        get: function get() {
-	            return this._starting;
+	            return this._subChartWidth;
 	        },
-	        set: function set(newStarting) {
-	            if (newStarting) {
-	                this._starting = newStarting;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartWidth = arg;
 	            }
 	        }
 	    }, {
-	        key: 'ending',
+	        key: 'subChartHeight',
 	        get: function get() {
-	            return this._ending;
+	            return this._subChartHeight;
 	        },
-	        set: function set(newEnding) {
-	            if (newEnding) {
-	                this._ending = newEnding;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartHeight = arg;
 	            }
 	        }
 	    }, {
-	        key: 'itemHeight',
+	        key: 'subChartMargin',
 	        get: function get() {
-	            return this._itemHeight;
+	            return this._subChartMargin;
 	        },
-	        set: function set(newItemHeight) {
-	            if (newItemHeight) {
-	                this._itemHeight = newItemHeight;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._subChartMargin = arg;
 	            }
 	        }
 	    }, {
-	        key: 'itemMargin',
+	        key: 'brush',
 	        get: function get() {
-	            return this._itemMargin;
+	            return this._brush;
 	        },
-	        set: function set(newItemMargin) {
-	            if (newItemMargin) {
-	                this._itemMargin = newItemMargin;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._brush = arg;
 	            }
 	        }
 	    }, {
-	        key: 'labelMargin',
+	        key: 'stackList',
 	        get: function get() {
-	            return this._labelMargin;
+	            return this._stackList;
 	        },
-	        set: function set(newLabelMargin) {
-	            if (newLabelMargin) {
-	                this._labelMargin = newLabelMargin;
-	            }
-	        }
-	    }, {
-	        key: 'maxStack',
-	        get: function get() {
-	            return this._maxStack;
-	        },
-	        set: function set(newMaxStack) {
-	            if (newMaxStack) {
-	                this._maxStack = newMaxStack;
-	            }
-	        }
-	    }, {
-	        key: 'striped',
-	        get: function get() {
-	            return this._striped;
-	        },
-	        set: function set(newStriped) {
-	            if (newStriped) {
-	                this._striped = newStriped;
+	        set: function set(arg) {
+	            if (arg) {
+	                this._stackList = arg;
 	            }
 	        }
 	    }]);
@@ -5600,15 +6995,29 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 14 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _C = __webpack_require__(3);
+	
+	var _C2 = _interopRequireDefault(_C);
+	
+	var _C3 = __webpack_require__(8);
+	
+	var _C4 = _interopRequireDefault(_C3);
+	
+	var _C5 = __webpack_require__(9);
+	
+	var _C6 = _interopRequireDefault(_C5);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -5620,29 +7029,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var config = {
 	            // container
 	            id: "body",
-	
 	            // Layers:
 	            // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
 	            // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
-	            layers: {
-	                type: "Tile",
-	                source: {
-	                    name: "OSM"
-	                }
-	            },
+	            layers: null,
 	            view: {
 	                lat: 0,
 	                lon: 0,
 	                zoom: 2
+	            },
+	            data: null,
+	            tooltip: {
+	                format: null
 	            }
 	        };
 	
-	        self._id = options.id || config.id;
-	        self._data = options.data || config.data;
-	        self._view = options.view || config.view;
-	        self._markers = options.markers || [];
-	        self._options = options;
-	        self._layers = options.layers || config.layers;
+	        self._options = _C2.default.mergeDeep(config, options);
+	        self._dataSource = self._options.data;
 	        self.initMapConfig();
 	    }
 	
@@ -5650,8 +7053,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	    =            Getter            =
 	    ==============================*/
 	
+	    // get id() {
+	    //     return this._options.id;
+	    // }
+	
+	    // get height() {
+	    //     return this._height;
+	    // }
+	
+	    // get width() {
+	    //     return this._width;
+	    // }
+	
+	    // get view() {
+	    //     return this._view;
+	    // }
+	
+	    // get markers() {
+	    //     return this._markers;
+	    // }
+	
+	    // get layers() {
+	    //     return this._layers;
+	    // }
+	
 	    _createClass(Map, [{
-	        key: "initMapConfig",
+	        key: 'initMapConfig',
 	
 	        /*=====  End of Setter  ======*/
 	
@@ -5665,37 +7092,81 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //c9Layers contain all layers
 	            self.c9Layers = [];
 	            //c9Markers contain all markers
-	            self.c9Markers = new ol.source.Vector({});
+	            // self.c9Markers = new ol.source.Vector({});
 	            //c9Objects contain all polygons, lines
 	            self.c9Objs = new ol.source.Vector({});
+	            self.c9GeojsonObjs = [];
 	            //init all thing relating to user's data
 	
 	            //layer
 	            self.initLayer();
 	
 	            //quick markers
-	            self.initMarker();
+	            // self.initMarker();
 	
 	            //object
-	            self.initObj();
+	            // self.initObj();
+	
+	            //init popup
+	            var popup = document.createElement('div');
+	            popup.id = 'c9MapPopup';
+	            popup.className = 'c9-map-tooltip-container c9-custom-tooltip-container c9-tooltip-top';
+	            document.body.appendChild(popup);
 	        }
 	    }, {
-	        key: "draw",
+	        key: 'draw',
 	        value: function draw() {
 	            var self = this;
+	            var view = self.options.view,
+	                id = self.options.id;
+	
 	            self.c9View = new ol.View({
-	                center: ol.proj.fromLonLat([self.view.lon, self.view.lat]),
-	                zoom: self.view.zoom > 2 ? self.view.zoom : 2,
+	                center: ol.proj.fromLonLat([view.lon, view.lat]),
+	                zoom: view.zoom > 2 ? view.zoom : 2,
 	                minZoom: 2
 	            });
 	            self.c9Map = new ol.Map({
-	                target: self.id,
+	                target: id,
 	                layers: self.c9Layers,
 	                view: self.c9View,
 	                interactions: ol.interaction.defaults({ doubleClickZoom: false })
 	            });
 	
-	            //TODO - Create a function to gather all these event function
+	            /******************** ADD C9 OBJECTS ********************/
+	            self.c9ObjsLayer = new ol.layer.Vector({
+	                source: self.c9Objs,
+	                map: self.c9Map
+	            });
+	            /********************************************************/
+	
+	            /********************* ADD C9 POPUP *********************/
+	            self.c9Popup = new ol.Overlay({
+	                positioning: 'bottom-center',
+	                element: document.getElementById('c9MapPopup')
+	            });
+	
+	            //add overlay to contain popup
+	            self.c9Map.addOverlay(self.c9Popup);
+	            /********************************************************/
+	
+	            /********************* HOVER STYLE **********************/
+	            self.c9CustomHover = new ol.layer.Vector({
+	                source: new ol.source.Vector(),
+	                map: self.c9Map,
+	                style: new ol.style.Style({
+	                    stroke: new ol.style.Stroke({
+	                        color: 'rgb(0, 153, 255)',
+	                        width: 3
+	                    }),
+	                    fill: new ol.style.Fill({
+	                        color: 'rgba(255, 255, 255, 0.2)'
+	                    })
+	                })
+	            });
+	            /********************************************************/
+	            //adapt data to obj
+	            self.addData(self.dataSource);
+	            //define interaction
 	            self.updateInteraction();
 	        }
 	        /*=====  End of Main Functions  ======*/
@@ -5707,14 +7178,110 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	
 	    }, {
-	        key: "createLayer",
-	        value: function createLayer(type) {
-	            var source = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
-	
+	        key: 'createLayer',
+	        value: function createLayer(options) {
 	            var self = this;
+	            if (_C2.default.isEmpty(options)) return;
+	
+	            var type = options.type || 'Tile',
+	                source = options.source || { name: 'OSM' };
+	            // style = options.style;
+	
 	            var layer = new ol.layer[type]();
 	            layer.setSource(self.setupSource(source));
+	            // if (!Helper.isEmpty(style)) layer.setStyle(style);
+	
+	            //adapt source data to c9obj
+	            //support maximum 2 source level
+	            var containFeature = true,
+	                vs;
+	            try {
+	                vs = layer.getSource();
+	                vs.getFeatures();
+	            } catch (err) {
+	                try {
+	                    vs = layer.getSource().getSource();
+	                    vs.getFeatures();
+	                } catch (err) {
+	                    containFeature = false;
+	                }
+	            }
+	
+	            if (containFeature) {
+	                var readFormat = function readFormat(feature) {
+	                    var result = {};
+	                    feature.getKeys().forEach(function (k) {
+	                        result[k] = feature.getProperties()[k];
+	                    });
+	                    result['id'] = feature.getId();
+	                    return result;
+	                };
+	                var setStyle = function setStyle() {
+	                    if (!_C2.default.isEmpty(options.style)) {
+	                        try {
+	                            self.setStyle({ obj: layer.getSource(), style: options.style });
+	                        } catch (err) {
+	                            try {
+	                                self.setStyle({ obj: vs, style: options.style });
+	                            } catch (err) {
+	                                try {
+	                                    self.setStyle({ obj: layer, style: options.style });
+	                                } catch (err) {
+	                                    throw 'Cannot set style for this source';
+	                                }
+	                            }
+	                        }
+	                    }
+	                };
+	                //register layer loaded event to set data for obj
+	                vs.once('change', function (e) {
+	                    if (vs.getState() == 'ready') {
+	                        var objs = vs.getFeatures();
+	                        self.c9GeojsonObjs.push(layer.getSource());
+	                        // self.c9Objs.addFeatures(objs);
+	
+	                        objs.forEach(function (o) {
+	                            o.set('data', readFormat(o));
+	                            o.set('type', 'c9-geojson');
+	                        });
+	
+	                        //read data from url
+	                        if (!_C2.default.isEmpty(options.data) && _C2.default.isFunction(options.data.condition) && !_C2.default.isEmpty(options.data.file) && !_C2.default.isEmpty(options.data.file.url) && !_C2.default.isEmpty(options.data.file.type)) {
+	                            var da = new _C6.default(options.data);
+	                            da.getDataTarget('', function (data) {
+	                                var condition = options.data.condition;
+	                                var process = options.data.process;
+	
+	                                if (!_C2.default.isEmpty(process) && _C2.default.isFunction(process)) data = process(data);
+	
+	                                objs.forEach(function (o) {
+	                                    if (_C2.default.isArray(data)) {
+	                                        for (var i = 0; i < data.length; i++) {
+	                                            if (condition(o, data[i])) {
+	                                                for (var j in data[i]) {
+	                                                    o.get('data')[j] = data[i][j];
+	                                                }
+	                                                break;
+	                                            }
+	                                        }
+	                                    } else if (condition(o, data)) {
+	                                        for (var i in data) {
+	                                            o.get('data')[i] = data[i];
+	                                        }
+	                                    }
+	                                });
+	                                setStyle();
+	                            });
+	                        } else setStyle();
+	                    }
+	                });
+	            }
+	
 	            self.c9Layers.push(layer);
+	
+	            if (!_C2.default.isEmpty(self.c9Map)) self.c9Map.addLayer(layer);
+	
+	            return layer;
 	        }
 	
 	        /**
@@ -5722,86 +7289,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	
 	    }, {
-	        key: "initLayer",
+	        key: 'initLayer',
 	        value: function initLayer() {
 	            var self = this;
-	            var layers = self.layers;
+	            var layers = self.options.layers;
 	
 	            if (layers instanceof Array) {
 	                layers.forEach(function (l, i) {
-	                    self.createLayer(l.type, l.source);
+	                    self.createLayer({ type: l.type, source: l.source, style: l.style, condition: l.condition, data: l.data });
 	                });
-	            } else {
-	                self.createLayer(layers.type, layers.source);
-	            }
-	        }
-	
-	        /**
-	         * Create marker
-	         * @param  {Number} latitude of marker
-	         * @param  {Number} longitude of marker
-	         * @param  {String} image source (support for both local and net)
-	         * @param  {Number} scale image if its size is too large - default = 1
-	         */
-	
-	    }, {
-	        key: "createMarker",
-	        value: function createMarker(lat, lon) {
-	            var imgSrc = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'http://s21.postimg.org/blklb8scn/marker_icon.png';
-	            var scale = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
-	
-	            var self = this;
-	
-	            var marker = new ol.Feature({
-	                type: 'c9GeoMarker',
-	                geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
-	            });
-	
-	            /**
-	             * Create marker style
-	             * @param  {String} image source
-	             * @param  {Number} scale
-	             * @return {ol.style.Style} return marker style
-	             */
-	            var createMarkerStyle = function createMarkerStyle(imgSrc, scale) {
-	                return new ol.style.Style({
-	                    image: new ol.style.Icon({
-	                        anchor: [0.5, 1], //middle-width and bottom-height of image
-	                        src: imgSrc,
-	                        scale: scale
-	                    })
-	                });
-	            };
-	
-	            marker.setStyle(createMarkerStyle(imgSrc, scale));
-	
-	            //add this marker to marker list (c9Markers)
-	            self.c9Markers.addFeature(marker);
-	        }
-	
-	        /**
-	         * marker first set up
-	         */
-	
-	    }, {
-	        key: "initMarker",
-	        value: function initMarker() {
-	            var self = this;
-	            //data
-	            var markers = self.markers;
-	            //add marker layer to layer list (c9Layers)
-	            self.c9Layers.push(new ol.layer.Vector({
-	                source: self.c9Markers
-	            }));
-	
-	            if (markers.length === 0) return;
-	
-	            if (markers instanceof Array) {
-	                markers.forEach(function (m, i) {
-	                    self.createMarker(m.lat, m.lon, m.img, m.scale);
-	                });
-	            } else {
-	                self.createMarker(markers.lat, markers.lon, markers.img, markers.scale);
+	            } else if (_C2.default.isObject(layers)) {
+	                self.createLayer({ type: layers.type, source: layers.source, style: layers.style, condition: layers.condition, data: layers.data });
 	            }
 	        }
 	
@@ -5812,7 +7310,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	
 	    }, {
-	        key: "setupSource",
+	        key: 'setupSource',
 	        value: function setupSource(s) {
 	            var source = undefined;
 	            switch (s.name) {
@@ -5855,7 +7353,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	                case 'ImageVector':
 	                    source = new ol.source.ImageVector({
-	                        source: this.setupSource(s.source)
+	                        source: this.setupSource(s.source),
+	                        // default style
+	                        style: new ol.style.Style({
+	                            fill: new ol.style.Fill({
+	                                color: 'rgba(255, 255, 255, 0.2)'
+	                            }),
+	                            stroke: new ol.style.Stroke({
+	                                color: '#319FD3',
+	                                width: 1
+	                            })
+	                        })
 	                    });
 	                    break;
 	                default:
@@ -5863,79 +7371,97 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	
 	            }
+	
 	            return source;
 	        }
 	
 	        /**
-	         * Create marker's flash effect
-	         * @param  {ol.Feature}
+	         * define some interactions
 	         */
 	
 	    }, {
-	        key: "createMarkerEffect",
-	        value: function createMarkerEffect(feature) {
-	            var self = this;
-	            var duration = 3000;
-	            var start = new Date().getTime();
-	            var listenerKey;
-	
-	            function animate(event) {
-	                var vectorContext = event.vectorContext;
-	                var frameState = event.frameState;
-	                var flashGeom = feature.getGeometry().clone();
-	                var elapsed = frameState.time - start;
-	                var elapsedRatio = elapsed / duration;
-	                // radius will be 5 at start and 30 at end.
-	                var radius = ol.easing.easeOut(elapsedRatio) * 25 + 5;
-	                var opacity = ol.easing.easeOut(1 - elapsedRatio);
-	
-	                var style = new ol.style.Style({
-	                    image: new ol.style.Circle({
-	                        radius: radius,
-	                        snapToPixel: false,
-	                        stroke: new ol.style.Stroke({
-	                            color: 'rgba(255, 0, 0, ' + opacity + ')',
-	                            width: 0.25 + opacity
-	                        })
-	                    })
-	                });
-	
-	                vectorContext.setStyle(style);
-	                vectorContext.drawGeometry(flashGeom);
-	                if (elapsed > duration) {
-	                    ol.Observable.unByKey(listenerKey);
-	                    return;
-	                }
-	                // tell OL3 to continue postcompose animation
-	                self.c9Map.render();
-	            }
-	            listenerKey = self.c9Map.on('postcompose', animate);
-	        }
-	    }, {
-	        key: "updateInteraction",
+	        key: 'updateInteraction',
 	        value: function updateInteraction() {
 	            var self = this;
 	            var LEFT_KEY = 37,
 	                RIGHT_KEY = 39,
+	                DEL_KEY = 46,
 	                DURATION = 1000,
 	                LOAD_MAP_DELAY = 500;
 	
-	            var getCoordinatesLonLat = function getCoordinatesLonLat(f) {
-	                return ol.proj.transform(f.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326');
+	            // add default interaction of ol3
+	            // self.c9Map.addInteraction(self.c9DefaultHoverStyle = new ol.interaction.Select({
+	            //     condition: ol.events.condition.pointerMove
+	            // }));
+	
+	            //normal: stroke 'rgb(49, 159, 211)' width: 1
+	            //        fill '#fff'
+	
+	
+	            /******************* SOME HELPER FUNCTION ********************/
+	            var getCenterLonLat = function getCenterLonLat(f) {
+	                return ol.proj.transform(getCenter(f), 'EPSG:3857', 'EPSG:4326');
 	            };
-	            var getCoordinates = function getCoordinates(f) {
-	                return f.getGeometry().getCoordinates();
+	            var getCenter = function getCenter(f) {
+	                return ol.extent.getCenter(f.getGeometry().getExtent());
 	            };
 	            var transformCoordinates = function transformCoordinates(c) {
 	                return ol.proj.transform(c, 'EPSG:3857', 'EPSG:4326');
 	            };
-	            var panAnimation = function panAnimation(f) {
+	            /**
+	             * Create pan animation on object
+	             * @param  {ol.Feature}
+	             */
+	            var panAnimation = function panAnimation(feature) {
+	                if (self.c9View.getCenter()[0] == getCenter(feature)[0] && self.c9View.getCenter()[1] == getCenter(feature)[1]) return;
+	
 	                var pan = ol.animation.pan({
 	                    duration: DURATION,
 	                    source: self.c9View.getCenter()
 	                });
 	                self.c9Map.beforeRender(pan);
-	                self.c9View.setCenter(getCoordinates(f));
+	                self.c9View.setCenter(getCenter(feature));
+	            };
+	            /**
+	             * Create marker's flash effect
+	             * @param  {ol.Feature}
+	             */
+	            var createMarkerEffect = function createMarkerEffect(feature) {
+	                var duration = 3000;
+	                var start = new Date().getTime();
+	                var listenerKey;
+	
+	                function animate(event) {
+	                    var vectorContext = event.vectorContext;
+	                    var frameState = event.frameState;
+	                    var flashGeom = feature.getGeometry().clone();
+	                    var elapsed = frameState.time - start;
+	                    var elapsedRatio = elapsed / duration;
+	                    // radius will be 5 at start and 30 at end.
+	                    var radius = ol.easing.easeOut(elapsedRatio) * 25 + 5;
+	                    var opacity = ol.easing.easeOut(1 - elapsedRatio);
+	
+	                    var style = new ol.style.Style({
+	                        image: new ol.style.Circle({
+	                            radius: radius,
+	                            snapToPixel: false,
+	                            stroke: new ol.style.Stroke({
+	                                color: 'rgba(255, 0, 0, ' + opacity + ')',
+	                                width: 0.25 + opacity
+	                            })
+	                        })
+	                    });
+	
+	                    vectorContext.setStyle(style);
+	                    vectorContext.drawGeometry(flashGeom);
+	                    if (elapsed > duration) {
+	                        ol.Observable.unByKey(listenerKey);
+	                        return;
+	                    }
+	                    // tell OL3 to continue postcompose animation
+	                    self.c9Map.render();
+	                }
+	                listenerKey = self.c9Map.on('postcompose', animate);
 	            };
 	            /**
 	             * Caculate distance between marker and center view, plus direction compare with center
@@ -5944,50 +7470,193 @@ return /******/ (function(modules) { // webpackBootstrap
 	             */
 	            var distanceAndDirection = function distanceAndDirection(f) {
 	                var center = transformCoordinates(self.c9View.getCenter());
-	                var fCoordinates = getCoordinatesLonLat(f);
+	                var fCoordinates = getCenterLonLat(f);
 	                return [Math.sqrt(Math.pow(fCoordinates[0] - center[0], 2) + Math.pow(fCoordinates[1] - center[1], 2)), fCoordinates[0] - center[0] <= 0];
 	            };
+	            var formatPopup = function formatPopup(data) {
+	                if (_C2.default.isEmpty(data)) return;
+	                var capitalizeFirstLetter = function capitalizeFirstLetter(string) {
+	                    return string.charAt(0).toUpperCase() + string.slice(1);
+	                };
+	                var strongSpan = function strongSpan(strong, span) {
+	                    if (span == '' || _C2.default.isEmpty(span) || _C2.default.isObject(span)) return "";return "<strong>" + capitalizeFirstLetter(strong) + ":</strong>" + "<span> " + span + "</span></br>";
+	                };
+	                var result = strongSpan("Name", data.name),
+	                    v;
+	                if (!_C2.default.isEmpty(data.coor)) result += strongSpan("Lon", data.coor.lon || data.coor[0]) + strongSpan("Lat", data.coor.lat || data.coor[1]);
+	
+	                for (var i in v = data.value) {
+	                    result += strongSpan(i, v[i]);
+	                }
+	                return result;
+	            };
+	            /*************************************************************/
+	
 	            //register pointer move event to show cursor as pointer if user hover on markers
 	            self.c9Map.on('pointermove', function (evt) {
-	                self.c9Map.getTargetElement().style.cursor = self.c9Map.hasFeatureAtPixel(evt.pixel) ? 'pointer' : '';
+	                var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+	                    return feature;
+	                });
+	
+	                // new hover style
+	                if (f !== self.lastHoveredObj) {
+	                    if (self.lastHoveredObj) {
+	                        if (self.lastHoveredObj.get('type') != "c9-geojson" && self.lastHoveredObj.get('c9-style')) self.lastHoveredObj.setStyle(self.lastHoveredObj.get('c9-style'));else self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
+	                    }
+	                    if (f) {
+	                        var fStyle = f.get('c9-style'),
+	                            strokeColor = 'rgb(0, 153, 255)',
+	                            strokeWidth = 3,
+	                            fillColor = 'rgba(255, 255, 255, 0.2)';
+	                        if (fStyle) {
+	                            strokeColor = fStyle.getStroke().getColor() == '#319FD3' ? 'rgb(0, 153, 255)' : self.getLightenColor(fStyle.getStroke().getColor());
+	                            strokeWidth = fStyle.getStroke().getWidth() + 2;
+	                            fillColor = fStyle.getFill().getColor() == 'rgba(255, 255, 255, 0.2)' ? 'rgba(255, 255, 255, 0.2)' : self.getLightenColor(fStyle.getFill().getColor());
+	                        }
+	                        var newStyle = new ol.style.Style({
+	                            stroke: new ol.style.Stroke({
+	                                color: strokeColor,
+	                                width: strokeWidth
+	                            }),
+	                            fill: new ol.style.Fill({
+	                                color: fillColor
+	                            })
+	                        });
+	                        if (fStyle) f.setStyle(newStyle);else {
+	                            self.c9CustomHover.setStyle(newStyle);
+	                            self.c9CustomHover.getSource().addFeature(f);
+	                        }
+	                    }
+	                    self.lastHoveredObj = f;
+	                }
+	                if (f) {
+	                    self.c9Map.getTargetElement().style.cursor = 'pointer';
+	                    // self.createMarkerEffect(f);
+	                    /************* LIGHTEN COLOR ***********/
+	                    // if (f.get('type') == 'c9-line' || f.get('type') == 'c9-polygon' || f.get('type') == 'c9-multipolygon'){
+	                    //     var fStyle = f.getStyle();
+	                    //     var defaultStyle = f.get('c9-style');
+	
+	                    //     if (fStyle.getStroke().getWidth() == defaultStyle.strokeWidth)
+	                    //         f.setStyle(new ol.style.Style({
+	                    //             stroke: new ol.style.Stroke({
+	                    //                 width: fStyle.getStroke().getWidth() + 2,
+	                    //                 color: self.getLightenColor(fStyle.getStroke().getColor())
+	                    //             }),
+	                    //             fill: new ol.style.Fill({
+	                    //                 color: self.getLightenColor(fStyle.getFill().getColor())
+	                    //             })
+	                    //         }));
+	                    // }
+	
+	                    // if (f !== self.lastHoveredObj) {
+	                    //     if (self.lastHoveredObj) {
+	                    //         self.c9CustomHover.getSource().removeFeature(self.lastHoveredObj);
+	                    //     }
+	                    //     if (f) {
+	                    //         self.c9CustomHover.getSource().addFeature(f);
+	                    //     }
+	                    //     self.lastHoveredObj = f;
+	                    // }
+	
+	                    /****************************************/
+	
+	                    /************** SHOW POPUP *************/
+	                    self.c9Popup.getElement().style.display = 'none';
+	
+	                    // panAnimation(f);
+	
+	                    try {
+	                        if (self.options.tooltip.format) self.options.tooltip.format(f.get('data'));
+	                    } catch (err) {
+	                        throw "Check data format again";
+	                        return;
+	                    }
+	
+	                    var content = self.options.tooltip.format ? self.options.tooltip.format(f.get('data')) : formatPopup(f.get('data'));
+	                    if (_C2.default.isEmpty(content) || content.toString().trim() == "") return;
+	
+	                    self.c9Popup.getElement().style.display = 'block';
+	                    self.c9Popup.getElement().innerHTML = content;
+	                    // self.c9Popup.setPosition(getCenter(f));
+	                    self.c9Popup.setPosition(evt.coordinate);
+	                    /****************************************/
+	                    // var stop = new CustomEvent("click", {detail: {message: "stop"}});
+	                    // self.c9Map.dispatchEvent(stop);
+	                }
+	                if (!f) {
+	                    self.c9Map.getTargetElement().style.cursor = '';
+	                    self.c9Popup.getElement().style.display = 'none';
+	
+	                    //remove last obj style
+	                    // if (!Helper.isEmpty(self.lastHoveredObj) && (self.lastHoveredObj.get('type') == 'c9-line' || self.lastHoveredObj.get('type') == 'c9-polygon' || self.lastHoveredObj.get('type') == 'c9-multipolygon')) {
+	                    //     var defaultStyle = self.lastHoveredObj.get('c9-style');
+	                    //     self.lastHoveredObj.setStyle(defaultStyle);
+	                    // }   
+	                }
 	            });
 	
 	            //register map first render's event to show marker's effect
 	            self.c9Map.once('postrender', function (evt) {
 	                setTimeout(function () {
-	                    self.c9Markers.getFeatures().forEach(function (f, i) {
-	                        self.createMarkerEffect(f);
+	                    self.c9Objs.getFeatures().forEach(function (f, i) {
+	                        if (f.get('type') == 'c9-marker') createMarkerEffect(f);
 	                    });
 	                }, LOAD_MAP_DELAY);
 	            });
 	
 	            //register click event to show effect on markers
 	            self.c9Map.on('click', function (evt) {
+	
+	                // if (evt instanceof CustomEvent) return;
 	                var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+	                    self.lastSelectedObj = feature;
 	                    return feature;
 	                });
-	                if (f && f.get('type') == 'c9GeoMarker') {
+	                if (f) {
 	                    // self.createMarkerEffect(f);
-	                    //test
+	                    // self.c9Popup.getElement().style.display = 'none';
+	
 	                    panAnimation(f);
+	
+	                    // try {
+	                    //     if (self.options.format) self.options.format(f.get('data'));
+	                    // }
+	                    // catch(err) {
+	                    //     throw "Check data format again";
+	                    //     return;
+	                    // }
+	
+	                    // var content = self.options.format ? self.options.format(f.get('data')) : formatPopup(f.get('data'));
+	                    // if (Helper.isEmpty(content) || content.toString().trim() == "") return;
+	
+	                    // self.c9Popup.getElement().style.display = 'block';
+	                    // self.c9Popup.getElement().innerHTML = content;
+	                    // self.c9Popup.setPosition(getCenter(f));
+	
+	                    // // var stop = new CustomEvent("click", {detail: {message: "stop"}});
+	                    // // self.c9Map.dispatchEvent(stop);
 	                }
+	                if (!f) self.c9Popup.getElement().style.display = 'none';
 	            });
 	
 	            //register keydown event to change center view
-	            $(document).keydown(function (e) {
+	            document.addEventListener('keydown', function (e) {
 	                var keydownAnimate = function keydownAnimate(k) {
 	                    var selectedFeature = undefined;
 	                    var minDistance = Infinity;
-	                    self.c9Markers.getFeatures().forEach(function (f, i) {
-	                        var checkAnimate = distanceAndDirection(f);
+	                    self.c9Objs.getFeatures().forEach(function (f, i) {
+	                        if (f.get('type') == "c9-marker") {
+	                            var checkAnimate = distanceAndDirection(f);
 	
-	                        if ((checkAnimate[1] && k == LEFT_KEY || !checkAnimate[1] && k == RIGHT_KEY) && checkAnimate[0] < minDistance && checkAnimate[0] != 0) {
-	                            minDistance = checkAnimate[0];
-	                            selectedFeature = f;
+	                            if ((checkAnimate[1] && k == LEFT_KEY || !checkAnimate[1] && k == RIGHT_KEY) && checkAnimate[0] < minDistance && checkAnimate[0] != 0) {
+	                                minDistance = checkAnimate[0];
+	                                selectedFeature = f;
+	                            }
 	                        }
 	                    });
 	                    if (selectedFeature) {
-	                        setTimeout(self.createMarkerEffect(selectedFeature), LOAD_MAP_DELAY);
+	                        setTimeout(createMarkerEffect(selectedFeature), LOAD_MAP_DELAY);
 	                        panAnimation(selectedFeature);
 	                    }
 	                };
@@ -5998,51 +7667,136 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    case RIGHT_KEY:
 	                        keydownAnimate(RIGHT_KEY);
 	                        break;
+	                    case DEL_KEY:
+	                        // if (!Helper.isEmpty(self.lastSelectedObj) && (!Helper.isEmpty(self.lastSelectedObj.get('type')) || self.lastSelectedObj.get('type') != 'c9-geojson')) self.c9Objs.removeFeature(self.lastSelectedObj);
+	                        break;
 	                }
 	            });
 	        }
 	
+	        // /**
+	        //  * marker first set up
+	        //  */
+	        // initMarker() {
+	        //     var self = this;
+	        //     //data
+	        //     var markers = self.markers;
+	        //     //add marker layer to layer list (c9Layers)
+	        //     self.c9Layers.push(new ol.layer.Vector({
+	        //         source: self.c9Markers
+	        //     }));
+	
+	        //     if (markers.length === 0) return;
+	
+	        //     if (markers instanceof Array) {
+	        //         markers.forEach(function(m, i) {
+	        //             self.createMarker({lat: m.lat, lon: m.lon, imgSrc: m.img, scale: m.scale});
+	        //         });
+	        //     }
+	        //     else {
+	        //         self.createMarker({lat: markers.lat, lon: markers.lon, imgSrc: markers.img, scale: markers.scale});
+	        //     }
+	        // }
 	        /**
 	         * obj first set up
 	         */
+	        // initObj() {
+	        //     var self = this;
 	
-	    }, {
-	        key: "initObj",
-	        value: function initObj() {
-	            var self = this;
-	
-	            //add layer Vector to layer list (c9Layers)
-	            self.c9Layers.push(new ol.layer.Vector({
-	                source: self.c9Objs
-	            }));
-	        }
+	        //     //add layer Vector to layer list (c9Layers)
+	        //     self.c9Layers.push(new ol.layer.Vector({
+	        //         source: self.c9Objs
+	        //     }));
+	        // }
 	
 	        /**
-	         * [createObj description]
-	         * @param  {[type]} type        [description]
-	         * @param  {[type]} data        [description]
-	         * @param  {[type]} strokeWidth [description]
-	         * @param  {[type]} strokeColor [description]
-	         * @param  {[type]} fillColor   [description]
-	         * @return {[type]}             [description]
+	         * create c9 obj
+	         * @data  {Object} coordinate
+	         * @options  {Object} some options: strokeWidth,strokeColor,fillColor,imgSrc,scale
+	         * @return {}
 	         */
 	
 	    }, {
-	        key: "createObj",
-	        value: function createObj(type, data, strokeWidth, strokeColor, fillColor) {
+	        key: 'createObject',
+	        value: function createObject(options) {
 	            var self = this;
+	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.data)) return;
+	            var data = options.data,
+	                style = options.style;
+	            /**
+	             * Create marker
+	             * @param  {Number} latitude of marker
+	             * @param  {Number} longitude of marker
+	             * @param  {String} image source (support for both local and net)
+	             * @param  {Number} scale image if its size is too large - default = 1
+	             */
+	            var createMarker = function createMarker(data, coor, options) {
 	
-	            if (type != "polygon" && type != "line") throw "No support";
+	                if (!_C2.default.isArray(coor) && coor.length != 2) return;
 	
-	            if (data == self.c9Markers) {
-	                data = [];
-	                self.c9Markers.getFeatures().forEach(function (d) {
-	                    data.push(ol.proj.transform(d.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
+	                var DEFAULT_SRC = 'http://s21.postimg.org/blklb8scn/marker_icon.png';
+	                var DEFAULT_SCALE = 1;
+	
+	                var lat = coor[1],
+	                    lon = coor[0],
+	                    imgSrc = options ? options.imgSrc || DEFAULT_SRC : DEFAULT_SRC,
+	                    scale = options ? options.scale || DEFAULT_SCALE : DEFAULT_SCALE;
+	
+	                var marker = new ol.Feature({
+	                    'data-ref': '',
+	                    type: 'c9-marker',
+	                    data: data,
+	                    // 'c9-id': ,
+	                    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat]))
 	                });
+	
+	                /**
+	                 * Create marker style
+	                 * @param  {String} image source
+	                 * @param  {Number} scale
+	                 * @return {ol.style.Style} return marker style
+	                 */
+	                var createMarkerStyle = function createMarkerStyle(imgSrc, scale) {
+	                    return new ol.style.Style({
+	                        image: new ol.style.Icon({
+	                            anchor: [0.5, 1], //middle-width and bottom-height of image
+	                            src: imgSrc,
+	                            scale: scale
+	                        })
+	                    });
+	                };
+	                // marker.set('c9-style', markerStyle);
+	                marker.setStyle(createMarkerStyle(imgSrc, scale));
+	
+	                //add this marker to marker list (c9Objs)
+	                self.c9Objs.addFeature(marker);
+	                return marker;
+	            };
+	
+	            var coorAndType = self.normalizeCoordinate(data.coor);
+	            if (coorAndType.coor == null) return;
+	
+	            //marker
+	            if (coorAndType.type == "marker") {
+	                return createMarker(data, coorAndType.coor, style);
 	            }
 	
+	            // if (data == self.c9Markers) {
+	            //     data = [];
+	            //     self.c9Markers.getFeatures().forEach(function (d) {
+	            //         data.push(ol.proj.transform(d.getGeometry().getCoordinates(), 'EPSG:3857', 'EPSG:4326'));
+	            //     })
+	            // }
+	
+	            var strokeWidth = style ? style.strokeWidth || 1 : 1,
+	                strokeColor = style ? style.strokeColor || "#319FD3" : "#319FD3",
+	                fillColor = style ? style.fillColor || "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.2)";
+	
 	            var obj = new ol.Feature({
-	                geometry: type == "polygon" ? new ol.geom.Polygon([data]) : new ol.geom.LineString(data, 'XY')
+	                'data-ref': '',
+	                type: "c9-" + coorAndType.type,
+	                data: data,
+	                geometry: coorAndType.type == "polygon" ? new ol.geom.Polygon(coorAndType.coor) : coorAndType.type == "line" ? new ol.geom.LineString(coorAndType.coor) : new ol.geom.MultiPolygon(coorAndType.coor)
 	            });
 	
 	            obj.getGeometry().transform('EPSG:4326', 'EPSG:3857');
@@ -6057,24 +7811,293 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var createObjStyle = function createObjStyle(strokeWidth, strokeColor, fillColor) {
 	                return new ol.style.Style({
 	                    stroke: new ol.style.Stroke({
-	                        width: strokeWidth || 2,
-	                        color: strokeColor || "steelblue"
+	                        width: strokeWidth,
+	                        color: strokeColor
 	                    }),
 	                    fill: new ol.style.Fill({
-	                        color: fillColor || "rgba(0, 0, 255, 0.2)"
+	                        color: fillColor
 	                    })
 	                });
 	            };
 	
-	            obj.setStyle(createObjStyle(strokeWidth, strokeColor, fillColor));
+	            var objStyle = createObjStyle(strokeWidth, strokeColor, fillColor);
+	            obj.set('c9-style', objStyle);
+	            obj.setStyle(objStyle);
 	
-	            //add this marker to marker list (c9Markers)
+	            //add this marker to marker list (c9Objs)
 	            self.c9Objs.addFeature(obj);
+	            return obj;
+	        }
+	
+	        /**
+	         * normalize coordinate
+	         * currently only support marker, linestring, polygon and multipolygon
+	         * @coor  {Array} coordinate of object
+	         * @return {Array} coordinate was normalized
+	         */
+	
+	    }, {
+	        key: 'normalizeCoordinate',
+	        value: function normalizeCoordinate(coor) {
+	            var normCoor = [],
+	                type,
+	                error = { coor: null, type: null };
+	            if (_C2.default.isObject(coor) && coor.length == undefined || _C2.default.isArray(coor) && coor.length == 2 && !isNaN(coor[0]) && !isNaN(coor[1])) {
+	                // marker - [] - {}
+	                type = "marker";
+	                if (coor.length == undefined) {
+	                    if (_C2.default.isEmpty(coor.lat) || _C2.default.isEmpty(coor.lon)) return error;
+	                    normCoor = [coor.lon, coor.lat];
+	                } else {
+	                    normCoor = coor;
+	                }
+	            } else if (_C2.default.isArray(coor)) {
+	                // linestring - [{},{}] - [[],[]] - [{},[]] - [[],{}]
+	                var isArrayOrObject = function isArrayOrObject(obj) {
+	                    var result = {};
+	                    if (_C2.default.isObject(obj) && obj.length == undefined) {
+	                        result['check'] = !_C2.default.isEmpty(obj.lat) && !_C2.default.isEmpty(obj.lon);
+	                        if (result['check']) result['coor'] = [obj.lon, obj.lat];
+	                    } else {
+	                        result['check'] = _C2.default.isArray(obj) && obj.length == 2 && !isNaN(obj[0]) && !isNaN(obj[1]);
+	                        if (result['check']) result['coor'] = obj;
+	                    }
+	                    return result;
+	                };
+	
+	                // check data inside to eliminate case: multipolygon contains 2 polygons
+	                if (coor.length == 2 && isArrayOrObject(coor[0]).check && isArrayOrObject(coor[1]).check) {
+	                    type = "line";
+	                    normCoor.push(isArrayOrObject(coor[0]).coor);
+	                    normCoor.push(isArrayOrObject(coor[1]).coor);
+	                }
+	                //polygon || multipolygon
+	                else if (coor.length >= 1) {
+	                        // multipolygon [[[[] || {}, ...]], [[[] || {}, ...]], ...]
+	                        if (!_C2.default.isEmpty(coor[0][0]) && !_C2.default.isEmpty(coor[0][0][0])) {
+	                            type = "multipolygon";
+	                            coor.forEach(function (pc, i) {
+	                                if (_C2.default.isArray(pc) && pc.length == 1) {
+	                                    normCoor.push([[]]);
+	                                    pc[0].forEach(function (c) {
+	                                        // data - [] || {}
+	                                        var obj = isArrayOrObject(c);
+	                                        if (obj.check) normCoor[i][0].push(obj.coor);
+	                                    });
+	                                    // cannot create polygon with the number of points is less than 2
+	                                    if (normCoor[i][0].length <= 2) return error;
+	                                } else return error; // because data format is not true
+	                            });
+	                        }
+	                        // polygon [[[] || {}, ...]]
+	                        else {
+	                                type = "polygon";
+	                                normCoor.push([]);
+	                                coor[0].forEach(function (c) {
+	                                    // data - [] || {}
+	                                    var obj = isArrayOrObject(c);
+	                                    if (obj.check) normCoor[0].push(obj.coor);
+	                                });
+	                                if (normCoor[0].length <= 2) return error;
+	                            }
+	                    } else return error;
+	            }
+	            return {
+	                coor: normCoor,
+	                type: type
+	            };
+	        }
+	
+	        /**
+	         * create obj base on user data
+	         * @data  {Object} data structure: {coor: [], name: , value: }
+	         * return list of created object
+	         */
+	
+	    }, {
+	        key: 'addData',
+	        value: function addData(data) {
+	            if (_C2.default.isEmpty(data) || _C2.default.isEmpty(data.plain) && _C2.default.isEmpty(data.file)) return;
+	            var self = this;
+	
+	            var da = new _C6.default(data);
+	            da.getDataTarget('map', function (data) {
+	                self.data = data;
+	                if (!_C2.default.isEmpty(self.c9Map)) {
+	                    if (_C2.default.isArray(self.data)) self.data.forEach(function (d, i) {
+	                        self.createObject({ data: d });
+	                    });else self.createObject({ data: self.data });
+	                }
+	            });
 	        }
 	    }, {
-	        key: "id",
+	        key: 'getObjects',
+	        value: function getObjects() {
+	            var c9GeojsonObjs = [];
+	            this.c9GeojsonObjs.forEach(function (o) {
+	                try {
+	                    c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());
+	                } catch (err) {
+	                    try {
+	                        c9GeojsonObjs = c9GeojsonObjs.concat(o.getFeatures());
+	                    } catch (err) {}
+	                }
+	            });
+	            return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
+	        }
+	    }, {
+	        key: 'getMap',
+	        value: function getMap() {
+	            return this.c9Map;
+	        }
+	
+	        /**
+	         * Custom Event Listener
+	         * @param  {[type]}   eventType [description]
+	         * @param  {Function} callback  [description]
+	         */
+	
+	    }, {
+	        key: 'on',
+	        value: function on(eventType, callback) {
+	            var self = this;
+	            // Update Event Factory
+	            var eventFactoryViewport = {
+	                'click': function click(evt) {
+	                    var f = self.c9Map.forEachFeatureAtPixel(self.c9Map.getEventPixel(evt), function (feature, layer) {
+	                        return feature;
+	                    });
+	                    if (_C2.default.isFunction(callback) && f) {
+	                        callback.call(this, f);
+	                    }
+	                },
+	                'pointermove': function pointermove(evt) {
+	                    var f = self.c9Map.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+	                        return feature;
+	                    });
+	                    if (_C2.default.isFunction(callback) && f) {
+	                        callback.call(this, f);
+	                    }
+	                },
+	                'postrender': function postrender(evt) {
+	                    if (_C2.default.isFunction(callback)) {
+	                        callback.call(this, evt);
+	                    }
+	                }
+	            };
+	
+	            if (eventType == "click") self.c9Map.getViewport().addEventListener(eventType, eventFactoryViewport[eventType]);else if (eventType == "pointermove") self.c9Map.on(eventType, eventFactoryViewport[eventType]);else if (eventType == "postrender") self.c9Map.once(eventType, eventFactoryViewport[eventType]);
+	        }
+	    }, {
+	        key: 'getLightenColor',
+	        value: function getLightenColor(color) {
+	            if (color.includes('rgba')) {
+	                var alpha = color.split(',')[color.split(',').length - 1].replace(')', '');
+	                var currentColor = color.replace(',' + alpha, '').replace('a', '');
+	                var newColor = _C2.default.shadeColor(-0.2, currentColor);
+	                return 'rgba(' + newColor.split('(')[1].split(')')[0] + ',' + alpha.trim() + ')';
+	            } else return _C2.default.shadeColor(-0.2, color);
+	        }
+	
+	        /**
+	         * set style: consist of layer, source and obj
+	         * @obj   {ol.layer || ol.source || ol.Feature}
+	         * @style {function || ol.style} style function || ol.style
+	         */
+	
+	    }, {
+	        key: 'setStyle',
+	        value: function setStyle(options) {
+	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.obj) || _C2.default.isEmpty(options.style)) return;
+	            //create style for obj
+	            if (_C2.default.isFunction(options.style) || options.style instanceof ol.style.Style) {
+	                options.obj.setStyle(options.style);
+	            } else {
+	                var DEFAULT_SRC = 'http://s21.postimg.org/blklb8scn/marker_icon.png';
+	                var DEFAULT_SCALE = 1;
+	
+	                var strokeColor = options.style.strokeColor ? options.style.strokeColor : '#319FD3',
+	                    strokeWidth = options.style.strokeWidth ? options.style.strokeColor : 1,
+	                    fillColor = options.style.fillColor ? options.style.fillColor : 'rgba(255, 255, 255, 0.2)',
+	                    imgSrc = options.style.type == 'marker' || options.style.type == 'c9-marker' ? options.style.imgSrc || DEFAULT_SRC : null,
+	                    scale = options.style.type == 'marker' || options.style.type == 'c9-marker' ? options.style.scale || DEFAULT_SCALE : null;
+	
+	                var style;
+	
+	                if (imgSrc != null) options.obj.setStyle(style = new ol.style.Style({
+	                    image: new ol.style.Icon({
+	                        anchor: [0.5, 1], //middle-width and bottom-height of image
+	                        src: imgSrc,
+	                        scale: scale
+	                    })
+	                }));else options.obj.setStyle(style = new ol.style.Style({
+	                    stroke: new ol.style.Stroke({
+	                        color: strokeColor,
+	                        width: strokeWidth
+	                    }),
+	                    fill: new ol.style.Fill({
+	                        color: fillColor
+	                    })
+	                }));
+	
+	                options.obj.set('c9-style', style);
+	            }
+	        }
+	
+	        // TODO - set hover style
+	
+	        /**
+	         * create a layer from geojson file
+	         * @url  {String} url of geojson file
+	         */
+	
+	    }, {
+	        key: 'createLayerFromGeojson',
+	        value: function createLayerFromGeojson(options) {
+	            var self = this;
+	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.url)) return;
+	
+	            self.createLayer({
+	                type: "Image",
+	                source: {
+	                    name: "ImageVector",
+	                    source: {
+	                        name: 'Vector',
+	                        url: options.url,
+	                        format: 'GeoJSON'
+	                    }
+	                },
+	                data: options.data,
+	                style: options.style
+	            });
+	            //create style
+	            // self.setStyle({obj: layer.getSource(), style: options.style});
+	
+	            // if (!Helper.isEmpty(options.style)) {
+	            //     if (Helper.isFunction(style) || style instanceof ol.style.Style) {
+	            //         layer.getSource().setStyle(options.style);
+	            //     }
+	            //     else {
+	            //         var strokeColor = options.style.strokeColor ? options.style.strokeColor : '#319FD3',
+	            //             strokeWidth = options.style.strokeWidth ? options.style.strokeColor : 1,
+	            //             fillColor   = options.style.fillColor   ? options.style.fillColor   : 'rgba(255, 255, 255, 0.2)';
+	
+	            //         layer.getSource().setStyle(new ol.style.Style({
+	            //             stroke: new ol.style.Stroke({
+	            //                 color: strokeColor,
+	            //                 width: strokeWidth
+	            //             }),
+	            //             fill: new ol.style.Fill({
+	            //                 color: fillColor
+	            //             })
+	            //         }))
+	            //     }
+	            // }
+	        }
+	    }, {
+	        key: 'dataSource',
 	        get: function get() {
-	            return this._id;
+	            return this._dataSource;
 	        },
 	
 	        /*=====  End of Getter  ======*/
@@ -6083,63 +8106,49 @@ return /******/ (function(modules) { // webpackBootstrap
 	        =            Setter            =
 	        ==============================*/
 	
-	        set: function set(newId) {
-	            if (newId) {
-	                this._id = newId;
+	        // set id(newId) {
+	        //     if (newId) {
+	        //         this._options.id = newId;
+	        //     }
+	        // }
+	
+	        // set height(newHeight) {
+	        //     if (newHeight) {
+	        //         this._height = newHeight;    
+	        //     }
+	        // }
+	
+	        // set width(newWidth) {
+	        //     if (newWidth) {
+	        //         this._width = newWidth;
+	        //     }
+	        // }
+	
+	        // set view(newView) {
+	        //     if (newView) {
+	        //         this._view = newView;
+	        //     }
+	        // }
+	
+	        // set markers(newMarkers) {
+	        //     if (newMarkers) {
+	        //         this._markers = newMarkers;
+	        //     }
+	        // }
+	
+	        // set layers(newLayers) {
+	        //     if (newLayers) {
+	        //         this._layers = newLayers;
+	        //     }
+	        // }
+	
+	        set: function set(newData) {
+	            if (newData) {
+	                this._dataSource = newData;
 	            }
 	        }
 	    }, {
-	        key: "height",
-	        get: function get() {
-	            return this._height;
-	        },
-	        set: function set(newHeight) {
-	            if (newHeight) {
-	                this._height = newHeight;
-	            }
-	        }
-	    }, {
-	        key: "width",
-	        get: function get() {
-	            return this._width;
-	        },
-	        set: function set(newWidth) {
-	            if (newWidth) {
-	                this._width = newWidth;
-	            }
-	        }
-	    }, {
-	        key: "view",
-	        get: function get() {
-	            return this._view;
-	        },
-	        set: function set(newView) {
-	            if (newView) {
-	                this._view = newView;
-	            }
-	        }
-	    }, {
-	        key: "markers",
-	        get: function get() {
-	            return this._markers;
-	        },
-	        set: function set(newMarkers) {
-	            if (newMarkers) {
-	                this._markers = newMarkers;
-	            }
-	        }
-	    }, {
-	        key: "layers",
-	        get: function get() {
-	            return this._layers;
-	        },
-	        set: function set(newLayers) {
-	            if (newLayers) {
-	                this._layers = newLayers;
-	            }
-	        }
-	    }, {
-	        key: "data",
+	        key: 'data',
 	        get: function get() {
 	            return this._data;
 	        },
@@ -6147,6 +8156,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (newData) {
 	                this._data = newData;
 	            }
+	        }
+	    }, {
+	        key: 'options',
+	        get: function get() {
+	            return this._options;
 	        }
 	    }]);
 	
