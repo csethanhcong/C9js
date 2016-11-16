@@ -89,64 +89,122 @@
 // 			lineChart.draw();
 // 			
 // 			
+		// var data1 = [
+		// 	{name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
+		// 	{name: "test", icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
+		// 	{name: "test", icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
+		// 	];
+
+		// 	var data2 = [
+		// 	{name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 15:30:00"}]},
+		// 	{name: "test", icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 19, 2012 23:30:00"}, ]},
+		// 	{name: "test", icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 20, 2012 00:05:00"}]}
+		// 	];
+
+		// 	var options7 = {
+		// 		id: "chart", 
+		// 		width: 750, 
+		// 		height: 300, 
+		// 		margin: {
+		// 			top: 100, 
+		// 			left: 100, 
+		// 			right: 50, 
+		// 			bottom:100
+		// 		}, 
+		// 		data: {
+		// 			plain: data1
+		// 		}, 
+		// 		axis: {
+		// 			x: {
+		// 				show: true,
+		// 				text: "Time",
+		// 				tick: {
+		// 					interval: 5
+		// 				}
+		// 			}
+		// 		},
+		// 		tooltip: {
+		// 			format: function(data) {
+		// 				var start = new Date(data.start);
+		// 				var end = new Date(data.end);
+		// 				return start.getHours() + '-' + start.getMinutes() + ' | ' + end.getHours() + '-' + end.getMinutes();
+		// 			}
+		// 		},
+		// 		title_text: 'Timeline Chart',
+		// 		stack: true,
+		// 		// backgroundColor: ["yellow", "red"],
+		// 		// colorRange: ["red", "green", "blue"],
+		// 		labelMargin: 0,
+		// 		rowSeparator: null,
+		// 		// itemMargin: 30,
+		// 		striped: true,
+		// 	};
+
+		// 	var timelineChart = new C9.TimeLine(options7);
+		// 	timelineChart.setOption('subchart.show', true);
+		// 	timelineChart.draw();
+
+		// 	setTimeout(function() {
+		// 		timelineChart.updateData(data2);
+		// 	}, 2000);
+		
 		var data1 = [
-			{name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
-			{name: "test", icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
-			{name: "test", icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
-			];
+            	{
+            		value: {
+            			start: "11/1/2016",
+				  		end: "11/16/2016",
+            		},
+				  	name: "Jeremy Kelly"
+				}, {
+					value: {
+						start: "11/13/2016",
+				  		end: "11/14/2016",
+					},
+				  	name: "Marie Hansen"
+				}, {
+					value: {
+						start: "11/11/2016",
+				  		end: "11/13/2016",
+					},
+				  	name: "Paul Myers"
+				}, {
+					value: {
+						start: "11/13/2016",
+				  		end: "11/21/2016",
+					},
+				  	name: "Steven Ross"
+				}
+            ];
 
-			var data2 = [
-			{name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 15:30:00"}]},
-			{name: "test", icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 19, 2012 23:30:00"}, ]},
-			{name: "test", icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 20, 2012 00:05:00"}]}
-			];
-
-			var options7 = {
+			var options1 = {
 				id: "chart", 
-				width: 750, 
-				height: 300, 
-				margin: {
-					top: 100, 
-					left: 100, 
-					right: 50, 
-					bottom:100
-				}, 
+				width: 1100, 
+				height: 400,
 				data: {
-					plain: data1
-				}, 
+					plain: data1,
+				},
+				title: {
+					text: "Change Separtor Color"
+				},
+				labelMargin: -50,
 				axis: {
 					x: {
-						show: true,
-						text: "Time",
+						label: {
+							text: ""
+						},
 						tick: {
-							interval: 5
+							format: d3.time.format("%d/%m/%Y")
 						}
 					}
 				},
-				tooltip: {
-					format: function(data) {
-						var start = new Date(data.start);
-						var end = new Date(data.end);
-						return start.getHours() + '-' + start.getMinutes() + ' | ' + end.getHours() + '-' + end.getMinutes();
-					}
+				subchart: {
+					show: true
 				},
-				title_text: 'Timeline Chart',
-				stack: true,
-				// backgroundColor: ["yellow", "red"],
-				// colorRange: ["red", "green", "blue"],
-				labelMargin: 0,
-				rowSeparator: null,
-				// itemMargin: 30,
 				striped: true,
+				separatorColor: "red" // default value: rgb(154, 154, 154),
 			};
-
-			var timelineChart = new C9.TimeLine(options7);
-			timelineChart.setOption('subchart.show', true);
-			timelineChart.draw();
-
-			setTimeout(function() {
-				timelineChart.updateData(data2);
-			}, 2000);
+			var timeline = new C9.TimeLine(options1);
+			timeline.draw();
 		</script>
 		
 	</body>
