@@ -204,13 +204,17 @@ export default class TimeLine extends Chart {
 
         var da = new DataAdapter(dataOption, self.chartType, null);
         da.getDataTarget(self.chartType, function(data) {
+            self.dataTarget = data;
+
             var maxStack = 0,
                 minTime = 0,
                 maxTime = 0,
                 width = self.width - self.margin.left - self.margin.right,
                 height = self.height - self.margin.top - self.margin.bottom;
 
-            // count number of stack and calculate min time, max time from data
+            // Count number of stack and calculate min time, max time from data
+            // Update from existing data, so starting|ending both existed, no need
+            // to check
             if (self.options.stack || self.options.ending === 0 || self.options.starting === 0) {
                 
                 self.dataTarget.forEach(function (datum, index) {
@@ -221,24 +225,24 @@ export default class TimeLine extends Chart {
                     }
 
                     datum.value.forEach(function (time, i) {
-                        if(self.options.starting === 0)
+                        // if(self.options.starting === 0)
                             if (time.start < minTime || minTime === 0)
                                 minTime = time.start;
-                        if(self.options.ending === 0) {
+                        // if(self.options.ending === 0) {
                             if (time.start > maxTime)
                                 maxTime = time.start;
                             if (time.end > maxTime)
                                 maxTime = time.end;
-                        }
+                        // }
                     });
                 });
 
-                if (self.options.ending === 0) {
+                // if (self.options.ending === 0) {
                   self.options.ending = maxTime;
-                }
-                if (self.options.starting === 0) {
+                // }
+                // if (self.options.starting === 0) {
                   self.options.starting = minTime;
-                }
+                // }
             }
 
             self.maxStack = maxStack;
@@ -684,8 +688,8 @@ export default class TimeLine extends Chart {
         
         // Update chart
         self.updateDataConfig(newCfg, function(data) {
-            self.update(self.dataTarget);
-            self.updateSubChart(self.dataTarget);
+            self.update(data);
+            self.updateSubChart(data);
 
             // Update Axis
             self.axis.update(self.x, self.y, 100);

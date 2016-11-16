@@ -208,8 +208,6 @@ export default class LineChart extends Chart {
 
             self.updateDomain(self.dataTarget);
 
-            console.log(self.x.domain());
-
             self.lineGen = d3.svg.line()
                             .x(function(d) { return self.x(d.valueX); })
                             .y(function(d) { return self.y(d.valueY); })

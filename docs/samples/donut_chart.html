@@ -57,36 +57,96 @@
 		<div id="chart"></div>
 		<div id="table"></div>
 	    <script type="text/javascript" charset="utf-8">
-			var data = [{
-  "name": "Philip",
-  "value": {"x" : [ '2013-01-01', '2013-05-01'], "y": [100, 200] }
-}, {
-  "name": "Brenda",
-  "value": {"x" : [ '2012-01-01', '2012-05-01'], "y": [100, 200] }
-}];			
+// 			var data = [{
+//   "name": "Philip",
+//   "value": {"x" : [ '2013-01-01', '2013-05-01'], "y": [100, 200] }
+// }, {
+//   "name": "Brenda",
+//   "value": {"x" : [ '2012-01-01', '2012-05-01'], "y": [100, 200] }
+// }];			
 
-			var options = {
-				id: "chart",
+// 			var options = {
+// 				id: "chart",
+// 				data: {
+// 					plain: data,
+// 					keys: {
+// 						x: 'value.x',
+// 						y: 'value.y'
+// 					},
+// 					timeFormat: '%Y-%m-%d'
+// 				}, 
+// 				axis: {
+// 					x: {
+// 						type: "timeseries",
+// 						tick: {
+// 							count: 5,
+// 							format: d3.time.format('%d-%m')
+// 						}
+// 					}
+// 				},
+// 			};
+// 			var lineChart = new C9.LineChart(options);
+// 			lineChart.draw();
+// 			
+// 			
+		var data1 = [
+			{name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
+			{name: "test", icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
+			{name: "test", icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
+			];
+
+			var data2 = [
+			{name: "test", icon: "../../images/icon.png", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 15:30:00"}]},
+			{name: "test", icon: "../../images/icon.png", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 19, 2012 23:30:00"}, ]},
+			{name: "test", icon: "../../images/icon.png", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 20, 2012 00:05:00"}]}
+			];
+
+			var options7 = {
+				id: "chart", 
+				width: 750, 
+				height: 300, 
+				margin: {
+					top: 100, 
+					left: 100, 
+					right: 50, 
+					bottom:100
+				}, 
 				data: {
-					plain: data,
-					keys: {
-						x: 'value.x',
-						y: 'value.y'
-					},
-					timeFormat: '%Y-%m-%d'
+					plain: data1
 				}, 
 				axis: {
 					x: {
-						type: "timeseries",
+						show: true,
+						text: "Time",
 						tick: {
-							count: 5,
-							format: d3.time.format('%d-%m')
+							interval: 5
 						}
 					}
 				},
+				tooltip: {
+					format: function(data) {
+						var start = new Date(data.start);
+						var end = new Date(data.end);
+						return start.getHours() + '-' + start.getMinutes() + ' | ' + end.getHours() + '-' + end.getMinutes();
+					}
+				},
+				title_text: 'Timeline Chart',
+				stack: true,
+				// backgroundColor: ["yellow", "red"],
+				// colorRange: ["red", "green", "blue"],
+				labelMargin: 0,
+				rowSeparator: null,
+				// itemMargin: 30,
+				striped: true,
 			};
-			var lineChart = new C9.LineChart(options);
-			lineChart.draw();
+
+			var timelineChart = new C9.TimeLine(options7);
+			timelineChart.setOption('subchart.show', true);
+			timelineChart.draw();
+
+			setTimeout(function() {
+				timelineChart.updateData(data2);
+			}, 2000);
 		</script>
 		
 	</body>
