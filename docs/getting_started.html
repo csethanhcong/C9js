@@ -238,7 +238,10 @@
                 <div id="map_1"></div>
                 <script type="text/javascript" charset="utf-8">
                 var options = {
-                  id: "map_1"
+                  id: "map_1",
+                  layers: {
+                    type: "Tile"
+                  }
                 };
                 var map = new C9.Map(options);
                 map.draw();

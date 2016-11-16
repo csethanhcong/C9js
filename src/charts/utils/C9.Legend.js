@@ -246,12 +246,6 @@ export default class Legend {
                         var preItem  = items[i - 1];
                         var newR = Math.floor((getXY(preItem).x + getSize(preItem).width + self.options.space + getSize(item).width + self.options.margin[1]) / self.maxWidth);
                         if (newR > 0) r++;
-                        if (self.chart.id == "#chart_7") {
-                            console.log(preItem)
-                            console.log(getXY(preItem).x)
-                            console.log(getSize(preItem).width)
-                            console.log(self.options.space)    
-                        }
                         
                         return "translate(" + (newR > 0 ? self.options.margin[3] : (getXY(preItem).x + getSize(preItem).width + self.options.space)) + "," + (self.options.margin[0] + r * (itemHeight + self.options.space)) + ")";
                     }
