@@ -141,7 +141,7 @@ So, you just need point out which data you want to present on C9 Chart
 var option = {
 	data: {
 		file: {
-			url: '/data/data1.json',
+			url: '/data/data.json',
 			type: 'json'
 		},
 		// Your own defined-keys go here
@@ -155,6 +155,8 @@ var option = {
 var chart = new C9.BarChart(option);
 chart.draw();
 ```
+
+More examples about `Data Adapter` available [here](http://c9js.me/examples#data_adapter)
 
 ## Customize Chart/Map Option
 ---
@@ -211,20 +213,16 @@ var chart = new C9.LineChart(option);
 chart.draw();
 
 ```
-You can see some examples on axis option [here](http://c9js.me/)
+You can see some examples on axis option [here](http://c9js.me/examples#axis_option)
 
 ### Tooltip Format
 
 ```js
 var option = {
 	tooltip: {
-		tooltip: {
-			format: function(data, index) {
-				format: function(data, index) {
-		            return '<strong>' + data.name + '</strong>' + '<br>' + 'Start at hour: ' + data.start.getHours() + '<br>' + 'End at hour: ' + data.end.getHours();
-		        }
-			}
-		},
+		format: function(data, index) {
+	        return '<strong>' + data.name + '</strong>' + '<br>' + 'Start at hour: ' + data.start.getHours() + '<br>' + 'End at hour: ' + data.end.getHours();
+	    }
 	}
 };
 
@@ -287,11 +285,11 @@ Change color range used to color chart
 
 ```js
 var option = {
-	colorRange: ['red', 'green', 'blue']
+	colorRange: ['#008F95', '#EB6E80', '#DF744A', '#DCB239', '#4ABDAC', '#FC4A1A', '#F7B733']
 };
 
-var chart = new C9.DonutChart(option);
-chart.draw();
+var barChart = new C9.BarChart(option);
+barChart.draw();
 ```
 
 ### Via CSS Selector

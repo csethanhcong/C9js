@@ -113,7 +113,7 @@
                 </ul>
               </li>
               <li><a href="#update-chart">Update Chart</a></li>
-              <li><a href="#and-more">More</a></li>
+              <li><a href="#and-more">More...</a></li>
             </ul>
           </div>
 
@@ -314,7 +314,7 @@
 <pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
     <span class="dt">data</span><span class="op">:</span> <span class="op">{</span>
         <span class="dt">file</span><span class="op">:</span> <span class="op">{</span>
-            <span class="dt">url</span><span class="op">:</span> <span class="st">&#39;/data/data1.json&#39;</span><span class="op">,</span>
+            <span class="dt">url</span><span class="op">:</span> <span class="st">&#39;/data/data.json&#39;</span><span class="op">,</span>
             <span class="dt">type</span><span class="op">:</span> <span class="st">&#39;json&#39;</span>
         <span class="op">},</span>
         <span class="co">// Your own defined-keys go here</span>
@@ -328,6 +328,29 @@
 <span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
 </pre>
               </div>
+              <!-- Demo -->
+              <div id="chart_2"></div>
+              <script type="text/javascript" charset="utf-8">
+              var option = {
+                id: 'chart_2',
+                data: {
+                  file: {
+                    url: 'data/data.json',
+                    type: 'json'
+                  },
+                  // Your own defined-keys go here
+                  keys: {
+                    'name': 'username',
+                    'value': 'property.salary'
+                  }
+                }
+              }
+
+              var chart = new C9.BarChart(option);
+              chart.draw();
+              </script> <!-- End of Demo -->
+
+              <p>More examples about <code>Data Adapter</code> available <a href="http://c9js.me/examples#data_adapter">here</a></p>
             </section><!--end of #data-adapter-->
 
             <section id="customize-chartmap-option">
@@ -385,26 +408,90 @@ chart.setOption(&#39;grid.x.show&#39;, true);</code>
 <span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
 </pre>
                 </div>
+                
+              <!-- Demo -->
+              <div id="chart_3"></div>
+              <script type="text/javascript" charset="utf-8">
+              var data = [
+                {"name": "Jessie", "value": [100, 200, 300, 120, 320]},
+                {"name": "Kame", "value": [150, 250, -100, 100, 500]}
+              ];
+              var option = {
+                id: 'chart_3',
+                data: {
+                  plain: data
+                },
+                axis: {
+                  x: {
+                    grid: false,
+                    tick: {
+                      rotate: 45
+                    }
+                  },
+                  y: {
+                    tick: {
+                      format: function(data, index) {
+                        return '-' + data + '-';
+                      }
+                    }
+                  },
+                }
+              }
+
+              var chart = new C9.LineChart(option);
+              chart.draw();
+              </script> <!-- End of Demo -->
+
                 <p>You can see some examples on axis option <a href="http://c9js.me/">here</a></p>
               </section> <!-- end of #axis-format -->
               
               <section id="tooltip-format">
                 <h3>Tooltip Format</h3>
-                <div class="sourceCode">
-<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+                <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
     <span class="dt">tooltip</span><span class="op">:</span> <span class="op">{</span>
-        <span class="dt">tooltip</span><span class="op">:</span> <span class="op">{</span>
-            <span class="dt">format</span><span class="op">:</span> <span class="kw">function</span>(data<span class="op">,</span> index) <span class="op">{</span>
-                <span class="dt">format</span><span class="op">:</span> <span class="kw">function</span>(data<span class="op">,</span> index) <span class="op">{</span>
-                    <span class="cf">return</span> <span class="st">&#39;&lt;strong&gt;&#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="at">name</span> <span class="op">+</span> <span class="st">&#39;&lt;/strong&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;&lt;br&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;Start at hour: &#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="va">start</span>.<span class="at">getHours</span>() <span class="op">+</span> <span class="st">&#39;&lt;br&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;End at hour: &#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="va">end</span>.<span class="at">getHours</span>()<span class="op">;</span>
-                <span class="op">}</span>
-            <span class="op">}</span>
-        <span class="op">},</span>
+        <span class="dt">format</span><span class="op">:</span> <span class="kw">function</span>(data<span class="op">,</span> index) <span class="op">{</span>
+            <span class="cf">return</span> <span class="st">&#39;&lt;strong&gt;&#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="at">name</span> <span class="op">+</span> <span class="st">&#39;&lt;/strong&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;&lt;br&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;Start at hour: &#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="va">start</span>.<span class="at">getHours</span>() <span class="op">+</span> <span class="st">&#39;&lt;br&gt;&#39;</span> <span class="op">+</span> <span class="st">&#39;End at hour: &#39;</span> <span class="op">+</span> <span class="va">data</span>.<span class="va">end</span>.<span class="at">getHours</span>()<span class="op">;</span>
+        <span class="op">}</span>
     <span class="op">}</span>
 <span class="op">};</span>
+
 <span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">Timeline</span>(option)<span class="op">;</span>
-<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
-</pre>
+<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre>
+
+              <!-- Demo -->
+              <div id="chart_4"></div>
+              <script type="text/javascript" charset="utf-8">
+              var data = [
+                    {name: "Adam", value: [{"name":"Me", "start": "December 17, 2012 21:00:00", "end": "December 17, 2012 23:00:00"}, {"name":"Me", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 11:00:00"}]},
+                    {name: "Eva", value: [{"name":"Her", "start": "December 17, 2012 23:00:00", "end": "December 17, 2012 23:30:00"}, ]},
+                    {name: "Jes", value: [{"name":"Him", "start": "December 17, 2012 23:30:00", "end": "December 18, 2012 00:05:00"}]}
+                  ];
+            var options = {
+              id: "chart_4", 
+              margin: {
+                left: 100, 
+              }, 
+              data: {
+                plain: data 
+              },
+              tooltip: {
+                format: function(data, index) {
+                      return '<strong>' + data.name + '</strong>' + '<br>' + 'Start at hour: ' + data.start.getHours() + '<br>' + 'End at hour: ' + data.end.getHours();
+                  }
+              },
+              axis: {
+                x: {
+                  label: {
+                    text : 'Time'
+                  }
+                }
+              },
+              striped: true,
+            };
+            var timelineChart = new C9.TimeLine(options);
+            timelineChart.draw();
+              </script> <!-- End of Demo -->
+
                 </div>
                 <p>In Timeline, data will be normalized and return with format</p>
                 <div class="sourceCode">
@@ -428,9 +515,48 @@ chart.setOption(&#39;grid.x.show&#39;, true);</code>
 <span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
 <span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
 </pre>
+              <!-- Demo -->
+              <div id="chart_5"></div>
+              <script type="text/javascript" charset="utf-8">
+              var data = [{
+  "name": "Seldom",
+  "value": 83
+}, {
+  "name": "Weekly",
+  "value": 89
+}, {
+  "name": "Daily",
+  "value": 95
+}, {
+  "name": "Once",
+  "value": 58
+}, {
+  "name": "Monthly",
+  "value": 82
+}, {
+  "name": "Never",
+  "value": 34
+}];
+      var options = {  
+         id:"chart_5",
+         data: {
+          plain: data
+         },
+         titleText:'Pie Chart',
+         tooltip: {
+          position: 'top'
+         },
+         legend: {
+          show: false
+         }
+      };
+      var pieChart = new C9.PieChart(options);
+      pieChart.draw();
+              </script> <!-- End of Demo -->
+
                 </div>
                 <p>C9js supports 4 positions on Tooltip: <code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code></p>
-                <p>Some examples on Tooltip go <a href="http://c9js.me/">here</a></p>
+                <p>Some examples on Tooltip go <a href="http://c9js.me/examples#tooltip_option">here</a></p>
               </section> <!-- end of tooltip-format -->
               
               <section id="table">
@@ -445,6 +571,38 @@ chart.setOption(&#39;grid.x.show&#39;, true);</code>
 <span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
 <span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
 </pre>
+              <!-- Demo -->
+              <div class="row">
+                <div class="col-md-8" id="chart_6"></div>
+                <div class="col-md-4" style="margin-top: 100px;" id="table_ctn"></div>
+              </div>
+              <script type="text/javascript" charset="utf-8">
+              var data = [
+          {name: "A", value:  .0245},
+          {name: "B", value:  .01492},
+          {name: "C", value:  .02782},
+          {name: "D", value:  .04253},
+          {name: "E", value:  .01},
+          {name: "F", value:  .02288},
+          {name: "G", value:  .02015},
+          {name: "H", value:  .06094},
+          {name: "I", value:  .5},
+            ];
+      var options = {
+        id: "chart_6",
+        width: 500,
+        data: {
+          plain: data,
+        },
+        table: {
+          container: 'table_ctn',
+          show: true
+        }
+      };
+      var barChart = new C9.BarChart(options);
+      barChart.draw();
+              </script> <!-- End of Demo -->
+        
                 </div>
                 <blockquote>
                   <p>Try to hover on each row and see what happens ;)</p>
@@ -459,13 +617,40 @@ chart.setOption(&#39;grid.x.show&#39;, true);</code>
               <section id="via-option-constructor">
                 <h3>Via option constructor</h3>
                 <p>Change color range used to color chart</p>
-                <div class="sourceCode">
-<pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
-    <span class="dt">colorRange</span><span class="op">:</span> [<span class="st">&#39;red&#39;</span><span class="op">,</span> <span class="st">&#39;green&#39;</span><span class="op">,</span> <span class="st">&#39;blue&#39;</span>]
+                <div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">var</span> option <span class="op">=</span> <span class="op">{</span>
+    <span class="dt">colorRange</span><span class="op">:</span> [<span class="st">&#39;#008F95&#39;</span><span class="op">,</span> <span class="st">&#39;#EB6E80&#39;</span><span class="op">,</span> <span class="st">&#39;#DF744A&#39;</span><span class="op">,</span> <span class="st">&#39;#DCB239&#39;</span><span class="op">,</span> <span class="st">&#39;#4ABDAC&#39;</span><span class="op">,</span> <span class="st">&#39;#FC4A1A&#39;</span><span class="op">,</span> <span class="st">&#39;#F7B733&#39;</span>]
 <span class="op">};</span>
-<span class="kw">var</span> chart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">DonutChart</span>(option)<span class="op">;</span>
-<span class="va">chart</span>.<span class="at">draw</span>()<span class="op">;</span></code>
-</pre>
+
+<span class="kw">var</span> barChart <span class="op">=</span> <span class="kw">new</span> <span class="va">C9</span>.<span class="at">BarChart</span>(option)<span class="op">;</span>
+<span class="va">barChart</span>.<span class="at">draw</span>()<span class="op">;</span></code></pre>
+
+            <!-- Demo -->
+              <div id="chart_7"></div>
+              <script type="text/javascript" charset="utf-8">
+                  var data = [
+                    {name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+                    {name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+                    {name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+                    {name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+                    {name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+                    {name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
+                  ];
+
+                var option = {
+                  id: "chart_7",
+                  data: {
+                    plain: data,
+                  },
+                  title: {
+                    text: "The Populations of different States in America by age group"
+                  },
+                  colorRange: ['#008F95', '#EB6E80', '#DF744A', '#DCB239', '#4ABDAC', '#FC4A1A', '#F7B733']
+                };
+
+                var barChart = new C9.BarChart(option);
+                barChart.draw();
+              </script> <!-- End of Demo -->
+
                 </div>
               </section> <!-- end of #via-option-constructor -->
               
@@ -498,6 +683,35 @@ chart.setOption(&#39;grid.x.show&#39;, true);</code>
     ])<span class="op">;</span>
 <span class="op">},</span> <span class="dv">5000</span>)<span class="op">;</span></code>
 </pre>
+
+              <!-- Demo -->
+              <div id="chart_8"></div>
+              <script type="text/javascript" charset="utf-8">
+                  var data1 = [
+                    {name: "Male", value: 10},
+                    {name: "Female", value: 35},
+                    {name: "Other", value:  25},
+                  ];
+
+                  var data2 = [
+                    {name: "Male", value:   45},
+                    {name: "Female", value: 55}
+                  ];
+
+                  var options = {
+                      id:"chart_8",
+                      data: {
+                        plain: data1
+                      },
+                  };
+                  var donutChart = new C9.DonutChart(options);
+                  donutChart.draw();
+
+                  setTimeout(function(){
+                    donutChart.updateData(data2);
+                  }, 5000);
+              </script> <!-- End of Demo -->
+
               </div>
               <p>You can also re-define which keys you want to update</p>
               <div class="sourceCode">
@@ -527,6 +741,48 @@ chart.setOption(&#39;grid.x.show&#39;, true);</code>
     <span class="op">}</span>)<span class="op">;</span>
 <span class="op">},</span> <span class="dv">5000</span>)<span class="op">;</span></code>
 </pre>
+
+              <!-- Demo -->
+              <div id="chart_9"></div>
+              <script type="text/javascript" charset="utf-8">
+                  var data1 = [
+                    {name: "Male", value: 10},
+                    {name: "Female", value: 35},
+                    {name: "Other", value:  25},
+                  ];
+
+                  var options = {
+                      id:"chart_9",
+                      data: {
+                        plain: data1
+                      },
+                  };
+                  var donutChart = new C9.DonutChart(options);
+                  donutChart.draw();
+
+                  setTimeout(function(){
+                    donutChart.updateData([
+                        {
+                            name: "Male", 
+                            property: {
+                                age: 28,
+                                salary: 5000
+                            }
+                        },
+                        {
+                            name: "Female", 
+                            property: {
+                                age: 30,
+                                salary: 4500
+                            }
+                        },
+                    ], {
+                        // new keys go here
+                        value: 'property.salary'
+                    });
+                }, 5000);
+              </script> <!-- End of Demo -->
+
               </div>
             </section><!--end of #update-chart-->
 

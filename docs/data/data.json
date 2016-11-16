@@ -1,0 +1,25 @@
+[{
+  "username": "Christine",
+  "property": {"salary": 540}
+}, {
+  "username": "Christopher",
+  "property": {"salary": 530}
+}, {
+  "username": "Ryan",
+  "property": {"salary": 760}
+}, {
+  "username": "George",
+  "property": {"salary": 760}
+}, {
+  "username": "Mary",
+  "property": {"salary": 240}
+}, {
+  "username": "Carol",
+  "property": {"salary": 270}
+}, {
+  "username": "Melissa",
+  "property": {"salary": 280}
+}, {
+  "username": "Todd",
+  "property": {"salary": 840}
+}]
