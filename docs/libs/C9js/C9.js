@@ -3698,7 +3698,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    break;
 	
 	                default:
-	                    self.dataSource;
+	                    self.dataTarget = self.dataSource;
 	                    break;
 	            }
 	        }
@@ -4109,7 +4109,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var _keys = key.split('.');
 	                var _value = _C2.default.get(key, data);
 	                var _v = void 0;
-	                if (_keys.length == 1 && keys[0] == 'value' && !isArray) {
+	                if (_keys.length == 1 && _keys[0] == 'value' && !isArray) {
 	                    _v = _value;
 	                } else {
 	                    _v = new Object();
@@ -7010,12 +7010,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // Layers:
 	            // BingMaps, OSM, Raster, Tile, TileImage, Vector, VectorTile,...
 	            // REF: http://openlayers.org/en/latest/apidoc/ol.source.html?stableonly=true
-	            layers: {
-	                type: "Tile",
-	                source: {
-	                    name: "OSM"
-	                }
-	            },
+	            layers: null,
 	            view: {
 	                lat: 0,
 	                lon: 0,
@@ -7148,7 +7143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	            /********************************************************/
 	            //adapt data to obj
-	            self.update(self.dataSource);
+	            self.addData(self.dataSource);
 	            //define interaction
 	            self.updateInteraction();
 	        }
@@ -7189,6 +7184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    containFeature = false;
 	                }
 	            }
+	
 	            if (containFeature) {
 	                var readFormat = function readFormat(feature) {
 	                    var result = {};
@@ -7198,21 +7194,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    result['id'] = feature.getId();
 	                    return result;
 	                };
-	                if (!_C2.default.isEmpty(options.style)) {
-	                    try {
-	                        self.setStyle({ obj: layer.getSource(), style: options.style });
-	                    } catch (err) {
+	                var setStyle = function setStyle() {
+	                    if (!_C2.default.isEmpty(options.style)) {
 	                        try {
-	                            self.setStyle({ obj: vs, style: options.style });
+	                            self.setStyle({ obj: layer.getSource(), style: options.style });
 	                        } catch (err) {
 	                            try {
-	                                self.setStyle({ obj: layer, style: options.style });
+	                                self.setStyle({ obj: vs, style: options.style });
 	                            } catch (err) {
-	                                throw 'Cannot set style for this source';
+	                                try {
+	                                    self.setStyle({ obj: layer, style: options.style });
+	                                } catch (err) {
+	                                    throw 'Cannot set style for this source';
+	                                }
 	                            }
 	                        }
 	                    }
-	                }
+	                };
 	                //register layer loaded event to set data for obj
 	                vs.once('change', function (e) {
 	                    if (vs.getState() == 'ready') {
@@ -7223,31 +7221,43 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        objs.forEach(function (o) {
 	                            o.set('data', readFormat(o));
 	                            o.set('type', 'c9-geojson');
-	                            // o.set('c9-style', options.style);
-	                            if (_C2.default.isFunction(options.condition) && !_C2.default.isEmpty(options.data)) {
-	                                var data = options.data,
-	                                    condition = options.condition;
-	                                if (_C2.default.isArray(data)) {
-	                                    for (var i = 0; i < data.length; i++) {
-	                                        if (condition(o, data[i])) {
-	                                            for (var j in data[i]) {
-	                                                o.get('data')[j] = data[i][j];
+	                        });
+	
+	                        //read data from url
+	                        if (!_C2.default.isEmpty(options.data) && _C2.default.isFunction(options.data.condition) && !_C2.default.isEmpty(options.data.file) && !_C2.default.isEmpty(options.data.file.url) && !_C2.default.isEmpty(options.data.file.type)) {
+	                            var da = new _C6.default(options.data);
+	                            da.getDataTarget('', function (data) {
+	                                var condition = options.data.condition;
+	                                var process = options.data.process;
+	
+	                                if (!_C2.default.isEmpty(process) && _C2.default.isFunction(process)) data = process(data);
+	
+	                                objs.forEach(function (o) {
+	                                    if (_C2.default.isArray(data)) {
+	                                        for (var i = 0; i < data.length; i++) {
+	                                            if (condition(o, data[i])) {
+	                                                for (var j in data[i]) {
+	                                                    o.get('data')[j] = data[i][j];
+	                                                }
+	                                                break;
 	                                            }
-	                                            break;
+	                                        }
+	                                    } else if (condition(o, data)) {
+	                                        for (var i in data) {
+	                                            o.get('data')[i] = data[i];
 	                                        }
 	                                    }
-	                                } else if (condition(o, data)) {
-	                                    for (var i in data) {
-	                                        o.get('data')[i] = data[i];
-	                                    }
-	                                }
-	                            }
-	                        });
+	                                });
+	                                setStyle();
+	                            });
+	                        } else setStyle();
 	                    }
 	                });
 	            }
 	
 	            self.c9Layers.push(layer);
+	
+	            if (!_C2.default.isEmpty(self.c9Map)) self.c9Map.addLayer(layer);
 	
 	            return layer;
 	        }
@@ -7266,7 +7276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                layers.forEach(function (l, i) {
 	                    self.createLayer({ type: l.type, source: l.source, style: l.style, condition: l.condition, data: l.data });
 	                });
-	            } else {
+	            } else if (_C2.default.isObject(layers)) {
 	                self.createLayer({ type: layers.type, source: layers.source, style: layers.style, condition: layers.condition, data: layers.data });
 	            }
 	        }
@@ -7685,10 +7695,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	
 	    }, {
-	        key: 'createObj',
-	        value: function createObj(data, options) {
+	        key: 'createObject',
+	        value: function createObject(options) {
 	            var self = this;
-	
+	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.data)) return;
+	            var data = options.data,
+	                style = options.style;
 	            /**
 	             * Create marker
 	             * @param  {Number} latitude of marker
@@ -7736,6 +7748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                //add this marker to marker list (c9Objs)
 	                self.c9Objs.addFeature(marker);
+	                return marker;
 	            };
 	
 	            var coorAndType = self.normalizeCoordinate(data.coor);
@@ -7743,8 +7756,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            //marker
 	            if (coorAndType.type == "marker") {
-	                createMarker(data, coorAndType.coor, options);
-	                return;
+	                return createMarker(data, coorAndType.coor, style);
 	            }
 	
 	            // if (data == self.c9Markers) {
@@ -7754,9 +7766,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //     })
 	            // }
 	
-	            var strokeWidth = options ? options.strokeWidth || 1 : 1,
-	                strokeColor = options ? options.strokeColor || "#319FD3" : "#319FD3",
-	                fillColor = options ? options.fillColor || "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.2)";
+	            var strokeWidth = style ? style.strokeWidth || 1 : 1,
+	                strokeColor = style ? style.strokeColor || "#319FD3" : "#319FD3",
+	                fillColor = style ? style.fillColor || "rgba(255, 255, 255, 0.2)" : "rgba(255, 255, 255, 0.2)";
 	
 	            var obj = new ol.Feature({
 	                'data-ref': '',
@@ -7792,6 +7804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            //add this marker to marker list (c9Objs)
 	            self.c9Objs.addFeature(obj);
+	            return obj;
 	        }
 	
 	        /**
@@ -7836,33 +7849,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    normCoor.push(isArrayOrObject(coor[0]).coor);
 	                    normCoor.push(isArrayOrObject(coor[1]).coor);
 	                }
-	                // multipolygon [[[[] || {}, ...]], [[[] || {}, ...]], ...]
-	                else if (coor.length >= 2) {
-	                        type = "multipolygon";
-	                        coor.forEach(function (pc, i) {
-	                            if (_C2.default.isArray(pc) && pc.length == 1) {
-	                                normCoor.push([[]]);
-	                                pc[0].forEach(function (c) {
+	                //polygon || multipolygon
+	                else if (coor.length >= 1) {
+	                        // multipolygon [[[[] || {}, ...]], [[[] || {}, ...]], ...]
+	                        if (!_C2.default.isEmpty(coor[0][0]) && !_C2.default.isEmpty(coor[0][0][0])) {
+	                            type = "multipolygon";
+	                            coor.forEach(function (pc, i) {
+	                                if (_C2.default.isArray(pc) && pc.length == 1) {
+	                                    normCoor.push([[]]);
+	                                    pc[0].forEach(function (c) {
+	                                        // data - [] || {}
+	                                        var obj = isArrayOrObject(c);
+	                                        if (obj.check) normCoor[i][0].push(obj.coor);
+	                                    });
+	                                    // cannot create polygon with the number of points is less than 2
+	                                    if (normCoor[i][0].length <= 2) return error;
+	                                } else return error; // because data format is not true
+	                            });
+	                        }
+	                        // polygon [[[] || {}, ...]]
+	                        else {
+	                                type = "polygon";
+	                                normCoor.push([]);
+	                                coor[0].forEach(function (c) {
 	                                    // data - [] || {}
 	                                    var obj = isArrayOrObject(c);
-	                                    if (obj.check) normCoor[i][0].push(obj.coor);
+	                                    if (obj.check) normCoor[0].push(obj.coor);
 	                                });
-	                                // cannot create polygon with the number of points is less than 2
-	                                if (normCoor[i][0].length <= 2) return error;
-	                            } else return error; // because data format is not true
-	                        });
-	                    }
-	                    // polygon [[[] || {}, ...]]
-	                    else if (coor.length == 1) {
-	                            type = "polygon";
-	                            normCoor.push([]);
-	                            coor[0].forEach(function (c) {
-	                                // data - [] || {}
-	                                var obj = isArrayOrObject(c);
-	                                if (obj.check) normCoor[0].push(obj.coor);
-	                            });
-	                            if (normCoor[0].length <= 2) return error;
-	                        } else return error;
+	                                if (normCoor[0].length <= 2) return error;
+	                            }
+	                    } else return error;
 	            }
 	            return {
 	                coor: normCoor,
@@ -7873,36 +7889,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * create obj base on user data
 	         * @data  {Object} data structure: {coor: [], name: , value: }
+	         * return list of created object
 	         */
 	
 	    }, {
-	        key: 'update',
-	        value: function update(data) {
-	            if (_C2.default.isEmpty(data)) return;
+	        key: 'addData',
+	        value: function addData(data) {
+	            if (_C2.default.isEmpty(data) || _C2.default.isEmpty(data.plain) && _C2.default.isEmpty(data.file)) return;
 	            var self = this;
 	
 	            var da = new _C6.default(data);
-	            self.data = da.getDataTarget('map');
-	
-	            if (!_C2.default.isEmpty(self.c9Map)) {
-	                if (_C2.default.isArray(self.data)) self.data.forEach(function (d) {
-	                    self.createObj(d);
-	                });else self.createObj(self.data);
-	            }
+	            da.getDataTarget('map', function (data) {
+	                self.data = data;
+	                if (!_C2.default.isEmpty(self.c9Map)) {
+	                    if (_C2.default.isArray(self.data)) self.data.forEach(function (d, i) {
+	                        self.createObject({ data: d });
+	                    });else self.createObject({ data: self.data });
+	                }
+	            });
 	        }
 	    }, {
-	        key: 'getObjs',
-	        value: function getObjs() {
+	        key: 'getObjects',
+	        value: function getObjects() {
 	            var c9GeojsonObjs = [];
 	            this.c9GeojsonObjs.forEach(function (o) {
-	                c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());
+	                try {
+	                    c9GeojsonObjs = c9GeojsonObjs.concat(o.getSource().getFeatures());
+	                } catch (err) {
+	                    try {
+	                        c9GeojsonObjs = c9GeojsonObjs.concat(o.getFeatures());
+	                    } catch (err) {}
+	                }
 	            });
 	            return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
 	        }
 	    }, {
-	        key: 'getLayers',
-	        value: function getLayers() {
-	            return this.c9Layers;
+	        key: 'getMap',
+	        value: function getMap() {
+	            return this.c9Map;
 	        }
 	
 	        /**
@@ -7934,7 +7958,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    }
 	                },
 	                'postrender': function postrender(evt) {
-	                    console.log(callback);
 	                    if (_C2.default.isFunction(callback)) {
 	                        callback.call(this, evt);
 	                    }
@@ -7965,7 +7988,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function setStyle(options) {
 	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.obj) || _C2.default.isEmpty(options.style)) return;
 	            //create style for obj
-	            if (_C2.default.isFunction(options.style) || style instanceof ol.style.Style) {
+	            if (_C2.default.isFunction(options.style) || options.style instanceof ol.style.Style) {
 	                options.obj.setStyle(options.style);
 	            } else {
 	                var DEFAULT_SRC = 'http://s21.postimg.org/blklb8scn/marker_icon.png';
@@ -7977,13 +8000,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    imgSrc = options.style.type == 'marker' || options.style.type == 'c9-marker' ? options.style.imgSrc || DEFAULT_SRC : null,
 	                    scale = options.style.type == 'marker' || options.style.type == 'c9-marker' ? options.style.scale || DEFAULT_SCALE : null;
 	
-	                if (imgSrc != null) obj.setStyle(new ol.style.Style({
+	                var style;
+	
+	                if (imgSrc != null) options.obj.setStyle(style = new ol.style.Style({
 	                    image: new ol.style.Icon({
 	                        anchor: [0.5, 1], //middle-width and bottom-height of image
 	                        src: imgSrc,
 	                        scale: scale
 	                    })
-	                }));else obj.setStyle(new ol.style.Style({
+	                }));else options.obj.setStyle(style = new ol.style.Style({
 	                    stroke: new ol.style.Stroke({
 	                        color: strokeColor,
 	                        width: strokeWidth
@@ -7992,6 +8017,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        color: fillColor
 	                    })
 	                }));
+	
+	                options.obj.set('c9-style', style);
 	            }
 	        }
 	
@@ -8008,7 +8035,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var self = this;
 	            if (_C2.default.isEmpty(options) || _C2.default.isEmpty(options.url)) return;
 	
-	            var layer = self.createLayer({
+	            self.createLayer({
 	                type: "Image",
 	                source: {
 	                    name: "ImageVector",
@@ -8018,12 +8045,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        format: 'GeoJSON'
 	                    }
 	                },
-	                condition: options.condition,
-	                data: options.data
+	                data: options.data,
+	                style: options.style
 	            });
-	
 	            //create style
-	            self.setStyle({ obj: layer.getSource(), style: options.style });
+	            // self.setStyle({obj: layer.getSource(), style: options.style});
+	
 	            // if (!Helper.isEmpty(options.style)) {
 	            //     if (Helper.isFunction(style) || style instanceof ol.style.Style) {
 	            //         layer.getSource().setStyle(options.style);
@@ -8044,8 +8071,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //         }))
 	            //     }
 	            // }
-	
-	            return layer;
 	        }
 	    }, {
 	        key: 'dataSource',
