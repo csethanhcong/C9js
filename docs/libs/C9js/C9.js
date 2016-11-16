@@ -6537,12 +6537,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                itemContainer.selectAll(".c9-rect-container").data(datum.value).enter().append(function (d, i) {
 	                    return document.createElementNS(d3.ns.prefix.svg, d.end != "Invalid Date" ? "rect" : "circle");
-	                }).attr('class', 'c9-timeline-custom-rect').attr("x", function (d, i) {
-	                    return self.getXPos(d, i, scale);
+	                }).attr('class', 'c9-timeline-custom-rect')
+	                // .attr("x", function(d, i) { return self.getXPos(d,i,scale); })
+	                .attr("x", function (d, i) {
+	                    return self.x(d.start);
 	                }).attr("y", function (d, i) {
 	                    return self.getStackPosition(d, i, index);
-	                }).attr("width", function (d, i) {
-	                    return (d.end - d.start) * scale;
+	                })
+	                // .attr("width", function (d, i) {
+	                //     return (d.end - d.start) * scale;
+	                // })
+	                .attr("width", function (d, i) {
+	                    return self.x(d.end) - self.x(d.start);
 	                }).attr("cy", function (d, i) {
 	                    return self.getStackPosition(d, i, index) + self.options.itemHeight / 2;
 	                }).attr("cx", function (d, i) {
@@ -6603,11 +6609,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	                self.brush = d3.svg.brush().x(self.subChartX).on("brush", function () {
 	                    // Update axis
 	                    self.x.domain(self.brush.empty() ? self.subChartX.domain() : self.brush.extent());
+	
+	                    self.options.starting = self.x.domain()[0];
+	                    self.options.ending = self.x.domain()[1];
+	
 	                    self.axis.update(self.x, self.y, 500);
 	                    var scale = width / (self.options.ending - self.options.starting);
+	
 	                    // Update main path of Line Chart
 	                    self.body.selectAll(".c9-timeline-custom-rect").attr("x", function (d, i) {
 	                        return self.x(d.start);
+	                    }).attr("width", function (d, i) {
+	                        return self.x(d.end) - self.x(d.start);
 	                    });
 	                    // .attr("x", function(d, i) { return self.getXPos(d,i, scale); });
 	                    // .attr("y", function(d, i) { return self.getStackPosition(d,i,stackList, index); })
@@ -6643,7 +6656,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    .attr("x", function (d, i) {
 	                        return self.subChartX(d.start);
 	                    }).attr("y", function (d, i) {
-	                        return self.getStackPosition(d, i, index);
+	                        return self.getStackPosition(d, i, index, true);
 	                    })
 	                    // .attr("width", function (d, i) {
 	                    //     return (d.end - d.start) * scale;
@@ -6743,13 +6756,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }, {
 	        key: 'getStackPosition',
-	        value: function getStackPosition(d, i, index) {
+	        value: function getStackPosition(d, i, index, isSubchart) {
 	            var self = this;
 	
 	            var stackList = self.stackList;
 	
 	            if (self.options.stack) {
-	                return (self.options.itemHeight + self.options.itemMargin) * stackList[index];
+	                if (isSubchart) {
+	                    var height = self.height - self.margin.top - self.margin.bottom;
+	                    var ratio = self.subChartHeight / height;
+	
+	                    return (self.options.itemHeight * ratio + self.options.itemMargin) * stackList[index];
+	                } else {
+	                    return (self.options.itemHeight + self.options.itemMargin) * stackList[index];
+	                }
 	            }
 	            return 0;
 	        }
