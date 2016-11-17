@@ -30,6 +30,13 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
-  ]
+    "tests",
+    "src",
+    "tasks",
+    "docs"
+  ],
+  "files": [
+    "dist",
+    "README.md"
+  ],
 }
