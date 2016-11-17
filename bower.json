@@ -16,7 +16,12 @@
     "openlayer",
     "leaflet",
     "interactive",
-    "data"
+    "data",
+    "visualization",
+    "visual",
+    "image",
+    "graph",
+    "JavaScript"
   ],
   "homepage": "https://github.com/csethanhcong/C9js",
   "moduleType": [],

@@ -16,7 +16,8 @@
     "visualization",
     "visual",
     "image",
-    "graph"
+    "graph",
+    "JavaScript"
   ],
   "description": "A JavaScript library, used for interactive map-chart based on various types of data.",
   "files": [

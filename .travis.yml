@@ -7,7 +7,7 @@ branches:
   only:
     - master
 notifications:
-  email: false
+  email: true
 node_js:
   - '4'
 before_install:
