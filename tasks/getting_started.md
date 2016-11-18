@@ -6,13 +6,27 @@
 
 	* From [GitHub](https://github.com/csethanhcong/C9js/releases)
 
-	* From [unpkg](https://unpkg.com/C9js)
-
 2. Via Package Manager: 
 
 	* `npm: npm install C9js`
 
 	* `bower: bower install C9js`
+
+3. Via CDN:
+	
+	* npm CDN:
+
+	```js
+	<link href="https://npmcdn.com/C9js/dist/C9.min.css" type="text/css" rel="stylesheet" >
+	<script src="https://npmcdn.com/C9js/dist/C9.min.js" type="text/javascript"></script>
+	```
+
+	* unpkg:
+
+	```js
+	<link href="https://unpkg.com/C9js/dist/C9.min.css" type="text/css" rel="stylesheet" >
+	<script src="https://unpkg.com/C9js/dist/C9.min.js" type="text/javascript"></script>
+	```
 
 ### Usage:
 
