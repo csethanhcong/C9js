@@ -1,7 +1,7 @@
 {
   "name": "C9js",
   "description": "A JavaScript library, used for interactive map-chart based on various types of data.",
-  "main": "dist/C9.js",
+  "main": "dist/C9.min.js",
   "authors": [
     "Cong Pham<cse.thanhcong@gmail.com> (http://c9js.me/)"
   ],
@@ -23,7 +23,7 @@
     "graph",
     "JavaScript"
   ],
-  "homepage": "https://github.com/csethanhcong/C9js",
+  "homepage": "http://c9js.me/",
   "moduleType": [],
   "ignore": [
     "**/.*",
@@ -34,9 +34,5 @@
     "src",
     "tasks",
     "docs"
-  ],
-  "files": [
-    "dist",
-    "README.md"
-  ],
+  ]
 }
