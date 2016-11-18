@@ -246,7 +246,7 @@ export default class Axis {
             .call(self.xAxis);
             
         //draw tick
-        d3.select(".c9-axis.c9-axis-x").selectAll("text")
+        self.chart.svg.select(".c9-axis.c9-axis-x").selectAll("text")
             .style("text-anchor", textAnchor(self.options.x.tick.rotate))
             .attr("y", textY(self.options.x.tick.rotate))
             .attr("x", 0)
@@ -254,7 +254,7 @@ export default class Axis {
             .attr("dx", textDx(self.options.x.tick.rotate))
             .attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
         //draw label
-        d3.select(".c9-axis.c9-axis-x")
+        self.chart.svg.select(".c9-axis.c9-axis-x")
             .append("text")
             .attr("class", "c9-axis c9-axis-x-text")
             .attr("dx", "-.8em")
@@ -266,8 +266,8 @@ export default class Axis {
 
         //hide x axis
         if (!self.options.x.show) {
-            d3.select(".c9-axis.c9-axis-x>.domain").style("display", "none");
-            if (!self.options.x.grid) d3.selectAll(".c9-axis.c9-axis-x>g.tick>line").style("display", "none");
+            self.chart.svg.select(".c9-axis.c9-axis-x>.domain").style("display", "none");
+            if (!self.options.x.grid) self.chart.svg.selectAll(".c9-axis.c9-axis-x>g.tick>line").style("display", "none");
         }
 
         if (self.chart.chartType != "timeline") {
@@ -275,7 +275,7 @@ export default class Axis {
                 .attr("class", "c9-axis c9-axis-y")
                 .call(self.yAxis);
 
-            d3.select(".c9-axis.c9-axis-y")
+            self.chart.svg.select(".c9-axis.c9-axis-y")
                 .append("text")
                 .attr("class", "c9-axis c9-axis-y-text")
                 .attr("y", -10)
@@ -284,8 +284,8 @@ export default class Axis {
                 .text(self.options.y.label.text);
 
             if (!self.options.y.show) {
-                d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
-                if (!self.options.y.grid) d3.selectAll(".c9-axis.c9-axis-y>g.tick>line").style("display", "none");
+                self.chart.svg.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
+                if (!self.options.y.grid) self.chart.svg.selectAll(".c9-axis.c9-axis-y>g.tick>line").style("display", "none");
             }
         }
     }
