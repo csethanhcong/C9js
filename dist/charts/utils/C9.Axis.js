@@ -142,24 +142,24 @@ var Axis = function () {
             self.chart.body.append("g").attr("class", "c9-axis c9-axis-x").attr("transform", "translate(0," + self.height + ")").call(self.xAxis);
 
             //draw tick
-            d3.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
+            self.chart.svg.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
             //draw label
-            d3.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
+            self.chart.svg.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
 
             //hide x axis
             if (!self.options.x.show) {
-                d3.select(".c9-axis.c9-axis-x>.domain").style("display", "none");
-                if (!self.options.x.grid) d3.selectAll(".c9-axis.c9-axis-x>g.tick>line").style("display", "none");
+                self.chart.svg.select(".c9-axis.c9-axis-x>.domain").style("display", "none");
+                if (!self.options.x.grid) self.chart.svg.selectAll(".c9-axis.c9-axis-x>g.tick>line").style("display", "none");
             }
 
             if (self.chart.chartType != "timeline") {
                 self.chart.body.append("g").attr("class", "c9-axis c9-axis-y").call(self.yAxis);
 
-                d3.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.label.text);
+                self.chart.svg.select(".c9-axis.c9-axis-y").append("text").attr("class", "c9-axis c9-axis-y-text").attr("y", -10).attr("dy", ".10").style("text-anchor", "end").text(self.options.y.label.text);
 
                 if (!self.options.y.show) {
-                    d3.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
-                    if (!self.options.y.grid) d3.selectAll(".c9-axis.c9-axis-y>g.tick>line").style("display", "none");
+                    self.chart.svg.select(".c9-axis.c9-axis-y>.domain").style("display", "none");
+                    if (!self.options.y.grid) self.chart.svg.selectAll(".c9-axis.c9-axis-y>g.tick>line").style("display", "none");
                 }
             }
         }
