@@ -2417,6 +2417,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
 	                        chart.updateSubChart(newData);
 	                    }
+	
+	                    // Update overlay to make it at the bottom of structure
+	                    chart.updateOverlay();
+	                    chart.updateInteraction();
 	                },
 	
 	                'mouseover': function mouseover(item) {
@@ -5047,6 +5051,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //** Create a invisible rect for mouse tracking
 	            var paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01,
 	                paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
+	
+	            self.body.selectAll(".c9-chart-line.c9-rect-overlay").remove();
 	
 	            self.body.append('rect').attr('class', 'c9-chart-line c9-rect-overlay')
 	            // .attr('width', self.actualWidth)

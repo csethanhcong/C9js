@@ -202,6 +202,8 @@ var LineChart = function (_Chart) {
             var paddingX = (self.x.domain()[1] - self.x.domain()[0]) * 0.01,
                 paddingY = (self.y.domain()[1] - self.y.domain()[0]) * 0.05;
 
+            self.body.selectAll(".c9-chart-line.c9-rect-overlay").remove();
+
             self.body.append('rect').attr('class', 'c9-chart-line c9-rect-overlay')
             // .attr('width', self.actualWidth)
             // .attr('height', self.actualHeight)

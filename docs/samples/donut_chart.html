@@ -57,36 +57,23 @@
 		<div id="chart"></div>
 		<div id="table"></div>
 	    <script type="text/javascript" charset="utf-8">
-			var data = [{
-  "name": "Philip",
-  "value": {"x" : [ '2013-01-01', '2013-05-01'], "y": [100, 200] }
-}, {
-  "name": "Brenda",
-  "value": {"x" : [ '2012-01-01', '2012-05-01'], "y": [100, 200] }
-}];			
+  var data = [
+		{"name": "Jessie", "value": {"x": [10, 20, 30, 50, 75], "y" : [100, 200, 300, 120, 320]}},
+		{"name": "Kame", "value": {"x": [10, 20, 30, 50, 75], "y" : [150, 210, -100, 500, 600]}}
+	];
 
-			var options = {
-				id: "chart",
-				data: {
-					plain: data,
-					keys: {
-						x: 'value.x',
-						y: 'value.y'
-					},
-					timeFormat: '%Y-%m-%d'
-				}, 
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							count: 5,
-							format: d3.time.format('%d-%m')
-						}
-					}
-				},
-			};
-			var lineChart = new C9.LineChart(options);
-			lineChart.draw();
+	var options = {
+		id: "chart",
+		data: {
+			plain: data,
+      keys: { // Define keys for each axe
+        x: 'value.x',
+        y: 'value.y'
+      }
+		}
+	};
+	var lineChart = new C9.LineChart(options);
+	lineChart.draw();
 			
 			
 		// var data1 = [

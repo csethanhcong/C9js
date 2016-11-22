@@ -334,6 +334,10 @@ export default class Legend {
                     chart.svg.select('.c9-subchart-custom .c9-subchart-axis').transition().duration(750).call(chart.subChartXAxis);
                     chart.updateSubChart(newData);
                 }
+
+                // Update overlay to make it at the bottom of structure
+                chart.updateOverlay();
+                chart.updateInteraction();
             },
 
             'mouseover': function(item) {
