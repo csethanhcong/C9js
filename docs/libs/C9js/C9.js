@@ -657,11 +657,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                // Draw axis
 	                // self.axis.draw();
 	
-	                // Draw title
-	                self.title.draw();
+	
 	                // Update Chart based on dataTarget
 	                self.update(data);
 	                self.updateInteraction();
+	
+	                // Draw title
+	                self.title.draw();
 	
 	                // Draw legend
 	                self.legend.draw();

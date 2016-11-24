@@ -33,7 +33,21 @@
 
 - Tự động format commit messages, kiểm soát trạng thái issues (open/close) trên GitHub, hiển thị changelog sau mỗi lần cập nhật code.
 
-### Mocha / Chai:
+### Mocha, Chai, jsdom, Mocha, Karma, istanbul:
+
+REF: http://amzotti.github.io/testing/2015/03/16/what-is-the-difference-between-a-test-runner-testing-framework-assertion-library-and-a-testing-plugin/
+
+> Phân biệt các khái niệm bên dưới
+
+- Mocha | Jamine: Testing framework, cung cấp các suite case (describe)
+
+- Chai: Assertion Library, cung cấp các utilities, functions (asertion, expect, should) giúp viết test-case đơn giản
+
+- jsdom | PhantomJS: Cung cấp headless browser (mock browser)
+
+- Karma: Test runner, cho phép test JS Code trên 'real' browser (Chrome, Firefox, IE, Safari hoặc PhantomJS)
+
+- Istanbul | nyc: Hỗ trợ generate report (nyc support ES6, Istanbul thì không)
 
 - Thư viện hỗ trợ thực thi `Unit Test`. Thông qua miêu tả các hành động (action) / chức năng (functionality) và các giá trị output mong muốn để kiểm tra tính đúng đắn của mã nguồn.
 
@@ -112,6 +126,7 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 - https://twitter.com/MikeQuindazzi/status/796925182526881793/photo/1
 
+
 2. Map: 
 
 - https://www.weforum.org/agenda/2016/10/this-map-shows-where-the-world-s-most-generous-people-live
@@ -122,6 +137,40 @@ Hệ thống hiện thực CI nhanh chóng và gọn lẹ, tích hợp với Git
 
 - http://tuoitre.vn/tin/interactive/20161101/truc-tuyen-ket-qua-bau-cu-tong-thong-my/1210954.html
 
+
 3. Mock Data Server:
 
 - https://www.sitepoint.com/mock-rest-apis-using-json-server/
+
+
+4. So sánh JSDOM vs PhantomJS:
+
+- http://hellote.com/testing-react-components-with-mocha-and-jsdom/
+
+- https://github.com/tmpvar/jsdom/blob/master/README.md
+
+- https://medium.com/podio-engineering-blog/from-karma-to-mocha-with-a-taste-of-jsdom-c9c703a06b21#.23prdcnkm
+
+
+5. So sánh Mocha, Chai vs Jasmine: 
+
+- http://thejsguy.com/2015/01/12/jasmine-vs-mocha-chai-and-sinon.html
+
+
+6. Tips:
+
+- Sử dụng package để tránh lỗi Object.assign trong Karma, thêm vào files[] trong karma.conf.js: 
+`./node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js`
+
+- Load external library: Trong `karma.conf.js`
+files: [
+    './node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js',
+    'docs/libs/d3/d3.min.js',
+    'docs/libs/ol3/ol.js',
+    'docs/libs/ol3/ol.css',
+    
+    // These lines
+    {pattern: 'dist/C9.js', included: true},
+    {pattern: 'dist/C9.min.css', included: true},
+    {pattern: 'test/*.test.js', included: true}
+],

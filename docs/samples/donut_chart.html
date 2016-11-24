@@ -57,23 +57,47 @@
 		<div id="chart"></div>
 		<div id="table"></div>
 	    <script type="text/javascript" charset="utf-8">
-  var data = [
-		{"name": "Jessie", "value": {"x": [10, 20, 30, 50, 75], "y" : [100, 200, 300, 120, 320]}},
-		{"name": "Kame", "value": {"x": [10, 20, 30, 50, 75], "y" : [150, 210, -100, 500, 600]}}
-	];
+            
+	    var data = [
+                {name: 'CA', value: [2704659,4499890,2159981,3853788,10604510,8819342,4114496]},
+                {name: 'TX', value: [2027307,3277946,1420518,2454721,7017731,5656528,2472223]},
+                {name: 'NY', value: [1208495,2141490,1058031,1999120,5355235,5120254,2607672]},
+                {name: 'FL', value: [1140516,1938695,925060,1607297,4782119,4746856,3187797]},
+                {name: 'IL', value: [894368,1558919,725973,1311479,3596343,3239173,1575308]},
+                {name: 'PA', value: [737462,1345341,679201,1203944,3157759,3414001,1910571]},
+            ];
 
-	var options = {
-		id: "chart",
-		data: {
-			plain: data,
-      keys: { // Define keys for each axe
-        x: 'value.x',
-        y: 'value.y'
-      }
-		}
-	};
-	var lineChart = new C9.LineChart(options);
-	lineChart.draw();
+        var option = {
+            id: "chart", 
+            width: 1100, 
+            height: 500,
+            data: {
+                plain: data,
+            },
+            title: {
+                show: false
+            }
+        };
+
+        var barChart = new C9.BarChart(option);
+        barChart.draw();
+ //  var data = [
+	// 	{"name": "Jessie", "value": {"x": [10, 20, 30, 50, 75], "y" : [100, 200, 300, 120, 320]}},
+	// 	{"name": "Kame", "value": {"x": [10, 20, 30, 50, 75], "y" : [150, 210, -100, 500, 600]}}
+	// ];
+
+	// var options = {
+	// 	id: "chart",
+	// 	data: {
+	// 		plain: data,
+ //      keys: { // Define keys for each axe
+ //        x: 'value.x',
+ //        y: 'value.y'
+ //      }
+	// 	}
+	// };
+	// var lineChart = new C9.LineChart(options);
+	// lineChart.draw();
 			
 			
 		// var data1 = [

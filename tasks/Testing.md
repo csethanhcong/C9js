@@ -1,8 +1,5 @@
 ### Test Configurations:
 
-- Test with Mocha/Chai
-- Auto-run with script in package.json: npm test
-
 (TODO): Add test to all units **Unit Testing**
 
 #### Setup Notes:
@@ -14,7 +11,15 @@
 
 
 
-- "test:single": "nyc cover -x *.test.js node_modules/mocha/bin/_mocha -- -R spec test/index.test.js --compilers js:babel-register",
+- "test:single": "nyc cover -x *.test.js node_modules/mocha/bin/_mocha -- -R spec test/*.test.js --compilers js:babel-register",
+
+- "check-coverage": "istanbul check-coverage --statements 100 --branches 100 --functions 100 --lines 100",
+
+- "test": "mocha test/*.test.js --compilers js:babel-register",
+
+- "cover": "istanbul npm test",
+
+- "watch:test": "npm t -- -w",
 
 - ,
     "ghooks": {
