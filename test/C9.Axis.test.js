@@ -4,10 +4,27 @@ function load(doneLoaded) {
     div.style.width = '640px';
     div.style.height = '480px';
     document.body.appendChild(div);
+
+    var tableDiv = document.createElement('div');
+    tableDiv.id = 'table';
+    tableDiv.style.width = '640px';
+    tableDiv.style.height = '480px';
+    document.body.appendChild(tableDiv);
+
+    var expandDiv = document.createElement('div');
+    expandDiv.id = 'expand';
+    expandDiv.style.width = '640px';
+    expandDiv.style.height = '480px';
+    document.body.appendChild(expandDiv);
+
+    var mapDiv = document.createElement('div');
+    mapDiv.id = 'map';
+    document.body.appendChild(mapDiv);
+
     document.body.style.margin = '0px';
 
     doneLoaded();
-} 
+}
 
 
 describe('C9 Unit Test - Axis', function() {

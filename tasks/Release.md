@@ -39,15 +39,15 @@ REF: http://amzotti.github.io/testing/2015/03/16/what-is-the-difference-between-
 
 > Phân biệt các khái niệm bên dưới
 
-- Mocha | Jamine: Testing framework, cung cấp các suite case (describe)
+- Mocha | `Jasmine`: Testing framework, cung cấp các suite case (describe)
 
 - Chai: Assertion Library, cung cấp các utilities, functions (asertion, expect, should) giúp viết test-case đơn giản
 
-- jsdom | PhantomJS: Cung cấp headless browser (mock browser)
+- jsdom | `PhantomJS`: Cung cấp headless browser (mock browser)
 
-- Karma: Test runner, cho phép test JS Code trên 'real' browser (Chrome, Firefox, IE, Safari hoặc PhantomJS)
+- `Karma`: Test runner, cho phép test JS Code trên 'real' browser (Chrome, Firefox, IE, Safari hoặc PhantomJS)
 
-- Istanbul | nyc: Hỗ trợ generate report (nyc support ES6, Istanbul thì không)
+- `Istanbul` | nyc: Hỗ trợ generate report (nyc support ES6, Istanbul thì không)
 
 - Thư viện hỗ trợ thực thi `Unit Test`. Thông qua miêu tả các hành động (action) / chức năng (functionality) và các giá trị output mong muốn để kiểm tra tính đúng đắn của mã nguồn.
 

@@ -1,19 +1,4 @@
-function load(doneLoaded) {
-    var div = document.createElement('div');
-    div.id = 'chart';
-    div.style.width = '640px';
-    div.style.height = '480px';
-    document.body.appendChild(div);
-    document.body.style.margin = '0px';
-
-    doneLoaded();
-} 
-
 describe('C9 Unit Test - Pie Chart', function() {
-
-    beforeEach(function(done) {
-        load(done);
-    });
 
     it('should create PieChart with id #chart', function() {
 

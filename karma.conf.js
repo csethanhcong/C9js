@@ -17,6 +17,7 @@ module.exports = function(config) {
     files: [
         './node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js',
         'docs/libs/d3/d3.min.js',
+        'docs/libs/jquery/jquery-3.1.1.min.js',
         'docs/libs/ol3/ol.js',
         'docs/libs/ol3/ol.css',
         {pattern: 'dist/C9.js', included: true},

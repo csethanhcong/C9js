@@ -1,27 +1,4 @@
-function load(doneLoaded) {
-    var div = document.createElement('div');
-    div.id = 'chart';
-    div.style.width = '640px';
-    div.style.height = '480px';
-    document.body.appendChild(div);
-
-    var tableDiv = document.createElement('div');
-    tableDiv.id = 'table';
-    tableDiv.style.width = '640px';
-    tableDiv.style.height = '480px';
-    document.body.appendChild(tableDiv);
-
-    document.body.style.margin = '0px';
-
-    doneLoaded();
-} 
-
-
 describe('C9 Unit Test - Table', function() {
-
-    beforeEach(function(done) {
-        load(done);
-    });
 
     it('should show table with id #table', function() {
 
