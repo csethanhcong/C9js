@@ -65,22 +65,22 @@ var Table = function () {
         value: function update(data) {
             var self = this;
 
-            if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
-                //headings
-                if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) self.options.headings.push("Group");
+            if (self.options.show && !_C2.default.isEmpty(data)) {
+                if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
+                    //headings
+                    if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) self.options.headings.push("Group");
 
-                //data
-                self.data = [];
-                data.forEach(function (d) {
-                    (_C2.default.isArray(d) ? d : d.value).forEach(function (b) {
-                        self.data.push(b);
+                    //data
+                    self.data = [];
+                    data.forEach(function (d) {
+                        (_C2.default.isArray(d) ? d : d.value).forEach(function (b) {
+                            self.data.push(b);
+                        });
                     });
-                });
-            } else {
-                self.data = data;
-            }
+                } else {
+                    self.data = data;
+                }
 
-            if (self.options.show) {
                 d3.selectAll('.c9-table').remove();
                 d3.selectAll('.c9-table-container').remove();
 

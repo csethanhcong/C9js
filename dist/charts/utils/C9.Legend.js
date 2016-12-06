@@ -67,7 +67,7 @@ var Legend = function () {
 
             self.data = data;
 
-            if (self.options.show) {
+            if (self.options.show && !_C2.default.isEmpty(self.data)) {
                 // Remove current legend
                 self.chart.svg.selectAll('.c9-custom-legend.c9-custom-legend-container').remove();
 
@@ -295,7 +295,7 @@ var Legend = function () {
 
             };
 
-            if (self.options.show) {
+            if (self.options.show && self.item) {
                 self.item.on(self.itemEventFactory);
             }
         }
@@ -452,7 +452,7 @@ var Legend = function () {
 
             };
 
-            if (self.options.show) self.item.on(self.itemEventFactory);
+            if (self.options.show && self.item) self.item.on(self.itemEventFactory);
         }
 
         /**
@@ -571,7 +571,7 @@ var Legend = function () {
                 }
 
             };
-            if (self.options.show) self.item.on(self.itemEventFactory);
+            if (self.options.show && self.item) self.item.on(self.itemEventFactory);
         }
     }, {
         key: "lightenLegendItem",

@@ -77,23 +77,23 @@ export default class Table {
     update(data) {
         var self = this;
 
-        if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
-            //headings
-            if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) 
-                self.options.headings.push("Group");
+        if (self.options.show && !Helper.isEmpty(data)) {
+            if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
+                //headings
+                if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) 
+                    self.options.headings.push("Group");
 
-            //data
-            self.data = [];
-            data.forEach(function(d) {
-                (Helper.isArray(d) ? d : d.value).forEach(function(b) {
-                    self.data.push(b);
-                })
-            });
-        } else {
-            self.data = data;
-        }
-
-        if (self.options.show) {
+                //data
+                self.data = [];
+                data.forEach(function(d) {
+                    (Helper.isArray(d) ? d : d.value).forEach(function(b) {
+                        self.data.push(b);
+                    })
+                });
+            } else {
+                self.data = data;
+            }
+        
             d3.selectAll('.c9-table').remove();
             d3.selectAll('.c9-table-container').remove();
 

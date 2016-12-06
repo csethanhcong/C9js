@@ -15,11 +15,11 @@
 		2.2.2. d3
 		2.2.3. OL
 		2.2.4. Repository Management (GitHub)
-		2.2.4. Module Loader (Webpack)
-		2.2.5. Unit Testing (Mocha, Chai)
-		2.2.6. Version Control (Semantic-release)
-		2.2.7. Code Coverage (codecov.io)
-		2.2.8. Continuous Integration & Continuous Delivery (CI & CD) - TravisCI
+		2.2.5. Module Loader (Webpack)
+		2.2.6. Unit Testing (Jasmine, Karma, PhantomJS, Istanbul)
+		2.2.8. Code Coverage (codecov.io)
+		2.2.9. Version Control (Semantic-release)
+		2.2.10. Continuous Integration & Continuous Delivery (CI & CD) - TravisCI
 		...
 
 3. Giới thiệu thư viện C9js:

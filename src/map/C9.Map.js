@@ -137,6 +137,7 @@ export default class Map {
         //c9Objects contain all polygons, lines
         self.c9Objs = new ol.source.Vector({});
         self.c9GeojsonObjs = [];
+        self.c9GeojsonObjsLayers = [];
         //init all thing relating to user's data
 
         //layer
@@ -254,32 +255,12 @@ export default class Map {
                 result['id'] = feature.getId();
                 return result;
             }
-            var setStyle = function(){
-                if (!Helper.isEmpty(options.style)) {
-                    try {
-                        self.setStyle({obj: layer.getSource(), style: options.style});
-                    }
-                    catch (err) {
-                        try {
-                            self.setStyle({obj: vs, style: options.style});
-                        }
-                        catch (err) {
-                            try {
-                                self.setStyle({obj: layer, style: options.style});    
-                            }
-                            catch (err) {
-                                throw 'Cannot set style for this source';
-                            }
-                        }
-                        
-                    }
-                }
-            };
             //register layer loaded event to set data for obj
             vs.once('change', function(e) {
                 if (vs.getState() == 'ready') {
                     var objs = vs.getFeatures();
                     self.c9GeojsonObjs.push(layer.getSource());
+                    self.c9GeojsonObjsLayers.push(layer);
                     // self.c9Objs.addFeatures(objs);
 
                     objs.forEach(function(o) {
@@ -287,40 +268,10 @@ export default class Map {
                         o.set('type', 'c9-geojson');
                     })
 
-                    //read data from url
-                    if (!Helper.isEmpty(options.data) && Helper.isFunction(options.data.condition) && !Helper.isEmpty(options.data.file) && !Helper.isEmpty(options.data.file.url) && !Helper.isEmpty(options.data.file.type)) {
-                        var da = new DataAdapter(options.data);
-                        da.getDataTarget('', function(data) {
-                            var condition = options.data.condition;
-                            var process = options.data.process;
-
-                            if (!Helper.isEmpty(process) && Helper.isFunction(process))
-                                data = process(data);
-
-                            objs.forEach(function(o) {
-                                if (Helper.isArray(data)) {
-                                    for (var i = 0; i < data.length; i++) {
-                                        if (condition(o, data[i])) {
-                                            for (var j in data[i]) {
-                                                o.get('data')[j] = data[i][j];
-                                            }
-                                            break;
-                                        }
-                                    }
-                                } 
-                                else 
-                                    if (condition(o, data)) {
-                                        for (var i in data) {
-                                            o.get('data')[i] = data[i];
-                                        }
-                                    }
-                            });
-                            setStyle();
-                        });
-                    }
-                    else 
-                        setStyle();
-                        
+                    self.updateGeojsonData({
+                        data: options.data,
+                        style: options.style
+                    })
                 }
             })
         }
@@ -980,6 +931,7 @@ export default class Map {
                 }
             }
         });
+
         return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
     }
 
@@ -1131,5 +1083,88 @@ export default class Map {
         //     }
         // }
 
+    }
+
+    updateGeojsonData(options) {
+        if (Helper.isEmpty(options)) return;
+
+        var self = this,
+            objs = this.getObjects().filter(function(o) {
+                return o.get('type') == 'c9-geojson';
+            }),
+            layer;
+
+        if (Helper.isArray(options.layerIndex)) {
+            layer = [];
+            options.layerIndex.forEach(function(i) {
+                layer.push(self.c9GeojsonObjsLayers[i]);
+            });
+        } else {
+            layer = options.layerIndex ? options.layerIndex > self.c9GeojsonObjsLayers.length - 1 ? self.c9GeojsonObjsLayers[self.c9GeojsonObjsLayers.length - 1] : self.c9GeojsonObjsLayers[options.layerIndex] : self.c9GeojsonObjsLayers[self.c9GeojsonObjsLayers.length - 1];
+        }
+
+        var setStyle = function(layers){
+            var sf = function(layer) {
+                try {
+                    self.setStyle({obj: layer.getSource(), style: options.style});
+                }
+                catch (err) {
+                    try {
+                        self.setStyle({obj: layer.getSource().getSource(), style: options.style});
+                    }
+                    catch (err) {
+                        try {
+                            self.setStyle({obj: layer, style: options.style});    
+                        }
+                        catch (err) {
+                            throw 'Cannot set style for this source';
+                        }
+                    }
+                    
+                }
+            }
+            if (!Helper.isEmpty(options.style)) {
+                if (Helper.isArray(layers))
+                    layers.forEach(function(l) {
+                        sf(l);
+                    })
+                else
+                    sf(layers);
+            }
+        };
+
+        //read data from url
+        if (!Helper.isEmpty(options.data) && Helper.isFunction(options.data.condition) && !Helper.isEmpty(options.data.file) && !Helper.isEmpty(options.data.file.url) && !Helper.isEmpty(options.data.file.type)) {
+            var da = new DataAdapter(options.data);
+            da.getDataTarget('', function(data) {
+                var condition = options.data.condition;
+                var process = options.data.process;
+
+                if (!Helper.isEmpty(process) && Helper.isFunction(process))
+                    data = process(data);
+
+                objs.forEach(function(o) {
+                    if (Helper.isArray(data)) {
+                        for (var i = 0; i < data.length; i++) {
+                            if (condition(o, data[i])) {
+                                for (var j in data[i]) {
+                                    o.get('data')[j] = data[i][j];
+                                }
+                                break;
+                            }
+                        }
+                    } 
+                    else 
+                        if (condition(o, data)) {
+                            for (var i in data) {
+                                o.get('data')[i] = data[i];
+                            }
+                        }
+                });
+                setStyle(layer);
+            });
+        }
+        else 
+            setStyle(layer);
     }
 }

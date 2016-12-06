@@ -120,7 +120,7 @@ export default class Legend {
 
         self.data = data;
 
-        if (self.options.show) {
+        if (self.options.show && !Helper.isEmpty(self.data)) {
             // Remove current legend
             self.chart.svg.selectAll('.c9-custom-legend.c9-custom-legend-container').remove();
 
@@ -177,7 +177,7 @@ export default class Legend {
 
             //caculate position for legend
             var getSize = function(item) { 
-                return item.getBoundingClientRect() 
+                return item.getBoundingClientRect();
             };
             var getXY = function(item) {
                 var xy = d3.select(item).attr('transform').split(','); 
@@ -366,7 +366,7 @@ export default class Legend {
         
         };
 
-        if (self.options.show) {
+        if (self.options.show && self.item) {
             self.item.on(self.itemEventFactory);
         }
     }
@@ -542,7 +542,7 @@ export default class Legend {
         
         };
 
-        if (self.options.show)
+        if (self.options.show && self.item)
             self.item.on(self.itemEventFactory);
     }
 
@@ -665,7 +665,7 @@ export default class Legend {
             }
         
         };
-        if (self.options.show)
+        if (self.options.show && self.item)
             self.item.on(self.itemEventFactory);
     }
 

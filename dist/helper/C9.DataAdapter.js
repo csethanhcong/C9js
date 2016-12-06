@@ -96,8 +96,8 @@ var DataAdapter = function () {
         value: function hasPlainData() {
             var self = this;
 
-            // return options.plain && Helper.isArray(options.plain);
-            return !_C2.default.isEmpty(self.options.plain); // fix for map
+            return self.options.plain && _C2.default.isArray(self.options.plain) || !_C2.default.isEmpty(self.options.plain);
+            // return !Helper.isEmpty(self.options.plain); // fix for map
         }
     }, {
         key: "hasFile",

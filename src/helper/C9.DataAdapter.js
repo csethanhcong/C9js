@@ -174,8 +174,8 @@ export default class DataAdapter {
     hasPlainData() {
         var self = this;
 
-        // return options.plain && Helper.isArray(options.plain);
-        return !Helper.isEmpty(self.options.plain); // fix for map
+        return (self.options.plain && Helper.isArray(self.options.plain)) || !Helper.isEmpty(self.options.plain);
+        // return !Helper.isEmpty(self.options.plain); // fix for map
     }
 
     hasFile() {

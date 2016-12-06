@@ -2223,7 +2223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            self.data = data;
 	
-	            if (self.options.show) {
+	            if (self.options.show && !_C2.default.isEmpty(self.data)) {
 	                // Remove current legend
 	                self.chart.svg.selectAll('.c9-custom-legend.c9-custom-legend-container').remove();
 	
@@ -2451,7 +2451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            };
 	
-	            if (self.options.show) {
+	            if (self.options.show && self.item) {
 	                self.item.on(self.itemEventFactory);
 	            }
 	        }
@@ -2608,7 +2608,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	            };
 	
-	            if (self.options.show) self.item.on(self.itemEventFactory);
+	            if (self.options.show && self.item) self.item.on(self.itemEventFactory);
 	        }
 	
 	        /**
@@ -2727,7 +2727,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	
 	            };
-	            if (self.options.show) self.item.on(self.itemEventFactory);
+	            if (self.options.show && self.item) self.item.on(self.itemEventFactory);
 	        }
 	    }, {
 	        key: "lightenLegendItem",
@@ -2909,22 +2909,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function update(data) {
 	            var self = this;
 	
-	            if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
-	                //headings
-	                if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) self.options.headings.push("Group");
+	            if (self.options.show && !_C2.default.isEmpty(data)) {
+	                if (self.chart.chartType == "bar" || self.chart.chartType == "line") {
+	                    //headings
+	                    if (self.options.headings.length < 3 && !data[0].value && data[0][0]["group-ref"] != undefined) self.options.headings.push("Group");
 	
-	                //data
-	                self.data = [];
-	                data.forEach(function (d) {
-	                    (_C2.default.isArray(d) ? d : d.value).forEach(function (b) {
-	                        self.data.push(b);
+	                    //data
+	                    self.data = [];
+	                    data.forEach(function (d) {
+	                        (_C2.default.isArray(d) ? d : d.value).forEach(function (b) {
+	                            self.data.push(b);
+	                        });
 	                    });
-	                });
-	            } else {
-	                self.data = data;
-	            }
+	                } else {
+	                    self.data = data;
+	                }
 	
-	            if (self.options.show) {
 	                d3.selectAll('.c9-table').remove();
 	                d3.selectAll('.c9-table-container').remove();
 	
@@ -3584,8 +3584,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function hasPlainData() {
 	            var self = this;
 	
-	            // return options.plain && Helper.isArray(options.plain);
-	            return !_C2.default.isEmpty(self.options.plain); // fix for map
+	            return self.options.plain && _C2.default.isArray(self.options.plain) || !_C2.default.isEmpty(self.options.plain);
+	            // return !Helper.isEmpty(self.options.plain); // fix for map
 	        }
 	    }, {
 	        key: "hasFile",
@@ -7104,6 +7104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //c9Objects contain all polygons, lines
 	            self.c9Objs = new ol.source.Vector({});
 	            self.c9GeojsonObjs = [];
+	            self.c9GeojsonObjsLayers = [];
 	            //init all thing relating to user's data
 	
 	            //layer
@@ -7224,28 +7225,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    result['id'] = feature.getId();
 	                    return result;
 	                };
-	                var setStyle = function setStyle() {
-	                    if (!_C2.default.isEmpty(options.style)) {
-	                        try {
-	                            self.setStyle({ obj: layer.getSource(), style: options.style });
-	                        } catch (err) {
-	                            try {
-	                                self.setStyle({ obj: vs, style: options.style });
-	                            } catch (err) {
-	                                try {
-	                                    self.setStyle({ obj: layer, style: options.style });
-	                                } catch (err) {
-	                                    throw 'Cannot set style for this source';
-	                                }
-	                            }
-	                        }
-	                    }
-	                };
 	                //register layer loaded event to set data for obj
 	                vs.once('change', function (e) {
 	                    if (vs.getState() == 'ready') {
 	                        var objs = vs.getFeatures();
 	                        self.c9GeojsonObjs.push(layer.getSource());
+	                        self.c9GeojsonObjsLayers.push(layer);
 	                        // self.c9Objs.addFeatures(objs);
 	
 	                        objs.forEach(function (o) {
@@ -7253,34 +7238,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                            o.set('type', 'c9-geojson');
 	                        });
 	
-	                        //read data from url
-	                        if (!_C2.default.isEmpty(options.data) && _C2.default.isFunction(options.data.condition) && !_C2.default.isEmpty(options.data.file) && !_C2.default.isEmpty(options.data.file.url) && !_C2.default.isEmpty(options.data.file.type)) {
-	                            var da = new _C6.default(options.data);
-	                            da.getDataTarget('', function (data) {
-	                                var condition = options.data.condition;
-	                                var process = options.data.process;
-	
-	                                if (!_C2.default.isEmpty(process) && _C2.default.isFunction(process)) data = process(data);
-	
-	                                objs.forEach(function (o) {
-	                                    if (_C2.default.isArray(data)) {
-	                                        for (var i = 0; i < data.length; i++) {
-	                                            if (condition(o, data[i])) {
-	                                                for (var j in data[i]) {
-	                                                    o.get('data')[j] = data[i][j];
-	                                                }
-	                                                break;
-	                                            }
-	                                        }
-	                                    } else if (condition(o, data)) {
-	                                        for (var i in data) {
-	                                            o.get('data')[i] = data[i];
-	                                        }
-	                                    }
-	                                });
-	                                setStyle();
-	                            });
-	                        } else setStyle();
+	                        self.updateGeojsonData({
+	                            data: options.data,
+	                            style: options.style
+	                        });
 	                    }
 	                });
 	            }
@@ -7951,6 +7912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    } catch (err) {}
 	                }
 	            });
+	
 	            return this.c9Objs.getFeatures().concat(c9GeojsonObjs);
 	        }
 	    }, {
@@ -8101,6 +8063,78 @@ return /******/ (function(modules) { // webpackBootstrap
 	            //         }))
 	            //     }
 	            // }
+	        }
+	    }, {
+	        key: 'updateGeojsonData',
+	        value: function updateGeojsonData(options) {
+	            if (_C2.default.isEmpty(options)) return;
+	
+	            var self = this,
+	                objs = this.getObjects().filter(function (o) {
+	                return o.get('type') == 'c9-geojson';
+	            }),
+	                layer;
+	
+	            if (_C2.default.isArray(options.layerIndex)) {
+	                layer = [];
+	                options.layerIndex.forEach(function (i) {
+	                    layer.push(self.c9GeojsonObjsLayers[i]);
+	                });
+	            } else {
+	                layer = options.layerIndex ? options.layerIndex > self.c9GeojsonObjsLayers.length - 1 ? self.c9GeojsonObjsLayers[self.c9GeojsonObjsLayers.length - 1] : self.c9GeojsonObjsLayers[options.layerIndex] : self.c9GeojsonObjsLayers[self.c9GeojsonObjsLayers.length - 1];
+	            }
+	
+	            var setStyle = function setStyle(layers) {
+	                var sf = function sf(layer) {
+	                    try {
+	                        self.setStyle({ obj: layer.getSource(), style: options.style });
+	                    } catch (err) {
+	                        try {
+	                            self.setStyle({ obj: layer.getSource().getSource(), style: options.style });
+	                        } catch (err) {
+	                            try {
+	                                self.setStyle({ obj: layer, style: options.style });
+	                            } catch (err) {
+	                                throw 'Cannot set style for this source';
+	                            }
+	                        }
+	                    }
+	                };
+	                if (!_C2.default.isEmpty(options.style)) {
+	                    if (_C2.default.isArray(layers)) layers.forEach(function (l) {
+	                        sf(l);
+	                    });else sf(layers);
+	                }
+	            };
+	
+	            //read data from url
+	            if (!_C2.default.isEmpty(options.data) && _C2.default.isFunction(options.data.condition) && !_C2.default.isEmpty(options.data.file) && !_C2.default.isEmpty(options.data.file.url) && !_C2.default.isEmpty(options.data.file.type)) {
+	                var da = new _C6.default(options.data);
+	                da.getDataTarget('', function (data) {
+	                    var condition = options.data.condition;
+	                    var process = options.data.process;
+	
+	                    if (!_C2.default.isEmpty(process) && _C2.default.isFunction(process)) data = process(data);
+	
+	                    objs.forEach(function (o) {
+	                        if (_C2.default.isArray(data)) {
+	                            for (var i = 0; i < data.length; i++) {
+	                                if (condition(o, data[i])) {
+	                                    for (var j in data[i]) {
+	                                        o.get('data')[j] = data[i][j];
+	                                    }
+	                                    break;
+	                                }
+	                            }
+	                        } else if (condition(o, data)) {
+	                            for (var i in data) {
+	                                o.get('data')[i] = data[i];
+	                            }
+	                        }
+	                    });
+	                    setStyle(layer);
+	                });
+	            } else setStyle(layer);
 	        }
 	    }, {
 	        key: 'dataSource',
