@@ -26,10 +26,64 @@
 	3.1. Mô tả bài toán
 	3.2. Hướng dẫn sử dụng
 	3.3. Các ví dụ minh hoạ
-	3.4. Ứng dụng thực tế
+	3.4. API
+	Chart:
+		- draw
+		- setOption
+		- updateData
+		- on
+
+	Map: Có 2 loại 2 Object: 
+			+ Người dùng định nghĩa: name, coor, value -> Thông qua addData() | createObject()
+			+ GeoJSON: data: chứa các field trong properties (mặc định file geojson có) và id
+		- draw
+		
+		- addData(plain: {coor:, name:, value: }, [keys: ]) -> Tạo một/nhiều đối tượng trên bản đồ (Line, Polygon, Marker dựa trên coor), có thể định nghĩa khoá
+		
+		- createObject(data: {name:, coor:, value: {chứa các field, được lấy hết} }, style: { imgSrc: 'link/to/img', scale: 0.2 }) -> Tạo một đối tượng mẫu trên Map, chứa các trường theo yêu cầu
+		
+		- getObjects() -> Trả về FeatureObject từ OpenLayers, người dùng có thể truy xuất dữ liệu qua hàm get('data') ('name', 'coor', 'value')
+		
+		- createLayerFromGeojson({
+			url: load geojson,
+			data: {
+				plain: {
+
+				},
+				// hoặc file: {
+
+				},
+				[process: tiền xử lý, thêm field, edit data,]
+				condition: bắt buộc, điều kiện để binding data từ geojson với file, ví dụ thông qua ID
+			},
+			style: return OLStyle Object
+		})
+		- updateGeojsonData({
+			data: {
+				plain: {
+
+				},
+				// hoặc file: {
+
+				},
+				[process: tiền xử lý, thêm field, edit data,]
+				condition: bắt buộc, điều kiện để binding data từ geojson với file, ví dụ thông qua ID
+			},
+			style: return OLStyle Object
+		})
+		
+		- on: return FeatureObject, feature.get('data')  để trả về data
 
 4. Quá trình thực hiện:
 	4.1. Kiến trúc xây dựng (Componentize & Data-driven) <trích code>
+	Component-based:
+		Chart:
+			constructor -> base constructor -> initConfig
+										draw	<-	updateConfig	<-
+		Map: 
+			constructor -> initConfig(layer, geojson object, object) -> draw
+
+
 	4.2. Hiện thực thư viện:
 		<Đoạn dẫn>
 		4.2.1. Coding
