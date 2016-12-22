@@ -887,7 +887,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // title
 	            title: {
 	                show: true,
-	                text: "Sample Chart",
+	                text: "Sample",
 	                position: 'top',
 	                fontSize: "14px"
 	            },

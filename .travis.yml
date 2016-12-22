@@ -15,10 +15,8 @@ before_install:
 before_script:
   - npm prune
 script:
-  # - npm run cover
   - npm run build
   - npm run ci
-  # - npm run check-coverage
 after_success:
   - npm run report-coverage
   - npm run semantic-release
