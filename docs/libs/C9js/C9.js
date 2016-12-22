@@ -1652,6 +1652,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (element.scrollTop === to) return;
 	            self.scroll(element, to, duration - 10);
 	        }, 10);
+	    },
+	    textDx: function textDx(angle) {
+	        var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+	        return 8 * sin;
+	    },
+	    textY: function textY(angle) {
+	        return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
+	    },
+	    textAnchor: function textAnchor(angle) {
+	        var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+	        return sin == 0 ? "middle" : sin > 0 ? "start" : "end";
 	    }
 	};
 	
@@ -1850,25 +1861,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	
-	            var textAnchor = function textAnchor(angle) {
-	                var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
-	                return sin == 0 ? "middle" : sin > 0 ? "start" : "end";
-	            };
-	
-	            var textDx = function textDx(angle) {
-	                var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
-	                return 8 * sin;
-	            };
-	
-	            var textY = function textY(angle) {
-	                return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
-	            };
-	
 	            //draw x axis
 	            self.chart.body.append("g").attr("class", "c9-axis c9-axis-x").attr("transform", "translate(0," + self.height + ")").call(self.xAxis);
 	
 	            //draw tick
-	            self.chart.svg.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", textAnchor(self.options.x.tick.rotate)).attr("y", textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
+	            self.chart.svg.select(".c9-axis.c9-axis-x").selectAll("text").style("text-anchor", _C2.default.textAnchor(self.options.x.tick.rotate)).attr("y", _C2.default.textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", _C2.default.textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
 	            //draw label
 	            self.chart.svg.select(".c9-axis.c9-axis-x").append("text").attr("class", "c9-axis c9-axis-x-text").attr("dx", "-.8em").attr("dy", "-.55em").attr("x", self.width + 20).attr("y", 10).style("text-anchor", "start").text(self.options.x.label.text);
 	
@@ -1918,6 +1915,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	                self.chart.body.select(".c9-axis.c9-axis-y").transition().duration(duration).call(self.yAxis);
 	            }
+	
+	            // update tick position
+	            self.chart.svg.selectAll(".c9-axis.c9-axis-x>g.tick>text").style("text-anchor", _C2.default.textAnchor(self.options.x.tick.rotate)).attr("y", _C2.default.textY(self.options.x.tick.rotate)).attr("x", 0).attr("dy", ".71em").attr("dx", _C2.default.textDx(self.options.x.tick.rotate)).attr("transform", "rotate(" + self.options.x.tick.rotate + ")");
 	        }
 	    }, {
 	        key: "draw",

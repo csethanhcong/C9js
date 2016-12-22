@@ -189,7 +189,18 @@ var Helper = {
             if (element.scrollTop === to) return;
             self.scroll(element, to, duration - 10);
         }, 10);
-    }   
+    },
+    textDx: function(angle) {
+        var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+        return 8 * sin;
+    },
+    textY: function(angle) {
+        return 11.5 - 2.5 * (angle / 15) * (angle > 0 ? 1 : -1);
+    },
+    textAnchor: function(angle) {
+        var sin = Math.sin(angle * Math.PI / 180).toFixed(15);
+        return sin == 0 ? "middle" : (sin > 0 ? "start" : "end");
+    },
 };
 
 var Util = {
