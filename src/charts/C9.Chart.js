@@ -50,7 +50,7 @@ export default class Chart {
             // title
             title: {
                 show      : true,
-                text      : "Sample",
+                text      : "Sample Chart",
                 position  : 'top',
                 fontSize  : "14px"
             },
