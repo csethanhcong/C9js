@@ -4,7 +4,7 @@
   "description": "A JavaScript library, used for interactive map-chart based on various types of data.",
   "main": "dist/C9.min.js",
   "authors": [
-    "Cong Pham<cse.thanhcong@gmail.com> (http://c9js.me/)"
+    "Cong Pham<cse.thanhcong@gmail.com> (http://csethanhcong.github.io/C9js/)"
   ],
   "license": "MIT",
   "keywords": [
@@ -24,7 +24,7 @@
     "graph",
     "JavaScript"
   ],
-  "homepage": "http://c9js.me/",
+  "homepage": "http://csethanhcong.github.io/C9js/",
   "moduleType": [],
   "ignore": [
     "**/.*",

@@ -15,12 +15,12 @@
 
 C9js is a d3 and OpenLayers-based JavaScript library, built on top with ES6's new features to generate interactive charts and map from arbitrary data, also brings to you strong features.
 
-Follow the link for more information: [http://C9js.me](http://C9js.me/)
+Follow the link for more information: [http://csethanhcong.github.io/C9js](http://csethanhcong.github.io/C9js/)
 
 ## Tutorial and Examples
 
-+ [Getting Started](http://c9js.me/getting_started.html)
-+ [Examples](http://c9js.me/examples.html)
++ [Getting Started](http://csethanhcong.github.io/C9js/getting_started.html)
++ [Examples](http://csethanhcong.github.io/C9js/examples.html)
 
 ## Contribution
 Pull requests are welcome, though please post an [issue](https://github.com/csethanhcong/C9js/issues) first to see whether such a change is desirable.

@@ -84,7 +84,7 @@ barChart.draw();
 
 Above sample will generate the Bar Chart like this:
 
-C9js currently supports many types of chart (`Bar Chart`, `Line Chart`, `Timeline`, `Pie Chart`, `Donut Chart`), you can see some [examples](http://c9js.me/examples.html) available.
+C9js currently supports many types of chart (`Bar Chart`, `Line Chart`, `Timeline`, `Pie Chart`, `Donut Chart`), you can see some [examples](http://csethanhcong.github.io/C9js/examples.html) available.
 
 ## Generate First C9 Map
 ---
@@ -170,7 +170,7 @@ var chart = new C9.BarChart(option);
 chart.draw();
 ```
 
-More examples about `Data Adapter` available [here](http://c9js.me/examples#data_adapter)
+More examples about `Data Adapter` available [here](http://csethanhcong.github.io/C9js/examples#data_adapter)
 
 ## Customize Chart/Map Option
 ---
@@ -227,7 +227,7 @@ var chart = new C9.LineChart(option);
 chart.draw();
 
 ```
-You can see some examples on axis option [here](http://c9js.me/examples#axis_option)
+You can see some examples on axis option [here](http://csethanhcong.github.io/C9js/examples#axis_option)
 
 ### Tooltip Format
 
@@ -270,7 +270,7 @@ chart.draw();
 
 C9js supports 4 positions on Tooltip: `top`, `right`, `bottom`, `left`
 
-Some examples on Tooltip go [here](http://c9js.me/)
+Some examples on Tooltip go [here](http://csethanhcong.github.io/C9js/)
 
 ### Table 
 
@@ -369,4 +369,4 @@ setTimeout(function(){
 
 ## and more...
 
-Please check the [examples](http://c9js.me/examples.html) and the [issues](https://github.com/csethanhcong/C9js/issues) on GitHub for more information.
+Please check the [examples](http://csethanhcong.github.io/C9js/examples.html) and the [issues](https://github.com/csethanhcong/C9js/issues) on GitHub for more information.

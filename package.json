@@ -93,10 +93,10 @@
     "type": "git",
     "url": "https://github.com/csethanhcong/C9js.git"
   },
-  "author": "Cong Pham<cse.thanhcong@gmail.com> (http://c9js.me/)",
+  "author": "Cong Pham<cse.thanhcong@gmail.com> (http://csethanhcong.github.io/C9js/)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/csethanhcong/C9js/issues"
   },
-  "homepage": "http://c9js.me/"
+  "homepage": "http://csethanhcong.github.io/C9js/"
 }
